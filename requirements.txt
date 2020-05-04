@@ -1,0 +1,8 @@
+numpy
+sncosmo
+astropy
+pwv_kpno
+tqdm
+pandas
+pyyaml
+matplotlib

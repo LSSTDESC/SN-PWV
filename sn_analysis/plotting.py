@@ -1,0 +1,320 @@
+# !/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+"""Plotting functions for SNe results"""
+
+import numpy as np
+import sncosmo
+from matplotlib import pyplot as plt
+from matplotlib.ticker import MultipleLocator
+from pwv_kpno import pwv_atm
+
+
+def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
+    """Plot a 2d y array vs a 1d x array
+
+    Lines are color coded according to values of a 2d z array
+
+    Args:
+        x_arr (ndarray): A 1d array
+        y_arr (ndarray): A 2d array
+        z_arr (ndarray): A 2d array
+    """
+
+    colors = plt.cm.viridis(np.linspace(0, 1, len(z_arr)))
+    for z, y, color in zip(z_arr, y_arr, colors):
+        if label:
+            axis.plot(x_arr, y, label=label.format(z), c=color)
+
+        else:
+            axis.plot(x_arr, y, c=color)
+
+    axis.set_xlim(x_arr[0], x_arr[-1])
+
+
+def plot_delta_mag_vs_z(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
+    """Plot the change in apparent mag due to PWV vs redshift
+
+    Args:
+        pwv_arr       (ndarray): Array of PWV values
+        z_arr         (ndarray): Array of redshift values
+        delta_mag_arr (ndarray): Array of delta mag values
+    """
+
+    if axis is None:
+        axis = plt.gca()
+
+    multi_line_plot(z_arr, delta_mag_arr, pwv_arr, axis, label)
+    axis.set_xlabel('Redshift', fontsize=20)
+    axis.set_xlim(min(z_arr), max(z_arr))
+    axis.set_ylabel(r'$\Delta m$', fontsize=20)
+
+
+def plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
+    """Plot the change in mag due to PWV as a function of pwv
+
+    Args:
+        pwv_arr       (ndarray): Array of PWV values
+        z_arr         (ndarray): Array of redshift values
+        delta_mag_arr (ndarray): Array of delta mag values
+    """
+
+    if axis is None:
+        axis = plt.gca()
+
+    multi_line_plot(pwv_arr, delta_mag_arr.T, z_arr, axis, label)
+    axis.set_xlabel('PWV', fontsize=20)
+    axis.set_xlim(min(pwv_arr), max(pwv_arr))
+    axis.set_ylabel(r'$\Delta m$', fontsize=20)
+
+
+def plot_derivative_mag_vs_z(pwv_arr, z_arr, slope_arr, axis=None):
+    """Plot the delta mag / delta PWV as a function of redshift
+
+    Args:
+        pwv_arr   (ndarray): Array of PWV values
+        z_arr     (ndarray): Array of redshift values
+        slope_arr (ndarray): Slope of delta mag at reference PWV
+    """
+
+    if axis is None:
+        axis = plt.gca()
+
+    axis.plot(z_arr, slope_arr)
+    axis.set_xlabel('Redshift', fontsize=20)
+    axis.set_xlim(min(z_arr), max(z_arr))
+    axis.set_ylabel(r'$\frac{\Delta \, m}{\Delta \, PWV} |_{PWV = 4 mm}$', fontsize=20)
+
+
+def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 8)):
+    """Plot the effects of PWV on SN magnitudes
+
+    ``delta_mag`` is expected to have band names as keys, and 2d arrays as
+    values. Each array should represent the change in magnitude for each
+    given PWV and redshift
+
+    Args:
+        pwv_arr  (ndarray): PWV values used in the calculation
+        z_arr    (ndarray): Redshift values used in the calculation
+        delta_mag   (dict): Dictionary with delta mag for each band
+        slopes   (ndarray): Slope in delta_mag for each redshift
+        bands      (bands): Order of bands to plot
+        figsize    (tuple): The size of the figure
+
+    returns:
+        - A matplotlib figure
+        - An array of matplotlib axes
+    """
+
+    fig, axes = plt.subplots(3, len(delta_mag), figsize=figsize)
+    top_reference_ax = axes[0, 0]
+    middle_reference_ax = axes[1, 0]
+    bottom_reference_ax = axes[2, 0]
+
+    # Plot data
+    for band, axes_column in zip(bands, axes.T):
+        top_ax, middle_ax, bottom_ax = axes_column
+
+        # First row
+        plot_delta_mag_vs_z(pwv_arr, z_arr, delta_mag[band], top_ax, label='{:g} mm')
+        top_ax.axhline(0, linestyle='--', color='k', label='4 mm')
+        top_ax.set_title(f'{band[-1]}-band')
+        top_ax.set_xlabel('Redshift', fontsize=12)
+        top_ax.set_ylabel('')
+
+        # Middle row
+        plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag[band], middle_ax, label='z = {:g}')
+        top_ax.axvline(4, linestyle='--', color='k')
+        middle_ax.set_xlabel('PWV', fontsize=12)
+        middle_ax.set_ylabel('')
+
+        # Bottom row
+        plot_derivative_mag_vs_z(pwv_arr, z_arr, slopes[band], bottom_ax)
+        bottom_ax.set_xlabel('Redshift', fontsize=12)
+        bottom_ax.set_ylabel('')
+
+        # Share axes
+        top_ax.get_shared_y_axes().join(top_ax, top_reference_ax)
+        middle_ax.get_shared_y_axes().join(middle_ax, middle_reference_ax)
+        bottom_ax.get_shared_y_axes().join(bottom_ax, bottom_reference_ax)
+
+        top_ax.get_shared_x_axes().join(top_ax, top_reference_ax)
+        bottom_ax.get_shared_x_axes().join(bottom_ax, top_reference_ax)
+
+    top_reference_ax.autoscale()  # To reset y-range
+    top_reference_ax.set_xlim(0.1, 1.1)
+
+    # Remove unnecessary tick marks
+    for axis in axes.T[1:].flatten():
+        axis.set_yticklabels([])
+
+    # Add legends
+    top_ax.legend(bbox_to_anchor=(1, 1.1))
+    handles, labels = middle_ax.get_legend_handles_labels()
+    labels = labels[::5]
+    handles = handles[::5]
+    middle_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
+
+    # Add y labels
+    top_reference_ax.set_ylabel(r'$\Delta m \, \left(PWV,\, z\right)$', fontsize=12)
+    middle_reference_ax.set_ylabel(r'$\Delta m \, \left(z,\, PWV\right)$', fontsize=12)
+    bottom_reference_ax.set_ylabel(r'$\frac{\Delta \, m}{\Delta \, PWV} |_{4 mm}$', fontsize=12)
+    plt.tight_layout()
+
+    return fig, axes
+
+
+def plot_pwv_color_effects(
+        pwv_arr, z_arr, delta_mag, band1='decam_i', band2='decam_z', xval='pwv', figsize=(3, 3)):
+    """Plot the effects of PWV on band1 - band2 color
+
+    ``delta_mag`` is expected to have band names as keys, and 2d arrays as
+    values. Each array should represent the change in magnitude for each
+    given PWV and redshift
+
+    Args:
+        pwv_arr  (ndarray): PWV values used in the calculation
+        z_arr    (ndarray): Redshift values used in the calculation
+        delta_mag   (dict): Dictionary with delta mag for each band
+        band1        (str): Name of the first band
+        band2        (str): Name of the second band
+        figsize    (tuple): The size of the figure
+
+    returns:
+        - A matplotlib figure
+        - An array of matplotlib axes
+    """
+
+    color = delta_mag[band1] - delta_mag[band2]
+
+    fig, axis = plt.subplots(1, 1, figsize=figsize)
+    if xval == 'pwv':
+        multi_line_plot(pwv_arr, color.T, z_arr, axis, label='z = {:.2f}')
+        handles, labels = axis.get_legend_handles_labels()
+        labels = labels[::5]
+        handles = handles[::5]
+
+        axis.xaxis.set_major_locator(MultipleLocator(3))
+        axis.xaxis.set_minor_locator(MultipleLocator(1))
+        xlabel = 'PWV (mm)'
+
+    elif xval == 'z':
+        multi_line_plot(z_arr, color, pwv_arr, axis, label='{} mm')
+        handles, labels = axis.get_legend_handles_labels()
+
+        axis.xaxis.set_major_locator(MultipleLocator(.2))
+        axis.xaxis.set_minor_locator(MultipleLocator(.1))
+        xlabel = 'Redshift'
+
+    else:
+        raise ValueError('xval must be either "pwv" or "z"')
+
+    axis.set_ylabel(r'$\Delta \, (i - z) $', fontsize=12)
+    axis.set_xlabel(xlabel, fontsize=12)
+    axis.legend(handles, labels, bbox_to_anchor=(1, 1))
+
+    return fig, axis
+
+
+# https://stackoverflow.com/questions/18311909/how-do-i-annotate-with-power-of-ten-formatting
+def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
+    """Return a string representation of number in scientific notation"""
+
+    if exponent is None:
+        exponent = int(np.floor(np.log10(abs(num))))
+
+    coeff = round(num / float(10 ** exponent), decimal_digits)
+    if coeff == 1:
+        return r"$10^{{{}}}$".format(exponent)
+
+    if precision is None:
+        precision = decimal_digits
+
+    return r"${0:.{2}f}\cdot10^{{{1:d}}}$".format(coeff, exponent, precision)
+
+
+def plot_salt2_extended_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6, 4)):
+    """Plot the a spectral template at several redshifts overlaid with PWV
+
+    Args:
+        wave_arr  (ndarray): The observer frame wavelengths to plot flux for in Angstroms
+        z_arr     (ndarray): The redshifts to plot the template at
+        pwv         (float): The PWV to plot the transmission function for
+        phase       (float): The phase of the template to plot
+        resolution  (float): The resolution of the atmospheric model
+        figsize     (tuple): The size of the figure
+
+    Returns:
+        - A matplotlib figure
+        - A matplotlib axis
+    """
+
+    fig, (top_ax, bottom_ax) = plt.subplots(
+        2, 1,
+        figsize=figsize,
+        sharex=True,
+        gridspec_kw={'height_ratios': [4, 1.75]}
+    )
+
+    # Plot spectral template at given redshifts
+    model = sncosmo.Model('salt2-extended')
+    flux_scale = 1e-13
+    for i, z in enumerate(reversed(z_arr)):
+        color = f'C{len(z_arr) - i - 1}'
+        model.set(z=z)
+        flux = model.flux(phase, wave_arr) / flux_scale
+        top_ax.fill_between(wave_arr, flux, color=color, alpha=.8)
+        top_ax.plot(wave_arr, flux, label=f'z = {z}', color=color, zorder=0)
+
+    # Plot transmission function on twin axis at given wavelength resolution
+    transmission_bins = np.arange(min(wave_arr), max(wave_arr) + 1, resolution)
+    trans_table = pwv_atm.trans_for_pwv(pwv, bins=transmission_bins)
+    transmission = np.interp(
+        wave_arr, trans_table['wavelength'], trans_table['transmission'])
+
+    twin_axis = top_ax.twinx()
+    twin_axis.plot(wave_arr, transmission, alpha=0.75, color='grey')
+
+    # Plot the band passes
+    for b in 'rizy':
+        band = sncosmo.get_bandpass(f'decam_{b}')
+        bottom_ax.plot(band.wave, band.trans, label=f'{b} Band')
+
+    # Format top axis
+    top_ax.set_ylim(0, 5)
+    top_ax.set_xlim(min(wave_arr), max(wave_arr))
+    top_ax.set_ylabel(f'Flux ({sci_notation(flux_scale)} ergs / s / cm$^2$ / $\AA$)')
+    top_ax.legend(loc='lower left', framealpha=1)
+
+    # Format twin axis
+    twin_axis.set_ylim(0, 1)
+    twin_axis.set_ylabel('Transmission', rotation=-90, labelpad=12)
+    plt.tight_layout()
+
+    # Format bottom axis
+    bottom_ax.set_ylim(0, 1)
+    bottom_ax.set_xlabel(r'Wavelength $\AA$')
+    bottom_ax.xaxis.set_minor_locator(MultipleLocator(500))
+    bottom_ax.set_xticks(np.arange(4000, 11001, 2000))
+    bottom_ax.legend(loc='lower left', framealpha=1)
+
+    plt.subplots_adjust(hspace=0)
+
+    return fig, np.array([top_ax, bottom_ax])
+
+
+def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
+    """Plot simulated magnitudes vs Redshift and PWV"""
+
+    fig, axes = plt.subplots(2, len(mags), figsize=figsize, sharey='row')
+    for (band, mag_arr), (top_ax, bottom_ax) in zip(mags.items(), axes.T):
+        top_ax.set_title(band)
+        top_ax.set_xlabel('Redshift')
+        multi_line_plot(z, mag_arr, pwv, top_ax)
+
+        bottom_ax.set_xlabel('PWV')
+        multi_line_plot(pwv, mag_arr.T, z, bottom_ax)
+
+    axes[0][0].set_ylabel('Magnitude')
+    axes[1][0].set_ylabel('Magnitude')
+    plt.tight_layout()
