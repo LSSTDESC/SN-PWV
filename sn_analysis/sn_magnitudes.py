@@ -95,7 +95,7 @@ def tabulate_fiducial_mag(source, z_arr, bands, fid_pwv_dict):
     # Get mag at reference pwv values
     magnitudes = tabulate_mag(
         source=source,
-        pwv_arr=[pwv_fiducial, pwv_slope_start, pwv_slope_end],
+        pwv_arr=[pwv_slope_start, pwv_fiducial, pwv_slope_end],
         z_arr=z_arr,
         bands=bands)
 

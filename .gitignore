@@ -1,0 +1,28 @@
+# OS Files
+*.DS_Store
+
+# IDE files
+.idea/
+
+# Python build files
+*__pycache__*
+*.pyc
+.eggs/
+*.egg-info/
+build/
+dist/
+
+# Light Curve Data
+sndata/sweetspot/whircs
+
+# Testing cache files
+.pytest_cache/
+
+# Built Docs
+docs/build
+
+# Jupyter Notebooks
+*.ipynb
+.ipynb_checkpoints/
+
+todo.md

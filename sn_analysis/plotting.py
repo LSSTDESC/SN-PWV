@@ -310,11 +310,21 @@ def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
     for (band, mag_arr), (top_ax, bottom_ax) in zip(mags.items(), axes.T):
         top_ax.set_title(band)
         top_ax.set_xlabel('Redshift')
-        multi_line_plot(z, mag_arr, pwv, top_ax)
+        multi_line_plot(z, mag_arr, pwv, top_ax, label='{:g} mm')
 
         bottom_ax.set_xlabel('PWV')
-        multi_line_plot(pwv, mag_arr.T, z, bottom_ax)
+        multi_line_plot(pwv, mag_arr.T, z, bottom_ax, label='z = {:.2f}')
 
     axes[0][0].set_ylabel('Magnitude')
     axes[1][0].set_ylabel('Magnitude')
+
+    # Add legends
+    top_ax.legend(bbox_to_anchor=(1, 1.1))
+
+    handles, labels = bottom_ax.get_legend_handles_labels()
+    labels = labels[::5]
+    handles = handles[::5]
+    bottom_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
+
     plt.tight_layout()
+    return fig, axes
