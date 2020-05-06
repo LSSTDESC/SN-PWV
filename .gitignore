@@ -23,6 +23,6 @@ docs/build
 
 # Jupyter Notebooks
 *.ipynb
-.ipynb_checkpoints/
+*.ipynb_checkpoints/
 
 todo.md
