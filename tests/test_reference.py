@@ -89,7 +89,8 @@ class ReferenceStarMag(TestCase):
     def assertZeroMagBand(self, band):
         """Assert magnitude is zero at fiducial PWV in the given band"""
 
-        returned_mag = reference.ref_star_mag(band, [0])[0]
+        config_pwv = reference.get_config_pwv_vals()['reference_pwv']
+        returned_mag = reference.ref_star_mag(band, [config_pwv])[0]
         self.assertEqual(0, returned_mag)
 
     def test_zero_mag_for_fiducial_pwv(self):
@@ -97,3 +98,46 @@ class ReferenceStarMag(TestCase):
 
         for band in ('decam_r', 'decam_i', 'decam_z'):
             self.assertZeroMagBand(band)
+
+
+class SubtractRefStar(TestCase):
+    """Tests for subtracting off reference star magnitudes"""
+
+    def test_recovers_mstar_mag(self):
+        """Subtracting the reference star from an array of zero magnitudes
+        should return negative the reference flux"""
+
+        test_pwv = [1, 2, 3]
+        test_band = 'decam_z'
+
+        ref_mag = reference.ref_star_mag(test_band, test_pwv, 'M9').tolist()
+        zeros = np.zeros_like(ref_mag)
+
+        subtracted_mag = reference._subtract_ref_star(test_band, zeros, test_pwv, 'M9')
+        self.assertSequenceEqual(ref_mag, list(-subtracted_mag))
+
+
+class SubtractRefStarSlope(TestCase):
+    """Tests for subtracting off reference star slopes"""
+
+    def test_recovers_mstar_slope(self):
+        """Subtracting the reference star from an array of zeros
+        should return negative the reference slope"""
+
+        test_band = 'decam_z'
+        slope_start_pwv = 2
+        slope_end_pwv = 6
+
+        # Calculate expected slope
+        mag_slope_start, mag_slope_end = reference.ref_star_mag(
+            test_band, [slope_start_pwv, slope_end_pwv])
+
+        expected_slope = (mag_slope_end - mag_slope_start) / (slope_end_pwv - slope_start_pwv)
+
+        # Get returned slope
+        pwv_config = {'slope_start': slope_start_pwv, 'slope_end': slope_end_pwv}
+        returned_slope = reference._subtract_ref_star_slope(
+            test_band, [0], pwv_config
+        )[0]
+
+        self.assertEqual(expected_slope, -returned_slope)

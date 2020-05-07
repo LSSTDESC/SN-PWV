@@ -25,7 +25,7 @@ _stellar_type_paths = {
 
 @lru_cache()  # Cache I/O
 def get_config_pwv_vals(config_path=_config_path):
-    """Retrieve PWV values t use as reference values
+    """Retrieve PWV values to use as reference values
 
     Returned values include:
         - Lower pwv bound for calculating slope
@@ -36,7 +36,7 @@ def get_config_pwv_vals(config_path=_config_path):
         config_path (str): Path of config file if not default
 
     Returns:
-        A list of PWV values in mm
+        Dictionary with PWV values in mm
     """
 
     with open(config_path) as infile:
@@ -53,7 +53,7 @@ def get_ref_star_dataframe(reference_type='G2'):
         reference_type (str): Type of reference star (Default 'G2')
 
     Returns:
-        A data frame with columns for PWV, zflux, iflux, and rflux
+        A DataFrame indexed by PWV with columns for flux
     """
 
     try:
@@ -92,7 +92,7 @@ def ref_star_mag(band, pwv_arr, reference_type='G2'):
         reference_type (str): Type of reference star (Default 'G2')
 
     Returns:
-        Normalized magnitude at the given PWV
+        An array of normalized magnitudes at the given PWV values
     """
 
     reference_star_flux = get_ref_star_dataframe(reference_type)
@@ -101,8 +101,25 @@ def ref_star_mag(band, pwv_arr, reference_type='G2'):
 
     # Since we are using normalized flux
     # m = -2.5log(f / f_atm) + (zp - zp_atm) = -2.5log(f / f_atm)
-    normalized_mag = -2.5 * np.log10(reference_flux)
-    return normalized_mag
+    return -2.5 * np.log10(reference_flux)
+
+
+def _subtract_ref_star(band, norm_mag, pwv_arr, reference_type):
+    """Return reference star magnitudes from an array of normalized magnitudes
+
+    This function separated from ``ref_star_mag`` for easier testing
+
+   Args:
+       band           (str): Name of the band to subtract magnitudes for
+       norm_mag   (ndarray): Array of magnitudes to subtract from
+       pwv_arr    (ndarray): PWV values for each value in norm_mag
+       reference_type (str): Type of reference to use (Default 'G2')
+
+   Returns:
+       An array of delta magnitude values
+   """
+
+    return norm_mag - ref_star_mag(band, pwv_arr, reference_type)
 
 
 def subtract_ref_star(norm_mag, pwv_arr, reference_type='G2'):
@@ -112,40 +129,40 @@ def subtract_ref_star(norm_mag, pwv_arr, reference_type='G2'):
     atmosphere.
 
     Args:
-        band           (str): Name of the bandpass
-        norm_mag      (dict): Dict with 2d array of magnitudes for each band
+        norm_mag      (dict): Dictionary with arrays of magnitudes for each band
         pwv_arr    (ndarray): PWV values for each magnitude
         reference_type (str): Type of reference star (Default 'G2')
 
     Return:
-        A 2d array of magnitudes relative to a reference star
+        Dictionary with arrays of magnitudes relative to a reference star for each band
     """
 
     # Determine normalized magnitude with respect to reference star
-    return {band: norm_mag[band] - ref_star_mag(band, pwv_arr, reference_type)
-            for band in norm_mag}
+    return {band: _subtract_ref_star(band, norm_mag, pwv_arr, reference_type) for band in norm_mag}
 
 
 def _subtract_ref_star_slope(band, mag_slope, pwv_config, reference_type='G2'):
     """Determine (delta magnitude) / (delta pwv) relative to a reference star
 
+    This function separated from ``subtract_ref_star_slope`` for easier testing
+
     Args:
         band           (str): Name of the bandpass
         mag_slope  (ndarray): 1d array of slope values
+        pwv_config    (dict): Config dictionary for fiducial atmosphere
         reference_type (str): Type of reference star (Default 'G2')
 
     Return:
-        An array of slopes relative to a reference star
+        Dictionary with magnitudes relative to a reference star in each band
     """
 
     # Parse reference pwv values
-    pwv_fiducial = pwv_config['reference_pwv']
     pwv_slope_start = pwv_config['slope_start']
     pwv_slope_end = pwv_config['slope_end']
 
     # Determine slope in normalized magnitude with respect to reference star
-    mag_fiducial, mag_slope_start, mag_slope_end = ref_star_mag(
-        band, [pwv_fiducial, pwv_slope_start, pwv_slope_end], reference_type)
+    mag_slope_start, mag_slope_end = ref_star_mag(
+        band, [pwv_slope_start, pwv_slope_end], reference_type)
 
     delta_x = pwv_slope_end - pwv_slope_start
     stellar_delta_y = mag_slope_end - mag_slope_start
@@ -154,4 +171,18 @@ def _subtract_ref_star_slope(band, mag_slope, pwv_config, reference_type='G2'):
 
 
 def subtract_ref_star_slope(mag_slope, pwv_config, reference_type='G2'):
+    """Determine (delta magnitude) / (delta pwv) relative to a reference star
+
+    This function separated from ``subtract_ref_star_slope`` for easier testing
+
+    Args:
+        band           (str): Name of the bandpass
+        mag_slope  (ndarray): 1d array of slope values
+        pwv_config    (dict): Config dictionary for fiducial atmosphere
+        reference_type (str): Type of reference star (Default 'G2')
+
+    Return:
+        Dictionary with slopes relative to a reference star in each band
+    """
+
     return {b: _subtract_ref_star_slope(b, mag_slope[b], pwv_config, reference_type) for b in mag_slope}
