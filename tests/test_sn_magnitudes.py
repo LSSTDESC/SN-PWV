@@ -21,8 +21,8 @@ class TestTabulateMagnitudes(TestCase):
         cls.mag_dict = sn_magnitudes.tabulate_mag(
             cls.source, cls.pwv_vals, cls.z_vals, cls.bands)
 
-    def test_values_match_simulation(self):
-        """Test returned values equal simulated values"""
+    def test_values_match_sncosmo_simulation(self):
+        """Test returned values equal simulated values from sncosmo"""
 
         # Tabulated results for a single band
         test_band = self.bands[0]

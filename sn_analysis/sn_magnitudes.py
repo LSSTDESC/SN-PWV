@@ -208,7 +208,7 @@ def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fiducial_pwv_dict):
 
     # Get mag at reference pwv values
     pwv_vals = [pwv_slope_start, pwv_fiducial, pwv_slope_end]
-    light_curves = list(modeling.iter_lcs(obs, source, pwv_vals, z_arr))
+    light_curves = modeling.iter_lcs(obs, source, pwv_vals, z_arr)
     fitted_mag, fitted_params = fit_mag(
         source=source,
         light_curves=light_curves,
@@ -254,3 +254,55 @@ def calc_delta_mag(mag, fiducial_mag, fiducial_pwv):
         )
 
     return delta_mag, slope
+
+
+###############################################################################
+# Distance Modulus Calculations
+###############################################################################
+
+def calc_mu_for_model(model, abs_mag=-19):
+    """Calculate the distance modulus of a model
+
+    Args:
+        model   (Model): An sncosmo model
+        abs_mag (float): Absolute magnitude to use for a supernova
+
+    Returns:
+        mu = m_B - M_B
+    """
+
+    temp_model = deepcopy(model)
+    temp_model.set_source_peakabsmag(abs_mag, 'bessellb', 'ab')
+
+    base_band = sncosmo.get_bandpass('bessellb')
+    apparent_band = base_band.shifted(1 + temp_model.get('z'))
+    apparent_mag = temp_model.bandmag(apparent_band, 'ab', 0)
+
+    return apparent_mag - abs_mag
+
+
+def calc_mu_for_params(source, params, abs_mag=-19):
+    """Calculate the distance modulus for an array of params
+
+    Args:
+        source  (Source): Name of the sncosmo Model the params are for
+        params (ndarray): n-dimensional array of params
+        abs_mag  (float): Absolute magnitude to use for a supernova
+
+    Returns:
+        An array of distance moduli with one dimension less than ``params``
+    """
+
+    param_shape = np.shape(params)[:-1]
+    num_param_arrays = np.prod(param_shape)
+    num_params = params.shape[-1]
+
+    reshaped_params = np.reshape(params, (num_param_arrays, num_params))
+
+    mu = []
+    model = sncosmo.Model(source)
+    for param_arr in reshaped_params:
+        model.parameters = param_arr
+        mu.append(calc_mu_for_model(model, abs_mag))
+
+    return np.reshape(mu, param_shape)

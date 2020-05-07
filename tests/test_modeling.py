@@ -1,8 +1,15 @@
+# !/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+"""Tests for the ``modeling`` module"""
+
+import types
 from unittest import TestCase
 
 import numpy as np
 from matplotlib import pyplot as plt
 from pwv_kpno import pwv_atm
+
 from sn_analysis import modeling
 from utils import register_decam_filters
 
@@ -96,18 +103,51 @@ class TestLCSimulation(TestCase):
     """Tests for light-curve simulation"""
 
     def setUp(self):
+        """Create a new light-curve iterator for each test"""
+
         self.pwv_vals = 0, 5
         self.z_vals = 0, 1
         source = 'salt2-extended'
-        observations = modeling.create_observations_table()
+        self.observations = modeling.create_observations_table()
         self.lc_iter = modeling.iter_lcs(
-            observations, source, self.pwv_vals, self.z_vals, verbose=False)
+            self.observations,
+            source,
+            self.pwv_vals,
+            self.z_vals,
+            verbose=False)
 
     def test_correct_meta_data(self):
         """Test light-curve meta data reflects expected simulation params"""
 
         for pwv in self.pwv_vals:
             for z in self.z_vals:
-                lc = next(self.lc_iter)
-                meta = {'t0': 0, 'pwv': pwv, 'z': z}
-                self.assertEqual(meta, lc.meta)
+                expected_meta = {'t0': 0, 'pwv': pwv, 'z': z}
+                self.assertEqual(expected_meta, next(self.lc_iter).meta)
+
+    def assertSimValuesEqualObs(self, key, lc=None):
+        """Assert values in the observation table match values in the
+        light-curve table.
+
+        Args:
+            key  (str): Name of the column to test
+            lc (Table): Light-curve table to test against observations
+        """
+
+        if not lc:
+            lc = next(self.lc_iter)
+
+        obs_times = self.observations[key]
+        sim_times = lc[key]
+        self.assertSequenceEqual(list(obs_times), list(sim_times))
+
+    def test_obs_table_matches_simulation(self):
+        """Test band and time values in the simulated light-curves match the
+         observations table """
+
+        self.assertSimValuesEqualObs('time')
+        self.assertSimValuesEqualObs('band')
+
+    def test_return_is_iter(self):
+        """Test the returned light-curve collection is an generator"""
+
+        self.assertIsInstance(self.lc_iter, types.GeneratorType)
