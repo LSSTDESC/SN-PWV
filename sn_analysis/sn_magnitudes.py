@@ -5,7 +5,6 @@
 
 import itertools
 from copy import deepcopy
-from pathlib import Path
 
 import numpy as np
 import sncosmo
@@ -13,12 +12,12 @@ from tqdm import tqdm
 
 from . import modeling
 
-data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
-config_path = data_dir / 'ref_pwv.yaml'  # Reference pwv values
-reference_flux_path = data_dir / 'PWV_absorp/pwv_absorp_type_G2.txt'
-
 # From Betoule 2014
-α, β = 0.14, 3.15
+alpha = 0.141
+beta = 3.101
+omega_m = 0.295
+abs_mb = -19.05
+H0 = 70
 
 
 ###############################################################################
@@ -132,7 +131,7 @@ def calibrate_mag(source, mag, params):
 
     i_x1 = model.param_names.index('x1')
     i_c = model.param_names.index('c')
-    return mag + α * params[..., i_x1] - β * params[..., i_c]
+    return mag + alpha * params[..., i_x1] - beta * params[..., i_c]
 
 
 def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
@@ -281,7 +280,7 @@ def calc_mu_for_model(model, abs_mag=-19):
     return apparent_mag - abs_mag
 
 
-def calc_mu_for_params(source, params, abs_mag=-19):
+def calc_mu_for_params(source, params, abs_mag=abs_mb):
     """Calculate the distance modulus for an array of params
 
     Args:

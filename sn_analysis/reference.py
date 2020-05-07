@@ -138,7 +138,7 @@ def subtract_ref_star(norm_mag, pwv_arr, reference_type='G2'):
     """
 
     # Determine normalized magnitude with respect to reference star
-    return {band: _subtract_ref_star(band, norm_mag, pwv_arr, reference_type) for band in norm_mag}
+    return {band: _subtract_ref_star(band, norm_mag[band], pwv_arr, reference_type) for band in norm_mag}
 
 
 def _subtract_ref_star_slope(band, mag_slope, pwv_config, reference_type='G2'):

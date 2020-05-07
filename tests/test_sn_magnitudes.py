@@ -1,3 +1,8 @@
+# !/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+"""Tests for the ``sn_magnitudes`` module"""
+
 from unittest import TestCase
 
 import numpy as np
