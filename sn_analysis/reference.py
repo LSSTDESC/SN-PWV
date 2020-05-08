@@ -165,7 +165,11 @@ def subtract_ref_star_array(band, norm_mag, pwv, reference_type='G2'):
     if np.ndim(norm_mag) - np.ndim(pwv) != 1:
         raise ValueError('``pwv`` should be one dimension less than ``norm_mag``')
 
-    return norm_mag - ref_star_mag(band, pwv, reference_type)
+    ref_mag = ref_star_mag(band, pwv, reference_type)
+    if np.ndim(ref_mag > 0):
+        ref_mag = ref_mag[:, None]
+
+    return norm_mag - ref_mag
 
 
 def subtract_ref_star_dict(norm_mag, pwv, reference_type='G2'):
