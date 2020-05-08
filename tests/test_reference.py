@@ -33,7 +33,7 @@ class DefaultPWVConfigVals(TestCase):
         self.assertEqual(upper_dist, -lower_dist)
 
 
-class ReferenceStarParsing(TestCase):
+class ReferenceStarFileParsing(TestCase):
     """Tests for the loading / parsing of reference star flux values"""
 
     @classmethod
@@ -83,38 +83,100 @@ class ReferenceStarParsing(TestCase):
             self.assertFalse(dataframe.empty)
 
 
+class ReferenceStarFlux(TestCase):
+    """Tests for the ``ref_star_flux`` function"""
+
+    def assert_ref_flux_is_one(self, band):
+        """Assert flux is 1 at the fiducial PWV in a given band
+
+        Args:
+            band (str): Name of the band to test
+        """
+
+        config_pwv = reference.get_config_pwv_vals()['reference_pwv']
+        returned_flux = reference.ref_star_flux(band, config_pwv)
+        self.assertEqual(1, returned_flux)
+
+    def test_pwv_arg_is_float(self):
+        """Test return is a float when pwv arg is a float"""
+
+        returned_flux = reference.ref_star_flux('decam_z', 5)
+        self.assertIsInstance(returned_flux, float)
+
+    def test_pwv_arg_is_array(self):
+        """Test return is an array when pwv arg is an array"""
+
+        n1d_flux = reference.ref_star_flux('decam_z', [5, 6])
+        self.assertIsInstance(n1d_flux, np.ndarray)
+        self.assertEqual(1, np.ndim(n1d_flux))
+
+    def test_ref_flux_is_one(self):
+        """Test flux is 1 at the fiducial PWV in all bands"""
+
+        for band in ('decam_r', 'decam_i', 'decam_z'):
+            self.assert_ref_flux_is_one(band)
+
+
 class ReferenceStarMag(TestCase):
     """Tests for the ``ref_star_mag`` function"""
 
-    def assertZeroMagBand(self, band):
-        """Assert magnitude is zero at fiducial PWV in the given band"""
+    def assert_zero_ref_mag(self, band):
+        """Assert magnitude is zero at the fiducial PWV in a given band
+
+        Args:
+            band (str): Name of the band to test
+        """
 
         config_pwv = reference.get_config_pwv_vals()['reference_pwv']
         returned_mag = reference.ref_star_mag(band, [config_pwv])[0]
         self.assertEqual(0, returned_mag)
 
-    def test_zero_mag_for_fiducial_pwv(self):
-        """Assert magnitude is zero at fiducial PWV for all bands"""
+    def test_pwv_arg_is_float(self):
+        """Test return is a float when pwv arg is a float"""
+
+        returned_mag = reference.ref_star_mag('decam_z', 5)
+        self.assertIsInstance(returned_mag, float)
+
+    def test_pwv_arg_is_array(self):
+        """Test return is an array when pwv arg is an array"""
+
+        n1d_mag = reference.ref_star_flux('decam_z', [5, 6])
+        self.assertIsInstance(n1d_mag, np.ndarray)
+        self.assertEqual(1, np.ndim(n1d_mag))
+
+    def test_ref_flux_is_one(self):
+        """Test flux is 1 at the fiducial PWV in all bands"""
 
         for band in ('decam_r', 'decam_i', 'decam_z'):
-            self.assertZeroMagBand(band)
+            self.assert_zero_ref_mag(band)
 
 
-class SubtractRefStar(TestCase):
-    """Tests for subtracting off reference star magnitudes"""
+class SubtractRefStarArray(TestCase):
+    """Tests for the ``subtract_ref_star_array`` function"""
 
     def test_recovers_mstar_mag(self):
         """Subtracting the reference star from an array of zero magnitudes
-        should return negative the reference flux"""
+        should return negative the reference star magnitude"""
 
-        test_pwv = [1, 2, 3]
+        # Determine the reference star magnitude
         test_band = 'decam_z'
+        test_pwv = 10
+        ref_mag = reference.ref_star_mag(test_band, test_pwv, 'M9')
 
-        ref_mag = reference.ref_star_mag(test_band, test_pwv, 'M9').tolist()
-        zeros = np.zeros_like(ref_mag)
+        # Subtract the reference star from an array of zero magnitudes
+        zeros = [0, 0, 0]
+        subtracted_mag = reference.subtract_ref_star_array(
+            test_band, zeros, test_pwv, 'M9')
 
-        subtracted_mag = reference._subtract_ref_star(test_band, zeros, test_pwv, 'M9')
-        self.assertSequenceEqual(ref_mag, list(-subtracted_mag))
+        expected_return = [-ref_mag, -ref_mag, -ref_mag]
+        self.assertSequenceEqual(expected_return, list(subtracted_mag))
+
+    def test_ndmin_mismatch_raises(self):
+        """Test an error is raise if ndim(pwv) == ndim(norm_mag)"""
+
+        test_band = 'decam_z'
+        with self.assertRaises(ValueError):
+            reference.subtract_ref_star_array(test_band, [1, 2, 3], [1, 2, 3])
 
 
 class SubtractRefStarSlope(TestCase):
@@ -128,16 +190,13 @@ class SubtractRefStarSlope(TestCase):
         slope_start_pwv = 2
         slope_end_pwv = 6
 
-        # Calculate expected slope
-        mag_slope_start, mag_slope_end = reference.ref_star_mag(
-            test_band, [slope_start_pwv, slope_end_pwv])
-
-        expected_slope = (mag_slope_end - mag_slope_start) / (slope_end_pwv - slope_start_pwv)
+        # Calculate actual slope
+        mag_slope_start = reference.ref_star_mag(test_band, slope_start_pwv)
+        mag_slope_end = reference.ref_star_mag(test_band, slope_end_pwv)
+        true_slope = (mag_slope_end - mag_slope_start) / (slope_end_pwv - slope_start_pwv)
 
         # Get returned slope
         pwv_config = {'slope_start': slope_start_pwv, 'slope_end': slope_end_pwv}
-        returned_slope = reference._subtract_ref_star_slope(
-            test_band, [0], pwv_config
-        )[0]
+        returned_slope = reference._subtract_ref_star_slope(test_band, 0, pwv_config)
 
-        self.assertEqual(expected_slope, -returned_slope)
+        self.assertEqual(true_slope, -returned_slope)

@@ -23,6 +23,10 @@ _stellar_type_paths = {
 }
 
 
+###############################################################################
+# Data Parsing
+###############################################################################
+
 @lru_cache()  # Cache I/O
 def get_config_pwv_vals(config_path=_config_path):
     """Retrieve PWV values to use as reference values
@@ -83,46 +87,88 @@ def get_ref_star_dataframe(reference_type='G2'):
     return reference_star_flux
 
 
-def ref_star_mag(band, pwv_arr, reference_type='G2'):
-    """Return reference magnitude values as a 2d array
+def ref_star_flux(band, pwv, reference_type='G2'):
+    """Return normalized reference star flux values
 
     Args:
         band           (str): Name of the band to get flux for
-        pwv_arr    (ndarray): PWV values to get magnitudes for
+        pwv (float, ndarray): PWV values to get magnitudes for
         reference_type (str): Type of reference star (Default 'G2')
 
     Returns:
-        An array of normalized magnitudes at the given PWV values
+        The normalized flux at the given PWV value(s)
     """
 
     reference_star_flux = get_ref_star_dataframe(reference_type)
-    reference_flux = reference_star_flux.loc[pwv_arr][f'{band}_norm']
-    reference_flux = reference_flux[:, None]
+    reference_flux = reference_star_flux.loc[pwv][f'{band}_norm']
+    if isinstance(reference_flux, pd.Series):
+        reference_flux = np.array(reference_flux)
 
-    # Since we are using normalized flux
-    # m = -2.5log(f / f_atm) + (zp - zp_atm) = -2.5log(f / f_atm)
-    return -2.5 * np.log10(reference_flux)
+    return reference_flux
 
 
-def _subtract_ref_star(band, norm_mag, pwv_arr, reference_type):
+def ref_star_mag(band, pwv, reference_type='G2'):
+    """Return normalized reference star magnitude values as a 2d array
+
+    Args:
+        band           (str): Name of the band to get flux for
+        pwv    (float, list): PWV values to get magnitudes for
+        reference_type (str): Type of reference star (Default 'G2')
+
+    Returns:
+        The normalized magnitude at the given PWV value(s)
+    """
+
+    return -2.5 * np.log10(ref_star_flux(band, pwv, reference_type))
+
+
+###############################################################################
+# Subtracting reference magnitudes from various data models
+###############################################################################
+
+def subtract_ref_from_lc(lc_table, pwv, reference_type='G2'):
+    """Subtract reference flux from a light-curve
+
+    Args:
+        lc_table     (Table): Astropy table with columns ``flux`` and ``band``
+        pwv          (float): PWV value to subtract reference star for
+        reference_type (str): Type of reference star (Default 'G2')
+
+    Returns:
+        A modified copy of ``lc_table``
+    """
+
+    lc_table = lc_table.copy()
+    for band in set(lc_table['band']):
+        # The reference flux normalized to the fiducial atm
+        ref_flux = ref_star_flux(band, pwv, reference_type)
+
+        band_data = lc_table[lc_table['band'] == band]
+        band_data['flux'] /= ref_flux
+
+
+def subtract_ref_star_array(band, norm_mag, pwv, reference_type='G2'):
     """Return reference star magnitudes from an array of normalized magnitudes
 
-    This function separated from ``ref_star_mag`` for easier testing
+    ``pwv_arr`` should be one dimension less than ``norm_mag``
 
-   Args:
-       band           (str): Name of the band to subtract magnitudes for
-       norm_mag   (ndarray): Array of magnitudes to subtract from
-       pwv_arr    (ndarray): PWV values for each value in norm_mag
-       reference_type (str): Type of reference to use (Default 'G2')
+    Args:
+        band           (str): Name of the band to subtract magnitudes for
+        norm_mag   (ndarray): One or 2d array of magnitudes to subtract from
+        pwv    (float, list): PWV values to get magnitudes for
+        reference_type (str): Type of reference to use (Default 'G2')
 
    Returns:
        An array of delta magnitude values
    """
 
-    return norm_mag - ref_star_mag(band, pwv_arr, reference_type)
+    if np.ndim(norm_mag) - np.ndim(pwv) != 1:
+        raise ValueError('``pwv`` should be one dimension less than ``norm_mag``')
+
+    return norm_mag - ref_star_mag(band, pwv, reference_type)
 
 
-def subtract_ref_star(norm_mag, pwv_arr, reference_type='G2'):
+def subtract_ref_star_dict(norm_mag, pwv, reference_type='G2'):
     """Determine magnitude relative to a reference star
 
     Given magnitudes are expected to be normalized relative to the fiducial
@@ -130,7 +176,7 @@ def subtract_ref_star(norm_mag, pwv_arr, reference_type='G2'):
 
     Args:
         norm_mag      (dict): Dictionary with arrays of magnitudes for each band
-        pwv_arr    (ndarray): PWV values for each magnitude
+        pwv (float, ndarray): PWV values for each value in norm_mag
         reference_type (str): Type of reference star (Default 'G2')
 
     Return:
@@ -138,7 +184,7 @@ def subtract_ref_star(norm_mag, pwv_arr, reference_type='G2'):
     """
 
     # Determine normalized magnitude with respect to reference star
-    return {band: _subtract_ref_star(band, norm_mag[band], pwv_arr, reference_type) for band in norm_mag}
+    return {band: subtract_ref_star_array(band, norm_mag[band], pwv, reference_type) for band in norm_mag}
 
 
 def _subtract_ref_star_slope(band, mag_slope, pwv_config, reference_type='G2'):
@@ -172,8 +218,6 @@ def _subtract_ref_star_slope(band, mag_slope, pwv_config, reference_type='G2'):
 
 def subtract_ref_star_slope(mag_slope, pwv_config, reference_type='G2'):
     """Determine (delta magnitude) / (delta pwv) relative to a reference star
-
-    This function separated from ``subtract_ref_star_slope`` for easier testing
 
     Args:
         band           (str): Name of the bandpass
