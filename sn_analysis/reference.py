@@ -146,6 +146,8 @@ def subtract_ref_from_lc(lc_table, pwv, reference_type='G2'):
         band_data = lc_table[lc_table['band'] == band]
         band_data['flux'] /= ref_flux
 
+    return lc_table
+
 
 def subtract_ref_star_array(band, norm_mag, pwv, reference_type='G2'):
     """Return reference star magnitudes from an array of normalized magnitudes

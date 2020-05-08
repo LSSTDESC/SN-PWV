@@ -8,7 +8,7 @@ from pathlib import Path
 
 import numpy as np
 import sncosmo
-from astropy.table import Table
+from astropy.table import Table, Column
 from pwv_kpno import pwv_atm
 from tqdm import tqdm
 
@@ -148,6 +148,7 @@ def iter_lcs(obs, source, pwv_arr, z_arr, verbose=True):
         # Some versions of sncosmo mutate arguments so we use copy to be safe
         param_list = [params.copy()]
         light_curve = sncosmo.realize_lcs(obs, model, param_list)[0]
+        light_curve['zp'] = Column(light_curve['zp'], dtype=float)
 
         light_curve.meta = params
         yield light_curve
