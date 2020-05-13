@@ -1,8 +1,10 @@
-numpy
-sncosmo
 astropy
-pwv_kpno
-tqdm
-pandas
-pyyaml
+bokeh
 matplotlib
+iminuit
+numpy
+pandas
+pwv_kpno
+pyyaml
+sncosmo
+tqdm

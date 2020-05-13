@@ -138,15 +138,14 @@ def subtract_ref_from_lc(lc_table, pwv, reference_type='G2'):
         A modified copy of ``lc_table``
     """
 
-    lc_table = lc_table.copy()
-    for band in set(lc_table['band']):
+    table_copy = lc_table.copy()
+    for band in set(table_copy['band']):
         # The reference flux normalized to the fiducial atm
         ref_flux = ref_star_flux(band, pwv, reference_type)
 
-        band_data = lc_table[lc_table['band'] == band]
-        band_data['flux'] /= ref_flux
+        table_copy['flux'][table_copy['band'] == band] /= ref_flux
 
-    return lc_table
+    return table_copy
 
 
 def subtract_ref_star_array(band, norm_mag, pwv, reference_type='G2'):

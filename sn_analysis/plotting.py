@@ -1,7 +1,38 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-"""Plotting functions for SNe results"""
+"""Plotting functions for SNe results
+
+Plot summaries:
+
++------------------------------+----------------------------------------------+
+| Function                     | Description                                  |
++==============================+==============================================+
+| ``plot_delta_mag_vs_z``      | Single panel, muti-line plot of change in    |
+|                              | magnitude vs z. Color coded by PWV.          |
++------------------------------+----------------------------------------------+
+| ``plot_delta_mag_vs_pwv``    | Single panel, multi-line plot for change in  |
+|                              | magnitude vs PWV. Color coded by redshift.   |
++------------------------------+----------------------------------------------+
+| ``plot_derivative_mag_vs_z`` | Single panel, multi-line plot of slope in    |
+|                              | delta magnitude vs z. Color coded by PWV.    |
++------------------------------+----------------------------------------------+
+| ``plot_pwv_mag_effects``     | Multi panel plot with a column for each band |
+|                              | and a row for each of the first three plots  |
+|                              | in this table.                               |
++------------------------------+----------------------------------------------+
+| ``plot_salt2_template``      | Plot the salt2-extended spectral template.   |
+|                              | Overlay PWV and bandpass throughput curves.  |
++------------------------------+----------------------------------------------+
+| ``plot_magnitude``           | Multi-panel plot showing with a column for   |
+|                              | each band. Top row shows simulated magnitudes|
+|                              | vs Redshift. Bottom row shows mag vs PWV.    |
++------------------------------+----------------------------------------------+
+| ``plot_fitted_params``       | Multi-panel plot showing subplots for each   |
+|                              | salt2 parameter vs redshift. Multiple lines  |
+|                              | included for different PWV values.           |
++------------------------------+----------------------------------------------+
+"""
 
 import numpy as np
 import sncosmo
@@ -9,8 +40,10 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from pwv_kpno import pwv_atm
 
+from . import sn_magnitudes
 
-def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
+
+def _multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
     """Plot a 2d y array vs a 1d x array
 
     Lines are color coded according to values of a 2d z array
@@ -44,7 +77,7 @@ def plot_delta_mag_vs_z(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
     if axis is None:
         axis = plt.gca()
 
-    multi_line_plot(z_arr, delta_mag_arr, pwv_arr, axis, label)
+    _multi_line_plot(z_arr, delta_mag_arr, pwv_arr, axis, label)
     axis.set_xlabel('Redshift', fontsize=20)
     axis.set_xlim(min(z_arr), max(z_arr))
     axis.set_ylabel(r'$\Delta m$', fontsize=20)
@@ -62,7 +95,7 @@ def plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
     if axis is None:
         axis = plt.gca()
 
-    multi_line_plot(pwv_arr, delta_mag_arr.T, z_arr, axis, label)
+    _multi_line_plot(pwv_arr, delta_mag_arr.T, z_arr, axis, label)
     axis.set_xlabel('PWV', fontsize=20)
     axis.set_xlim(min(pwv_arr), max(pwv_arr))
     axis.set_ylabel(r'$\Delta m$', fontsize=20)
@@ -164,58 +197,6 @@ def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 
     return fig, axes
 
 
-def plot_pwv_color_effects(
-        pwv_arr, z_arr, delta_mag, band1='decam_i', band2='decam_z', xval='pwv', figsize=(3, 3)):
-    """Plot the effects of PWV on band1 - band2 color
-
-    ``delta_mag`` is expected to have band names as keys, and 2d arrays as
-    values. Each array should represent the change in magnitude for each
-    given PWV and redshift
-
-    Args:
-        pwv_arr  (ndarray): PWV values used in the calculation
-        z_arr    (ndarray): Redshift values used in the calculation
-        delta_mag   (dict): Dictionary with delta mag for each band
-        band1        (str): Name of the first band
-        band2        (str): Name of the second band
-        figsize    (tuple): The size of the figure
-
-    returns:
-        - A matplotlib figure
-        - An array of matplotlib axes
-    """
-
-    color = delta_mag[band1] - delta_mag[band2]
-
-    fig, axis = plt.subplots(1, 1, figsize=figsize)
-    if xval == 'pwv':
-        multi_line_plot(pwv_arr, color.T, z_arr, axis, label='z = {:.2f}')
-        handles, labels = axis.get_legend_handles_labels()
-        labels = labels[::5]
-        handles = handles[::5]
-
-        axis.xaxis.set_major_locator(MultipleLocator(3))
-        axis.xaxis.set_minor_locator(MultipleLocator(1))
-        xlabel = 'PWV (mm)'
-
-    elif xval == 'z':
-        multi_line_plot(z_arr, color, pwv_arr, axis, label='{} mm')
-        handles, labels = axis.get_legend_handles_labels()
-
-        axis.xaxis.set_major_locator(MultipleLocator(.2))
-        axis.xaxis.set_minor_locator(MultipleLocator(.1))
-        xlabel = 'Redshift'
-
-    else:
-        raise ValueError('xval must be either "pwv" or "z"')
-
-    axis.set_ylabel(r'$\Delta \, (i - z) $', fontsize=12)
-    axis.set_xlabel(xlabel, fontsize=12)
-    axis.legend(handles, labels, bbox_to_anchor=(1, 1))
-
-    return fig, axis
-
-
 # https://stackoverflow.com/questions/18311909/how-do-i-annotate-with-power-of-ten-formatting
 def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
     """Return a string representation of number in scientific notation"""
@@ -233,7 +214,7 @@ def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
     return r"${0:.{2}f}\cdot10^{{{1:d}}}$".format(coeff, exponent, precision)
 
 
-def plot_salt2_extended_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6, 4)):
+def plot_salt2_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6, 4)):
     """Plot the a spectral template at several redshifts overlaid with PWV
 
     Args:
@@ -310,10 +291,10 @@ def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
     for (band, mag_arr), (top_ax, bottom_ax) in zip(mags.items(), axes.T):
         top_ax.set_title(band)
         top_ax.set_xlabel('Redshift')
-        multi_line_plot(z, mag_arr, pwv, top_ax, label='{:g} mm')
+        _multi_line_plot(z, mag_arr, pwv, top_ax, label='{:g} mm')
 
         bottom_ax.set_xlabel('PWV')
-        multi_line_plot(pwv, mag_arr.T, z, bottom_ax, label='z = {:.2f}')
+        _multi_line_plot(pwv, mag_arr.T, z, bottom_ax, label='z = {:.2f}')
 
     axes[0][0].set_ylabel('Magnitude')
     axes[1][0].set_ylabel('Magnitude')
@@ -327,4 +308,34 @@ def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
     bottom_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
 
     plt.tight_layout()
+    return fig, axes
+
+
+def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
+    """Plot fitted parameters as a function of Redshift.
+    Color code by PWV.
+    """
+
+    # Parse the fitted parameters for easier plotting
+    model = sncosmo.Model('salt2-extended')
+    params_dict = {
+        param: fitted_params[bands[0]][..., i] for
+        i, param in enumerate(model.param_names)
+    }
+
+    fig, axes = plt.subplots(2, 3, figsize=(12, 8))
+    for axis, (param, param_vals) in zip(axes.flatten(), params_dict.items()):
+        _multi_line_plot(z_arr, param_vals, pwv_arr, axis, label='z = {:g}')
+        axis.set_xlabel('Redshift')
+        axis.set_ylabel(param)
+
+    correction_factor = sn_magnitudes.alpha * params_dict['x1'] - sn_magnitudes.beta * params_dict['c']
+    _multi_line_plot(z_arr, correction_factor, pwv_arr, axes[-1][-1], label='PWV = {:g} mm')
+
+    label = f'{sn_magnitudes.alpha} * $x_1$ - {sn_magnitudes.beta} * $c$'
+    axes[-1][-1].set_ylabel(label)
+    axes[-1][-1].legend(bbox_to_anchor=(1, 1.1))
+
+    plt.tight_layout()
+
     return fig, axes

@@ -107,8 +107,8 @@ def tabulate_fiducial_mag(source, z_arr, bands, fid_pwv_dict):
 ###############################################################################
 
 
-def calibrate_mag(source, mag, params):
-    """Calibrate fitted supernova magnitude
+def correct_mag(source, mag, params):
+    """Correct fitted supernova magnitude for stretch and color
 
     calibrated mag = mag + α * x1 - β * c
 
