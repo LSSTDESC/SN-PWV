@@ -21,8 +21,7 @@ sndata/sweetspot/whircs
 # Built Docs
 docs/build
 
-# Jupyter Notebooks
-*.ipynb
+# Jupyter Notebook Checkpoints
 *.ipynb_checkpoints/
 
 todo.md
