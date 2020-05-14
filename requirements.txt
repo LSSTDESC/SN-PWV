@@ -1,8 +1,8 @@
-astropy
+astropy>=4.0
 bokeh
 matplotlib
 iminuit
-numpy
+numpy>=1.16.0
 pandas
 pwv_kpno
 pyyaml
