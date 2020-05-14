@@ -14,7 +14,7 @@ _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
 from sn_analysis.modeling import get_model_with_pwv
-from utils import register_decam_filters
+from sn_analysis.utils import register_decam_filters
 
 # SNCosmo source to use when plotting
 SOURCE = 'salt2-extended'

@@ -11,7 +11,7 @@ from matplotlib import pyplot as plt
 from pwv_kpno import pwv_atm
 
 from sn_analysis import modeling
-from utils import register_decam_filters
+from sn_analysis.utils import register_decam_filters
 
 register_decam_filters(force=True)
 
