@@ -13,7 +13,7 @@ from astropy.table import Table
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 
-filter_dir = Path('.').resolve().parent / 'data/filters'
+filter_dir = Path(__file__).resolve().parent / 'data/filters'
 
 
 def register_decam_filters(force=False):
