@@ -8,7 +8,8 @@ from pathlib import Path
 
 import numpy as np
 import sncosmo
-from astropy.table import Table, Column
+from astropy.cosmology import WMAP9
+from astropy.table import Column, Table
 from pwv_kpno import pwv_atm
 from tqdm import tqdm
 
@@ -78,6 +79,49 @@ def get_model_with_pwv(source, **params):
 ###############################################################################
 
 
+def calc_x0_for_z(z, cosmo=WMAP9):
+    """Set the redshift and corresponding x_0 value of an sncosmo model
+
+    x_0 is determined for the given redshift using the given cosmology.
+    A derivation is summarized as follows.
+
+    The apparent magnitude as a function of x_0 is given by:
+        m = -2.5 * log(f / f_0)
+          = -2.5 * log(x_0 * f|_{x_0=1} / f_0)
+          = -2.5 * log(f|_{x_0=1} / f_0) - 2.5 * log(x_0)
+          = m|_{x_0=1} - 2.5 * log(x_0)
+
+    The distance module can thus be written as
+        mu = M - m = M - m|_{x_0=1} + 2.5 * log(x_0)
+
+    which gives us x_0 as:
+       x_0 = 10 ** ((mu - M + m|_{x_0=1}) / 2.5)
+
+    Args:
+         model     (Model): Model to set parameters for
+         z         (float): Model redshift to set
+         cosmo (Cosmology): Cosmology to use when determining x0
+         Any other model parameters to set as kwargs
+    """
+
+    if z == 0:
+        return 1
+
+    # Our results are independent of the SN mdel and absolute magnitude
+    # We still need a these for intermediate calculations.
+    abs_mag = -19.1
+    model = sncosmo.Model('salt2-extended')
+
+    # Use a temp model so if something goes wrong the original is unchanged
+    model.set(z=z, x0=1)
+    model.set_source_peakabsmag(abs_mag, 'standard::b', 'AB', cosmo=cosmo)
+
+    apparent_mag = model.bandmag('standard::b', 'AB', 0)
+    dist_mod_model = apparent_mag - abs_mag
+    dist_mod_cosmo = cosmo.distmod(z).value
+    return 10 ** ((dist_mod_cosmo - dist_mod_model) / 2.5)
+
+
 def create_observations_table(
         phases=range(-20, 50),
         bands=('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
@@ -143,7 +187,7 @@ def iter_lcs(obs, source, pwv_arr, z_arr, verbose=True):
         arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
 
     for pwv, z in arg_iter:
-        params = {'t0': 0.0, 'pwv': pwv, 'z': z}
+        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z)}
 
         # Some versions of sncosmo mutate arguments so we use copy to be safe
         param_list = [params.copy()]

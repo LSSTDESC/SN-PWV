@@ -121,7 +121,8 @@ class TestLCSimulation(TestCase):
 
         for pwv in self.pwv_vals:
             for z in self.z_vals:
-                expected_meta = {'t0': 0, 'pwv': pwv, 'z': z}
+                x0 = modeling.calc_x0_for_z(z)
+                expected_meta = {'t0': 0, 'pwv': pwv, 'z': z, 'x0': x0}
                 self.assertEqual(expected_meta, next(self.lc_iter).meta)
 
     def assertSimValuesEqualObs(self, key, lc=None):
@@ -151,3 +152,20 @@ class TestLCSimulation(TestCase):
         """Test the returned light-curve collection is an generator"""
 
         self.assertIsInstance(self.lc_iter, types.GeneratorType)
+
+
+class calc_x0_for_z(TestCase):
+    """Tests for the ``scale_model_to_redshift`` function"""
+
+    def test_z_is_zero(self):
+        """Test x_0 == 1 when z == 0"""
+
+        self.assertEqual(1, modeling.calc_x0_for_z(0))
+
+    def test_z_approx_zero(self):
+        """Test x_0 is approximately 1 when z is approximately 0
+
+        Tests a different path than ``test_z_is_zero``
+        """
+
+        self.assertEqual(1, modeling.calc_x0_for_z(1E-500))

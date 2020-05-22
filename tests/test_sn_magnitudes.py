@@ -40,7 +40,7 @@ class TestTabulateMagnitudes(TestCase):
             mag_for_pwv = []
 
             for j, z in enumerate(self.z_vals):
-                model.set(pwv=pwv, z=z)
+                model.set(pwv=pwv, z=z, x0=modeling.calc_x0_for_z(z))
                 mag = model.bandmag(test_band, 'ab', 0)
                 mag_for_pwv.append(mag)
 

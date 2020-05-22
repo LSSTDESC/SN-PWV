@@ -8,6 +8,7 @@ from copy import deepcopy
 
 import numpy as np
 import sncosmo
+
 from tqdm import tqdm
 
 from . import modeling
@@ -18,6 +19,51 @@ beta = 3.101
 omega_m = 0.295
 abs_mb = -19.05
 H0 = 70
+
+
+# def scale_model_to_redshift(model, z, cosmo=WMAP9, **kwargs):
+#     """Set the redshift and corresponding x_0 value of an sncosmo model
+#
+#     x_0 is determined for the given redshift using the given cosmology.
+#     A derivation is summarized as follows.
+#
+#     The apparent magnitude as a function of x_0 is given by:
+#         m = -2.5 * log(f / f_0)
+#           = -2.5 * log(x_0 * f|_{x_0=1} / f_0)
+#           = -2.5 * log(f|_{x_0=1} / f_0) - 2.5 * log(x_0)
+#           = m|_{x_0=1} - 2.5 * log(x_0)
+#
+#     The distance module can thus be written as
+#         mu = M - m = M - m|_{x_0=1} + 2.5 * log(x_0)
+#
+#     which gives us x_0 as:
+#        x_0 = 10 ** ((mu - M + m|_{x_0=1}) / 2.5)
+#
+#     Args:
+#          model     (Model): Model to set parameters for
+#          z         (float): Model redshift to set
+#          cosmo (Cosmology): Cosmology to use when determining x0
+#          Any other model parameters to set as kwargs
+#     """
+#
+#     if z == 0:
+#         model.set(z=z, x0=1, **kwargs)
+#
+#     # Absolute SN magnitude. Our results are independent of this value, but
+#     # we still need a number for intermediate calculations.
+#     abs_mag = -19.1
+#
+#     # Use a temp model so if something goes wrong the original is unchanged
+#     temp = deepcopy(model)
+#     temp.set(z=z, x0=1, **kwargs)
+#     temp.set_source_peakabsmag(abs_mag, 'standard::b', 'AB', cosmo=cosmo)
+#
+#     apparent_mag = temp.bandmag('standard::b', 'AB', 0)
+#     dist_mod_model = apparent_mag - abs_mag
+#     dist_mod_cosmo = cosmo.distmod(z).value
+#     x0 = 10 ** ((dist_mod_cosmo - dist_mod_model) / 2.5)
+#
+#     model.set(z=z, x0=x0, **kwargs)
 
 
 ###############################################################################
@@ -57,7 +103,7 @@ def tabulate_mag(source, pwv_arr, z_arr, bands, verbose=True):
 
         mag_arr = []
         for pwv, z in itertools.product(pwv_arr, z_arr):
-            model_with_pwv.set(pwv=pwv, z=z)
+            model_with_pwv.set(pwv=pwv, z=z, x0=modeling.calc_x0_for_z(z))
             mag = model_with_pwv.bandmag(band, 'ab', 0)
             mag_arr.append(mag)
 
@@ -274,7 +320,7 @@ def calc_mu_for_model(model, abs_mag=-19):
     temp_model.set_source_peakabsmag(abs_mag, 'bessellb', 'ab')
 
     base_band = sncosmo.get_bandpass('bessellb')
-    apparent_band = base_band.shifted(1 + temp_model.get('z'))
+    apparent_band = base_band.shifted(1 + temp_model['z'])
     apparent_mag = temp_model.bandmag(apparent_band, 'ab', 0)
 
     return apparent_mag - abs_mag
