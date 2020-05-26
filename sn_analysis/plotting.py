@@ -176,6 +176,7 @@ def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 
 
     top_reference_ax.autoscale()  # To reset y-range
     top_reference_ax.set_xlim(0.1, 1.1)
+    bottom_reference_ax.set_ylim(ymin=0)
 
     # Remove unnecessary tick marks
     for axis in axes.T[1:].flatten():
@@ -264,7 +265,7 @@ def plot_salt2_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6
     # Format top axis
     top_ax.set_ylim(0, 5)
     top_ax.set_xlim(min(wave_arr), max(wave_arr))
-    top_ax.set_ylabel(f'Flux ({sci_notation(flux_scale)} ergs / s / cm$^2$ / $\AA$)')
+    top_ax.set_ylabel(f'Flux')
     top_ax.legend(loc='lower left', framealpha=1)
 
     # Format twin axis
@@ -325,6 +326,10 @@ def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
 
     fig, axes = plt.subplots(2, 3, figsize=(12, 8))
     for axis, (param, param_vals) in zip(axes.flatten(), params_dict.items()):
+        if param == 'x0':
+            param_vals = -2.5 * np.log10(param_vals)
+            param = r'-2.5 log$_{10}$(x$_{0}$)'
+
         _multi_line_plot(z_arr, param_vals, pwv_arr, axis, label='z = {:g}')
         axis.set_xlabel('Redshift')
         axis.set_ylabel(param)

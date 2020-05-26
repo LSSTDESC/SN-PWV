@@ -79,7 +79,7 @@ def get_model_with_pwv(source, **params):
 ###############################################################################
 
 
-def calc_x0_for_z(z, cosmo=WMAP9):
+def calc_x0_for_z(z, cosmo=WMAP9, source='salt2-extended'):
     """Set the redshift and corresponding x_0 value of an sncosmo model
 
     x_0 is determined for the given redshift using the given cosmology.
@@ -98,21 +98,16 @@ def calc_x0_for_z(z, cosmo=WMAP9):
        x_0 = 10 ** ((mu - M + m|_{x_0=1}) / 2.5)
 
     Args:
-         model     (Model): Model to set parameters for
          z         (float): Model redshift to set
          cosmo (Cosmology): Cosmology to use when determining x0
-         Any other model parameters to set as kwargs
+         source   (Source): Model source to use when determining x0
     """
 
     if z == 0:
         return 1
 
-    # Our results are independent of the SN mdel and absolute magnitude
-    # We still need a these for intermediate calculations.
     abs_mag = -19.1
-    model = sncosmo.Model('salt2-extended')
-
-    # Use a temp model so if something goes wrong the original is unchanged
+    model = sncosmo.Model(source)
     model.set(z=z, x0=1)
     model.set_source_peakabsmag(abs_mag, 'standard::b', 'AB', cosmo=cosmo)
 
