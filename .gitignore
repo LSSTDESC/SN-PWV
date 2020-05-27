@@ -12,9 +12,6 @@
 build/
 dist/
 
-# Light Curve Data
-sndata/sweetspot/whircs
-
 # Testing cache files
 .pytest_cache/
 
@@ -24,4 +21,5 @@ docs/build
 # Jupyter Notebook Checkpoints
 *.ipynb_checkpoints/
 
-todo.md
+# Rendered figures
+*.pdf
