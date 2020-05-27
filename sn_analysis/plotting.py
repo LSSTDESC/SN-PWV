@@ -176,7 +176,6 @@ def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 
 
     top_reference_ax.autoscale()  # To reset y-range
     top_reference_ax.set_xlim(0.1, 1.1)
-    bottom_reference_ax.set_ylim(ymin=0)
 
     # Remove unnecessary tick marks
     for axis in axes.T[1:].flatten():
