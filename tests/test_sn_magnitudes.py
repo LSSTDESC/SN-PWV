@@ -19,8 +19,8 @@ class TestTabulateMagnitudes(TestCase):
     @classmethod
     def setUpClass(cls):
         cls.source = 'salt2-extended'
-        cls.pwv_vals = 0, 5
-        cls.z_vals = 0, .5
+        cls.pwv_vals = 0.001, 5
+        cls.z_vals = 0.001, .5
         cls.bands = ['sdssu', 'sdssg']
 
         cls.mag_dict = sn_magnitudes.tabulate_mag(
@@ -40,7 +40,7 @@ class TestTabulateMagnitudes(TestCase):
             mag_for_pwv = []
 
             for j, z in enumerate(self.z_vals):
-                model.set(pwv=pwv, z=z, x0=modeling.calc_x0_for_z(z))
+                model.set(pwv=pwv, z=z, x0=modeling.calc_x0_for_z(z, self.source))
                 mag = model.bandmag(test_band, 'ab', 0)
                 mag_for_pwv.append(mag)
 

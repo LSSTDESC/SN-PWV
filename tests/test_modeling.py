@@ -105,13 +105,13 @@ class TestLCSimulation(TestCase):
     def setUp(self):
         """Create a new light-curve iterator for each test"""
 
-        self.pwv_vals = 0, 5
-        self.z_vals = 0, 1
-        source = 'salt2-extended'
+        self.pwv_vals = 0.01, 5
+        self.z_vals = 0.01, 1
+        self.source = 'salt2-extended'
         self.observations = modeling.create_observations_table()
         self.lc_iter = modeling.iter_lcs(
             self.observations,
-            source,
+            self.source,
             self.pwv_vals,
             self.z_vals,
             verbose=False)
@@ -121,7 +121,7 @@ class TestLCSimulation(TestCase):
 
         for pwv in self.pwv_vals:
             for z in self.z_vals:
-                x0 = modeling.calc_x0_for_z(z)
+                x0 = modeling.calc_x0_for_z(z, self.source)
                 expected_meta = {'t0': 0, 'pwv': pwv, 'z': z, 'x0': x0}
                 self.assertEqual(expected_meta, next(self.lc_iter).meta)
 
@@ -157,10 +157,12 @@ class TestLCSimulation(TestCase):
 class calc_x0_for_z(TestCase):
     """Tests for the ``scale_model_to_redshift`` function"""
 
+    source= 'salt2-extended'
+
     def test_z_is_zero(self):
         """Test x_0 == 1 when z == 0"""
 
-        self.assertEqual(1, modeling.calc_x0_for_z(0))
+        self.assertEqual(1, modeling.calc_x0_for_z(0, self.source))
 
     def test_z_approx_zero(self):
         """Test x_0 is approximately 1 when z is approximately 0
@@ -168,4 +170,4 @@ class calc_x0_for_z(TestCase):
         Tests a different path than ``test_z_is_zero``
         """
 
-        self.assertEqual(1, modeling.calc_x0_for_z(1E-500))
+        self.assertEqual(1, modeling.calc_x0_for_z(1E-10, self.source))
