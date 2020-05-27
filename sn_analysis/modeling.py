@@ -79,49 +79,29 @@ def get_model_with_pwv(source, **params):
 ###############################################################################
 
 
-def calc_x0_for_z(z, cosmo=WMAP9, source='salt2-extended'):
-    """Set the redshift and corresponding x_0 value of an sncosmo model
-
-    x_0 is determined for the given redshift using the given cosmology.
-    A derivation is summarized as follows.
-
-    The apparent magnitude as a function of x_0 is given by:
-        m = -2.5 * log(f / f_0)
-          = -2.5 * log(x_0 * f|_{x_0=1} / f_0)
-          = -2.5 * log(f|_{x_0=1} / f_0) - 2.5 * log(x_0)
-          = m|_{x_0=1} - 2.5 * log(x_0)
-
-    The distance module can thus be written as
-        mu = M - m = M - m|_{x_0=1} + 2.5 * log(x_0)
-
-    which gives us x_0 as:
-       x_0 = 10 ** ((mu - M + m|_{x_0=1}) / 2.5)
+def calc_x0_for_z(z, source, cosmo=WMAP9, abs_mag=-19.05, **params):
+    """Determine x0 for a given redshift and model
 
     Args:
-         z         (float): Model redshift to set
-         cosmo (Cosmology): Cosmology to use when determining x0
-         source   (Source): Model source to use when determining x0
+         z            (float): Model redshift to set
+         source (Source, str): Model to use
+         cosmo    (Cosmology): Cosmology to use when determining x0
+         abs_mag      (float): Absolute peak magnitude of the SNe Ia
+         Any other params to set for the provided `source`
     """
 
-    if z == 0:
-        return 1
-
-    abs_mag = -19.1
     model = sncosmo.Model(source)
-    model.set(z=z, x0=1)
+    model.set(z=z, **params)
     model.set_source_peakabsmag(abs_mag, 'standard::b', 'AB', cosmo=cosmo)
-
-    apparent_mag = model.bandmag('standard::b', 'AB', 0)
-    dist_mod_model = apparent_mag - abs_mag
-    dist_mod_cosmo = cosmo.distmod(z).value
-    return 10 ** ((dist_mod_cosmo - dist_mod_model) / 2.5)
+    return model['x0']
 
 
 def create_observations_table(
         phases=range(-20, 50),
         bands=('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
         zp=25,
-        zpsys='ab'):
+        zpsys='ab',
+        gain=100):
     """Create an astropy table defining a uniform observation cadence for a single target
 
     Time values are specified in units of phase
@@ -131,6 +111,7 @@ def create_observations_table(
         bands  (ndarray): Array of bands to include
         zp       (float): The zero point
         zpsys    (float): The zero point system
+        gain     (float): The simulated gain
 
     Returns:
         An astropy table
@@ -138,7 +119,7 @@ def create_observations_table(
 
     phase_arr = np.concatenate([phases for _ in bands])
     band_arr = np.concatenate([bands for _ in phases])
-    gain_arr = np.ones_like(phase_arr)
+    gain_arr = np.full_like(phase_arr, gain)
     skynoise_arr = np.zeros_like(phase_arr)
     zp_arr = np.full_like(phase_arr, zp)
     zp_sys_arr = np.full_like(phase_arr, zpsys, dtype='U10')
@@ -182,7 +163,7 @@ def iter_lcs(obs, source, pwv_arr, z_arr, verbose=True):
         arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
 
     for pwv, z in arg_iter:
-        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z)}
+        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, source)}
 
         # Some versions of sncosmo mutate arguments so we use copy to be safe
         param_list = [params.copy()]
