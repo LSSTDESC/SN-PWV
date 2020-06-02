@@ -1,3 +1,8 @@
+# !/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+"""Interactive plotting for light-curve fits"""
+
 import sys
 from pathlib import Path
 
@@ -57,16 +62,16 @@ class FittedParamWidgets:
 
     top_section_div = models.Div(text=(
         '<h2>Fitted Parameters</h2>'
-        '<p>Current parameter values are used as an initial guess when fitting.'
-        'Note that redshift values ar not varied as part of the fit.</p>'
+        '<p>Current parameter values are used as an initial guess when fitting. '
+        'Note that redshift values are not varied as part of the fit.</p>'
     ))
 
     # User input widgets for setting model parameters
-    fit_t0_slider = models.Slider(start=-10, end=10, value=0, step=.001, title='t0')
-    fit_x0_slider = models.Slider(start=0.001, end=2, value=.1, step=.001, title='x0')
-    fit_x1_slider = models.Slider(start=-1, end=1, value=0, step=.001, title='x1')
-    fit_c_slider = models.Slider(start=-1, end=1, value=0, step=.001, title='c')
-    plot_model_button = models.Button(label='Plot Initial Model', button_type='warning')
+    fit_t0_slider = models.Slider(start=-10, end=10, value=0, step=1E-4, title='t0')
+    fit_x0_slider = models.Slider(start=0.001, end=2, value=.1, step=1E-4, title='x0')
+    fit_x1_slider = models.Slider(start=-1, end=1, value=0, step=1E-4, title='x1')
+    fit_c_slider = models.Slider(start=-1, end=1, value=0, step=1E-4, title='c')
+    plot_model_button = models.Button(label='Plot Model', button_type='warning')
     fit_button = models.Button(label='Fit Light-Curve', button_type='success')
 
     fitted_params_widgets_list = [
@@ -186,7 +191,16 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
 
         # Update results div
         keys = 'message', 'ncall', 'chisq', 'ndof', 'vparam_names', 'param_names', 'parameters'
-        text = '<br>'.join(f'{k}: {result[k]}' for k in keys)
+        text = '<h4>Fit Results</h4>'
+        text += '<br>'.join(f'{k}: {result[k]}' for k in keys)
+
+        text += '<br><h4>Sim Mag</h4>'
+        text += f'standard::b (AB): {model.source_peakmag("standard::b", "AB")}'
+        text += f'<br>peak standard::b (AB): {model.source_peakabsmag("standard::b", "AB")}'
+
+        text += '<br><h4>Fitted Mag</h4>'
+        text += f'standard::b (AB): {fitted_model.source_peakmag("standard::b", "AB")}'
+        text += f'<br>peak standard::b (AB): {fitted_model.source_peakabsmag("standard::b", "AB")}'
         self.fit_results_div.update(text=text)
 
         # Plot the fitted model
@@ -201,6 +215,12 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
             )
 
             self.plotted_fits.append(line)
+
+        # Match fitted param sliders to sim param sliders
+        self.fit_t0_slider.update(value=self.sim_t0_slider.value)
+        self.fit_x0_slider.update(value=self.sim_x0_slider.value)
+        self.fit_x1_slider.update(value=self.sim_x1_slider.value)
+        self.fit_c_slider.update(value=self.sim_c_slider.value)
 
     def plot_current_model(self, event=None):
         """Plot the model using the initial guess parameters"""
