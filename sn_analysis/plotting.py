@@ -43,7 +43,7 @@ from pwv_kpno import pwv_atm
 from . import modeling
 
 
-def _multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
+def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
     """Plot a 2d y array vs a 1d x array
 
     Lines are color coded according to values of a 2d z array
@@ -77,7 +77,7 @@ def plot_delta_mag_vs_z(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
     if axis is None:
         axis = plt.gca()
 
-    _multi_line_plot(z_arr, delta_mag_arr, pwv_arr, axis, label)
+    multi_line_plot(z_arr, delta_mag_arr, pwv_arr, axis, label)
     axis.set_xlabel('Redshift', fontsize=20)
     axis.set_xlim(min(z_arr), max(z_arr))
     axis.set_ylabel(r'$\Delta m$', fontsize=20)
@@ -95,7 +95,7 @@ def plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
     if axis is None:
         axis = plt.gca()
 
-    _multi_line_plot(pwv_arr, delta_mag_arr.T, z_arr, axis, label)
+    multi_line_plot(pwv_arr, delta_mag_arr.T, z_arr, axis, label)
     axis.set_xlabel('PWV', fontsize=20)
     axis.set_xlim(min(pwv_arr), max(pwv_arr))
     axis.set_ylabel(r'$\Delta m$', fontsize=20)
@@ -291,10 +291,10 @@ def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
     for (band, mag_arr), (top_ax, bottom_ax) in zip(mags.items(), axes.T):
         top_ax.set_title(band)
         top_ax.set_xlabel('Redshift')
-        _multi_line_plot(z, mag_arr, pwv, top_ax, label='{:g} mm')
+        multi_line_plot(z, mag_arr, pwv, top_ax, label='{:g} mm')
 
         bottom_ax.set_xlabel('PWV')
-        _multi_line_plot(pwv, mag_arr.T, z, bottom_ax, label='z = {:.2f}')
+        multi_line_plot(pwv, mag_arr.T, z, bottom_ax, label='z = {:.2f}')
 
     axes[0][0].set_ylabel('Magnitude')
     axes[1][0].set_ylabel('Magnitude')
@@ -329,12 +329,12 @@ def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
             param_vals = -2.5 * np.log10(param_vals)
             param = r'-2.5 log$_{10}$(x$_{0}$)'
 
-        _multi_line_plot(z_arr, param_vals, pwv_arr, axis, label='z = {:g}')
+        multi_line_plot(z_arr, param_vals, pwv_arr, axis, label='z = {:g}')
         axis.set_xlabel('Redshift')
         axis.set_ylabel(param)
 
     correction_factor = modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']
-    _multi_line_plot(z_arr, correction_factor, pwv_arr, axes[-1][-1], label='PWV = {:g} mm')
+    multi_line_plot(z_arr, correction_factor, pwv_arr, axes[-1][-1], label='PWV = {:g} mm')
 
     label = f'{modeling.alpha} * $x_1$ - {modeling.beta} * $c$'
     axes[-1][-1].set_ylabel(label)

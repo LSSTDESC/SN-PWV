@@ -262,23 +262,17 @@ def calc_mu_for_model(model):
         mu = m_B - M_B
     """
 
-    b_band = 'standard::b'
-    base_band = sncosmo.get_bandpass(b_band)
-    apparent_band = base_band.shifted(1 + model['z'])
-    apparent_mag = model.bandmag(apparent_band, 'AB', 0)
-
-    return apparent_mag - model.source_peakabsmag(apparent_band, 'AB')
+    apparent = model.source_peakmag('standard::b', 'AB')
+    absolute = model.source_peakabsmag('standard::b', 'AB')
+    return apparent - absolute
 
 
-def calc_mu_for_params(source, params, abs_mag=None):
+def calc_mu_for_params(source, params):
     """Calculate the distance modulus for an array of params
 
-    When ``abs_mag`` is given, it overrides the given `x0` parameter.
-
     Args:
-        source  (Source): Name of the sncosmo Model the params are for
+        source  (Source): Name / source of the sncosmo Model to use
         params (ndarray): n-dimensional array of params
-        abs_mag  (float): Optionally set the absolute magnitude of the SN model
 
     Returns:
         An array of distance moduli with one dimension less than ``params``
@@ -293,10 +287,7 @@ def calc_mu_for_params(source, params, abs_mag=None):
     mu = []
     model = sncosmo.Model(source)
     for param_arr in reshaped_params:
-        model.parameters = param_arr
-        if abs_mag:
-            model.set_source_peakabsmag(abs_mag, 'standard::b', 'AB')
-
+        model.parameters = param_arr  # We don't need to use `update` because `parameters` has a setter
         mu.append(calc_mu_for_model(model))
 
     return np.reshape(mu, param_shape)

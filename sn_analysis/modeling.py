@@ -88,7 +88,7 @@ def get_model_with_pwv(source, **params):
 ###############################################################################
 
 
-def calc_x0_for_z(z, source, cosmo=betoule_cosmo, abs_mag=-19.05, **params):
+def calc_x0_for_z(z, source, cosmo=betoule_cosmo, abs_mag=abs_mb, **params):
     """Determine x0 for a given redshift and model
 
     Args:
