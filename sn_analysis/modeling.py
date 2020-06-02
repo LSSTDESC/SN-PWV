@@ -8,12 +8,21 @@ from pathlib import Path
 
 import numpy as np
 import sncosmo
-from astropy.cosmology import WMAP9
+from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Column, Table
 from pwv_kpno import pwv_atm
 from tqdm import tqdm
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
+
+# From Betoule 2014
+alpha = 0.141
+beta = 3.101
+omega_m = 0.295
+abs_mb = -19.05
+H0 = 70
+
+betoule_cosmo = FlatLambdaCDM(H0=H0, Om0=omega_m)
 
 
 ###############################################################################
@@ -79,7 +88,7 @@ def get_model_with_pwv(source, **params):
 ###############################################################################
 
 
-def calc_x0_for_z(z, source, cosmo=WMAP9, abs_mag=-19.05, **params):
+def calc_x0_for_z(z, source, cosmo=betoule_cosmo, abs_mag=-19.05, **params):
     """Determine x0 for a given redshift and model
 
     Args:

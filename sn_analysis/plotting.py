@@ -40,7 +40,7 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from pwv_kpno import pwv_atm
 
-from . import sn_magnitudes
+from . import modeling
 
 
 def _multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
@@ -333,10 +333,10 @@ def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
         axis.set_xlabel('Redshift')
         axis.set_ylabel(param)
 
-    correction_factor = sn_magnitudes.alpha * params_dict['x1'] - sn_magnitudes.beta * params_dict['c']
+    correction_factor = modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']
     _multi_line_plot(z_arr, correction_factor, pwv_arr, axes[-1][-1], label='PWV = {:g} mm')
 
-    label = f'{sn_magnitudes.alpha} * $x_1$ - {sn_magnitudes.beta} * $c$'
+    label = f'{modeling.alpha} * $x_1$ - {modeling.beta} * $c$'
     axes[-1][-1].set_ylabel(label)
     axes[-1][-1].legend(bbox_to_anchor=(1, 1.1))
 

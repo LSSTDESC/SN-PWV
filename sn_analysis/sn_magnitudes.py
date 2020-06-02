@@ -12,13 +12,6 @@ from tqdm import tqdm
 
 from . import modeling
 
-# From Betoule 2014
-alpha = 0.141
-beta = 3.101
-omega_m = 0.295
-abs_mb = -19.05
-H0 = 70
-
 
 ###############################################################################
 # Determining the PWV induced change in magnitude while leaving all other
@@ -107,7 +100,7 @@ def tabulate_fiducial_mag(source, z_arr, bands, fid_pwv_dict):
 ###############################################################################
 
 
-def correct_mag(source, mag, params):
+def correct_mag(source, mag, params, alpha=modeling.alpha, beta=modeling.beta):
     """Correct fitted supernova magnitude for stretch and color
 
     calibrated mag = mag + α * x1 - β * c
