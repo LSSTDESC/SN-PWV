@@ -41,6 +41,7 @@ from matplotlib.ticker import MultipleLocator
 from pwv_kpno import pwv_atm
 
 from . import modeling
+from . import sn_magnitudes
 
 
 def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
@@ -52,6 +53,8 @@ def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
         x_arr (ndarray): A 1d array
         y_arr (ndarray): A 2d array
         z_arr (ndarray): A 2d array
+        axis     (Axis): Axis to plot on
+        label     (str): Optional label to format with ``z`` value
     """
 
     colors = plt.cm.viridis(np.linspace(0, 1, len(z_arr)))
@@ -72,6 +75,8 @@ def plot_delta_mag_vs_z(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
         pwv_arr       (ndarray): Array of PWV values
         z_arr         (ndarray): Array of redshift values
         delta_mag_arr (ndarray): Array of delta mag values
+        axis             (Axis): Optionally plot on a given axis
+        label             (str): Optional label to format with PWV
     """
 
     if axis is None:
@@ -90,6 +95,8 @@ def plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
         pwv_arr       (ndarray): Array of PWV values
         z_arr         (ndarray): Array of redshift values
         delta_mag_arr (ndarray): Array of delta mag values
+        axis             (Axis): Optionally plot on a given axis
+        label             (str): Optional label to format with redshift
     """
 
     if axis is None:
@@ -108,6 +115,7 @@ def plot_derivative_mag_vs_z(pwv_arr, z_arr, slope_arr, axis=None):
         pwv_arr   (ndarray): Array of PWV values
         z_arr     (ndarray): Array of redshift values
         slope_arr (ndarray): Slope of delta mag at reference PWV
+        axis         (Axis): Optionally plot on a given axis
     """
 
     if axis is None:
@@ -285,7 +293,18 @@ def plot_salt2_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6
 
 
 def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
-    """Plot simulated magnitudes vs Redshift and PWV"""
+    """Plot simulated magnitudes vs Redshift and PWV
+
+    Args:
+        mags  (ndarray): Simulated magnitude values
+        pwv   (ndarray): Array of PWV values
+        z     (ndarray): Array of redshift values
+        figsize (tuple): Size of the figure
+
+    Returns:
+        - A matplotlib figure
+        - A matplotlib axis
+    """
 
     fig, axes = plt.subplots(2, len(mags), figsize=figsize, sharey='row')
     for (band, mag_arr), (top_ax, bottom_ax) in zip(mags.items(), axes.T):
@@ -343,3 +362,82 @@ def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
     plt.tight_layout()
 
     return fig, axes
+
+
+def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
+    """Plot the variation in x0 as a function of redshift and PWV
+
+    Args:
+        source    (Source): Source corresponding to the provided parameters
+        pwv_arr  (ndarray): Array of PWV values
+        z_arr    (ndarray): Array of redshift values
+        params_dict (dict): Dictionary with fitted parameters for each pwv and z
+    """
+
+    x0_cosmo = np.array([modeling.calc_x0_for_z(z, source) for z in z_arr])
+    delta_x0 = -2.5 * np.log10(params_dict['x0'] / x0_cosmo)
+
+    fig, (left_ax, right_ax) = plt.subplots(1, 2, sharey=True, figsize=(8, 4))
+    multi_line_plot(z_arr, delta_x0, pwv_arr, left_ax, label='{} mm')
+    multi_line_plot(pwv_arr, delta_x0.T, z_arr, right_ax, label='z = {:.2f}')
+
+    left_ax.set_ylabel(r'-2.5 * $\log$($\frac{x_0}{x_{0,sim}}$)', fontsize=16)
+    left_ax.set_xlabel('Redshift')
+    right_ax.set_xlabel('PWV')
+
+    handles, labels = left_ax.get_legend_handles_labels()
+    labels = labels[::2]
+    handles = handles[::2]
+    left_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
+
+    handles, labels = right_ax.get_legend_handles_labels()
+    labels = labels[::2]
+    handles = handles[::2]
+    right_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
+
+    plt.tight_layout()
+
+
+def plot_delta_mu(source, mu, pwv_arr, z_arr):
+    """Plot the variation in x0 as a function of redshift and PWV
+
+    Args:
+        source   (Source): Source corresponding to the provided mu values
+        mu      (ndarray): Array of distance moduli
+        pwv_arr (ndarray): Array of PWV values
+        z_arr   (ndarray): Array of redshift values
+    """
+
+    cosmo_mu = []
+    for z in z_arr:
+        m = sncosmo.Model(source)
+        m.set(z=z)
+        m.set_source_peakabsmag(-19.05, 'standard::b', 'AB')
+        cosmo_mu.append(sn_magnitudes.calc_mu_for_model(m))
+
+    cosmo_mu = np.array(cosmo_mu)
+
+    delta_mu = mu - cosmo_mu
+
+    fig, axes = plt.subplots(1, 3, figsize=(9, 3))
+    mu_ax, delta_mu_ax, relative_mu_ax = axes
+
+    multi_line_plot(z_arr, mu, pwv_arr, mu_ax)
+    mu_ax.plot(z_arr, cosmo_mu, linestyle=':', color='k', label='Simulated')
+    mu_ax.legend(framealpha=1)
+
+    multi_line_plot(z_arr, delta_mu, pwv_arr, delta_mu_ax)
+    delta_mu_ax.axhline(0, linestyle=':', color='k', label='Simulated')
+    delta_mu_ax.legend(framealpha=1)
+
+    multi_line_plot(z_arr, mu - mu[4], pwv_arr, relative_mu_ax, label='{:g} mm')
+    relative_mu_ax.axhline(0, color='k', label=f'PWV={pwv_arr[4]}')
+    relative_mu_ax.legend(framealpha=1, bbox_to_anchor=(1, 1.1))
+
+    mu_ax.set_ylabel(r'$\mu$', fontsize=12)
+    delta_mu_ax.set_ylabel(r'$\mu - \mu_{cosmo}$', fontsize=12)
+    relative_mu_ax.set_ylabel(r'$\mu - \mu_{pwv_f}$', fontsize=12)
+    for ax in axes:
+        ax.set_xlabel('Redshift', fontsize=12)
+
+    plt.tight_layout()

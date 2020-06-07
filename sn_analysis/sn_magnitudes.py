@@ -262,17 +262,19 @@ def calc_mu_for_model(model):
         mu = m_B - M_B
     """
 
-    apparent = model.source_peakmag('standard::b', 'AB')
-    absolute = model.source_peakabsmag('standard::b', 'AB')
+    b_band = sncosmo.get_bandpass('standard::b')
+    b_band_rest = b_band.shifted(1 + model['z'])
+    apparent = model.bandmag(b_band_rest, 'AB', 0)
+    absolute = model.source_peakabsmag(b_band, 'AB')
     return apparent - absolute
 
 
 def calc_mu_for_params(source, params):
-    """Calculate the distance modulus for an array of params
+    """Calculate the distance modulus for an array of fitted params
 
     Args:
         source  (Source): Name / source of the sncosmo Model to use
-        params (ndarray): n-dimensional array of params
+        params (ndarray): n-dimensional array of parameters
 
     Returns:
         An array of distance moduli with one dimension less than ``params``
@@ -291,3 +293,26 @@ def calc_mu_for_params(source, params):
         mu.append(calc_mu_for_model(model))
 
     return np.reshape(mu, param_shape)
+
+
+def calc_calibration_factor_for_params(source, params):
+    """Calculate the distance modulus for an array of fitted params
+
+    returns modeling.alpha * x_1 - modeling.beta * c
+
+    Args:
+        source  (Source): Name / source of the sncosmo Model to use
+        params (ndarray): n-dimensional array of parameters
+
+    Returns:
+        An array of calibration factors with one dimension less than ``params``
+    """
+
+    model = sncosmo.Model(source)
+    params_dict = {
+        param: params[..., i] for
+        i, param in enumerate(model.param_names)
+    }
+
+    cal_factor = modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']
+    return params_dict, cal_factor
