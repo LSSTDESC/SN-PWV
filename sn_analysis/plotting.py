@@ -408,15 +408,7 @@ def plot_delta_mu(source, mu, pwv_arr, z_arr):
         z_arr   (ndarray): Array of redshift values
     """
 
-    cosmo_mu = []
-    for z in z_arr:
-        m = sncosmo.Model(source)
-        m.set(z=z)
-        m.set_source_peakabsmag(-19.05, 'standard::b', 'AB')
-        cosmo_mu.append(sn_magnitudes.calc_mu_for_model(m))
-
-    cosmo_mu = np.array(cosmo_mu)
-
+    cosmo_mu = modeling.betoule_cosmo.distmod(z_arr).value
     delta_mu = mu - cosmo_mu
 
     fig, axes = plt.subplots(1, 3, figsize=(9, 3))
