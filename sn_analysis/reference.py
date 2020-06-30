@@ -87,7 +87,7 @@ def get_ref_star_dataframe(reference_type='G2'):
     return reference_star_flux
 
 
-def ref_star_flux(band, pwv, reference_type='G2'):
+def ref_star_norm_flux(band, pwv, reference_type='G2'):
     """Return normalized reference star flux values
 
     Args:
@@ -107,7 +107,7 @@ def ref_star_flux(band, pwv, reference_type='G2'):
     return reference_flux
 
 
-def ref_star_mag(band, pwv, reference_type='G2'):
+def ref_star_norm_mag(band, pwv, reference_type='G2'):
     """Return normalized reference star magnitude values as a 2d array
 
     Args:
@@ -119,7 +119,7 @@ def ref_star_mag(band, pwv, reference_type='G2'):
         The normalized magnitude at the given PWV value(s)
     """
 
-    return -2.5 * np.log10(ref_star_flux(band, pwv, reference_type))
+    return -2.5 * np.log10(ref_star_norm_flux(band, pwv, reference_type))
 
 
 ###############################################################################
@@ -139,11 +139,13 @@ def subtract_ref_from_lc(lc_table, pwv, reference_type='G2'):
     """
 
     table_copy = lc_table.copy()
+    table_copy['scale'] = np.nan
     for band in set(table_copy['band']):
         # The reference flux normalized to the fiducial atm
-        ref_flux = ref_star_flux(band, pwv, reference_type)
+        ref_flux = ref_star_norm_flux(band, pwv, reference_type)
 
         table_copy['flux'][table_copy['band'] == band] /= ref_flux
+        table_copy['scale'][table_copy['band'] == band] = ref_flux
 
     return table_copy
 
@@ -166,7 +168,7 @@ def subtract_ref_star_array(band, norm_mag, pwv, reference_type='G2'):
     if np.ndim(norm_mag) - np.ndim(pwv) != 1:
         raise ValueError('``pwv`` should be one dimension less than ``norm_mag``')
 
-    ref_mag = ref_star_mag(band, pwv, reference_type)
+    ref_mag = ref_star_norm_mag(band, pwv, reference_type)
     if np.ndim(ref_mag > 0):
         ref_mag = ref_mag[:, None]
 
@@ -212,7 +214,7 @@ def _subtract_ref_star_slope(band, mag_slope, pwv_config, reference_type='G2'):
     pwv_slope_end = pwv_config['slope_end']
 
     # Determine slope in normalized magnitude with respect to reference star
-    mag_slope_start, mag_slope_end = ref_star_mag(
+    mag_slope_start, mag_slope_end = ref_star_norm_mag(
         band, [pwv_slope_start, pwv_slope_end], reference_type)
 
     delta_x = pwv_slope_end - pwv_slope_start
