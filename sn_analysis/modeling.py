@@ -130,7 +130,7 @@ def create_observations_table(
     band_arr = np.concatenate([np.full_like(phases, b, dtype='U10') for b in bands])
     gain_arr = np.full_like(phase_arr, gain)
     skynoise_arr = np.zeros_like(phase_arr)
-    zp_arr = np.full_like(phase_arr, zp)
+    zp_arr = np.full_like(phase_arr, zp, dtype=float)
     zp_sys_arr = np.full_like(phase_arr, zpsys, dtype='U10')
 
     observations = Table(
@@ -140,7 +140,8 @@ def create_observations_table(
          'skynoise': skynoise_arr,
          'zp': zp_arr,
          'zpsys': zp_sys_arr
-         }
+         },
+        dtype=[float, 'U100', float, float, float, 'U100']
     )
 
     observations.sort('time')
