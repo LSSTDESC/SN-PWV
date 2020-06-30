@@ -163,7 +163,7 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
             fitted_mag[band].append(fitted_model.bandmag(band, 'ab', 0))
             fitted_params[band].append(fitted_model.parameters)
 
-    # We could have used a more complicated colloction pattern, but reshaping
+    # We could have used a more complicated collection pattern, but reshaping
     # after the fact is simpler.
     shape = (len(pwv_arr), len(z_arr))
     num_params = len(fitted_model.parameters)
@@ -200,7 +200,7 @@ def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fiducial_pwv_dict):
 
     # Get mag at reference pwv values
     pwv_vals = [pwv_slope_start, pwv_fiducial, pwv_slope_end]
-    light_curves = modeling.iter_lcs(obs, source, pwv_vals, z_arr)
+    light_curves = modeling.iter_lc_realizations(obs, source, pwv_vals, z_arr)
     fitted_mag, fitted_params = fit_mag(
         source=source,
         light_curves=light_curves,

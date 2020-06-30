@@ -109,7 +109,7 @@ class TestLCSimulation(TestCase):
         self.z_vals = 0.01, 1
         self.source = 'salt2-extended'
         self.observations = modeling.create_observations_table()
-        self.lc_iter = modeling.iter_lcs(
+        self.lc_iter = modeling.iter_lc_realizations(
             self.observations,
             self.source,
             self.pwv_vals,

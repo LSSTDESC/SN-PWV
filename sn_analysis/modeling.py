@@ -127,7 +127,7 @@ def create_observations_table(
     """
 
     phase_arr = np.concatenate([phases for _ in bands])
-    band_arr = np.concatenate([bands for _ in phases])
+    band_arr = np.concatenate([np.full_like(phases, b, dtype='U10') for b in bands])
     gain_arr = np.full_like(phase_arr, gain)
     skynoise_arr = np.zeros_like(phase_arr)
     zp_arr = np.full_like(phase_arr, zp)
@@ -147,11 +147,16 @@ def create_observations_table(
     return observations
 
 
-def iter_lcs(obs, source, pwv_arr, z_arr, verbose=True):
+def iter_lc_simulations(obs, source, pwv_arr, z_arr, verbose=True):
     """Iterator over simulated light-curves for combination of PWV and z values
 
-    Less memory intensive than using the default sncosmo behavior of simulating
-    all light-curves in memory at once.
+    Wrapper for the ``sncosmo.realize_lcs`` functionality that is less memory
+    intensive than using the default behavior of simulating all light-curves in
+    memory at once.
+
+    .. important:: If you are not specifically looking for the the behavior of
+       ``sncosmo.realize_lcs``, consider using the ``iter_lc_realizations``
+       method.
 
     Args:
         obs       (Table): Observation cadence
@@ -180,4 +185,44 @@ def iter_lcs(obs, source, pwv_arr, z_arr, verbose=True):
         light_curve['zp'] = Column(light_curve['zp'], dtype=float)
 
         light_curve.meta = params
+        yield light_curve
+
+
+def iter_lc_realizations(obs, source, pwv_arr, z_arr, snr=.1, verbose=True):
+    """Iterator over realized light-curves for combination of PWV and z values
+
+    Light-curves are realized for the given parameters without any of
+    the added effects from ``sncosmo.realize_lc``.
+
+    Args:
+        obs       (Table): Observation cadence
+        source   (Source): The sncosmo source to use in the simulations
+        pwv_arr (ndarray): Array of PWV values
+        z_arr   (ndarray): Array of redshift values
+        verbose    (bool): Show a progress bar
+
+    Yields:
+        Astropy table for each PWV and redshift
+    """
+
+    model = get_model_with_pwv(source)
+    arg_iter = itertools.product(pwv_arr, z_arr)
+
+    if verbose:
+        iter_total = len(pwv_arr) * len(z_arr)
+        arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
+
+    for pwv, z in arg_iter:
+        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, source)}
+        model.update(params)
+
+        light_curve = Table()
+        light_curve['flux'] = model.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
+        light_curve['fluxerr'] = light_curve['flux'] * .1
+        light_curve['zp'] = obs['zp'][0]
+        light_curve['zpsys'] = obs['zpsys'][0]
+        light_curve['time'] = obs['time']
+        light_curve['band'] = obs['band']
+        light_curve.meta = params
+
         yield light_curve
