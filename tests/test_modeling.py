@@ -7,6 +7,8 @@ import types
 from unittest import TestCase
 
 import numpy as np
+import sncosmo
+from astropy.table import Table
 from matplotlib import pyplot as plt
 from pwv_kpno import pwv_atm
 
@@ -99,7 +101,82 @@ class TestObservationsTableCreation(TestCase):
             set(self.phases), set(self.observations_table['time']))
 
 
-class TestLCSimulation(TestCase):
+class TestLCRealization(TestCase):
+    """Tests for individual light-curve simulation"""
+
+    def setUp(self):
+        """Simulate a cadence and associated light-curve"""
+
+        self.observations = modeling.create_observations_table()
+        self.source = 'salt2-extended'
+
+        z = 0.5
+        self.params = dict(
+            pwv=0.01,
+            x1=.8,
+            c=-.5,
+            z=z,
+            t0=1,
+            x0=modeling.calc_x0_for_z(z, self.source)
+        )
+
+        self.obs = modeling.create_observations_table()
+        self.simulated_lc = modeling.realize_lc(self.obs, self.source, **self.params)
+
+    def test_table_columns(self):
+        """Test simulated LC table has correct column names"""
+
+        for column in ('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'):
+            self.assertIn(column, self.simulated_lc.colnames)
+
+    def test_runs_with_sncosmo(self):
+        """Test the Simulated LC can be fit with ``sncosmo``"""
+
+        model = sncosmo.Model(self.source)
+        sncosmo.fit_lc(self.simulated_lc, model, vparam_names=['x0', 'x1', 'c'])
+
+    def test_correct_meta_data_values(self):
+        """Test simulated LC table has correct model parameters in meta data"""
+
+        self.assertEqual(self.params, self.simulated_lc.meta)
+
+    def assertSimValuesEqualObs(self):
+        """Assert values in the observation table match values in the
+        light-curve table.
+        """
+
+        for column in ('time', 'band'):
+            cadence = self.observations[column]
+            sim_vals = self.simulated_lc[column]
+            self.assertSequenceEqual(
+                list(cadence), list(sim_vals),
+                f'Cadence does not match cadence for {column} values')
+
+    def test_default_x0_value(self):
+        """Test default x0 is dependent on z"""
+
+        z = 0.5
+        expected_x0 = modeling.calc_x0_for_z(z, self.source)
+        simulated_lc = modeling.realize_lc(self.obs, self.source, z=z)
+        self.assertEqual(expected_x0, simulated_lc.meta['x0'])
+
+    def test_meta_includes_all_params(self):
+        """Test all param values are included in meta data, not just those
+        specified as kwargs.
+        """
+
+        expected_params = modeling.get_model_with_pwv(self.source).param_names
+        simulated_lc = modeling.realize_lc(self.obs, self.source, z=0.5)
+        meta_params = list(simulated_lc.meta.keys())
+        self.assertListEqual(expected_params, meta_params)
+
+    def test_raises_for_z_0(self):
+        """Test a value error is raised for simulating z==0"""
+
+        self.assertRaises(ValueError, modeling.realize_lc, self.obs, self.source, z=0)
+
+
+class TestLCIteration(TestCase):
     """Tests for light-curve simulation"""
 
     def setUp(self):
@@ -109,46 +186,15 @@ class TestLCSimulation(TestCase):
         self.z_vals = 0.01, 1
         self.source = 'salt2-extended'
         self.observations = modeling.create_observations_table()
-        self.lc_iter = modeling.iter_lc_realizations(
+        self.lc_iter = modeling.iter_lcs(
             self.observations,
             self.source,
             self.pwv_vals,
             self.z_vals,
             verbose=False)
 
-    def test_correct_meta_data(self):
-        """Test light-curve meta data reflects expected simulation params"""
-
-        for pwv in self.pwv_vals:
-            for z in self.z_vals:
-                x0 = modeling.calc_x0_for_z(z, self.source)
-                expected_meta = {'t0': 0, 'pwv': pwv, 'z': z, 'x0': x0}
-                self.assertEqual(expected_meta, next(self.lc_iter).meta)
-
-    def assertSimValuesEqualObs(self, key, lc=None):
-        """Assert values in the observation table match values in the
-        light-curve table.
-
-        Args:
-            key  (str): Name of the column to test
-            lc (Table): Light-curve table to test against observations
-        """
-
-        if not lc:
-            lc = next(self.lc_iter)
-
-        obs_times = self.observations[key]
-        sim_times = lc[key]
-        self.assertSequenceEqual(list(obs_times), list(sim_times))
-
-    def test_obs_table_matches_simulation(self):
-        """Test band and time values in the simulated light-curves match the
-         observations table """
-
-        self.assertSimValuesEqualObs('time')
-        self.assertSimValuesEqualObs('band')
-
     def test_return_is_iter(self):
-        """Test the returned light-curve collection is an generator"""
+        """Test the return is a generator or Tables"""
 
         self.assertIsInstance(self.lc_iter, types.GeneratorType)
+        self.assertIsInstance(next(self.lc_iter), Table)

@@ -9,7 +9,7 @@ from pathlib import Path
 import numpy as np
 import sncosmo
 from astropy.cosmology import FlatLambdaCDM
-from astropy.table import Column, Table
+from astropy.table import Table
 from pwv_kpno import pwv_atm
 from tqdm import tqdm
 
@@ -148,51 +148,43 @@ def create_observations_table(
     return observations
 
 
-def iter_lc_simulations(obs, source, pwv_arr, z_arr, verbose=True):
-    """Iterator over simulated light-curves for combination of PWV and z values
+def realize_lc(obs, source, snr=.05, **params):
+    """Simulate a SN light-curve for given parameters
 
-    Wrapper for the ``sncosmo.realize_lcs`` functionality that is less memory
-    intensive than using the default behavior of simulating all light-curves in
-    memory at once.
-
-    .. important:: If you are not specifically looking for the the behavior of
-       ``sncosmo.realize_lcs``, consider using the ``iter_lc_realizations``
-       method.
+    Light-curves are simulated for the given parameters without any of
+    the added effects from ``sncosmo.realize_lc``.
 
     Args:
         obs       (Table): Observation cadence
         source   (Source): The sncosmo source to use in the simulations
-        pwv_arr (ndarray): Array of PWV values
-        z_arr   (ndarray): Array of redshift values
-        verbose    (bool): Show a progress bar
+        snr       (float): Signal to noise ratio
+        **params         : Values for any model parameters
 
     Yields:
         Astropy table for each PWV and redshift
     """
 
     model = get_model_with_pwv(source)
-    arg_iter = itertools.product(pwv_arr, z_arr)
+    model.update(params)
 
-    if verbose:
-        iter_total = len(pwv_arr) * len(z_arr)
-        arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
+    z = params.get('z', model['z'])
+    model.set(x0=params.get('x0', calc_x0_for_z(z, source)))
 
-    for pwv, z in arg_iter:
-        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, source)}
-
-        # Some versions of sncosmo mutate arguments so we use copy to be safe
-        param_list = [params.copy()]
-        light_curve = sncosmo.realize_lcs(obs, model, param_list)[0]
-        light_curve['zp'] = Column(light_curve['zp'], dtype=float)
-
-        light_curve.meta = params
-        yield light_curve
+    light_curve = Table()
+    light_curve['flux'] = model.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
+    light_curve['fluxerr'] = light_curve['flux'] * snr
+    light_curve['zp'] = obs['zp'][0]
+    light_curve['zpsys'] = obs['zpsys'][0]
+    light_curve['time'] = obs['time']
+    light_curve['band'] = obs['band']
+    light_curve.meta = dict(zip(model.param_names, model.parameters))
+    return light_curve
 
 
-def iter_lc_realizations(obs, source, pwv_arr, z_arr, snr=.1, verbose=True):
-    """Iterator over realized light-curves for combination of PWV and z values
+def iter_lcs(obs, source, pwv_arr, z_arr, snr=.05, verbose=True):
+    """Iterator over SN light-curves for combination of PWV and z values
 
-    Light-curves are realized for the given parameters without any of
+    Light-curves are simulated for the given parameters without any of
     the added effects from ``sncosmo.realize_lc``.
 
     Args:
@@ -200,30 +192,18 @@ def iter_lc_realizations(obs, source, pwv_arr, z_arr, snr=.1, verbose=True):
         source   (Source): The sncosmo source to use in the simulations
         pwv_arr (ndarray): Array of PWV values
         z_arr   (ndarray): Array of redshift values
+        snr       (float): Signal to noise ratio
         verbose    (bool): Show a progress bar
 
     Yields:
         Astropy table for each PWV and redshift
     """
 
-    model = get_model_with_pwv(source)
     arg_iter = itertools.product(pwv_arr, z_arr)
-
     if verbose:
         iter_total = len(pwv_arr) * len(z_arr)
         arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
 
     for pwv, z in arg_iter:
         params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, source)}
-        model.update(params)
-
-        light_curve = Table()
-        light_curve['flux'] = model.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
-        light_curve['fluxerr'] = light_curve['flux'] * .1
-        light_curve['zp'] = obs['zp'][0]
-        light_curve['zpsys'] = obs['zpsys'][0]
-        light_curve['time'] = obs['time']
-        light_curve['band'] = obs['band']
-        light_curve.meta = params
-
-        yield light_curve
+        yield realize_lc(obs, source, snr, **params)
