@@ -8,7 +8,7 @@ Plot summaries:
 +------------------------------+----------------------------------------------+
 | Function                     | Description                                  |
 +==============================+==============================================+
-| ``plot_delta_mag_vs_z``      | Single panel, muti-line plot of change in    |
+| ``plot_delta_mag_vs_z``      | Single panel, multi-line plot of change in   |
 |                              | magnitude vs z. Color coded by PWV.          |
 +------------------------------+----------------------------------------------+
 | ``plot_delta_mag_vs_pwv``    | Single panel, multi-line plot for change in  |
@@ -41,7 +41,6 @@ from matplotlib.ticker import MultipleLocator
 from pwv_kpno import pwv_atm
 
 from . import modeling
-from . import sn_magnitudes
 
 
 def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
@@ -108,6 +107,7 @@ def plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
     axis.set_ylabel(r'$\Delta m$', fontsize=20)
 
 
+# noinspection PyUnusedLocal
 def plot_derivative_mag_vs_z(pwv_arr, z_arr, slope_arr, axis=None):
     """Plot the delta mag / delta PWV as a function of redshift
 
@@ -398,6 +398,7 @@ def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
     plt.tight_layout()
 
 
+# noinspection PyUnusedLocal
 def plot_delta_mu(source, mu, pwv_arr, z_arr):
     """Plot the variation in x0 as a function of redshift and PWV
 

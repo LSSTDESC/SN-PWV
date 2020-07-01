@@ -64,7 +64,7 @@ def tabulate_mag(source, pwv_arr, z_arr, bands, verbose=True):
 
 
 def tabulate_fiducial_mag(source, z_arr, bands, fid_pwv_dict):
-    """Get SN magnitudes corresponding to the fiducual atmosphere
+    """Get SN magnitudes corresponding to the fiducial atmosphere
 
     Returns a dictionary of the form
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
@@ -109,6 +109,8 @@ def correct_mag(source, mag, params, alpha=modeling.alpha, beta=modeling.beta):
         source     (str): Source of the model used to fit the given magnitudes
         mag    (ndarray): (n)d array of magnitudes for pwv and redshift
         params (ndarray): (n+1)d array with dimensions for pwv, redshift, parameter
+        alpha    (float): Alpha parameter value
+        beta     (float): Beta parameter value
 
     Returns:
         Array of calibrated magnitudes with same dimensions as ``mag``
@@ -175,7 +177,7 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
 
 
 def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fiducial_pwv_dict):
-    """Get fitted SN magnitudes corresponding to the fiducual atmosphere
+    """Get fitted SN magnitudes corresponding to the fiducial atmosphere
 
     Returns a dictionary of the form
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
@@ -185,7 +187,7 @@ def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fiducial_pwv_dict):
         obs              (Table): Array of light-curves to fit
         vparams           (list): Parameters to vary with the fit
         z_arr          (ndarray): Array of redshift values
-        band               (str): Name of band to return mag for
+        bands              (str): Name of band to return mag for
         fiducial_pwv_dict (dict): Config dictionary for fiducial atmosphere
 
     Returns:

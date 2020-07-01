@@ -227,7 +227,6 @@ def subtract_ref_star_slope(mag_slope, pwv_config, reference_type='G2'):
     """Determine (delta magnitude) / (delta pwv) relative to a reference star
 
     Args:
-        band           (str): Name of the bandpass
         mag_slope  (ndarray): 1d array of slope values
         pwv_config    (dict): Config dictionary for fiducial atmosphere
         reference_type (str): Type of reference star (Default 'G2')
