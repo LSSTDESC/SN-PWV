@@ -18,11 +18,11 @@ _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
 from sn_analysis.utils import register_decam_filters
-from sn_analysis import modeling
+from sn_analysis import modeling, reference
 
 # SNCosmo source to use when plotting
 SOURCE = 'salt2-extended'
-BANDS = tuple(f'decam_{b}' for b in 'ugriz')
+BANDS = tuple(f'decam_{b}' for b in 'riz')
 register_decam_filters(force=True)
 
 
@@ -32,17 +32,17 @@ class SimulatedParamWidgets:
     top_section_div = models.Div(text='<h2>Simulated Parameters</h2>')
 
     # User input widgets for setting model parameters
-    sim_z_slider = models.Slider(start=0.001, end=1, value=.1, step=.001, title='z')
-    sim_t0_slider = models.Slider(start=-10, end=10, value=0, step=.001, title='t0')
-    sim_x0_slider = models.Slider(start=0.001, end=2, value=.1, step=.001, title='x0')
-    sim_x1_slider = models.Slider(start=-1, end=1, value=0, step=.001, title='x1')
-    sim_c_slider = models.Slider(start=-1, end=1, value=0, step=.001, title='c')
+    sim_z_slider = models.Slider(start=0.001, end=1, value=.1, step=.01, title='z')
+    sim_t0_slider = models.Slider(start=-10, end=10, value=0, step=.01, title='t0')
+    sim_x0_slider = models.Slider(start=0.001, end=2, value=.1, step=.01, title='x0')
+    sim_x1_slider = models.Slider(start=-1, end=1, value=0, step=.01, title='x1')
+    sim_c_slider = models.Slider(start=-1, end=1, value=0, step=.01, title='c')
     sampling_input = models.TextInput(value='1', title='Sampling (Days):')
-    sim_pwv_slider = models.Slider(start=-0, end=15, value=4, step=.1, title='PWV')
+    sim_pwv_slider = models.Slider(start=-0, end=15, value=4, step=.5, title='PWV')
     plot_button = models.Button(label='Plot Light-Curve', button_type='success')
 
     snr_input = models.TextInput(value='10.0', title='SNR:', default_size=220)
-    checkbox = models.CheckboxGroup(labels=["Plot SNR",], active=[0])
+    checkbox = models.CheckboxGroup(labels=["Plot SNR", 'Subtract Reference Star'], active=[0])
 
     # Having all inputs as a list is useful when constructing layouts
     # as it establishes the default column order
@@ -145,6 +145,11 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
             c=self.sim_c_slider.value,
             pwv=self.sim_pwv_slider.value
         )
+
+        if 1 in self.checkbox.active:
+            self.sim_data = reference.subtract_ref_from_lc(
+                self.sim_data, self.sim_data.meta['pwv']
+            )
 
         # Update the plot with simulated data
         for band, color in zip(BANDS, palette):
