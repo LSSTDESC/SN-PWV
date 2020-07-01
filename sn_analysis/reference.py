@@ -139,13 +139,9 @@ def subtract_ref_from_lc(lc_table, pwv, reference_type='G2'):
     """
 
     table_copy = lc_table.copy()
-    table_copy['scale'] = np.nan
     for band in set(table_copy['band']):
-        # The reference flux normalized to the fiducial atm
         ref_flux = ref_star_norm_flux(band, pwv, reference_type)
-
         table_copy['flux'][table_copy['band'] == band] /= ref_flux
-        table_copy['scale'][table_copy['band'] == band] = ref_flux
 
     return table_copy
 
