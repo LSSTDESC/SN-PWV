@@ -111,6 +111,7 @@ class TestLCRealization(TestCase):
         self.source = 'salt2-extended'
 
         z = 0.5
+        self.snr = 12
         self.params = dict(
             pwv=0.01,
             x1=.8,
@@ -121,7 +122,15 @@ class TestLCRealization(TestCase):
         )
 
         self.obs = modeling.create_observations_table()
-        self.simulated_lc = modeling.realize_lc(self.obs, self.source, **self.params)
+        self.simulated_lc = modeling.realize_lc(self.obs, self.source, self.snr, **self.params)
+
+    def test_simulated_snr(self):
+        """Test SNR of simulated light-curve equals snr kwarg"""
+
+        simulated_snr = self.simulated_lc['flux'] / self.simulated_lc['fluxerr']
+        simulated_snr = np.round(simulated_snr, 3).tolist()
+        expected_snr = np.full_like(simulated_snr, self.snr).tolist()
+        self.assertListEqual(simulated_snr, expected_snr)
 
     def test_table_columns(self):
         """Test simulated LC table has correct column names"""
