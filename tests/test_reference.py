@@ -84,7 +84,7 @@ class ReferenceStarFileParsing(TestCase):
 
 
 class ReferenceStarFlux(TestCase):
-    """Tests for the ``ref_star_flux`` function"""
+    """Tests for the ``ref_star_norm_flux`` function"""
 
     def assert_ref_flux_is_one(self, band):
         """Assert flux is 1 at the fiducial PWV in a given band
@@ -94,19 +94,19 @@ class ReferenceStarFlux(TestCase):
         """
 
         config_pwv = reference.get_config_pwv_vals()['reference_pwv']
-        returned_flux = reference.ref_star_flux(band, config_pwv)
+        returned_flux = reference.ref_star_norm_flux(band, config_pwv)
         self.assertEqual(1, returned_flux)
 
     def test_pwv_arg_is_float(self):
         """Test return is a float when pwv arg is a float"""
 
-        returned_flux = reference.ref_star_flux('decam_z', 5)
+        returned_flux = reference.ref_star_norm_flux('decam_z', 5)
         self.assertIsInstance(returned_flux, float)
 
     def test_pwv_arg_is_array(self):
         """Test return is an array when pwv arg is an array"""
 
-        n1d_flux = reference.ref_star_flux('decam_z', [5, 6])
+        n1d_flux = reference.ref_star_norm_flux('decam_z', [5, 6])
         self.assertIsInstance(n1d_flux, np.ndarray)
         self.assertEqual(1, np.ndim(n1d_flux))
 
@@ -118,7 +118,7 @@ class ReferenceStarFlux(TestCase):
 
 
 class ReferenceStarMag(TestCase):
-    """Tests for the ``ref_star_mag`` function"""
+    """Tests for the ``ref_star_norm_mag`` function"""
 
     def assert_zero_ref_mag(self, band):
         """Assert magnitude is zero at the fiducial PWV in a given band
@@ -128,19 +128,19 @@ class ReferenceStarMag(TestCase):
         """
 
         config_pwv = reference.get_config_pwv_vals()['reference_pwv']
-        returned_mag = reference.ref_star_mag(band, [config_pwv])[0]
+        returned_mag = reference.ref_star_norm_mag(band, [config_pwv])[0]
         self.assertEqual(0, returned_mag)
 
     def test_pwv_arg_is_float(self):
         """Test return is a float when pwv arg is a float"""
 
-        returned_mag = reference.ref_star_mag('decam_z', 5)
+        returned_mag = reference.ref_star_norm_mag('decam_z', 5)
         self.assertIsInstance(returned_mag, float)
 
     def test_pwv_arg_is_array(self):
         """Test return is an array when pwv arg is an array"""
 
-        n1d_mag = reference.ref_star_flux('decam_z', [5, 6])
+        n1d_mag = reference.ref_star_norm_flux('decam_z', [5, 6])
         self.assertIsInstance(n1d_mag, np.ndarray)
         self.assertEqual(1, np.ndim(n1d_mag))
 
@@ -161,7 +161,7 @@ class SubtractRefStarArray(TestCase):
         # Determine the reference star magnitude
         test_band = 'decam_z'
         test_pwv = 10
-        ref_mag = reference.ref_star_mag(test_band, test_pwv, 'M9')
+        ref_mag = reference.ref_star_norm_mag(test_band, test_pwv, 'M9')
 
         # Subtract the reference star from an array of zero magnitudes
         zeros = [0, 0, 0]
@@ -191,8 +191,8 @@ class SubtractRefStarSlope(TestCase):
         slope_end_pwv = 6
 
         # Calculate actual slope
-        mag_slope_start = reference.ref_star_mag(test_band, slope_start_pwv)
-        mag_slope_end = reference.ref_star_mag(test_band, slope_end_pwv)
+        mag_slope_start = reference.ref_star_norm_mag(test_band, slope_start_pwv)
+        mag_slope_end = reference.ref_star_norm_mag(test_band, slope_end_pwv)
         true_slope = (mag_slope_end - mag_slope_start) / (slope_end_pwv - slope_start_pwv)
 
         # Get returned slope
