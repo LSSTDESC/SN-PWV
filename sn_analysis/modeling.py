@@ -13,6 +13,8 @@ from astropy.table import Table
 from pwv_kpno import pwv_atm
 from tqdm import tqdm
 
+from . import reference
+
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
 # From Betoule 2014
@@ -148,7 +150,7 @@ def create_observations_table(
     return observations
 
 
-def realize_lc(obs, source, snr=.05, **params):
+def realize_lc(obs, source, snr=.05,  **params):
     """Simulate a SN light-curve for given parameters
 
     Light-curves are simulated for the given parameters without any of
@@ -167,21 +169,18 @@ def realize_lc(obs, source, snr=.05, **params):
     model = get_model_with_pwv(source)
     model.update(params)
 
-    z = params.get('z', model['z'])
-    model.set(x0=params.get('x0', calc_x0_for_z(z, source)))
+    # Set default x0 value according to assumed cosmology and the model redshift
+    x0 = params.get('x0', calc_x0_for_z(model['z'], source))
+    model.set(x0=x0)
 
-    light_curve = Table()
+    light_curve = obs[['time', 'band', 'zp', 'zpsys']]
     light_curve['flux'] = model.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
-    light_curve['fluxerr'] = light_curve['flux'] * snr
-    light_curve['zp'] = obs['zp'][0]
-    light_curve['zpsys'] = obs['zpsys'][0]
-    light_curve['time'] = obs['time']
-    light_curve['band'] = obs['band']
+    light_curve['fluxerr'] = light_curve['flux'] / snr
     light_curve.meta = dict(zip(model.param_names, model.parameters))
     return light_curve
 
 
-def iter_lcs(obs, source, pwv_arr, z_arr, snr=.05, verbose=True):
+def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
     """Iterator over SN light-curves for combination of PWV and z values
 
     Light-curves are simulated for the given parameters without any of
