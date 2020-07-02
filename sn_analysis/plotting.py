@@ -399,7 +399,7 @@ def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
 
 
 # noinspection PyUnusedLocal
-def plot_delta_mu(source, mu, pwv_arr, z_arr):
+def plot_delta_mu(source, mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
     """Plot the variation in x0 as a function of redshift and PWV
 
     Args:
@@ -409,7 +409,7 @@ def plot_delta_mu(source, mu, pwv_arr, z_arr):
         z_arr   (ndarray): Array of redshift values
     """
 
-    cosmo_mu = modeling.betoule_cosmo.distmod(z_arr).value
+    cosmo_mu = cosmo.distmod(z_arr).value
     delta_mu = mu - cosmo_mu
 
     fig, axes = plt.subplots(1, 3, figsize=(9, 3))
