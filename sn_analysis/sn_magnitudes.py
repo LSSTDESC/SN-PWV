@@ -264,11 +264,15 @@ def calc_mu_for_model(model):
         mu = m_B - M_B
     """
 
+    dilation_factor = 1 + model['z']
+    time_dilation_mag_offset = - 2.5 * np.log10(dilation_factor)
+
     b_band = sncosmo.get_bandpass('standard::b')
-    b_band_rest = b_band.shifted(1 + model['z'])
-    apparent = model.bandmag(b_band_rest, 'AB', 0)
-    absolute = model.source_peakabsmag(b_band, 'AB')
-    return apparent - absolute
+    rest_band = b_band.shifted(dilation_factor)
+
+    apparent_mag = model.bandmag(rest_band, 'ab', 0) - time_dilation_mag_offset
+    absolute_mag = model.source_peakabsmag(b_band, 'ab', cosmo=modeling.betoule_cosmo)
+    return apparent_mag - absolute_mag
 
 
 def calc_mu_for_params(source, params):
@@ -316,5 +320,4 @@ def calc_calibration_factor_for_params(source, params):
         i, param in enumerate(model.param_names)
     }
 
-    cal_factor = modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']
-    return params_dict, cal_factor
+    return modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']
