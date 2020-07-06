@@ -11,7 +11,7 @@ import numpy as np
 import sncosmo
 from astropy.table import Table
 
-filter_dir = Path(__file__).resolve().parent.parent / 'data' / 'filters'
+FILTER_DIR = Path(__file__).resolve().parent.parent / 'data' / 'filters'
 
 
 def register_decam_filters(force=False):
@@ -22,11 +22,12 @@ def register_decam_filters(force=False):
     """
 
     # Register each filter
+    ctio_filter_dir = FILTER_DIR / 'ctio'
     for filter_name in 'ugrizY':
         # Iterate over bands with and without the atmosphere
         for extension in ('', '_filter'):
             band_name = filter_name + extension
-            filter_path = filter_dir / f'CTIO_DECam.{band_name}.dat'
+            filter_path = ctio_filter_dir / f'CTIO_DECam.{band_name}.dat'
 
             wave, transmission = np.genfromtxt(filter_path).T
             new_band = sncosmo.Bandpass(wave, transmission)
@@ -34,7 +35,7 @@ def register_decam_filters(force=False):
             sncosmo.register(new_band, force=force)
 
     # Register the CCD response function
-    ccd_path = filter_dir / 'DECam_CCD_QE.txt'
+    ccd_path = ctio_filter_dir / 'DECam_CCD_QE.txt'
     ccd_wave, ccd_trans = np.genfromtxt(ccd_path).T
     ccd_wave_angstroms = ccd_wave * 10  # Convert from nm to Angstroms.
     sncosmo_ccd = sncosmo.Bandpass(ccd_wave_angstroms, ccd_trans)
@@ -42,7 +43,7 @@ def register_decam_filters(force=False):
     sncosmo.register(sncosmo_ccd, force=force)
 
     # Register the fiducial atmosphere used for the filters
-    throughput = Table.read(filter_dir / f'CTIO_DECam.throughput.dat', format='ascii')
+    throughput = Table.read(ctio_filter_dir / f'CTIO_DECam.throughput.dat', format='ascii')
     atm = sncosmo.Bandpass(throughput['wave'], throughput['atm'])
     atm.name = 'DECam_atm'
     sncosmo.register(atm, force=force)
