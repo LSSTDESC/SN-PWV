@@ -8,7 +8,7 @@ from unittest import TestCase
 import numpy as np
 
 from sn_analysis import modeling, sn_magnitudes
-from sn_analysis.utils import register_decam_filters
+from sn_analysis.filters import register_decam_filters
 
 register_decam_filters(force=True)
 

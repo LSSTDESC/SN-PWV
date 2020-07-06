@@ -17,7 +17,7 @@ from bokeh.plotting import figure
 _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
-from sn_analysis.utils import register_decam_filters
+from sn_analysis.filters import register_decam_filters
 from sn_analysis import modeling, reference
 
 # SNCosmo source to use when plotting
