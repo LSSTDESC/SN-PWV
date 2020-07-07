@@ -2,10 +2,7 @@
 # -*- coding: UTF-8 -*-
 
 """Tabulate and save to disk stellar flux values through LSST bandpasses at
-various PWV concentrations. Much of the tapas related logic (e.g. loading the
-TAPAS atmospheric transmissions) could be removed from this module as it is
-not used. However, it is kept for reference incase design decisions change
-in the future.
+various PWV concentrations.
 
 This script is heavily based on work undertaken by Ashely Baker.
 """
@@ -14,9 +11,9 @@ from pathlib import Path
 
 import astropy.io.fits as fits
 import numpy as np
+import pandas as pd
 import sncosmo
 from scipy.integrate import trapz
-from scipy.interpolate import interp1d
 from tqdm import tqdm
 
 from sn_analysis import filters
@@ -25,30 +22,14 @@ from sn_analysis.transmission import trans_for_pwv
 filters.register_lsst_filters()
 
 # Define spectral types this script will consider
-SPEC_TYPES = ['G2', 'M4', 'M9', 'M0', 'M1', 'M2', 'M3', 'M5', 'K2', 'K9', 'K5', 'F5']
+SPEC_TYPES = ('G2', 'M4', 'M9', 'M0', 'M1', 'M2', 'M3', 'M5', 'K2', 'K9', 'K5', 'F5')
 
 # Set default data location and PWV sampling
 DATA_DIR = Path(__file__).parent
-PWV_VALS = np.arange(0, 20, 0.25)
+PWV_VALS = np.arange(0, 20, 0.5)
 
 
-def interp(x, xp, yp, fill=0):
-    """Interpolate data using scipy interp1d
-
-    Args:
-        x  (ndarray): Points to interpolate for
-        xp (ndarray): x values to interpolate from
-        yp (ndarray): y values to interpolate from
-        fill (float): Fill value for xnew values that are out of range
-
-    Returns:
-        Interpolated values as a numpy array
-    """
-
-    return interp1d(xp, yp, fill_value=fill, bounds_error=False)(x)
-
-
-def load_phoenix(fpath, wave_start=750, wave_end=780):
+def _read_stellar_spectra_path(fpath):
     """Load fits file with stellar spectrum from phoenix
 
     Fits files can be downloaded from:
@@ -57,14 +38,14 @@ def load_phoenix(fpath, wave_start=750, wave_end=780):
     converts from egs/s/cm2/cm to phot/cm2/s/nm using
       https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
 
+    Flux values are returned in phot/cm2/s/angstrom and are index by
+    wavelength values in Angstroms.
+
     Args:
         fpath  (str, Path): Path of the file to read
-        wave_start (float): Only return fluxes for wavelengths > this value
-        wave_end   (float): Only return fluxes for wavelengths < this value
 
     Returns:
-        - An array of wavelength values
-        - An array of flux values
+        Flux values as a pandas Series
     """
 
     # Load spectral data
@@ -76,133 +57,64 @@ def load_phoenix(fpath, wave_start=750, wave_end=780):
         lam = infile[0].data  # angstroms
 
     angstroms_per_cm = 1e8
-    angstroms_per_nm = 10
     conversion_factor = 5.03 * 10 ** 7  # See https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
     ergs_per_photon = conversion_factor * lam
 
     # Evaluate unit conversion
     spec /= angstroms_per_cm  # ergs/s/cm2/cm into ergs/s/cm2/Angstrom
     spec *= ergs_per_photon  # into phot/cm2/s/angstrom
-    spec *= angstroms_per_nm  # into phot/cm2/s/nm
 
-    # Return only the requested subarray
-    isub = np.where((lam > wave_start * angstroms_per_nm) & (lam < wave_end * angstroms_per_nm))[0]
-    return lam[isub] / angstroms_per_nm, spec[isub]
+    indices = (lam >= 3000) & (lam <= 12000)
+    return pd.Series(spec[indices], index=lam[indices])
 
 
-def load_tapas_data(data_dir):
-    """Load telluric and filters files
+def get_stellar_spectra(spectype):
+    """Load spectrum for given spectral type
 
-    Loads LSST filters and TAPAS data from the given directory. Data is
-    re-sampled to the TAPAS telluric wavelength grid.
+    Flux values are returned in phot/cm2/s/angstrom and are index by
+    wavelength values in Angstroms.
 
     Args:
-        data_dir (Path): Directory to read data from
+        spectype (str): Spectral type (e.g., G2)
 
     Returns:
-        A dictionary of arrays
-
-    Returned Dictionary Values:
-        xtap: Tapas wavelength array
-        ytap: Tapas H20 transmission profile
-        cv: H20 column density (float)
-        yray: Tapas rayleigh scattering profile
-        <ugrizy>: LSST filter transmission profiles without the atmospehre
-        <G2, M4, ...>: Stellar spectra
+        Flux values as a pandas Series
     """
 
-    data = {}
-    with fits.open(data_dir / 'TAPAS' / 'tapas_kpno_h2o.fits') as tapas:
-        # We dont need after 1099 and get nans past there anyways from LSST filters
-        data['xtap'] = tapas[1].data['wavelength'][::-1][0:3440000]
-        data['ytap'] = tapas[1].data['transmittance'][::-1][0:3440000]
-        data['cv'] = float(tapas[1].header['H2OCV'])
-
-    # Load TAPAS rayleigh scattering profile
-    rayleigh = fits.getdata(data_dir / 'TAPAS' / 'tapas_rayleigh.fits')
-    data['yray'] = interp(
-        x=data['xtap'],
-        xp=rayleigh['wavelength'][::-1],
-        yp=rayleigh['transmittance'][::-1])
-
-    # Load LSST filter profiles
-    angstroms_in_nm = 10
-    for band_abbrev in 'ugrizy':
-        band = sncosmo.get_bandpass(f'lsst_hardware_{band_abbrev}')
-        band_wave_in_nm = band.wave / angstroms_in_nm
-        data[band_abbrev] = interp(data['xtap'], band_wave_in_nm, band.trans)
-
-    # Load TAPAS spectra for different spectral types
-    stel_dir = data_dir / 'stellar_spectra'
-    for i, spectype in enumerate(SPEC_TYPES):
-        stelname = next(stel_dir.glob(spectype + '*.fits'))
-        lam, flux = load_phoenix(stelname, wave_start=500, wave_end=1200)
-        data[spectype] = interp(data['xtap'], lam, flux)
-
-    return data
+    # Load spectra for different spectral types
+    stellar_spectra_dir = DATA_DIR / 'stellar_spectra'
+    path = next(stellar_spectra_dir.glob(spectype + '*.fits'))
+    return _read_stellar_spectra_path(path)
 
 
-def calculate_flux_pwv(data, spectrum, pwv):
+def calculate_lsst_fluxes(spectrum, pwv):
     """Integrate final spectrum after multiplying by rayleigh and H20 absorption
 
-    For more information on the ``data`` argument, see ``load_tapas_data``.
+    For more information on the ``data`` argument, see ``get_stellar_spectra``.
 
     Args:
-        data        (dict): Dictionary of tapas and repository data
-        spectrum (ndarray): Spectrum to calculate flux for
-        pwv        (float): PWV in mm to calculate flux for
+        spectrum (Series): Spectrum to calculate flux for
+        pwv       (float): PWV in mm to calculate flux for
 
     Returns:
         List of flux values for the LSST ugrizy bands
     """
 
-    # create final spectrum at PWV using tapas (normalize by column density, cv, of template spectrum)
-    # airmass=1.0
-    # spec_with_trans = spectrum * data['yray'] ** airmass * np.abs(data['ytap']) ** (airmass * pwv / data['cv'])
-
-    # Create final spectrum using pwv_kpno
-    spec_with_trans = spectrum * trans_for_pwv(pwv, data['xtap'], resolution=5)
+    transmission = trans_for_pwv(pwv, spectrum.index, resolution=5)
+    spec_with_trans = spectrum * transmission
 
     # Integrate spectrum in each bandpass
-    return [trapz(data[b] * spec_with_trans, x=data['xtap']) for b in 'ugrizy']
+    fluxes = []
+    for band_abbrev in 'ugrizy':
+        band = sncosmo.get_bandpass(f'lsst_hardware_{band_abbrev}')
+        band_transmission = band(spec_with_trans.index)
+        flux = trapz(band_transmission * spec_with_trans, x=spec_with_trans.index)
+        fluxes.append(flux)
+
+    return fluxes
 
 
-def calc_flux_pwv_arr(data, pwv_vals):
-    """Calculate flux in the LSST ugrizy bands as a function of PWV
-
-    For more information on the ``data`` argument, see ``load_tapas_data``.
-
-    Args:
-        data     (dict): Dictionary of tapas and repository data
-        pwv_vals (iter): Collection of PWV values to determine fluxes for
-
-    Returns:
-        Lists of fluxes in the <ugrizy> bands for each spectral type and PWV
-    """
-
-    # initialize flux arrays
-    array_size = (len(SPEC_TYPES), len(pwv_vals))
-    uflux = np.zeros(array_size)
-    gflux = np.zeros(array_size)
-    rflux = np.zeros(array_size)
-    iflux = np.zeros(array_size)
-    zflux = np.zeros(array_size)
-    yflux = np.zeros(array_size)
-
-    with tqdm(total=np.product(array_size)) as pbar:
-        for i, spectype in enumerate(SPEC_TYPES):
-            pbar.set_description(f'Current spectral type {spectype} ({i} / {len(SPEC_TYPES)})')
-
-            for j, pwv in enumerate(pwv_vals):
-                uflux[i, j], gflux[i, j], rflux[i, j], iflux[i, j], zflux[i, j], yflux[i, j] = \
-                    calculate_flux_pwv(data, data[spectype], pwv)
-
-                pbar.update(1)
-
-    return uflux, gflux, rflux, iflux, zflux, yflux
-
-
-def run(out_dir, data_dir=DATA_DIR, pwv_vals=PWV_VALS):
+def run(out_dir, spec_types=SPEC_TYPES, pwv_vals=PWV_VALS):
     """Sample stellar flux in LSST bandpasses as a function of PWV
 
     Results are tabulated for multiple spectral types. Each spectral type
@@ -214,15 +126,21 @@ def run(out_dir, data_dir=DATA_DIR, pwv_vals=PWV_VALS):
         pwv_vals (pwv_vals): PWV values to sample for if not default values
     """
 
-    data = load_tapas_data(data_dir)
-    uflux, gflux, rflux, iflux, zflux, yflux = calc_flux_pwv_arr(data, pwv_vals)
+    output_file_header = 'PWV(mm) u g r i z y'
+    total_iters = len(spec_types) * len(pwv_vals)
+    with tqdm(total=total_iters) as pbar:
+        for i, spectype in enumerate(spec_types):
+            out_path = out_dir / f'{spectype}.txt'
+            spectrum = get_stellar_spectra(spectype)
+            pbar.set_description(f'Current spectral type {spectype} ({i} / {len(spec_types)})')
 
-    # save output
-    output_file_header = 'PWV uflux gflux rflux iflux zflux yflux'
-    for i, spectype in enumerate(SPEC_TYPES):
-        out_path = out_dir / f'{spectype}.txt'
-        out_data = np.vstack([PWV_VALS, uflux[i], gflux[i], rflux[i], iflux[i], zflux[i], yflux]).T
-        np.savetxt(out_path, out_data, header=output_file_header)
+            spectrum_flux = np.zeros((len(pwv_vals), 7))
+            spectrum_flux[:, 0] = pwv_vals
+            for i, pwv in enumerate(pwv_vals):
+                spectrum_flux[i, 1:] = calculate_lsst_fluxes(spectrum, pwv)
+                pbar.update(1)
+
+            np.savetxt(out_path, spectrum_flux, header=output_file_header)
 
 
 if __name__ == '__main__':
