@@ -11,7 +11,8 @@ import numpy as np
 import pandas as pd
 import sncosmo
 from astropy.table import Table
-
+import sncosmo
+sncosmo.registry.bandpasses
 FILTER_DIR = Path(__file__).resolve().parent.parent / 'data' / 'filters'
 
 
@@ -68,7 +69,7 @@ def register_lsst_filters(force: bool = False):
         force: Re-register a band if it is already registered
     """
 
-    lsst_filter_dir = FILTER_DIR / 'lsst'
+    lsst_filter_dir = FILTER_DIR / 'lsst_baseline'
     nm_in_angstrom = 10
 
     # Define file names for each optical component
@@ -103,7 +104,11 @@ def register_lsst_filters(force: bool = False):
     #   and the zenith atmos_std.dat atmosphere.
 
     mirrors = response_df.m1 * response_df.m2 * response_df.m3
+    register_sncosmo_filter(mirrors.index, mirrors, 'lsst_mirrors', force)
+
     lenses = response_df.lens1 * response_df.lens2 * response_df.lens3
+    register_sncosmo_filter(lenses.index, lenses, 'lsst_lenses', force)
+
     for band in 'ugrizy':
         filt_name = f'lsst_{band}_no_atm'
         trans = response_df[f'filter_{band}'] * mirrors * lenses * response_df.detector
