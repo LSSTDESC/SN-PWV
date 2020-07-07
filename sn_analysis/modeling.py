@@ -13,8 +13,6 @@ from astropy.table import Table
 from pwv_kpno import pwv_atm
 from tqdm import tqdm
 
-from . import reference
-
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
 # From Betoule 2014
