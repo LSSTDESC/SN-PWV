@@ -1,6 +1,6 @@
-## Baseline throughput curves.  ##
+# LSST Baseline Throughput Curves
 
-Cloned from https://github.com/lsst/throughputs
+This directory contains LSST throughput curves cloned from https://github.com/lsst/throughputs.
 
 The throughput curves in this directory should be considered
 'baseline' for the current behavior of LSST. These curves are
@@ -28,4 +28,4 @@ total_*.dat throughput curves represent the combination of all components in the
 All curves are in nanometers, with throughput represented by a number between 0 and 1.
 
 
-### Information about the source of these files is available in README_SOURCE.md ###
+**Information about the source of these files is available in README_SOURCE.md**
