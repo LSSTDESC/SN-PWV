@@ -79,7 +79,7 @@ class GetReferenceStarDataframe(TestCase):
         """Tests band flux columns are included in the dataframe"""
 
         self.assertTrue(
-            [c for c in self.ref_star_dataframe.columns if c.endswith('_flux')]
+            [c for c in self.ref_star_dataframe.columns if ~c.endswith('_norm')]
         )
 
     def test_includes_normalized_flux(self):
@@ -120,7 +120,7 @@ class GetReferenceStarDataframe(TestCase):
 class InterpNormFlux(TestCase):
     """Tests for the ``interp_norm_flux`` function"""
 
-    test_band = 'z'
+    test_band = 'lsst_hardware_z'
 
     def test_norm_flux_is_1_at_zero_pwv(self):
         """Test flux is 1 at the PWV=0 in the test band"""
@@ -150,7 +150,7 @@ class InterpNormFlux(TestCase):
 class InterpNormMag(TestCase):
     """Tests for the ``interp_norm_mag`` function"""
 
-    test_band = 'z'
+    test_band = 'lsst_hardware_z'
 
     def test_norm_mag_is_zero_at_zero_pwv(self):
         """Test magnitude is zero at the fiducial PWV in a given band"""
@@ -172,13 +172,14 @@ class InterpNormMag(TestCase):
         self.assertEqual(1, np.ndim(n1d_mag))
 
 
-class SubtractRefFromLc(TestCase):
+class DivideRefFromLc(TestCase):
+    """Tests for the ``divide_ref_from_lc`` function"""
 
     def setUp(self):
         # Create a dummy table. We don't care that the flux values
         # are non-physical for this set of tests
         self.test_table = Table()
-        self.test_table['flux'] = np.arange(10, 26)
+        self.test_table['flux'] = np.arange(10, 26, dtype='float')
         self.test_table['band'] = 'lsst_hardware_z'
         self.test_table['zp'] = 25
         self.test_table['zpsys'] = 'ab'
@@ -188,30 +189,41 @@ class SubtractRefFromLc(TestCase):
 
         original_table = self.test_table.copy()
         reference.divide_ref_from_lc(self.test_table, pwv=15)
-        self.assertEqual(original_table, self.test_table)
+        self.assertTrue(all(original_table == self.test_table))
 
     def test_returned_flux_is_scaled(self):
         """Test returned table has scaled flux"""
 
-        self.fail()
+        # Scale the flux values manually
+        test_pwv = 15
+        test_band = self.test_table['band'][0]
+        scale_factor = reference.interp_norm_flux(test_band, test_pwv)
+        expected_flux = list(self.test_table['flux'] / scale_factor)
+
+        # Scale the flux values with ``divide_ref_from_lc`` and check they
+        # match manual results
+        scaled_table = reference.divide_ref_from_lc(self.test_table, pwv=test_pwv)
+        returned_flux = list(scaled_table['flux'])
+        self.assertListEqual(expected_flux, returned_flux)
 
 
 class SubtractRefStarArray(TestCase):
     """Tests for the ``subtract_ref_star_array`` function"""
 
-    def test_recovers_mstar_mag(self):
+    test_band = 'lsst_hardware_z'
+
+    def test_recovers_stellar_mag(self):
         """Subtracting the reference star from an array of zero magnitudes
         should return negative the reference star magnitude"""
 
         # Determine the reference star magnitude
-        test_band = 'decam_z'
         test_pwv = 10
-        ref_mag = reference.interp_norm_mag(test_band, test_pwv, 'M9')
+        ref_mag = reference.interp_norm_mag(self.test_band, test_pwv, 'M9')
 
         # Subtract the reference star from an array of zero magnitudes
         zeros = [0, 0, 0]
         subtracted_mag = reference.subtract_ref_star_array(
-            test_band, zeros, test_pwv, 'M9')
+            self.test_band, zeros, test_pwv, 'M9')
 
         expected_return = [-ref_mag, -ref_mag, -ref_mag]
         self.assertSequenceEqual(expected_return, list(subtracted_mag))
@@ -219,9 +231,8 @@ class SubtractRefStarArray(TestCase):
     def test_ndmin_mismatch_raises(self):
         """Test an error is raise if ndim(pwv) == ndim(norm_mag)"""
 
-        test_band = 'decam_z'
         with self.assertRaises(ValueError):
-            reference.subtract_ref_star_array(test_band, [1, 2, 3], [1, 2, 3])
+            reference.subtract_ref_star_array(self.test_band, [1, 2, 3], [1, 2, 3])
 
 
 class SubtractRefStarSlope(TestCase):
@@ -231,7 +242,7 @@ class SubtractRefStarSlope(TestCase):
         """Subtracting the reference star from an array of zeros
         should return negative the reference slope"""
 
-        test_band = 'decam_z'
+        test_band = 'lsst_hardware_z'
         slope_start_pwv = 2
         slope_end_pwv = 6
 

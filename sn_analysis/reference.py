@@ -124,20 +124,20 @@ def get_ref_star_dataframe(reference_type='G2'):
             f'Data not available for specified star {reference_type}. '
             f'Could not find: {rpath}')
 
-    band_abbrevs = 'ugrizy'
-    names = ['PWV'] + [f'{b}_flux' for b in band_abbrevs]
+    band_names = [f'lsst_hardware_{b}' for b in 'ugrizy']
+    column_names = ['PWV'] + band_names
     reference_star_flux = pd.read_csv(
         rpath,
         sep='\s',
         header=None,
-        names=names,
+        names=column_names,
         comment='#',
         index_col=0,
         engine='python'
     )
 
-    for band in band_abbrevs:
-        band_flux = reference_star_flux[f'{band}_flux']
+    for band in band_names:
+        band_flux = reference_star_flux[f'{band}']
         reference_star_flux[f'{band}_norm'] = band_flux / band_flux.loc[0]
 
     return reference_star_flux
@@ -206,14 +206,14 @@ def divide_ref_from_lc(lc_table, pwv, reference_type='G2'):
     return table_copy
 
 
-def subtract_ref_star_array(band, norm_mag, pwv, reference_type='G2'):
-    """Return reference star magnitudes from an array of normalized magnitudes
+def subtract_ref_star_array(band, mag, pwv, reference_type='G2'):
+    """Subtract reference star magnitudes from an array of magnitudes
 
     ``pwv_arr`` should be one dimension less than ``norm_mag``
 
     Args:
         band           (str): Name of the band to subtract magnitudes for
-        norm_mag   (ndarray): One or 2d array of magnitudes to subtract from
+        mag        (ndarray): One or 2d array of magnitudes to subtract from
         pwv    (float, list): PWV values to get magnitudes for
         reference_type (str): Type of reference to use (Default 'G2')
 
@@ -221,14 +221,14 @@ def subtract_ref_star_array(band, norm_mag, pwv, reference_type='G2'):
        An array of delta magnitude values
    """
 
-    if np.ndim(norm_mag) - np.ndim(pwv) != 1:
+    if np.ndim(mag) - np.ndim(pwv) != 1:
         raise ValueError('``pwv`` should be one dimension less than ``norm_mag``')
 
     ref_mag = interp_norm_mag(band, pwv, reference_type)
     if np.ndim(ref_mag > 0):
         ref_mag = ref_mag[:, None]
 
-    return norm_mag - ref_mag
+    return mag - ref_mag
 
 
 def subtract_ref_star_dict(norm_mag, pwv, reference_type='G2'):
