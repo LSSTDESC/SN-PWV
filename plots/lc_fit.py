@@ -17,13 +17,13 @@ from bokeh.plotting import figure
 _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
-from sn_analysis.filters import register_decam_filters
+from sn_analysis.filters import register_lsst_filters
 from sn_analysis import modeling, reference
 
 # SNCosmo source to use when plotting
 SOURCE = 'salt2-extended'
-BANDS = tuple(f'decam_{b}' for b in 'riz')
-register_decam_filters(force=True)
+BANDS = tuple(f'lsst_hardware_{b}' for b in 'ugriz')
+register_lsst_filters(force=True)
 
 
 class SimulatedParamWidgets:
@@ -38,7 +38,7 @@ class SimulatedParamWidgets:
     sim_x1_slider = models.Slider(start=-1, end=1, value=0, step=.01, title='x1')
     sim_c_slider = models.Slider(start=-1, end=1, value=0, step=.01, title='c')
     sampling_input = models.TextInput(value='1', title='Sampling (Days):')
-    sim_pwv_slider = models.Slider(start=-0, end=15, value=4, step=.5, title='PWV')
+    sim_pwv_slider = models.Slider(start=-0, end=15, value=4, step=.1, title='PWV')
     plot_button = models.Button(label='Plot Light-Curve', button_type='success')
 
     snr_input = models.TextInput(value='10.0', title='SNR:', default_size=220)
@@ -147,7 +147,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         )
 
         if 1 in self.checkbox.active:
-            self.sim_data = reference.subtract_ref_from_lc(
+            self.sim_data = reference.divide_ref_from_lc(
                 self.sim_data, self.sim_data.meta['pwv']
             )
 
