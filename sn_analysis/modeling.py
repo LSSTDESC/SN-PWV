@@ -106,7 +106,7 @@ def calc_x0_for_z(z, source, cosmo=betoule_cosmo, abs_mag=abs_mb, **params):
 
 
 def create_observations_table(
-        phases=range(-20, 50),
+        phases=range(-20, 51),
         bands=('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
         zp=25,
         zpsys='ab',
@@ -127,7 +127,7 @@ def create_observations_table(
     """
 
     phase_arr = np.concatenate([phases for _ in bands])
-    band_arr = np.concatenate([np.full_like(phases, b, dtype='U10') for b in bands])
+    band_arr = np.concatenate([np.full_like(phases, b, dtype='U1000') for b in bands])
     gain_arr = np.full_like(phase_arr, gain)
     skynoise_arr = np.zeros_like(phase_arr)
     zp_arr = np.full_like(phase_arr, zp, dtype=float)
@@ -141,7 +141,7 @@ def create_observations_table(
          'zp': zp_arr,
          'zpsys': zp_sys_arr
          },
-        dtype=[float, 'U100', float, float, float, 'U100']
+        dtype=[float, 'U1000', float, float, float, 'U100']
     )
 
     observations.sort('time')

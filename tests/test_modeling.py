@@ -100,6 +100,17 @@ class TestObservationsTableCreation(TestCase):
         self.assertEqual(
             set(self.phases), set(self.observations_table['time']))
 
+    def test_table_datatypes(self):
+        expected_dtype = np.dtype([
+            ('time', '<f8'),
+            ('band', '<U1000'),
+            ('gain', '<f8'),
+            ('skynoise', '<f8'),
+            ('zp', '<f8'),
+            ('zpsys', '<U100')])
+
+        self.assertEqual(expected_dtype, self.observations_table.dtype)
+
 
 class TestLCRealization(TestCase):
     """Tests for individual light-curve simulation"""
