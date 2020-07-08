@@ -4,7 +4,7 @@
 """Tests for the ``modeling`` module"""
 
 import types
-from unittest import TestCase
+from unittest import TestCase, skip
 
 import numpy as np
 import sncosmo
@@ -25,6 +25,34 @@ class GetModelWithPWV(TestCase):
         model = modeling.get_model_with_pwv('salt2')
         effect_types = [type(eff) for eff in model.effects]
         self.assertIn(modeling.PWVTrans, effect_types)
+
+    def test_kwarg_params_are_set(self):
+        """Test kwargs are set as model parameters"""
+
+        test_pwv = 10
+        test_resolution = 6
+        model = modeling.get_model_with_pwv('salt2', pwv=test_pwv, res=test_resolution)
+        self.assertEqual(test_pwv, model['pwv'], 'Model has incorrect PWV value')
+        self.assertEqual(test_resolution, model['res'], 'Model has incorrect PWV resolution')
+
+
+class CalcX0ForZ(TestCase):
+    """Tests for the ``calc_x0_for_z`` function"""
+
+    @skip
+    def test_x0_recovers_absolute_mag(self):
+        """Test returned x0 corresponds to specified magnitude"""
+
+        z = 1.5
+        source = 'salt2-extended'
+        abs_mag = -18
+        band = 'standard::b'
+        x0 = modeling.calc_x0_for_z(z, source, abs_mag=abs_mag)
+
+        model = sncosmo.Model(source)
+        model.set(z=z, x0=x0)
+        recovered_mag = model.source_peakabsmag(band, 'AB')
+        self.assertEqual(abs_mag, recovered_mag)
 
 
 class CreateObservationsTable(TestCase):

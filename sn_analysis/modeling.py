@@ -46,7 +46,6 @@ def get_model_with_pwv(source, **params):
         An sncosmo model
     """
 
-    params.setdefault('pwv', 0)
     model = sncosmo.Model(source)
     model.add_effect(PWVTrans(), '', 'obs')
     model.update(params)
@@ -58,7 +57,9 @@ def get_model_with_pwv(source, **params):
 ###############################################################################
 
 
-def calc_x0_for_z(z, source, cosmo=betoule_cosmo, abs_mag=abs_mb, **params):
+def calc_x0_for_z(
+        z, source, cosmo=betoule_cosmo, abs_mag=abs_mb,
+        band='standard::b', magsys='AB', **params):
     """Determine x0 for a given redshift and model
 
     Args:
@@ -66,12 +67,14 @@ def calc_x0_for_z(z, source, cosmo=betoule_cosmo, abs_mag=abs_mb, **params):
          source (Source, str): Model to use
          cosmo    (Cosmology): Cosmology to use when determining x0
          abs_mag      (float): Absolute peak magnitude of the SNe Ia
+         band           (str): Band to set absolute magnitude in
+         magsys         (str): Magnitude system to set absolute magnitude in
          Any other params to set for the provided `source`
     """
 
     model = sncosmo.Model(source)
     model.set(z=z, **params)
-    model.set_source_peakabsmag(abs_mag, 'standard::b', 'AB', cosmo=cosmo)
+    model.set_source_peakabsmag(abs_mag, band, magsys, cosmo=cosmo)
     return model['x0']
 
 
