@@ -56,8 +56,19 @@ class TestTransmissionEffects(TestCase):
         self.assertTrue(is_close)
 
 
-class TestObservationsTableCreation(TestCase):
-    """Tests for creation of the observations (cadence) table"""
+class GetModelWithPWV(TestCase):
+    """Tests for the ``get_model_with_pwv`` function"""
+
+    def test_model_has_pwv_component(self):
+        """Test returned model has a PWV transmission component"""
+
+        model = modeling.get_model_with_pwv('salt2')
+        effect_types = [type(eff) for eff in model.effects]
+        self.assertIn(modeling.PWVTrans, effect_types)
+
+
+class CreateObservationsTable(TestCase):
+    """Tests for the ``create_observations_table`` function"""
 
     @classmethod
     def setUpClass(cls):
@@ -112,8 +123,8 @@ class TestObservationsTableCreation(TestCase):
         self.assertEqual(expected_dtype, self.observations_table.dtype)
 
 
-class TestLCRealization(TestCase):
-    """Tests for individual light-curve simulation"""
+class RealizeLC(TestCase):
+    """Tests for the ``realize_lc`` function"""
 
     def setUp(self):
         """Simulate a cadence and associated light-curve"""
@@ -160,7 +171,7 @@ class TestLCRealization(TestCase):
 
         self.assertEqual(self.params, self.simulated_lc.meta)
 
-    def assertSimValuesEqualObs(self):
+    def test_sim_values_equal_obs(self):
         """Assert values in the observation table match values in the
         light-curve table.
         """
@@ -196,8 +207,8 @@ class TestLCRealization(TestCase):
         self.assertRaises(ValueError, modeling.realize_lc, self.obs, self.source, z=0)
 
 
-class TestLCIteration(TestCase):
-    """Tests for light-curve simulation"""
+class IterLCS(TestCase):
+    """Tests for the ``iter_lcs`` light-curve iterator"""
 
     def setUp(self):
         """Create a new light-curve iterator for each test"""
