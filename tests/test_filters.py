@@ -41,7 +41,6 @@ class RegisterSncosmoFilter(TestCase):
         self.assertRaises(TypeError, filters.register_sncosmo_filter, args)
 
 
-# Todo: test correct profiles are registered for each filter
 class RegisterDECAMFilters(TestCase):
     """Tests for the ``register_decam_filters``"""
 
@@ -80,7 +79,6 @@ class RegisterDECAMFilters(TestCase):
         self.assert_bands_are_registered('DECam_atm')
 
 
-# Todo: test correct profiles are registered for each filter
 class RegisterLSSTFilters(TestCase):
     """Tests for the ``register_lsst_filters``"""
 
@@ -136,3 +134,43 @@ class RegisterLSSTFilters(TestCase):
 
         bands = ['lsst_atmos_10', 'lsst_atmos_std']
         self.assert_bands_are_registered(*bands)
+
+    def test_combined_mirrors_equal_product_of_mirrors(self):
+        """Test ``lsst_mirrors`` filter is the product of all three mirrors"""
+
+        m1 = sncosmo.get_bandpass('lsst_m1')
+        m2 = sncosmo.get_bandpass('lsst_m2')
+        m3 = sncosmo.get_bandpass('lsst_m3')
+        m_product = m1.trans * m2.trans * m3.trans
+
+        m_total = sncosmo.get_bandpass('lsst_mirrors')
+        self.assertListEqual(m_product.tolist(), m_total.trans.tolist())
+
+    def test_combined_lenses_equal_product_of_lenses(self):
+        """Test ``lsst_lenses`` filter is the product of all three lenses"""
+
+        l1 = sncosmo.get_bandpass('lsst_lens1')
+        l2 = sncosmo.get_bandpass('lsst_lens2')
+        l3 = sncosmo.get_bandpass('lsst_lens3')
+        l_product = l1.trans * l2.trans * l3.trans
+
+        l_total = sncosmo.get_bandpass('lsst_lenses')
+        self.assertListEqual(l_product.tolist(), l_total.trans.tolist())
+
+    def test_hardware_equal_product_of_components(self):
+        """Test ``lsst_hardware`` filter is product of all non-Atm. filters"""
+
+        wave = np.arange(3000, 11000)
+        mirrors = sncosmo.get_bandpass('lsst_mirrors')
+        lenses = sncosmo.get_bandpass('lsst_lenses')
+        detector = sncosmo.get_bandpass('lsst_detector')
+
+        for band in 'ugrizy':
+            filter = sncosmo.get_bandpass(f'lsst_filter_{band}')
+            hardware = sncosmo.get_bandpass(f'lsst_hardware_{band}')
+            expected_trans = mirrors(wave) * lenses(wave) * detector(wave) * filter(wave)
+
+            # We use ``all_close`` to allow for differences due to interpolation
+            np.testing.assert_allclose(
+                expected_trans, hardware(wave), atol=1e-10,
+                err_msg=f'Incorrect hardware transmission for {band}')
