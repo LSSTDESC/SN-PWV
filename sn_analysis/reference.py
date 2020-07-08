@@ -13,13 +13,17 @@ import numpy as np
 import pandas as pd
 import yaml
 
-_file = Path(__file__).resolve()
-data_dir = _file.parent.parent / 'data'
-_config_path = _file.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
+_PARENT = Path(__file__).resolve()
+_DATA_DIR = _PARENT.parent.parent / 'data'
+_STELLAR_SPECTRA_DIR = _DATA_DIR / 'stellar_spectra'
+_SELLAR_FLUX_DIR = _DATA_DIR / 'stellar_fluxes'
+
+_CONFIG_PATH = _PARENT.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
+available_types = sorted(f.stem for f in _SELLAR_FLUX_DIR.glob('*.txt'))
 
 
 ###############################################################################
-# Data Parsing
+# Data Parsing and interpolation
 ###############################################################################
 
 
@@ -76,13 +80,13 @@ def get_stellar_spectra(spectype):
     """
 
     # Load spectra for different spectral types
-    stellar_spectra_dir = data_dir / 'stellar_spectra'
+    stellar_spectra_dir = _STELLAR_SPECTRA_DIR
     path = next(stellar_spectra_dir.glob(spectype + '*.fits'))
     return _read_stellar_spectra_path(path)
 
 
 @lru_cache()  # Cache I/O
-def get_config_pwv_vals(config_path=_config_path):
+def get_config_pwv_vals(config_path=_CONFIG_PATH):
     """Retrieve PWV values to use as reference values
 
     Returned values include:
@@ -114,7 +118,7 @@ def get_ref_star_dataframe(reference_type='G2'):
         A DataFrame indexed by PWV with columns for flux
     """
 
-    rpath = data_dir / 'stellar_fluxes' / 'F5.txt'
+    rpath = _SELLAR_FLUX_DIR / f'{reference_type}.txt'
     if not rpath.exists():
         raise ValueError(
             f'Data not available for specified star {reference_type}. '
@@ -139,11 +143,11 @@ def get_ref_star_dataframe(reference_type='G2'):
     return reference_star_flux
 
 
-def ref_star_norm_flux(band, pwv, reference_type='G2'):
+def interp_norm_flux(band, pwv, reference_type='G2'):
     """Return normalized reference star flux values
 
     Args:
-        band           (str): Name of the band to get flux for
+        band           (str): Band abbreviation <ugrizy> of band to get flux for
         pwv (float, ndarray): PWV values to get magnitudes for
         reference_type (str): Type of reference star (Default 'G2')
 
@@ -152,18 +156,22 @@ def ref_star_norm_flux(band, pwv, reference_type='G2'):
     """
 
     reference_star_flux = get_ref_star_dataframe(reference_type)
-    reference_flux = reference_star_flux.loc[pwv][f'{band}_norm']
-    if isinstance(reference_flux, pd.Series):
-        reference_flux = np.array(reference_flux)
+    if np.any(
+            (pwv < reference_star_flux.index.min()) |
+            (pwv > reference_star_flux.index.max())):
+        raise ValueError('PWV is out of range')
 
-    return reference_flux
+    norm_flux = reference_star_flux[f'{band}_norm']
+    return np.interp(pwv, norm_flux.index, norm_flux)
 
 
-def ref_star_norm_mag(band, pwv, reference_type='G2'):
-    """Return normalized reference star magnitude values as a 2d array
+def interp_norm_mag(band, pwv, reference_type='G2'):
+    """Return normalized reference star magnitude
+
+    Interpolation is performed in flux space.
 
     Args:
-        band           (str): Name of the band to get flux for
+        band           (str): Band abbreviation <ugrizy> of band to get flux for
         pwv    (float, list): PWV values to get magnitudes for
         reference_type (str): Type of reference star (Default 'G2')
 
@@ -171,15 +179,15 @@ def ref_star_norm_mag(band, pwv, reference_type='G2'):
         The normalized magnitude at the given PWV value(s)
     """
 
-    return -2.5 * np.log10(ref_star_norm_flux(band, pwv, reference_type))
+    return -2.5 * np.log10(interp_norm_flux(band, pwv, reference_type))
 
 
 ###############################################################################
-# Subtracting reference magnitudes from various data models
+# Subtracting reference magnitudes from various data types
 ###############################################################################
 
-def subtract_ref_from_lc(lc_table, pwv, reference_type='G2'):
-    """Subtract reference flux from a light-curve
+def divide_ref_from_lc(lc_table, pwv, reference_type='G2'):
+    """Divide reference flux from a light-curve
 
     Args:
         lc_table     (Table): Astropy table with columns ``flux`` and ``band``
@@ -192,7 +200,7 @@ def subtract_ref_from_lc(lc_table, pwv, reference_type='G2'):
 
     table_copy = lc_table.copy()
     for band in set(table_copy['band']):
-        ref_flux = ref_star_norm_flux(band, pwv, reference_type)
+        ref_flux = interp_norm_flux(band, pwv, reference_type)
         table_copy['flux'][table_copy['band'] == band] /= ref_flux
 
     return table_copy
@@ -216,7 +224,7 @@ def subtract_ref_star_array(band, norm_mag, pwv, reference_type='G2'):
     if np.ndim(norm_mag) - np.ndim(pwv) != 1:
         raise ValueError('``pwv`` should be one dimension less than ``norm_mag``')
 
-    ref_mag = ref_star_norm_mag(band, pwv, reference_type)
+    ref_mag = interp_norm_mag(band, pwv, reference_type)
     if np.ndim(ref_mag > 0):
         ref_mag = ref_mag[:, None]
 
@@ -262,7 +270,7 @@ def _subtract_ref_star_slope(band, mag_slope, pwv_config, reference_type='G2'):
     pwv_slope_end = pwv_config['slope_end']
 
     # Determine slope in normalized magnitude with respect to reference star
-    mag_slope_start, mag_slope_end = ref_star_norm_mag(
+    mag_slope_start, mag_slope_end = interp_norm_mag(
         band, [pwv_slope_start, pwv_slope_end], reference_type)
 
     delta_x = pwv_slope_end - pwv_slope_start
