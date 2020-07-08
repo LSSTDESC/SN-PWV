@@ -4,19 +4,18 @@
 """Tabulate and save to disk stellar flux values through LSST bandpasses at
 various PWV concentrations.
 
-This script is heavily based on work undertaken by Ashely Baker.
+This script is based on work undertaken by Ashely Baker.
 """
 
 from pathlib import Path
 
-import astropy.io.fits as fits
 import numpy as np
-import pandas as pd
 import sncosmo
 from scipy.integrate import trapz
 from tqdm import tqdm
 
 from sn_analysis import filters
+from sn_analysis.reference import get_stellar_spectra
 from sn_analysis.transmission import trans_for_pwv
 
 filters.register_lsst_filters()
@@ -27,64 +26,6 @@ SPEC_TYPES = ('G2', 'M4', 'M9', 'M0', 'M1', 'M2', 'M3', 'M5', 'K2', 'K9', 'K5', 
 # Set default data location and PWV sampling
 DATA_DIR = Path(__file__).parent
 PWV_VALS = np.arange(0, 20, 0.5)
-
-
-def _read_stellar_spectra_path(fpath):
-    """Load fits file with stellar spectrum from phoenix
-
-    Fits files can be downloaded from:
-      http://phoenix.astro.physik.uni-goettingen.de/?page_id=15
-
-    converts from egs/s/cm2/cm to phot/cm2/s/nm using
-      https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
-
-    Flux values are returned in phot/cm2/s/angstrom and are index by
-    wavelength values in Angstroms.
-
-    Args:
-        fpath  (str, Path): Path of the file to read
-
-    Returns:
-        Flux values as a pandas Series
-    """
-
-    # Load spectral data
-    with fits.open(fpath) as infile:
-        spec = infile[0].data
-
-    # Load data used to convert spectra to new units
-    with fits.open(fpath.parent / 'WAVE_PHOENIX-ACES-AGSS-COND-2011.fits') as infile:
-        lam = infile[0].data  # angstroms
-
-    angstroms_per_cm = 1e8
-    conversion_factor = 5.03 * 10 ** 7  # See https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
-    ergs_per_photon = conversion_factor * lam
-
-    # Evaluate unit conversion
-    spec /= angstroms_per_cm  # ergs/s/cm2/cm into ergs/s/cm2/Angstrom
-    spec *= ergs_per_photon  # into phot/cm2/s/angstrom
-
-    indices = (lam >= 3000) & (lam <= 12000)
-    return pd.Series(spec[indices], index=lam[indices])
-
-
-def get_stellar_spectra(spectype):
-    """Load spectrum for given spectral type
-
-    Flux values are returned in phot/cm2/s/angstrom and are index by
-    wavelength values in Angstroms.
-
-    Args:
-        spectype (str): Spectral type (e.g., G2)
-
-    Returns:
-        Flux values as a pandas Series
-    """
-
-    # Load spectra for different spectral types
-    stellar_spectra_dir = DATA_DIR / 'stellar_spectra'
-    path = next(stellar_spectra_dir.glob(spectype + '*.fits'))
-    return _read_stellar_spectra_path(path)
 
 
 def calculate_lsst_fluxes(spectrum, pwv):
@@ -121,9 +62,9 @@ def run(out_dir, spec_types=SPEC_TYPES, pwv_vals=PWV_VALS):
     is written to it's own file.
 
     Args:
-        out_dir      (Path): Directory to write output files to
-        data_dir     (Path): Project data directory
-        pwv_vals (pwv_vals): PWV values to sample for if not default values
+        out_dir    (Path): Directory to write output files to
+        spec_types (iter): Spectral types to tabulate values for
+        pwv_vals   (iter): PWV values to sample for if not default values
     """
 
     output_file_header = 'PWV(mm) u g r i z y'

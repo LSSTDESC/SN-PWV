@@ -8,6 +8,7 @@ fiducial atmosphere (i.e., fiducial PWV).
 from functools import lru_cache
 from pathlib import Path
 
+import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 import yaml
@@ -15,17 +16,70 @@ import yaml
 _file = Path(__file__).resolve()
 data_dir = _file.parent.parent / 'data'
 _config_path = _file.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
-_stellar_type_paths = {
-    'F5': data_dir / 'PWV_absorp/pwv_absorp_type_F5.txt',
-    'G2': data_dir / 'PWV_absorp/pwv_absorp_type_G2.txt',
-    'M4': data_dir / 'PWV_absorp/pwv_absorp_type_M4.txt',
-    'M9': data_dir / 'PWV_absorp/pwv_absorp_type_M9.txt'
-}
 
 
 ###############################################################################
 # Data Parsing
 ###############################################################################
+
+
+def _read_stellar_spectra_path(fpath):
+    """Load fits file with stellar spectrum from phoenix
+
+    Fits files can be downloaded from:
+      http://phoenix.astro.physik.uni-goettingen.de/?page_id=15
+
+    converts from egs/s/cm2/cm to phot/cm2/s/nm using
+      https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
+
+    Flux values are returned in phot/cm2/s/angstrom and are index by
+    wavelength values in Angstroms.
+
+    Args:
+        fpath  (str, Path): Path of the file to read
+
+    Returns:
+        Flux values as a pandas Series
+    """
+
+    # Load spectral data
+    with fits.open(fpath) as infile:
+        spec = infile[0].data
+
+    # Load data used to convert spectra to new units
+    with fits.open(fpath.parent / 'WAVE_PHOENIX-ACES-AGSS-COND-2011.fits') as infile:
+        lam = infile[0].data  # angstroms
+
+    angstroms_per_cm = 1e8
+    conversion_factor = 5.03 * 10 ** 7  # See https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
+    ergs_per_photon = conversion_factor * lam
+
+    # Evaluate unit conversion
+    spec /= angstroms_per_cm  # ergs/s/cm2/cm into ergs/s/cm2/Angstrom
+    spec *= ergs_per_photon  # into phot/cm2/s/angstrom
+
+    indices = (lam >= 3000) & (lam <= 12000)
+    return pd.Series(spec[indices], index=lam[indices])
+
+
+def get_stellar_spectra(spectype):
+    """Load spectrum for given spectral type
+
+    Flux values are returned in phot/cm2/s/angstrom and are index by
+    wavelength values in Angstroms.
+
+    Args:
+        spectype (str): Spectral type (e.g., G2)
+
+    Returns:
+        Flux values as a pandas Series
+    """
+
+    # Load spectra for different spectral types
+    stellar_spectra_dir = data_dir / 'stellar_spectra'
+    path = next(stellar_spectra_dir.glob(spectype + '*.fits'))
+    return _read_stellar_spectra_path(path)
+
 
 @lru_cache()  # Cache I/O
 def get_config_pwv_vals(config_path=_config_path):
@@ -60,29 +114,27 @@ def get_ref_star_dataframe(reference_type='G2'):
         A DataFrame indexed by PWV with columns for flux
     """
 
-    try:
-        rpath = _stellar_type_paths[reference_type]
-
-    except KeyError:
-        keys = list(_stellar_type_paths.keys())
+    rpath = data_dir / 'stellar_fluxes' / 'F5.txt'
+    if not rpath.exists():
         raise ValueError(
             f'Data not available for specified star {reference_type}. '
-            f'available options include: {keys}')
+            f'Could not find: {rpath}')
 
+    band_abbrevs = 'ugrizy'
+    names = ['PWV'] + [f'{b}_flux' for b in band_abbrevs]
     reference_star_flux = pd.read_csv(
         rpath,
         sep='\s',
         header=None,
-        names=['PWV', 'decam_z_flux', 'decam_i_flux', 'decam_r_flux'],
+        names=names,
         comment='#',
         index_col=0,
         engine='python'
     )
 
-    ref_pwv = get_config_pwv_vals()['reference_pwv']
-    for band in 'riz':
-        band_flux = reference_star_flux[f'decam_{band}_flux']
-        reference_star_flux[f'decam_{band}_norm'] = band_flux / band_flux.loc[ref_pwv]
+    for band in band_abbrevs:
+        band_flux = reference_star_flux[f'{band}_flux']
+        reference_star_flux[f'{band}_norm'] = band_flux / band_flux.loc[0]
 
     return reference_star_flux
 
