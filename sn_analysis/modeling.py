@@ -10,8 +10,9 @@ import numpy as np
 import sncosmo
 from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Table
-from pwv_kpno import pwv_atm
 from tqdm import tqdm
+
+from .transmission import PWVTrans
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
@@ -28,37 +29,6 @@ betoule_cosmo = FlatLambdaCDM(H0=H0, Om0=omega_m)
 ###############################################################################
 # For building sncosmo models with a PWV component
 ###############################################################################
-
-
-# Todo: We should bin the PWV transmission to the same resolution as the template
-class PWVTrans(sncosmo.PropagationEffect):
-    """Atmospheric PWV propagation effect for sncosmo"""
-
-    _minwave = 3000.0
-    _maxwave = 12000.0
-
-    def __init__(self):
-        self._param_names = ['pwv']
-        self.param_names_latex = ['PWV']
-        self._parameters = np.array([0.])
-
-    def propagate(self, wave, flux):
-        """Propagate the flux through the atmosphere
-
-        Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-
-        Returns:
-            An array of flux values after suffering propagation effects
-        """
-
-        pwv = self.parameters[0]
-        transmission = pwv_atm.trans_for_pwv(pwv)
-        interp_transmission = np.interp(
-            wave, transmission['wavelength'], transmission['transmission'])
-
-        return interp_transmission * flux
 
 
 # Todo: Extend this to include other atm models as a kwarg
@@ -197,7 +167,7 @@ def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
     """
 
     arg_iter = itertools.product(pwv_arr, z_arr)
-    if verbose:
+    if verbose:  # pragma: no cover
         iter_total = len(pwv_arr) * len(z_arr)
         arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
 
