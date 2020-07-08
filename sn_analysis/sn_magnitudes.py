@@ -129,7 +129,7 @@ def correct_mag(source, mag, params, alpha=modeling.alpha, beta=modeling.beta):
     return mag + alpha * params[..., i_x1] - beta * params[..., i_c]
 
 
-def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
+def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands, **kwargs):
     """Determine apparent mag by fitting simulated light-curves
     
     Returned arrays are shape  (len(pwv_arr), len(z_arr)).
@@ -141,6 +141,7 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
         pwv_arr      (ndarray): Array of PWV values
         z_arr        (ndarray): Array of redshift values
         bands      (list[str]): Name of the bands to tabulate magnitudes for
+        Any arguments for ``sncosmo.fit_lc``.
     
     Returns:
         Dictionary with arrays for fitted magnitude at each PWV and redshift
@@ -159,7 +160,7 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
 
         # Fit the model without PWV
         model_without_pwv.update(lc_parameters)
-        _, fitted_model = sncosmo.fit_lc(lc, model_without_pwv, vparams)
+        _, fitted_model = sncosmo.fit_lc(lc, model_without_pwv, vparams, **kwargs)
 
         for band in bands:
             fitted_mag[band].append(fitted_model.bandmag(band, 'ab', 0))
