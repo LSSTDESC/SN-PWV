@@ -148,7 +148,7 @@ def create_observations_table(
     return observations
 
 
-def realize_lc(obs, source, snr=.05,  **params):
+def realize_lc(obs, source, snr=.05, **params):
     """Simulate a SN light-curve for given parameters
 
     Light-curves are simulated for the given parameters without any of
