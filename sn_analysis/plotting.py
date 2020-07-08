@@ -40,7 +40,9 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from pwv_kpno import pwv_atm
 
-from . import modeling
+from . import modeling, filters
+
+filters.register_lsst_filters(force=True)
 
 
 def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
@@ -266,7 +268,7 @@ def plot_salt2_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6
 
     # Plot the band passes
     for b in 'rizy':
-        band = sncosmo.get_bandpass(f'decam_{b}')
+        band = sncosmo.get_bandpass(f'lsst_hardware_{b}')
         bottom_ax.plot(band.wave, band.trans, label=f'{b} Band')
 
     # Format top axis
