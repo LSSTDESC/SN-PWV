@@ -11,13 +11,13 @@ from pwv_kpno import pwv_atm
 from scipy.stats import binned_statistic
 
 
-def trans_for_pwv(pwv, wavelengths, resolution):
+def trans_for_pwv(pwv, wave, resolution):
     """Retrieve the pwv_kpno transmission at given wavelengths and resolution
 
     Args:
-        pwv           (float): The PWV along line of sight
-        wavelengths (ndarray): Array of wavelengths to evaluate transmission at
-        resolution    (float): Resolution to bin transmission at
+        pwv        (float): The PWV along line of sight
+        wave     (ndarray): Array of wavelengths to evaluate transmission at
+        resolution (float): Resolution to bin transmission at
 
     Returns:
         An array of transmission values
@@ -27,8 +27,8 @@ def trans_for_pwv(pwv, wavelengths, resolution):
     # at the given resolution
     half_res = resolution / 2
     bins = np.arange(
-        min(wavelengths) - half_res,
-        max(wavelengths) + half_res + resolution,
+        min(wave) - half_res,
+        max(wave) + half_res + resolution,
         resolution)
 
     # Bin the atm model to the desired resolution
@@ -53,7 +53,7 @@ def trans_for_pwv(pwv, wavelengths, resolution):
     bin_centers = bin_edges_left[:-1] + dx / 2
 
     # Evaluate the transmission at the desired wavelengths
-    return np.interp(wavelengths, bin_centers, statistic)
+    return np.interp(wave, bin_centers, statistic)
 
 
 # Todo: We should bin the PWV transmission to the same resolution as the template

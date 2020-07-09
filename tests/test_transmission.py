@@ -6,45 +6,39 @@
 from unittest import TestCase
 
 import numpy as np
-from matplotlib import pyplot as plt
-from pwv_kpno import pwv_atm
 
-from sn_analysis import modeling
+from sn_analysis.transmission import trans_for_pwv, PWVTrans
 
 
-class TestTransmissionEffects(TestCase):
+class TestPWVTrans(TestCase):
     """Tests for the addition of PWV to sncosmo models"""
 
     def setUp(self):
-        self.pwv = 10
-        self.z = .8
-        self.model = modeling.get_model_with_pwv('salt2-extended')
+        self.transmission_effect = PWVTrans()
 
-    def test_recovered_transmission(self):
-        """The simulated SN flux with PWV / the flux without PWV should be
-        equivalent to the PWV transmission function
-        """
+    def test_default_pwv_is_zero(self):
+        """Test the default ``pwv`` parameter is 0"""
 
-        wavelengths = np.arange(4000, 10000)
+        self.assertEqual(0, self.transmission_effect['pwv'])
 
-        self.model.set(pwv=0, z=self.z)
-        flux = self.model.flux(0, wavelengths)
+    def test_default_resolution_is_five(self):
+        """Test the default ``res`` parameter is 5"""
 
-        self.model.set(pwv=self.pwv, z=self.z)
-        flux_pwv = self.model.flux(0, wavelengths)
+        self.assertEqual(5, self.transmission_effect['res'])
 
-        transmission = pwv_atm.trans_for_pwv(self.pwv)
-        interp_transmission = np.interp(
-            wavelengths,
-            transmission['wavelength'],
-            transmission['transmission'])
+    def test_propagation_applies_pwv_transmission(self):
+        """Test the ``propagate`` applies PWV absorption"""
 
-        is_close = np.isclose(interp_transmission, flux_pwv / flux).all()
-        if not is_close:
-            plt.plot(wavelengths, flux_pwv / flux)
-            plt.title('Incorrect Recovered Transmission')
-            plt.xlabel('Wavelength')
-            plt.ylabel('(Flux PWV=10) / (Flux PWV=0)')
-            plt.show()
+        # Get the expected transmission
+        pwv = res = 5
+        wave = np.arange(4000, 5000)
+        transmission = trans_for_pwv(pwv=pwv, wave=wave, resolution=res)
 
-        self.assertTrue(is_close)
+        # Get the expected flux
+        flux = np.ones_like(wave)
+        expected_flux = flux * transmission
+
+        # Get the returned flux
+        self.transmission_effect._parameters = [pwv, res]
+        propagated_flux = self.transmission_effect.propagate(wave, flux)
+        self.assertListEqual(expected_flux.tolist(), propagated_flux.tolist())
