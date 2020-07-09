@@ -45,29 +45,6 @@ class StellarSpectraParsing(TestCase):
             assert_series_equal(spec_by_path, spec_by_type)
 
 
-class GetConfigPWVValues(TestCase):
-    """Tests for the ``get_config_pwv_vals`` function"""
-
-    @classmethod
-    def setUpClass(cls):
-        """Load the default config values"""
-        cls.config_dict = reference.get_config_pwv_vals()
-
-    def test_expected_keys(self):
-        """Test returned dictionary has expected keys"""
-
-        returned_keys = set(self.config_dict.keys())
-        expected = {'reference_pwv', 'slope_start', 'slope_end'}
-        self.assertSequenceEqual(expected, returned_keys)
-
-    def test_values_are_equidistant(self):
-        """Test slope start / end values are equidistant from reference PWV"""
-
-        upper_dist = self.config_dict['reference_pwv'] - self.config_dict['slope_end']
-        lower_dist = self.config_dict['reference_pwv'] - self.config_dict['slope_start']
-        self.assertEqual(upper_dist, -lower_dist)
-
-
 class GetReferenceStarDataframe(TestCase):
     """Tests for the ``get_ref_star_dataframe`` function"""
 

@@ -11,14 +11,13 @@ from pathlib import Path
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
-import yaml
+
 
 _PARENT = Path(__file__).resolve()
 _DATA_DIR = _PARENT.parent.parent / 'data'
 _STELLAR_SPECTRA_DIR = _DATA_DIR / 'stellar_spectra'
 _SELLAR_FLUX_DIR = _DATA_DIR / 'stellar_fluxes'
 
-_CONFIG_PATH = _PARENT.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
 available_types = sorted(f.stem for f in _SELLAR_FLUX_DIR.glob('*.txt'))
 
 
@@ -83,28 +82,6 @@ def get_stellar_spectra(spectype):
     stellar_spectra_dir = _STELLAR_SPECTRA_DIR
     path = next(stellar_spectra_dir.glob(spectype + '*.fits'))
     return _read_stellar_spectra_path(path)
-
-
-@lru_cache()  # Cache I/O
-def get_config_pwv_vals(config_path=_CONFIG_PATH):
-    """Retrieve PWV values to use as reference values
-
-    Returned values include:
-        - Lower pwv bound for calculating slope
-        - Reference PWV value for normalizing delta m
-        - Upper pwv bound for calculating slope
-
-    Args:
-        config_path (str): Path of config file if not default
-
-    Returns:
-        Dictionary with PWV values in mm
-    """
-
-    with open(config_path) as infile:
-        config_dict = yaml.load(infile, yaml.BaseLoader)
-
-    return {k: float(v) for k, v in config_dict.items()}
 
 
 @lru_cache()  # Cache I/O
