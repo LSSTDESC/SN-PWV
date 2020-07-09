@@ -9,9 +9,10 @@ from pathlib import Path
 import numpy as np
 import sncosmo
 from astropy.cosmology import FlatLambdaCDM
-from astropy.table import Column, Table
-from pwv_kpno import pwv_atm
+from astropy.table import Table
 from tqdm import tqdm
+
+from .transmission import PWVTrans
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
@@ -30,37 +31,6 @@ betoule_cosmo = FlatLambdaCDM(H0=H0, Om0=omega_m)
 ###############################################################################
 
 
-# Todo: We should bin the PWV transmission to the same resolution as the template
-class PWVTrans(sncosmo.PropagationEffect):
-    """Atmospheric PWV propagation effect for sncosmo"""
-
-    _minwave = 3000.0
-    _maxwave = 12000.0
-
-    def __init__(self):
-        self._param_names = ['pwv']
-        self.param_names_latex = ['PWV']
-        self._parameters = np.array([0.])
-
-    def propagate(self, wave, flux):
-        """Propagate the flux through the atmosphere
-
-        Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-
-        Returns:
-            An array of flux values after suffering propagation effects
-        """
-
-        pwv = self.parameters[0]
-        transmission = pwv_atm.trans_for_pwv(pwv)
-        interp_transmission = np.interp(
-            wave, transmission['wavelength'], transmission['transmission'])
-
-        return interp_transmission * flux
-
-
 # Todo: Extend this to include other atm models as a kwarg
 def get_model_with_pwv(source, **params):
     """Return an sncosmo model with PWV effects
@@ -76,7 +46,6 @@ def get_model_with_pwv(source, **params):
         An sncosmo model
     """
 
-    params.setdefault('pwv', 0)
     model = sncosmo.Model(source)
     model.add_effect(PWVTrans(), '', 'obs')
     model.update(params)
@@ -88,7 +57,9 @@ def get_model_with_pwv(source, **params):
 ###############################################################################
 
 
-def calc_x0_for_z(z, source, cosmo=betoule_cosmo, abs_mag=abs_mb, **params):
+def calc_x0_for_z(
+        z, source, cosmo=betoule_cosmo, abs_mag=abs_mb,
+        band='standard::b', magsys='AB', **params):
     """Determine x0 for a given redshift and model
 
     Args:
@@ -96,17 +67,19 @@ def calc_x0_for_z(z, source, cosmo=betoule_cosmo, abs_mag=abs_mb, **params):
          source (Source, str): Model to use
          cosmo    (Cosmology): Cosmology to use when determining x0
          abs_mag      (float): Absolute peak magnitude of the SNe Ia
+         band           (str): Band to set absolute magnitude in
+         magsys         (str): Magnitude system to set absolute magnitude in
          Any other params to set for the provided `source`
     """
 
     model = sncosmo.Model(source)
     model.set(z=z, **params)
-    model.set_source_peakabsmag(abs_mag, 'standard::b', 'AB', cosmo=cosmo)
+    model.set_source_peakabsmag(abs_mag, band, magsys, cosmo=cosmo)
     return model['x0']
 
 
 def create_observations_table(
-        phases=range(-20, 50),
+        phases=range(-20, 51),
         bands=('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
         zp=25,
         zpsys='ab',
@@ -127,10 +100,10 @@ def create_observations_table(
     """
 
     phase_arr = np.concatenate([phases for _ in bands])
-    band_arr = np.concatenate([bands for _ in phases])
+    band_arr = np.concatenate([np.full_like(phases, b, dtype='U1000') for b in bands])
     gain_arr = np.full_like(phase_arr, gain)
     skynoise_arr = np.zeros_like(phase_arr)
-    zp_arr = np.full_like(phase_arr, zp)
+    zp_arr = np.full_like(phase_arr, zp, dtype=float)
     zp_sys_arr = np.full_like(phase_arr, zpsys, dtype='U10')
 
     observations = Table(
@@ -140,44 +113,67 @@ def create_observations_table(
          'skynoise': skynoise_arr,
          'zp': zp_arr,
          'zpsys': zp_sys_arr
-         }
+         },
+        dtype=[float, 'U1000', float, float, float, 'U100']
     )
 
     observations.sort('time')
     return observations
 
 
-def iter_lcs(obs, source, pwv_arr, z_arr, verbose=True):
-    """Iterator over simulated light-curves for combination of PWV and z values
+def realize_lc(obs, source, snr=.05, **params):
+    """Simulate a SN light-curve for given parameters
 
-    Less memory intensive than using the default sncosmo behavior of simulating
-    all light-curves in memory at once.
+    Light-curves are simulated for the given parameters without any of
+    the added effects from ``sncosmo.realize_lc``.
 
     Args:
         obs       (Table): Observation cadence
         source   (Source): The sncosmo source to use in the simulations
-        pwv_arr (ndarray): Array of PWV values
-        z_arr   (ndarray): Array of redshift values
-        verbose    (bool): Show a progress bar
+        snr       (float): Signal to noise ratio
+        **params         : Values for any model parameters
 
     Yields:
         Astropy table for each PWV and redshift
     """
 
     model = get_model_with_pwv(source)
-    arg_iter = itertools.product(pwv_arr, z_arr)
+    model.update(params)
 
-    if verbose:
+    # Set default x0 value according to assumed cosmology and the model redshift
+    x0 = params.get('x0', calc_x0_for_z(model['z'], source))
+    model.set(x0=x0)
+
+    light_curve = obs[['time', 'band', 'zp', 'zpsys']]
+    light_curve['flux'] = model.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
+    light_curve['fluxerr'] = light_curve['flux'] / snr
+    light_curve.meta = dict(zip(model.param_names, model.parameters))
+    return light_curve
+
+
+def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
+    """Iterator over SN light-curves for combination of PWV and z values
+
+    Light-curves are simulated for the given parameters without any of
+    the added effects from ``sncosmo.realize_lc``.
+
+    Args:
+        obs       (Table): Observation cadence
+        source   (Source): The sncosmo source to use in the simulations
+        pwv_arr (ndarray): Array of PWV values
+        z_arr   (ndarray): Array of redshift values
+        snr       (float): Signal to noise ratio
+        verbose    (bool): Show a progress bar
+
+    Yields:
+        Astropy table for each PWV and redshift
+    """
+
+    arg_iter = itertools.product(pwv_arr, z_arr)
+    if verbose:  # pragma: no cover
         iter_total = len(pwv_arr) * len(z_arr)
         arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
 
     for pwv, z in arg_iter:
         params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, source)}
-
-        # Some versions of sncosmo mutate arguments so we use copy to be safe
-        param_list = [params.copy()]
-        light_curve = sncosmo.realize_lcs(obs, model, param_list)[0]
-        light_curve['zp'] = Column(light_curve['zp'], dtype=float)
-
-        light_curve.meta = params
-        yield light_curve
+        yield realize_lc(obs, source, snr, **params)

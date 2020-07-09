@@ -8,7 +8,7 @@ Plot summaries:
 +------------------------------+----------------------------------------------+
 | Function                     | Description                                  |
 +==============================+==============================================+
-| ``plot_delta_mag_vs_z``      | Single panel, muti-line plot of change in    |
+| ``plot_delta_mag_vs_z``      | Single panel, multi-line plot of change in   |
 |                              | magnitude vs z. Color coded by PWV.          |
 +------------------------------+----------------------------------------------+
 | ``plot_delta_mag_vs_pwv``    | Single panel, multi-line plot for change in  |
@@ -32,6 +32,9 @@ Plot summaries:
 |                              | salt2 parameter vs redshift. Multiple lines  |
 |                              | included for different PWV values.           |
 +------------------------------+----------------------------------------------+
+| ``plot_delta_colors``        | Shows the change in color as a function of   |
+|                              | redshift color coded by PWV.                 |
++------------------------------+----------------------------------------------+
 """
 
 import numpy as np
@@ -40,8 +43,9 @@ from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from pwv_kpno import pwv_atm
 
-from . import modeling
-from . import sn_magnitudes
+from . import modeling, filters
+
+filters.register_lsst_filters(force=True)
 
 
 def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
@@ -108,6 +112,7 @@ def plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
     axis.set_ylabel(r'$\Delta m$', fontsize=20)
 
 
+# noinspection PyUnusedLocal
 def plot_derivative_mag_vs_z(pwv_arr, z_arr, slope_arr, axis=None):
     """Plot the delta mag / delta PWV as a function of redshift
 
@@ -266,7 +271,7 @@ def plot_salt2_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6
 
     # Plot the band passes
     for b in 'rizy':
-        band = sncosmo.get_bandpass(f'decam_{b}')
+        band = sncosmo.get_bandpass(f'lsst_hardware_{b}')
         bottom_ax.plot(band.wave, band.trans, label=f'{b} Band')
 
     # Format top axis
@@ -398,7 +403,37 @@ def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
     plt.tight_layout()
 
 
-def plot_delta_mu(source, mu, pwv_arr, z_arr):
+def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
+    """Plot the change in SN color as a function of redshift and PWV
+
+    Args:
+        pwv_arr    (ndarray): Array of PWV values
+        z_arr      (ndarray): Array of redshift values
+        mag_dict      (dict): Dictionary with magnitudes for each band
+        colors (list[tuple]): Band combinations to plot colors for
+    """
+
+    num_cols = len(colors)
+    fig, axes = plt.subplots(1, num_cols, figsize=(4 * num_cols, 4), sharex=True, sharey=True)
+    if num_cols == 1:
+        axes = [axes]
+
+    ref_idx = list(pwv_arr).index(ref_pwv)
+    for axis, (band1, band2) in zip(axes, colors):
+        color = mag_dict[band1] - mag_dict[band2]
+        delta_color = color - color[ref_idx]
+        multi_line_plot(z_arr, delta_color, pwv_arr, label='{} mm', axis=axis)
+
+        axis.set_xlabel('Redshift', fontsize=14)
+        axis.set_ylabel(fr'$\Delta$ ({band1[-1]} - {band2[-1]})', fontsize=14)
+
+    axis.set_xlim(0, max(z_arr))
+    axis.legend(bbox_to_anchor=(1, 1.1))
+    plt.tight_layout()
+
+
+# noinspection PyUnusedLocal
+def plot_delta_mu(source, mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
     """Plot the variation in x0 as a function of redshift and PWV
 
     Args:
@@ -408,7 +443,7 @@ def plot_delta_mu(source, mu, pwv_arr, z_arr):
         z_arr   (ndarray): Array of redshift values
     """
 
-    cosmo_mu = modeling.betoule_cosmo.distmod(z_arr).value
+    cosmo_mu = cosmo.distmod(z_arr).value
     delta_mu = mu - cosmo_mu
 
     fig, axes = plt.subplots(1, 3, figsize=(9, 3))

@@ -6,60 +6,71 @@
 from unittest import TestCase
 
 import numpy as np
+from astropy.table import Table
+from pandas.testing import assert_series_equal
 
 from sn_analysis import reference
 
 
-class DefaultPWVConfigVals(TestCase):
-    """Tests for the loading of default config values"""
+class StellarSpectraParsing(TestCase):
+    """Test ``get_stellar_spectra`` returns a spectrum that is the smae as
+    directly parsing the file of a stellar type using
+    ``_read_stellar_spectra_path``
+    """
 
     @classmethod
     def setUpClass(cls):
-        """Load the default config values"""
-        cls.config_dict = reference.get_config_pwv_vals()
+        cls.file_names = [
+            'F5_lte07000-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'G2_lte05800-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'K2_lte04900-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'K5_lte04400-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'K9_lte04100-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'M0_lte03800-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'M1_lte03600-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'M2_lte03400-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'M3_lte03200-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'M4_lte03100-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'M5_lte02800-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
+            'M9_lte02300-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits'
+        ]
 
-    def test_expected_keys(self):
-        """Test returned dictionary has expected keys"""
+        cls.stellar_types = [f[:2] for f in cls.file_names]
 
-        returned_keys = set(self.config_dict.keys())
-        expected = {'reference_pwv', 'slope_start', 'slope_end'}
-        self.assertSequenceEqual(expected, returned_keys)
-
-    def test_values_are_equidistant(self):
-        """Test slope start / end values are equidistance from reference PWV"""
-
-        upper_dist = self.config_dict['reference_pwv'] - self.config_dict['slope_end']
-        lower_dist = self.config_dict['reference_pwv'] - self.config_dict['slope_start']
-        self.assertEqual(upper_dist, -lower_dist)
+    def runTest(self):
+        for stellar_type, fname in zip(self.stellar_types, self.file_names):
+            full_path = reference._STELLAR_SPECTRA_DIR / fname
+            spec_by_path = reference._read_stellar_spectra_path(full_path)
+            spec_by_type = reference.get_stellar_spectra(stellar_type)
+            assert_series_equal(spec_by_path, spec_by_type)
 
 
-class ReferenceStarFileParsing(TestCase):
-    """Tests for the loading / parsing of reference star flux values"""
+class GetReferenceStarDataframe(TestCase):
+    """Tests for the ``get_ref_star_dataframe`` function"""
 
     @classmethod
     def setUpClass(cls):
         cls.ref_star_dataframe = reference.get_ref_star_dataframe()
 
-    def test_includes_base_flux(self):
+    def test_includes_unnormalized_flux(self):
         """Tests band flux columns are included in the dataframe"""
 
-        test_columns = ['decam_z_flux', 'decam_i_flux', 'decam_r_flux']
-        isin = np.isin(test_columns, self.ref_star_dataframe.columns)
-        self.assertTrue(isin.all())
+        self.assertTrue(
+            [c for c in self.ref_star_dataframe.columns if ~c.endswith('_norm')]
+        )
 
     def test_includes_normalized_flux(self):
         """Tests normalized flux columns are included in the dataframe"""
 
-        test_columns = ['decam_z_norm', 'decam_i_norm', 'decam_r_norm']
-        isin = np.isin(test_columns, self.ref_star_dataframe.columns)
-        self.assertTrue(isin.all())
+        self.assertTrue(
+            [c for c in self.ref_star_dataframe.columns if c.endswith('_norm')]
+        )
 
-    def test_flux_normalization(self):
-        """Tests normalized flux values are one for reference PWV"""
+    def test_flux_normalization_pwv_0(self):
+        """Tests normalized flux values are one for PWV = 0"""
 
-        config_pwv = reference.get_config_pwv_vals()['reference_pwv']
         norm_cols = [c for c in self.ref_star_dataframe.columns if 'norm' in c]
-        reference_flux = self.ref_star_dataframe.loc[config_pwv][norm_cols]
+        reference_flux = self.ref_star_dataframe.loc[0][norm_cols]
 
         ones = np.ones_like(reference_flux).tolist()
         self.assertSequenceEqual(ones, list(reference_flux))
@@ -78,125 +89,96 @@ class ReferenceStarFileParsing(TestCase):
     def test_known_types_parsed(self):
         """Test all stellar types in ``_stellar_type_paths`` are parsed"""
 
-        for stellar_type in reference._stellar_type_paths.keys():
+        for stellar_type in reference.available_types:
             dataframe = reference.get_ref_star_dataframe(stellar_type)
             self.assertFalse(dataframe.empty)
 
 
-class ReferenceStarFlux(TestCase):
-    """Tests for the ``ref_star_flux`` function"""
+class InterpNormFlux(TestCase):
+    """Tests for the ``interp_norm_flux`` function"""
 
-    def assert_ref_flux_is_one(self, band):
-        """Assert flux is 1 at the fiducial PWV in a given band
+    test_band = 'lsst_hardware_z'
 
-        Args:
-            band (str): Name of the band to test
-        """
+    def test_norm_flux_is_1_at_zero_pwv(self):
+        """Test flux is 1 at the PWV=0 in the test band"""
 
-        config_pwv = reference.get_config_pwv_vals()['reference_pwv']
-        returned_flux = reference.ref_star_flux(band, config_pwv)
-        self.assertEqual(1, returned_flux)
+        norm_flux = reference.interp_norm_flux(self.test_band, pwv=0)
+        self.assertEqual(1, norm_flux)
 
-    def test_pwv_arg_is_float(self):
+    def test_pwv_is_float_return_is_float(self):
         """Test return is a float when pwv arg is a float"""
 
-        returned_flux = reference.ref_star_flux('decam_z', 5)
+        returned_flux = reference.interp_norm_flux(self.test_band, 5)
         self.assertIsInstance(returned_flux, float)
 
-    def test_pwv_arg_is_array(self):
+    def test_pwv_is_array_return_is_array(self):
         """Test return is an array when pwv arg is an array"""
 
-        n1d_flux = reference.ref_star_flux('decam_z', [5, 6])
+        n1d_flux = reference.interp_norm_flux(self.test_band, [5, 6])
         self.assertIsInstance(n1d_flux, np.ndarray)
         self.assertEqual(1, np.ndim(n1d_flux))
 
-    def test_ref_flux_is_one(self):
-        """Test flux is 1 at the fiducial PWV in all bands"""
+    def test_error_out_of_bound(self):
+        """Test a value error is raise if PWV is out of range"""
 
-        for band in ('decam_r', 'decam_i', 'decam_z'):
-            self.assert_ref_flux_is_one(band)
+        self.assertRaises(ValueError, reference.interp_norm_flux, self.test_band, 100)
 
 
-class ReferenceStarMag(TestCase):
-    """Tests for the ``ref_star_mag`` function"""
+class InterpNormMag(TestCase):
+    """Tests for the ``interp_norm_mag`` function"""
 
-    def assert_zero_ref_mag(self, band):
-        """Assert magnitude is zero at the fiducial PWV in a given band
+    test_band = 'lsst_hardware_z'
 
-        Args:
-            band (str): Name of the band to test
-        """
+    def test_norm_mag_is_zero_at_zero_pwv(self):
+        """Test magnitude is zero at the fiducial PWV in a given band"""
 
-        config_pwv = reference.get_config_pwv_vals()['reference_pwv']
-        returned_mag = reference.ref_star_mag(band, [config_pwv])[0]
+        returned_mag = reference.interp_norm_mag(self.test_band, 0)
         self.assertEqual(0, returned_mag)
 
     def test_pwv_arg_is_float(self):
         """Test return is a float when pwv arg is a float"""
 
-        returned_mag = reference.ref_star_mag('decam_z', 5)
+        returned_mag = reference.interp_norm_mag(self.test_band, 5)
         self.assertIsInstance(returned_mag, float)
 
     def test_pwv_arg_is_array(self):
         """Test return is an array when pwv arg is an array"""
 
-        n1d_mag = reference.ref_star_flux('decam_z', [5, 6])
+        n1d_mag = reference.interp_norm_flux(self.test_band, [5, 6])
         self.assertIsInstance(n1d_mag, np.ndarray)
         self.assertEqual(1, np.ndim(n1d_mag))
 
-    def test_ref_flux_is_one(self):
-        """Test flux is 1 at the fiducial PWV in all bands"""
 
-        for band in ('decam_r', 'decam_i', 'decam_z'):
-            self.assert_zero_ref_mag(band)
+class DivideRefFromLc(TestCase):
+    """Tests for the ``divide_ref_from_lc`` function"""
 
+    def setUp(self):
+        # Create a dummy table. We don't care that the flux values
+        # are non-physical for this set of tests
+        self.test_table = Table()
+        self.test_table['flux'] = np.arange(10, 26, dtype='float')
+        self.test_table['band'] = 'lsst_hardware_z'
+        self.test_table['zp'] = 25
+        self.test_table['zpsys'] = 'ab'
 
-class SubtractRefStarArray(TestCase):
-    """Tests for the ``subtract_ref_star_array`` function"""
+    def test_no_argument_mutation(self):
+        """Test argument table is not mutated"""
 
-    def test_recovers_mstar_mag(self):
-        """Subtracting the reference star from an array of zero magnitudes
-        should return negative the reference star magnitude"""
+        original_table = self.test_table.copy()
+        reference.divide_ref_from_lc(self.test_table, pwv=15)
+        self.assertTrue(all(original_table == self.test_table))
 
-        # Determine the reference star magnitude
-        test_band = 'decam_z'
-        test_pwv = 10
-        ref_mag = reference.ref_star_mag(test_band, test_pwv, 'M9')
+    def test_returned_flux_is_scaled(self):
+        """Test returned table has scaled flux"""
 
-        # Subtract the reference star from an array of zero magnitudes
-        zeros = [0, 0, 0]
-        subtracted_mag = reference.subtract_ref_star_array(
-            test_band, zeros, test_pwv, 'M9')
+        # Scale the flux values manually
+        test_pwv = 15
+        test_band = self.test_table['band'][0]
+        scale_factor = reference.interp_norm_flux(test_band, test_pwv)
+        expected_flux = list(self.test_table['flux'] / scale_factor)
 
-        expected_return = [-ref_mag, -ref_mag, -ref_mag]
-        self.assertSequenceEqual(expected_return, list(subtracted_mag))
-
-    def test_ndmin_mismatch_raises(self):
-        """Test an error is raise if ndim(pwv) == ndim(norm_mag)"""
-
-        test_band = 'decam_z'
-        with self.assertRaises(ValueError):
-            reference.subtract_ref_star_array(test_band, [1, 2, 3], [1, 2, 3])
-
-
-class SubtractRefStarSlope(TestCase):
-    """Tests for subtracting off reference star slopes"""
-
-    def test_recovers_mstar_slope(self):
-        """Subtracting the reference star from an array of zeros
-        should return negative the reference slope"""
-
-        test_band = 'decam_z'
-        slope_start_pwv = 2
-        slope_end_pwv = 6
-
-        # Calculate actual slope
-        mag_slope_start = reference.ref_star_mag(test_band, slope_start_pwv)
-        mag_slope_end = reference.ref_star_mag(test_band, slope_end_pwv)
-        true_slope = (mag_slope_end - mag_slope_start) / (slope_end_pwv - slope_start_pwv)
-
-        # Get returned slope
-        pwv_config = {'slope_start': slope_start_pwv, 'slope_end': slope_end_pwv}
-        returned_slope = reference._subtract_ref_star_slope(test_band, 0, pwv_config)
-
-        self.assertEqual(true_slope, -returned_slope)
+        # Scale the flux values with ``divide_ref_from_lc`` and check they
+        # match manual results
+        scaled_table = reference.divide_ref_from_lc(self.test_table, pwv=test_pwv)
+        returned_flux = list(scaled_table['flux'])
+        self.assertListEqual(expected_flux, returned_flux)

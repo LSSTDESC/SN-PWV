@@ -1,16 +1,47 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-"""This module determines the change in sn magnitude vs PWV"""
+"""The ``sn_magnitudes.py`` module is responsible for calculating supernova
+magnitudes as a function of PWV and redshift. Functionality is provided to
+determine magnitudes directly from a SN model and via a light-curve fit.
+"""
 
 import itertools
 from copy import deepcopy
+from functools import lru_cache
+from pathlib import Path
 
 import numpy as np
 import sncosmo
+import yaml
 from tqdm import tqdm
 
-from . import modeling
+from . import modeling, reference
+
+_PARENT = Path(__file__).resolve()
+_CONFIG_PATH = _PARENT.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
+
+
+@lru_cache()  # Cache I/O
+def get_config_pwv_vals(config_path=_CONFIG_PATH):
+    """Retrieve PWV values to use as reference values
+
+    Returned values include:
+        - Lower pwv bound for calculating slope
+        - Reference PWV value for normalizing delta m
+        - Upper pwv bound for calculating slope
+
+    Args:
+        config_path (str): Path of config file if not default
+
+    Returns:
+        Dictionary with PWV values in mm
+    """
+
+    with open(config_path) as infile:
+        config_dict = yaml.load(infile, yaml.BaseLoader)
+
+    return {k: float(v) for k, v in config_dict.items()}
 
 
 ###############################################################################
@@ -63,8 +94,8 @@ def tabulate_mag(source, pwv_arr, z_arr, bands, verbose=True):
     return magnitudes
 
 
-def tabulate_fiducial_mag(source, z_arr, bands, fid_pwv_dict):
-    """Get SN magnitudes corresponding to the fiducual atmosphere
+def tabulate_fiducial_mag(source, z_arr, bands, fid_pwv_dict=None):
+    """Get SN magnitudes corresponding to the fiducial atmosphere
 
     Returns a dictionary of the form
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
@@ -78,6 +109,9 @@ def tabulate_fiducial_mag(source, z_arr, bands, fid_pwv_dict):
     Returns:
         A dictionary with fiducial magnitudes in each band
     """
+
+    if fid_pwv_dict is None:
+        fid_pwv_dict = reference.get_config_pwv_vals()
 
     # Parse reference pwv values
     pwv_fiducial = fid_pwv_dict['reference_pwv']
@@ -109,6 +143,8 @@ def correct_mag(source, mag, params, alpha=modeling.alpha, beta=modeling.beta):
         source     (str): Source of the model used to fit the given magnitudes
         mag    (ndarray): (n)d array of magnitudes for pwv and redshift
         params (ndarray): (n+1)d array with dimensions for pwv, redshift, parameter
+        alpha    (float): Alpha parameter value
+        beta     (float): Beta parameter value
 
     Returns:
         Array of calibrated magnitudes with same dimensions as ``mag``
@@ -127,7 +163,7 @@ def correct_mag(source, mag, params, alpha=modeling.alpha, beta=modeling.beta):
     return mag + alpha * params[..., i_x1] - beta * params[..., i_c]
 
 
-def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
+def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands, **kwargs):
     """Determine apparent mag by fitting simulated light-curves
     
     Returned arrays are shape  (len(pwv_arr), len(z_arr)).
@@ -139,6 +175,7 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
         pwv_arr      (ndarray): Array of PWV values
         z_arr        (ndarray): Array of redshift values
         bands      (list[str]): Name of the bands to tabulate magnitudes for
+        Any arguments for ``sncosmo.fit_lc``.
     
     Returns:
         Dictionary with arrays for fitted magnitude at each PWV and redshift
@@ -154,16 +191,17 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
         # Use the true light-curve parameters as the initial guess
         lc_parameters = deepcopy(lc.meta)
         lc_parameters.pop('pwv')
+        lc_parameters.pop('res')
 
         # Fit the model without PWV
         model_without_pwv.update(lc_parameters)
-        _, fitted_model = sncosmo.fit_lc(lc, model_without_pwv, vparams)
+        _, fitted_model = sncosmo.fit_lc(lc, model_without_pwv, vparams, **kwargs)
 
         for band in bands:
             fitted_mag[band].append(fitted_model.bandmag(band, 'ab', 0))
             fitted_params[band].append(fitted_model.parameters)
 
-    # We could have used a more complicated colloction pattern, but reshaping
+    # We could have used a more complicated collection pattern, but reshaping
     # after the fact is simpler.
     shape = (len(pwv_arr), len(z_arr))
     num_params = len(fitted_model.parameters)
@@ -174,8 +212,8 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands):
     return fitted_mag, fitted_params
 
 
-def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fiducial_pwv_dict):
-    """Get fitted SN magnitudes corresponding to the fiducual atmosphere
+def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fid_pwv_dict=None):
+    """Get fitted SN magnitudes corresponding to the fiducial atmosphere
 
     Returns a dictionary of the form
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
@@ -185,18 +223,21 @@ def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fiducial_pwv_dict):
         obs              (Table): Array of light-curves to fit
         vparams           (list): Parameters to vary with the fit
         z_arr          (ndarray): Array of redshift values
-        band               (str): Name of band to return mag for
-        fiducial_pwv_dict (dict): Config dictionary for fiducial atmosphere
+        bands              (str): Name of band to return mag for
+        fid_pwv_dict (dict): Config dictionary for fiducial atmosphere
 
     Returns:
         - A dictionary with 2d array of fitted magnitudes in each band
         - A dictionary with 3d array of fitted parameters in each band
     """
 
+    if fid_pwv_dict is None:
+        fid_pwv_dict = reference.get_config_pwv_vals()
+
     # Parse reference pwv values
-    pwv_fiducial = fiducial_pwv_dict['reference_pwv']
-    pwv_slope_start = fiducial_pwv_dict['slope_start']
-    pwv_slope_end = fiducial_pwv_dict['slope_end']
+    pwv_fiducial = fid_pwv_dict['reference_pwv']
+    pwv_slope_start = fid_pwv_dict['slope_start']
+    pwv_slope_end = fid_pwv_dict['slope_end']
 
     # Get mag at reference pwv values
     pwv_vals = [pwv_slope_start, pwv_fiducial, pwv_slope_end]
@@ -262,11 +303,15 @@ def calc_mu_for_model(model):
         mu = m_B - M_B
     """
 
+    dilation_factor = 1 + model['z']
+    time_dilation_mag_offset = - 2.5 * np.log10(dilation_factor)
+
     b_band = sncosmo.get_bandpass('standard::b')
-    b_band_rest = b_band.shifted(1 + model['z'])
-    apparent = model.bandmag(b_band_rest, 'AB', 0)
-    absolute = model.source_peakabsmag(b_band, 'AB')
-    return apparent - absolute
+    rest_band = b_band.shifted(dilation_factor)
+
+    apparent_mag = model.bandmag(rest_band, 'ab', 0) - time_dilation_mag_offset
+    absolute_mag = model.source_peakabsmag(b_band, 'ab', cosmo=modeling.betoule_cosmo)
+    return apparent_mag - absolute_mag
 
 
 def calc_mu_for_params(source, params):
@@ -314,5 +359,4 @@ def calc_calibration_factor_for_params(source, params):
         i, param in enumerate(model.param_names)
     }
 
-    cal_factor = modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']
-    return params_dict, cal_factor
+    return modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']

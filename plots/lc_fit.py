@@ -8,7 +8,6 @@ from pathlib import Path
 
 import numpy as np
 import sncosmo
-from astropy.table import Table, vstack
 from bokeh import models
 from bokeh.io import curdoc
 from bokeh.layouts import column, layout
@@ -18,13 +17,13 @@ from bokeh.plotting import figure
 _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
-from sn_analysis.modeling import get_model_with_pwv
-from sn_analysis.utils import register_decam_filters
+from sn_analysis.filters import register_lsst_filters
+from sn_analysis import modeling, reference
 
 # SNCosmo source to use when plotting
 SOURCE = 'salt2-extended'
-BANDS = tuple(f'decam_{b}' for b in 'ugrizy')
-register_decam_filters(force=True)
+BANDS = tuple(f'lsst_hardware_{b}' for b in 'ugriz')
+register_lsst_filters(force=True)
 
 
 class SimulatedParamWidgets:
@@ -33,14 +32,17 @@ class SimulatedParamWidgets:
     top_section_div = models.Div(text='<h2>Simulated Parameters</h2>')
 
     # User input widgets for setting model parameters
-    sim_z_slider = models.Slider(start=0.001, end=1, value=.1, step=.001, title='z')
-    sim_t0_slider = models.Slider(start=-10, end=10, value=0, step=.001, title='t0')
-    sim_x0_slider = models.Slider(start=0.001, end=2, value=.1, step=.001, title='x0')
-    sim_x1_slider = models.Slider(start=-1, end=1, value=0, step=.001, title='x1')
-    sim_c_slider = models.Slider(start=-1, end=1, value=0, step=.001, title='c')
+    sim_z_slider = models.Slider(start=0.001, end=1, value=.1, step=.01, title='z')
+    sim_t0_slider = models.Slider(start=-10, end=10, value=0, step=.01, title='t0')
+    sim_x0_slider = models.Slider(start=0.001, end=2, value=.1, step=.01, title='x0')
+    sim_x1_slider = models.Slider(start=-1, end=1, value=0, step=.01, title='x1')
+    sim_c_slider = models.Slider(start=-1, end=1, value=0, step=.01, title='c')
     sampling_input = models.TextInput(value='1', title='Sampling (Days):')
     sim_pwv_slider = models.Slider(start=-0, end=15, value=4, step=.1, title='PWV')
     plot_button = models.Button(label='Plot Light-Curve', button_type='success')
+
+    snr_input = models.TextInput(value='10.0', title='SNR:', default_size=220)
+    checkbox = models.CheckboxGroup(labels=["Plot SNR", 'Subtract Reference Star'], active=[0])
 
     # Having all inputs as a list is useful when constructing layouts
     # as it establishes the default column order
@@ -53,6 +55,8 @@ class SimulatedParamWidgets:
         sim_c_slider,
         sim_pwv_slider,
         sampling_input,
+        snr_input,
+        checkbox,
         plot_button
     ]
 
@@ -100,12 +104,9 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
             source  (Str, Source): SNCosmo source of the desired model
         """
 
-        # Widgets for plotting / fit results 
+        # Widgets for plotting / fit results
         self.figure = figure
         self.fit_results_div = fit_results_div
-
-        # Models for simulating and fitting light curves 
-        # i.e. Model with and without a PWV component
         self.source = source
 
         # Assign callbacks
@@ -113,13 +114,13 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         self.fit_button.on_click(self.fit_light_curve)
         self.plot_model_button.on_click(self.plot_current_model)
 
-    def clear_fitted_lines(self):
+    def _clear_fitted_lines(self):
         """Remove model fits from the plot"""
 
         while self.plotted_fits:
             self.figure.renderers.remove(self.plotted_fits.pop())
 
-    def clear_plotted_object_data(self):
+    def _clear_plotted_object_data(self):
         """Remove simulated light-curve data points from the plot"""
 
         while self.plotted_data:
@@ -128,38 +129,45 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
     def plot_light_curve(self, event=None):
         """Simulate and plot a light-curve"""
 
-        # Instantiate a model with simulation params from input widgets
-        model = get_model_with_pwv(self.source)
-        model.update(dict(
+        # Clear the plot
+        self._clear_plotted_object_data()
+        self._clear_fitted_lines()
+
+        # Simulate a light-curve
+        obs = modeling.create_observations_table(np.arange(-10, 51, float(self.sampling_input.value)), BANDS)
+        self.sim_data = modeling.realize_lc(
+            obs, self.source,
+            snr=float(self.snr_input.value),
             z=self.sim_z_slider.value,
             t0=self.sim_t0_slider.value,
             x0=self.sim_x0_slider.value,
             x1=self.sim_x1_slider.value,
             c=self.sim_c_slider.value,
             pwv=self.sim_pwv_slider.value
-        ))
+        )
 
-        # Clear the plot
-        self.clear_plotted_object_data()
-        self.clear_fitted_lines()
+        if 1 in self.checkbox.active:
+            self.sim_data = reference.divide_ref_from_lc(
+                self.sim_data, self.sim_data.meta['pwv']
+            )
 
         # Update the plot with simulated data
-        time_arr = np.arange(-20, 50, float(self.sampling_input.value))
-        band_sim_data = []
         for band, color in zip(BANDS, palette):
-            flux = model.bandflux(band, time_arr, zpsys='ab', zp=25)
-            band_data = Table([time_arr, flux], names=['time', 'flux'])
-            band_data['band'] = band
-            band_sim_data.append(band_data)
+            band_data = self.sim_data[self.sim_data['band'] == band]
+            x = band_data['time']
+            y = band_data['flux']
+            yerr = band_data['fluxerr']
 
-            circ = self.figure.circle(x=time_arr, y=flux, color=color)
+            circ = self.figure.circle(x=x, y=y, color=color)
             self.plotted_data.append(circ)
 
-        # Save the data so it can be fitted later on
-        self.sim_data = vstack(band_sim_data)
-        self.sim_data['fluxerr'] = .1 * self.sim_data['flux']
-        self.sim_data['zpsys'] = 'ab'
-        self.sim_data['zp'] = 25
+            if 0 in self.checkbox.active:
+                err_bar = self.figure.multi_line(
+                    np.transpose([x, x]).tolist(),
+                    np.transpose([y - yerr, y + yerr]).tolist(),
+                    color=color)
+
+                self.plotted_data.append(err_bar)
 
         # Match fitted param sliders to sim param sliders
         self.fit_t0_slider.update(value=self.sim_t0_slider.value)
@@ -204,7 +212,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         self.fit_results_div.update(text=text)
 
         # Plot the fitted model
-        self.clear_fitted_lines()
+        self._clear_fitted_lines()
         time_arr = np.arange(-25, 55, .5)
         for band, color in zip(BANDS, palette):
             line = self.figure.line(
@@ -234,7 +242,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
             c=self.fit_c_slider.value
         ))
 
-        self.clear_fitted_lines()
+        self._clear_fitted_lines()
         self.fit_results_div.update(text='')
         time_arr = np.arange(-25, 55, .5)
         for band, color in zip(BANDS, palette):

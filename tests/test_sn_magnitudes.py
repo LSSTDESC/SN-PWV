@@ -8,9 +8,32 @@ from unittest import TestCase
 import numpy as np
 
 from sn_analysis import modeling, sn_magnitudes
-from sn_analysis.utils import register_decam_filters
+from sn_analysis.filters import register_decam_filters
 
 register_decam_filters(force=True)
+
+
+class GetConfigPWVValues(TestCase):
+    """Tests for the ``get_config_pwv_vals`` function"""
+
+    @classmethod
+    def setUpClass(cls):
+        """Load the default config values"""
+        cls.config_dict = sn_magnitudes.get_config_pwv_vals()
+
+    def test_expected_keys(self):
+        """Test returned dictionary has expected keys"""
+
+        returned_keys = set(self.config_dict.keys())
+        expected = {'reference_pwv', 'slope_start', 'slope_end'}
+        self.assertSequenceEqual(expected, returned_keys)
+
+    def test_values_are_equidistant(self):
+        """Test slope start / end values are equidistant from reference PWV"""
+
+        upper_dist = self.config_dict['reference_pwv'] - self.config_dict['slope_end']
+        lower_dist = self.config_dict['reference_pwv'] - self.config_dict['slope_start']
+        self.assertEqual(upper_dist, -lower_dist)
 
 
 class TestTabulateMagnitudes(TestCase):
