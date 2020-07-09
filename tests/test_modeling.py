@@ -100,6 +100,8 @@ class CreateObservationsTable(TestCase):
             set(self.phases), set(self.observations_table['time']))
 
     def test_table_datatypes(self):
+        """Test table columns have the expected data types"""
+
         expected_dtype = np.dtype([
             ('time', '<f8'),
             ('band', '<U1000'),
@@ -128,7 +130,8 @@ class RealizeLC(TestCase):
             c=-.5,
             z=z,
             t0=1,
-            x0=modeling.calc_x0_for_z(z, self.source)
+            x0=modeling.calc_x0_for_z(z, self.source),
+            res=5
         )
 
         self.obs = modeling.create_observations_table()
@@ -155,12 +158,12 @@ class RealizeLC(TestCase):
         sncosmo.fit_lc(self.simulated_lc, model, vparam_names=['x0', 'x1', 'c'])
 
     def test_correct_meta_data_values(self):
-        """Test simulated LC table has correct model parameters in meta data"""
+        """Test simulated LC table has model parameters in meta data"""
 
         self.assertEqual(self.params, self.simulated_lc.meta)
 
     def test_sim_values_equal_obs(self):
-        """Assert values in the observation table match values in the
+        """Check if values in the observation table match values in the
         light-curve table.
         """
 
@@ -189,7 +192,7 @@ class RealizeLC(TestCase):
         meta_params = list(simulated_lc.meta.keys())
         self.assertListEqual(expected_params, meta_params)
 
-    def test_raises_for_z_0(self):
+    def test_raises_for_z_equals_0(self):
         """Test a value error is raised for simulating z==0"""
 
         self.assertRaises(ValueError, modeling.realize_lc, self.obs, self.source, z=0)
@@ -213,7 +216,7 @@ class IterLCS(TestCase):
             verbose=False)
 
     def test_return_is_iter(self):
-        """Test the return is a generator or Tables"""
+        """Test the return is a generator over Tables"""
 
         self.assertIsInstance(self.lc_iter, types.GeneratorType)
         self.assertIsInstance(next(self.lc_iter), Table)
