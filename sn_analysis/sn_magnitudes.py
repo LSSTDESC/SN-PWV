@@ -191,6 +191,7 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands, **kwargs):
         # Use the true light-curve parameters as the initial guess
         lc_parameters = deepcopy(lc.meta)
         lc_parameters.pop('pwv')
+        lc_parameters.pop('res')
 
         # Fit the model without PWV
         model_without_pwv.update(lc_parameters)

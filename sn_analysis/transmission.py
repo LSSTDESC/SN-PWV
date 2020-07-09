@@ -64,9 +64,9 @@ class PWVTrans(sncosmo.PropagationEffect):
     _maxwave = 12000.0
 
     def __init__(self):
-        self._param_names = ['pwv']
-        self.param_names_latex = ['PWV']
-        self._parameters = np.array([0.])
+        self._param_names = ['pwv', 'res']
+        self.param_names_latex = ['PWV', 'resolution']
+        self._parameters = np.array([0., 5])
 
     def propagate(self, wave, flux):
         """Propagate the flux through the atmosphere
@@ -79,9 +79,6 @@ class PWVTrans(sncosmo.PropagationEffect):
             An array of flux values after suffering propagation effects
         """
 
-        pwv = self.parameters[0]
-        transmission = pwv_atm.trans_for_pwv(pwv)
-        interp_transmission = np.interp(
-            wave, transmission['wavelength'], transmission['transmission'])
-
-        return interp_transmission * flux
+        pwv, res = self.parameters
+        transmission = trans_for_pwv(pwv, wave, res)
+        return flux * transmission
