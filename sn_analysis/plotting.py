@@ -32,6 +32,9 @@ Plot summaries:
 |                              | salt2 parameter vs redshift. Multiple lines  |
 |                              | included for different PWV values.           |
 +------------------------------+----------------------------------------------+
+| ``plot_delta_colors``        | Shows the change in color as a function of   |
+|                              | redshift color coded by PWV.                 |
++------------------------------+----------------------------------------------+
 """
 
 import numpy as np
@@ -397,6 +400,35 @@ def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
     handles = handles[::2]
     right_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
 
+    plt.tight_layout()
+
+
+def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
+    """Plot the change in SN color as a function of redshift and PWV
+
+    Args:
+        pwv_arr    (ndarray): Array of PWV values
+        z_arr      (ndarray): Array of redshift values
+        mag_dict      (dict): Dictionary with magnitudes for each band
+        colors (list[tuple]): Band combinations to plot colors for
+    """
+
+    num_cols = len(colors)
+    fig, axes = plt.subplots(1, num_cols, figsize=(4 * num_cols, 4), sharex=True, sharey=True)
+    if num_cols == 1:
+        axes = [axes]
+
+    ref_idx = list(pwv_arr).index(ref_pwv)
+    for axis, (band1, band2) in zip(axes, colors):
+        color = mag_dict[band1] - mag_dict[band2]
+        delta_color = color - color[ref_idx]
+        multi_line_plot(z_arr, delta_color, pwv_arr, label='{} mm', axis=axis)
+
+        axis.set_xlabel('Redshift', fontsize=14)
+        axis.set_ylabel(fr'$\Delta$ ({band1[-1]} - {band2[-1]})', fontsize=14)
+
+    axis.set_xlim(0, max(z_arr))
+    axis.legend(bbox_to_anchor=(1, 1.1))
     plt.tight_layout()
 
 
