@@ -227,16 +227,17 @@ def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
     return r"${0:.{2}f}\cdot10^{{{1:d}}}$".format(coeff, exponent, precision)
 
 
-def plot_salt2_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6, 4)):
+def plot_spectral_template(source, wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6, 4)):
     """Plot the a spectral template at several redshifts overlaid with PWV
 
     Args:
-        wave_arr  (ndarray): The observer frame wavelengths to plot flux for in Angstroms
-        z_arr     (ndarray): The redshifts to plot the template at
-        pwv         (float): The PWV to plot the transmission function for
-        phase       (float): The phase of the template to plot
-        resolution  (float): The resolution of the atmospheric model
-        figsize     (tuple): The size of the figure
+        source (Source, str): sncosmo source to use as spectral template
+        wave_arr   (ndarray): The observer frame wavelengths to plot flux for in Angstroms
+        z_arr      (ndarray): The redshifts to plot the template at
+        pwv          (float): The PWV to plot the transmission function for
+        phase        (float): The phase of the template to plot
+        resolution   (float): The resolution of the atmospheric model
+        figsize      (tuple): The size of the figure
 
     Returns:
         - A matplotlib figure
@@ -251,7 +252,7 @@ def plot_salt2_template(wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6
     )
 
     # Plot spectral template at given redshifts
-    model = sncosmo.Model('salt2-extended')
+    model = sncosmo.Model(source)
     flux_scale = 1e-13
     for i, z in enumerate(reversed(z_arr)):
         color = f'C{len(z_arr) - i - 1}'
