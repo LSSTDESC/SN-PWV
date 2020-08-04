@@ -124,31 +124,6 @@ class InterpNormFlux(TestCase):
         self.assertRaises(ValueError, reference.interp_norm_flux, self.test_band, 100)
 
 
-class InterpNormMag(TestCase):
-    """Tests for the ``interp_norm_mag`` function"""
-
-    test_band = 'lsst_hardware_z'
-
-    def test_norm_mag_is_zero_at_zero_pwv(self):
-        """Test magnitude is zero at the fiducial PWV in a given band"""
-
-        returned_mag = reference.interp_norm_mag(self.test_band, 0)
-        self.assertEqual(0, returned_mag)
-
-    def test_pwv_arg_is_float(self):
-        """Test return is a float when pwv arg is a float"""
-
-        returned_mag = reference.interp_norm_mag(self.test_band, 5)
-        self.assertIsInstance(returned_mag, float)
-
-    def test_pwv_arg_is_array(self):
-        """Test return is an array when pwv arg is an array"""
-
-        n1d_mag = reference.interp_norm_flux(self.test_band, [5, 6])
-        self.assertIsInstance(n1d_mag, np.ndarray)
-        self.assertEqual(1, np.ndim(n1d_mag))
-
-
 class DivideRefFromLc(TestCase):
     """Tests for the ``divide_ref_from_lc`` function"""
 
@@ -174,7 +149,7 @@ class DivideRefFromLc(TestCase):
         # Scale the flux values manually
         test_pwv = 15
         test_band = self.test_table['band'][0]
-        scale_factor = reference.interp_norm_flux(test_band, test_pwv)
+        scale_factor = reference.average_norm_flux(test_band, test_pwv)
         expected_flux = list(self.test_table['flux'] / scale_factor)
 
         # Scale the flux values with ``divide_ref_from_lc`` and check they
