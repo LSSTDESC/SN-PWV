@@ -118,7 +118,7 @@ def interp_norm_flux(band, pwv, reference_type='G2'):
     """Return normalized reference star flux values
 
     Args:
-        band           (str): Band abbreviation <ugrizy> of band to get flux for
+        band           (str): Band to get flux for
         pwv (float, ndarray): PWV values to get magnitudes for
         reference_type (str): Type of reference star (Default 'G2')
 
@@ -136,30 +136,31 @@ def interp_norm_flux(band, pwv, reference_type='G2'):
     return np.interp(pwv, norm_flux.index, norm_flux)
 
 
-def interp_norm_mag(band, pwv, reference_type='G2'):
-    """Return normalized reference star magnitude
-
-    Interpolation is performed in flux space.
+def average_norm_flux(band, pwv, reference_types=('G2', 'M5', 'K2')):
+    """Return the average normalized reference star flux
 
     Args:
-        band           (str): Band abbreviation <ugrizy> of band to get flux for
-        pwv    (float, list): PWV values to get magnitudes for
-        reference_type (str): Type of reference star (Default 'G2')
+        band            (str): Band to get flux for
+        pwv  (float, ndarray): PWV values to get magnitudes for
+        reference_types (str): Types of reference stars to average over
 
     Returns:
-        The normalized magnitude at the given PWV value(s)
+        The normalized flux at the given PWV value(s)
     """
 
-    return -2.5 * np.log10(interp_norm_flux(band, pwv, reference_type))
+    return np.average([interp_norm_flux(band, pwv, stype) for stype in reference_types])
 
 
-def divide_ref_from_lc(lc_table, pwv, reference_type='G2'):
+def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):
     """Divide reference flux from a light-curve
 
+    Recalibrate flux values using the average change in flux of a collection of
+    reference stars.
+
     Args:
-        lc_table     (Table): Astropy table with columns ``flux`` and ``band``
-        pwv          (float): PWV value to subtract reference star for
-        reference_type (str): Type of reference star (Default 'G2')
+        lc_table      (Table): Astropy table with columns ``flux`` and ``band``
+        pwv           (float): PWV value to subtract reference star for
+        reference_types (str): Type of reference stars to use in calibration
 
     Returns:
         A modified copy of ``lc_table``
@@ -167,7 +168,7 @@ def divide_ref_from_lc(lc_table, pwv, reference_type='G2'):
 
     table_copy = lc_table.copy()
     for band in set(table_copy['band']):
-        ref_flux = interp_norm_flux(band, pwv, reference_type)
+        ref_flux = average_norm_flux(band, pwv, reference_types)
         table_copy['flux'][table_copy['band'] == band] /= ref_flux
 
     return table_copy
