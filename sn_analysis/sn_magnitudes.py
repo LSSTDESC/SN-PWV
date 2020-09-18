@@ -163,7 +163,7 @@ def correct_mag(source, mag, params, alpha=modeling.alpha, beta=modeling.beta):
     return mag + alpha * params[..., i_x1] - beta * params[..., i_c]
 
 
-def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands, **kwargs):
+def fit_mag(source, light_curves, vparams, bands, pwv_arr=None, z_arr=None, **kwargs):
     """Determine apparent mag by fitting simulated light-curves
     
     Returned arrays are shape  (len(pwv_arr), len(z_arr)).
@@ -190,8 +190,8 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands, **kwargs):
     for lc in light_curves:
         # Use the true light-curve parameters as the initial guess
         lc_parameters = deepcopy(lc.meta)
-        lc_parameters.pop('pwv')
-        lc_parameters.pop('res')
+        lc_parameters.pop('pwv', None)
+        lc_parameters.pop('res', None)
 
         # Fit the model without PWV
         model_without_pwv.update(lc_parameters)
@@ -201,13 +201,14 @@ def fit_mag(source, light_curves, vparams, pwv_arr, z_arr, bands, **kwargs):
             fitted_mag[band].append(fitted_model.bandmag(band, 'ab', 0))
             fitted_params[band].append(fitted_model.parameters)
 
-    # We could have used a more complicated collection pattern, but reshaping
-    # after the fact is simpler.
-    shape = (len(pwv_arr), len(z_arr))
-    num_params = len(fitted_model.parameters)
-    for band in bands:
-        fitted_mag[band] = np.reshape(fitted_mag[band], shape)
-        fitted_params[band] = np.reshape(fitted_params[band], (*shape, num_params))
+    if pwv_arr is not None and z_arr is not None:
+        # We could have used a more complicated collection pattern, but reshaping
+        # after the fact is simpler.
+        shape = (len(pwv_arr), len(z_arr))
+        num_params = len(fitted_model.parameters)
+        for band in bands:
+            fitted_mag[band] = np.reshape(fitted_mag[band], shape)
+            fitted_params[band] = np.reshape(fitted_params[band], (*shape, num_params))
 
     return fitted_mag, fitted_params
 

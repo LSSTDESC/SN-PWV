@@ -44,7 +44,7 @@ def get_model_headers(cadence, model=11):
     return list(sim_dir.glob('*HEAD.FITS'))
 
 
-def iter_lc_for_header(header_path):
+def iter_lc_for_header(header_path, verbose=True):
     """Iterate over light-curves from a given header file
 
     Files are expected in pairs of a header file (`*HEAD.fits`) that stores target
@@ -52,6 +52,7 @@ def iter_lc_for_header(header_path):
 
     Args:
         header_path     (Path, str): Path of the header file
+        verbose (bool): Display a progress bar
 
     Yields:
         - An Astropy table with the MJD and filter for each observation
@@ -73,7 +74,7 @@ def iter_lc_for_header(header_path):
     #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 
     # phot_data = phot_data[['MJD', 'FLT', 'PHOTFLAG']]
-    for idx, meta in meta_data.iterrows():
+    for idx, meta in tqdm(meta_data.iterrows(), total=len(meta_data), position=1, disable=not verbose):
         lc_start = int(meta['PTROBS_MIN']) - 1
         lc_end = int(meta['PTROBS_MAX'])
         lc = phot_data[lc_start: lc_end]
@@ -82,16 +83,17 @@ def iter_lc_for_header(header_path):
 
 
 def iter_lc_for_cadence_model(cadence, model=11, verbose=True):
-    """Iterate over target pointings  for a given cadence
+    """Iterate over simulated light-curves  for a given cadence
 
     Args:
-        cadence (str): Name of the cadence to summarize
-        model   (int): Model number to retrieve light-curves for
+        cadence  (str): Name of the cadence to summarize
+        model    (int): Model number to retrieve light-curves for
+        verbose (bool): Display a progress bar
 
     Yields:
         - An Astropy table with the MJD and filter for each observation
     """
 
-    for header_path in tqdm(get_model_headers(cadence, model), desc=cadence, disable=~verbose):
-        for lc in iter_lc_for_header(header_path):
+    for header_path in tqdm(get_model_headers(cadence, model), desc=cadence, disable=not verbose):
+        for lc in iter_lc_for_header(header_path, verbose):
             yield lc
