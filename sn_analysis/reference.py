@@ -15,9 +15,9 @@ import pandas as pd
 _PARENT = Path(__file__).resolve()
 _DATA_DIR = _PARENT.parent.parent / 'data'
 _STELLAR_SPECTRA_DIR = _DATA_DIR / 'stellar_spectra'
-_SELLAR_FLUX_DIR = _DATA_DIR / 'stellar_fluxes'
+_STELLAR_FLUX_DIR = _DATA_DIR / 'stellar_fluxes'
 
-available_types = sorted(f.stem for f in _SELLAR_FLUX_DIR.glob('*.txt'))
+available_types = sorted(f.stem for f in _STELLAR_FLUX_DIR.glob('*.txt'))
 
 
 def _read_stellar_spectra_path(fpath):
@@ -89,7 +89,7 @@ def get_ref_star_dataframe(reference_type='G2'):
         A DataFrame indexed by PWV with columns for flux
     """
 
-    rpath = _SELLAR_FLUX_DIR / f'{reference_type}.txt'
+    rpath = _STELLAR_FLUX_DIR / f'{reference_type}.txt'
     if not rpath.exists():
         raise ValueError(
             f'Data not available for specified star {reference_type}. '

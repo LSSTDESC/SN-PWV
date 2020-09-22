@@ -77,6 +77,7 @@ def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
         label     (str): Optional label to format with ``z`` value
     """
 
+    # noinspection PyUnresolvedReferences
     colors = plt.cm.viridis(np.linspace(0, 1, len(z_arr)))
     for z, y, color in zip(z_arr, y_arr, colors):
         if label:

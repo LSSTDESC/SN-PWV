@@ -16,7 +16,7 @@ import sncosmo
 import yaml
 from tqdm import tqdm
 
-from . import modeling, reference
+from . import modeling
 
 _PARENT = Path(__file__).resolve()
 _CONFIG_PATH = _PARENT.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
@@ -111,7 +111,7 @@ def tabulate_fiducial_mag(source, z_arr, bands, fid_pwv_dict=None):
     """
 
     if fid_pwv_dict is None:
-        fid_pwv_dict = reference.get_config_pwv_vals()
+        fid_pwv_dict = get_config_pwv_vals()
 
     # Parse reference pwv values
     pwv_fiducial = fid_pwv_dict['reference_pwv']
@@ -224,7 +224,7 @@ def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fid_pwv_dict=None):
         obs              (Table): Array of light-curves to fit
         vparams           (list): Parameters to vary with the fit
         z_arr          (ndarray): Array of redshift values
-        bands              (str): Name of band to return mag for
+        bands        (list[str]): Name of band to return mag for
         fid_pwv_dict (dict): Config dictionary for fiducial atmosphere
 
     Returns:
@@ -233,7 +233,7 @@ def fit_fiducial_mag(source, obs, vparams, z_arr, bands, fid_pwv_dict=None):
     """
 
     if fid_pwv_dict is None:
-        fid_pwv_dict = reference.get_config_pwv_vals()
+        fid_pwv_dict = get_config_pwv_vals()
 
     # Parse reference pwv values
     pwv_fiducial = fid_pwv_dict['reference_pwv']
