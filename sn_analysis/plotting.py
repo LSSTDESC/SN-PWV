@@ -21,7 +21,7 @@ Plot summaries:
 |                              | and a row for each of the first three plots  |
 |                              | in this table.                               |
 +------------------------------+----------------------------------------------+
-| ``plot_salt2_template``      | Plot the salt2-extended spectral template.   |
+| ``plot_spectral_template``   | Plot the salt2-extended spectral template.   |
 |                              | Overlay PWV and bandpass throughput curves.  |
 +------------------------------+----------------------------------------------+
 | ``plot_magnitude``           | Multi-panel plot showing with a column for   |
@@ -35,13 +35,29 @@ Plot summaries:
 | ``plot_delta_colors``        | Shows the change in color as a function of   |
 |                              | redshift color coded by PWV.                 |
 +------------------------------+----------------------------------------------+
+| ``plot_delta_x0``            | Plot the variation in x0 as a function of    |
+|                              | redshift and PWV.                            |
++------------------------------+----------------------------------------------+
+| ``plot_delta_mu``            | Plot the variation in fitted distance modulus|
+|                              |  as a function of redshift and PWV.          |
++------------------------------+----------------------------------------------+
+| ``plot_delta_colors``        | Plot the change in fitted SN color           |
+|                              |  as a function of redshift and PWV.          |
++------------------------------+----------------------------------------------+
+| ``plot_delta_colors``        | Plot PWV measurements taken over a single    |
+|                              | year as a function of time.                  |
++------------------------------+----------------------------------------------+
 """
 
+from datetime import datetime
+
+import matplotlib.dates as mdates
 import numpy as np
 import sncosmo
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from pwv_kpno import pwv_atm
+from pytz import utc
 
 from . import modeling, filters
 
@@ -61,6 +77,7 @@ def multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
         label     (str): Optional label to format with ``z`` value
     """
 
+    # noinspection PyUnresolvedReferences
     colors = plt.cm.viridis(np.linspace(0, 1, len(z_arr)))
     for z, y, color in zip(z_arr, y_arr, colors):
         if label:
@@ -412,6 +429,7 @@ def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
         z_arr      (ndarray): Array of redshift values
         mag_dict      (dict): Dictionary with magnitudes for each band
         colors (list[tuple]): Band combinations to plot colors for
+        ref_pwv      (float): Plot values relative to given reference PWV
     """
 
     num_cols = len(colors)
@@ -435,13 +453,14 @@ def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
 
 # noinspection PyUnusedLocal
 def plot_delta_mu(source, mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
-    """Plot the variation in x0 as a function of redshift and PWV
+    """Plot the variation in fitted distance modulus as a function of redshift and PWV
 
     Args:
         source   (Source): Source corresponding to the provided mu values
         mu      (ndarray): Array of distance moduli
         pwv_arr (ndarray): Array of PWV values
         z_arr   (ndarray): Array of redshift values
+        cosmo (Cosmology): Astropy cosmology to compare results against
     """
 
     cosmo_mu = cosmo.distmod(z_arr).value
@@ -469,3 +488,80 @@ def plot_delta_mu(source, mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
         ax.set_xlabel('Redshift', fontsize=12)
 
     plt.tight_layout()
+
+
+def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4)):
+    """Plot PWV measurements taken over a single year as a function of time
+
+    Args:
+        pwv_series (Series): Measured PWV index by datetime
+        figsize     (tuple): Size of the figure in inches
+
+    Returns:
+        - A matplotlib figure
+        - A matplotlib axis
+    """
+
+    # Calculate rolling average of PWV time series
+    sampling_in_hour = 4
+    hour_in_day = 24
+    day_in_window = 7
+    window_size = sampling_in_hour * hour_in_day * day_in_window
+    rolling_mean_pwv = pwv_series.rolling(window=window_size).mean()
+
+    # In practice these dates vary by year so the values used here are approximate
+    year = pwv_series.index[0].year
+    mar_equinox = datetime(year, 3, 20, tzinfo=utc)
+    jun_equinox = datetime(year, 6, 21, tzinfo=utc)
+    sep_equinox = datetime(year, 9, 22, tzinfo=utc)
+    dec_equinox = datetime(year, 12, 21, tzinfo=utc)
+
+    # Separate data based on season
+    winter_pwv = pwv_series[(pwv_series.index < mar_equinox) | (pwv_series.index > dec_equinox)]
+    spring_pwv = pwv_series[(pwv_series.index > mar_equinox) & (pwv_series.index < jun_equinox)]
+    summer_pwv = pwv_series[(pwv_series.index > jun_equinox) & (pwv_series.index < sep_equinox)]
+    fall_pwv = pwv_series[(pwv_series.index > sep_equinox) & (pwv_series.index < dec_equinox)]
+
+    print(f'Winter Average: {winter_pwv.mean(): .2f} +\- {winter_pwv.std() : .2f} mm')
+    print(f'Spring Average: {spring_pwv.mean(): .2f} +\- {spring_pwv.std() : .2f} mm')
+    print(f'Summer Average: {summer_pwv.mean(): .2f} +\- {summer_pwv.std() : .2f} mm')
+    print(f'Fall Average:  {fall_pwv.mean(): .2f} +\- {fall_pwv.std() : .2f} mm')
+
+    # Plot measured PWV
+    fig, axis = plt.subplots(figsize=figsize)
+    for equinox_date in (mar_equinox, jun_equinox, sep_equinox, dec_equinox):
+        axis.axvline(equinox_date, linestyle='--', color='grey', zorder=0)
+
+    # Plot rolling average
+    axis.scatter(pwv_series.index, pwv_series, s=1, alpha=.2, label='Median PWV', zorder=1)
+    axis.plot(pwv_series.index, rolling_mean_pwv, color='C1', label='Rolling Avg.', zorder=2, linewidth=2)
+
+    # Plot seasonal average
+    # winter is plotted separately because it spans the new year
+    winter_avg = winter_pwv.mean()
+    winter_std = winter_pwv.std()
+    winter_subset = pwv_series[pwv_series.index < mar_equinox]
+    winter_x = winter_subset.index.max() - (winter_subset.index.max() - winter_subset.index.min()) / 2
+    axis.errorbar([winter_x], [winter_avg], yerr=[winter_std], color='k', zorder=3, linewidth=2, capsize=10, capthick=2)
+    axis.scatter([winter_x], [winter_avg], color='k', s=100, marker='+', zorder=3, label='Seasonal Avg.')
+
+    for season in (spring_pwv, summer_pwv, fall_pwv):
+        avg = season.mean()
+        std = season.std()
+        x = season.index.max() - (season.index.max() - season.index.min()) / 2
+        axis.errorbar([x], [avg], yerr=[std], color='k', zorder=3, linewidth=2, capsize=10, capthick=2)
+        axis.scatter([x], [avg], color='k', s=100, marker='+', zorder=3)
+
+    plt.ylabel('Median Folded PWV (mm)')
+    plt.xlabel('Time of Year')
+    plt.ylim(0, 20)
+
+    # Format x labels to be three letter month abbreviations
+    locator = mdates.MonthLocator()
+    formatter = mdates.DateFormatter('%b')
+    axis.xaxis.set_major_locator(locator)
+    axis.xaxis.set_major_formatter(formatter)
+    axis.legend(framealpha=1)
+
+    axis.twinx().set_ylim(axis.get_ylim())
+    return fig, axis

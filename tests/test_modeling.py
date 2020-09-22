@@ -73,7 +73,7 @@ class CreateObservationsTable(TestCase):
         )
 
     def test_correct_zero_point(self):
-        """Test the correct zero point and zeropoint system were used"""
+        """Test the correct zero point and zero-point system were used"""
 
         self.assertTrue(
             all(self.observations_table['zp'] == self.zp),
@@ -99,7 +99,7 @@ class CreateObservationsTable(TestCase):
         self.assertEqual(
             set(self.phases), set(self.observations_table['time']))
 
-    def test_table_datatypes(self):
+    def test_table_data_types(self):
         """Test table columns have the expected data types"""
 
         expected_dtype = np.dtype([

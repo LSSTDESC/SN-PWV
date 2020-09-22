@@ -5,6 +5,8 @@ iminuit
 numpy>=1.16.0
 pandas
 pwv_kpno
+pytz
 pyyaml
+scipy
 sncosmo
 tqdm

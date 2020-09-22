@@ -12,7 +12,6 @@ import pandas as pd
 import sncosmo
 from astropy.table import Table
 
-sncosmo.registry.bandpasses
 FILTER_DIR = Path(__file__).resolve().parent.parent / 'data' / 'filters'
 
 

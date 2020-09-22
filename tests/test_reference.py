@@ -13,7 +13,7 @@ from sn_analysis import reference
 
 
 class StellarSpectraParsing(TestCase):
-    """Test ``get_stellar_spectra`` returns a spectrum that is the smae as
+    """Test ``get_stellar_spectra`` returns a spectrum that is the same as
     directly parsing the file of a stellar type using
     ``_read_stellar_spectra_path``
     """
@@ -56,7 +56,7 @@ class GetReferenceStarDataframe(TestCase):
         """Tests band flux columns are included in the dataframe"""
 
         self.assertTrue(
-            [c for c in self.ref_star_dataframe.columns if ~c.endswith('_norm')]
+            [c for c in self.ref_star_dataframe.columns if not c.endswith('_norm')]
         )
 
     def test_includes_normalized_flux(self):
