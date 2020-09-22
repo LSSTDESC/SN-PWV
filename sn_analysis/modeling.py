@@ -4,6 +4,7 @@
 """This module handles the simulation of SN light-curves."""
 
 import itertools
+from copy import copy
 from pathlib import Path
 
 import numpy as np
@@ -149,6 +150,48 @@ def realize_lc(obs, source, snr=.05, **params):
     light_curve['fluxerr'] = light_curve['flux'] / snr
     light_curve.meta = dict(zip(model.param_names, model.parameters))
     return light_curve
+
+
+def simulate_lc(observations, model, params, scatter=True):
+    """Simulate a SN light-curve given a set of observations.
+
+    If ``scatter`` is ``True``, then simulated flux values include an added
+    random number drawn from a Normal Distribution with a standard deviation
+    equal to the error of the observation.
+
+    Args:
+        observations (Table): Table of observations.
+        model        (Model): The supernova model to use in the simulation
+        params        (dict): parameters to feed to the model for realizing the light-curve
+        scatter       (bool): Add random noise to the flux values
+
+    Returns:
+        An astropy table formatted for use with sncosmo
+    """
+
+    model = copy(model)
+    model.update(params)
+
+    flux = model.bandflux(
+        observations['band'],
+        observations['time'],
+        zp=observations['zp'],
+        zpsys=observations['zpsys'])
+
+    fluxerr = np.sqrt(observations['skynoise'] ** 2 + np.abs(flux) / observations['gain'])
+    if scatter:
+        flux = np.atleast_1d(np.random.normal(flux, fluxerr))
+
+    data = [
+        observations['time'],
+        observations['band'],
+        flux,
+        fluxerr,
+        observations['zp'],
+        observations['zpsys']
+    ]
+
+    return Table(data, names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'), meta=params)
 
 
 def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):

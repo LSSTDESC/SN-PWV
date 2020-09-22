@@ -12,6 +12,8 @@ from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
+from . import modeling
+
 default_data_dir = Path('/mnt/md0/snsims/')
 try:
     plasticc_simulations_directory = Path(os.environ['plasticc_sim_dir'])
@@ -91,9 +93,88 @@ def iter_lc_for_cadence_model(cadence, model=11, verbose=True):
         verbose (bool): Display a progress bar
 
     Yields:
-        - An Astropy table with the MJD and filter for each observation
+        An Astropy table with the MJD and filter for each observation
     """
 
     for header_path in tqdm(get_model_headers(cadence, model), desc=cadence, disable=not verbose):
         for lc in iter_lc_for_header(header_path, verbose):
             yield lc
+
+
+def format_plasticc_sncosmo(light_curve):
+    """Format a PLaSTICC light-curve to be compatible with sncosmo
+
+    Args:
+        light_curve (Table): Table of PLaSTICC light-curve data
+
+    Returns:
+        An astropy table formatted for use with sncosmo
+    """
+
+    lc = Table({
+        'time': light_curve['MJD'],
+        'band': ['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
+        'flux': light_curve['FLUXCAL'],
+        'fluxerr': light_curve['FLUXCALERR'],
+        'zp': light_curve['ZEROPT'],
+        'photflag': light_curve['PHOTFLAG']
+    })
+
+    lc['zpsys'] = 'AB'
+    lc.meta = light_curve.meta
+    return lc
+
+
+def extract_cadence_data(light_curve, drop_nondetection=False):
+    """Extract the observational cadence from a PLaSTICC light-curve
+
+    Returned table is formatted for use with ``sncosmo.realize_lcs``.
+
+    Args:
+        light_curve      (Table): Astropy table with PLaSTICC light-curve data
+        drop_nondetection (bool): Drop data with PHOTFLAG == 0
+
+    Returns:
+        An astropy table with cadence data for the input light-curve
+    """
+
+    if drop_nondetection:
+        light_curve = light_curve[light_curve['PHOTFLAG'] != 0]
+
+    observations = Table({
+        'time': light_curve['MJD'],
+        'band': ['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
+    })
+
+    observations['zp'] = 25
+    observations['zpsys'] = 'ab'
+    observations['gain'] = 5
+    observations['skynoise'] = light_curve['SKY_SIG'] / 100
+    return observations
+
+
+def duplicate_plasticc_sncosmo(light_curve, scatter=True):
+    """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
+
+    Args:
+        light_curve (Table): Astropy table with PLaSTICC light-curve data
+        scatter     (bool): Add random noise to the flux values
+
+    Returns:
+        Astropy table with data for the simulated light-curve
+    """
+
+    model = modeling.get_model_with_pwv('Salt2')
+    observations = extract_cadence_data(light_curve)
+
+    use_redshift = 'SIM_REDSHIFT_CMB'
+    params = {
+        't0': light_curve.meta['SIM_PEAKMJD'],
+        'x1': light_curve.meta['SIM_SALT2x1'],
+        'c': light_curve.meta['SIM_SALT2c'],
+        'z': light_curve.meta[use_redshift],
+        # 'x0': light_curve.meta['SIM_SALT2x0'],
+        'x0': modeling.calc_x0_for_z(light_curve.meta[use_redshift], 'salt2')
+    }
+
+    return modeling.simulate_lc(observations, model, params, scatter=scatter)
