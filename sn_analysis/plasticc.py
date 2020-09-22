@@ -125,7 +125,7 @@ def format_plasticc_sncosmo(light_curve):
     return lc
 
 
-def extract_cadence_data(light_curve, drop_nondetection=False):
+def extract_cadence_data(light_curve, drop_nondetection=False, zp=25):
     """Extract the observational cadence from a PLaSTICC light-curve
 
     Returned table is formatted for use with ``sncosmo.realize_lcs``.
@@ -133,6 +133,7 @@ def extract_cadence_data(light_curve, drop_nondetection=False):
     Args:
         light_curve      (Table): Astropy table with PLaSTICC light-curve data
         drop_nondetection (bool): Drop data with PHOTFLAG == 0
+        zp        (float, array): Overwrite the PLaSTICC zero-point with this value
 
     Returns:
         An astropy table with cadence data for the input light-curve
@@ -146,19 +147,20 @@ def extract_cadence_data(light_curve, drop_nondetection=False):
         'band': ['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
     })
 
-    observations['zp'] = 25
+    observations['zp'] = zp
     observations['zpsys'] = 'ab'
     observations['gain'] = 5
     observations['skynoise'] = light_curve['SKY_SIG'] / 100
     return observations
 
 
-def duplicate_plasticc_sncosmo(light_curve, scatter=True):
+def duplicate_plasticc_sncosmo(light_curve, scatter=True, cosmology=modeling.betoule_cosmo):
     """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
 
     Args:
-        light_curve (Table): Astropy table with PLaSTICC light-curve data
-        scatter     (bool): Add random noise to the flux values
+        light_curve   (Table): Astropy table with PLaSTICC light-curve data
+        scatter        (bool): Add random noise to the flux values
+        cosmology (Cosmology): Rescale the ``x0`` parameter according to the given cosmology
 
     Returns:
         Astropy table with data for the simulated light-curve
@@ -168,13 +170,18 @@ def duplicate_plasticc_sncosmo(light_curve, scatter=True):
     observations = extract_cadence_data(light_curve)
 
     use_redshift = 'SIM_REDSHIFT_CMB'
+    if cosmology is None:
+        x0 = light_curve.meta['SIM_SALT2x0']
+
+    else:
+        x0 = modeling.calc_x0_for_z(light_curve.meta[use_redshift], 'salt2', cosmology=cosmology)
+
     params = {
         't0': light_curve.meta['SIM_PEAKMJD'],
         'x1': light_curve.meta['SIM_SALT2x1'],
         'c': light_curve.meta['SIM_SALT2c'],
         'z': light_curve.meta[use_redshift],
-        # 'x0': light_curve.meta['SIM_SALT2x0'],
-        'x0': modeling.calc_x0_for_z(light_curve.meta[use_redshift], 'salt2')
+        'x0': x0
     }
 
     return modeling.simulate_lc(observations, model, params, scatter=scatter)
