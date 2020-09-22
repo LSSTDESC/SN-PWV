@@ -93,7 +93,7 @@ def create_observations_table(
         phases (ndarray): Array of phase values to include
         bands  (ndarray): Array of bands to include
         zp       (float): The zero point
-        zpsys    (float): The zero point system
+        zpsys      (str): The zero point system
         gain     (float): The simulated gain
 
     Returns:
