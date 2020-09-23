@@ -12,7 +12,7 @@ from pwv_kpno import pwv_atm
 from scipy.stats import binned_statistic
 
 
-def trans_for_pwv(pwv, wave, resolution):
+def trans_for_pwv(pwv, wave, resolution=5):
     """Retrieve the pwv_kpno transmission at given wavelengths and resolution
 
     Args:

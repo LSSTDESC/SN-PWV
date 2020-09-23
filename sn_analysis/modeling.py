@@ -103,9 +103,14 @@ class TimeVariablePWV(sncosmo.Source):
 
     # Todo: This is a placeholder function. Adds the actual flux calculation with PWV effects
     def _flux(self, phase, wave):
+        time = phase + self.__getitem__('t0')
+        pwv = self.pwv_func(time)
+        transmission = trans_for_pwv(pwv, wave)
+
         model = sncosmo.Model(self.parent_source)
         model._parameters = self._parameters
-        return model._flux(phase, wave)
+        flux = model._flux(phase, wave)
+        return flux * transmission
 
 
 ###############################################################################
