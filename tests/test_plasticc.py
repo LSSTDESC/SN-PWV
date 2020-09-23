@@ -10,9 +10,10 @@ from astropy.table import Table
 from numpy.testing import assert_equal
 
 from sn_analysis import plasticc
-from sn_analysis.plasticc import get_available_cadences
+from sn_analysis.filters import register_lsst_filters
+from sn_analysis.modeling import calc_x0_for_z
 
-local_data_is_available = bool(get_available_cadences())
+register_lsst_filters(force=True)
 
 
 def create_mock_plasticc_light_curve():
@@ -23,15 +24,24 @@ def create_mock_plasticc_light_curve():
     """
 
     time_values = np.arange(-20, 52)
-    return Table({
-        'MJD': time_values,
-        'FLT': list('ugrizY') * (len(time_values) // 6),
-        'FLUXCAL': np.ones_like(time_values),
-        'FLUXCALERR': np.full_like(time_values, .2),
-        'ZEROPT': np.full_like(time_values, 30),
-        'PHOTFLAG': [0] * 10 + [6144] + [4096] * 61,
-        'SKY_SIG': np.full_like(time_values, 80)
-    })
+    return Table(
+        data={
+            'MJD': time_values,
+            'FLT': list('ugrizY') * (len(time_values) // 6),
+            'FLUXCAL': np.ones_like(time_values),
+            'FLUXCALERR': np.full_like(time_values, .2),
+            'ZEROPT': np.full_like(time_values, 30),
+            'PHOTFLAG': [0] * 10 + [6144] + [4096] * 61,
+            'SKY_SIG': np.full_like(time_values, 80)
+        },
+        meta={
+            'SIM_PEAKMJD': 0,
+            'SIM_SALT2x1': .1,
+            'SIM_SALT2c': .2,
+            'SIM_REDSHIFT_CMB': .5,
+            'SIM_SALT2x0': 1
+        }
+    )
 
 
 class GetModelHeaders(TestCase):
@@ -102,3 +112,34 @@ class ExtractCadenceData(TestCase):
         returned_dates = extracted_cadence['time']
         expected_dates = self.plasticc_lc[self.plasticc_lc['PHOTFLAG'] != 0]['MJD']
         assert_equal(returned_dates, expected_dates)
+
+
+class DuplicatePlasticcSncosmo(TestCase):
+    """Tests for the ``duplicate_plasticc_sncosmo`` function"""
+
+    def setUp(self):
+        self.source = 'salt2-extended'
+        self.plasticc_lc = create_mock_plasticc_light_curve()
+        self.param_mapping = {  # Maps sncosmo param names to plasticc names
+            't0': 'SIM_PEAKMJD',
+            'x1': 'SIM_SALT2x1',
+            'c': 'SIM_SALT2c',
+            'z': 'SIM_REDSHIFT_CMB',
+            'x0': 'SIM_SALT2x0'
+        }
+
+    def test_lc_meta_matches_params(self):
+        """Test parameters in returned meta data match the input light_curve"""
+
+        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, source=self.source, cosmo=None)
+        for sncosmo_param, plasticc_param in self.param_mapping.items():
+            self.assertEqual(
+                duplicated_lc.meta[sncosmo_param], self.plasticc_lc.meta[plasticc_param],
+                f'Incorrect {sncosmo_param} ({plasticc_param}) parameter'
+            )
+
+    def test_x0_overwritten_by_cosmo_arg(self):
+        """Test """
+        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, source=self.source)
+        expected_x0 = calc_x0_for_z(duplicated_lc.meta['z'], source=self.source)
+        np.testing.assert_allclose(expected_x0, duplicated_lc.meta['x0'])

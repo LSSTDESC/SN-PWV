@@ -154,7 +154,7 @@ def extract_cadence_data(light_curve, drop_nondetection=False, zp=25):
     return observations
 
 
-def duplicate_plasticc_sncosmo(light_curve, scatter=True, cosmo=modeling.betoule_cosmo):
+def duplicate_plasticc_sncosmo(light_curve, source='Salt2-extended', scatter=True, cosmo=modeling.betoule_cosmo):
     """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
 
     Args:
@@ -165,9 +165,6 @@ def duplicate_plasticc_sncosmo(light_curve, scatter=True, cosmo=modeling.betoule
     Returns:
         Astropy table with data for the simulated light-curve
     """
-
-    model = modeling.get_model_with_pwv('Salt2')
-    observations = extract_cadence_data(light_curve)
 
     use_redshift = 'SIM_REDSHIFT_CMB'
     if cosmo is None:
@@ -184,4 +181,5 @@ def duplicate_plasticc_sncosmo(light_curve, scatter=True, cosmo=modeling.betoule
         'x0': x0
     }
 
-    return modeling.simulate_lc(observations, model, params, scatter=scatter)
+    observations = extract_cadence_data(light_curve)
+    return modeling.simulate_lc(observations, source, params, scatter=scatter)

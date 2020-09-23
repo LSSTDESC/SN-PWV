@@ -1,3 +1,5 @@
+# Scratch data
+tests/test_data
 notebooks/cerro_tololo.ecsv
 
 # OS Files
@@ -16,6 +18,7 @@ dist/
 
 # Testing cache files
 .pytest_cache/
+.coverage
 
 # Built Docs
 docs/build
