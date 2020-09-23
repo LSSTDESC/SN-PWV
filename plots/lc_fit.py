@@ -95,17 +95,18 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
     plotted_data = []
     sim_data = None
 
-    def __init__(self, figure, fit_results_div, source='salt2-extended'):
+    def __init__(self, main_figure, spec_figure, fit_results_div, source='salt2-extended'):
         """Assign callbacks to plot widgets
 
         Args:
-            figure       (Figure): Bokeh figure to render plots on
+            main_figure  (Figure): Bokeh figure to render plots on
             fit_results_div (Div): Used to display fit results as text
             source  (Str, Source): SNCosmo source of the desired model
         """
 
         # Widgets for plotting / fit results
-        self.figure = figure
+        self.main_figure = main_figure
+        self.spec_figure = spec_figure
         self.fit_results_div = fit_results_div
         self.source = source
 
@@ -118,13 +119,23 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         """Remove model fits from the plot"""
 
         while self.plotted_fits:
-            self.figure.renderers.remove(self.plotted_fits.pop())
+            line = self.plotted_fits.pop()
+            try:
+                self.main_figure.renderers.remove(line)
+
+            except ValueError:
+                self.spec_figure.renderers.remove(line)
 
     def _clear_plotted_object_data(self):
         """Remove simulated light-curve data points from the plot"""
 
         while self.plotted_data:
-            self.figure.renderers.remove(self.plotted_data.pop())
+            line = self.plotted_data.pop()
+            try:
+                self.main_figure.renderers.remove(line)
+
+            except ValueError:
+                self.spec_figure.renderers.remove(line)
 
     def plot_light_curve(self, event=None):
         """Simulate and plot a light-curve"""
@@ -132,12 +143,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         # Clear the plot
         self._clear_plotted_object_data()
         self._clear_fitted_lines()
-
-        # Simulate a light-curve
-        obs = modeling.create_observations_table(np.arange(-10, 51, float(self.sampling_input.value)), BANDS)
-        self.sim_data = modeling.realize_lc(
-            obs, self.source,
-            snr=float(self.snr_input.value),
+        params = dict(
             z=self.sim_z_slider.value,
             t0=self.sim_t0_slider.value,
             x0=self.sim_x0_slider.value,
@@ -146,28 +152,39 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
             pwv=self.sim_pwv_slider.value
         )
 
+        # Simulate a light-curve
+        obs = modeling.create_observations_table(np.arange(-10, 51, float(self.sampling_input.value)), BANDS)
+        self.sim_data = modeling.realize_lc(obs, self.source, snr=float(self.snr_input.value), **params)
+
+        # Scale flux by reference star
         if 1 in self.checkbox.active:
             self.sim_data = reference.divide_ref_from_lc(
                 self.sim_data, self.sim_data.meta['pwv']
             )
 
-        # Update the plot with simulated data
+        # Update the main plot with simulated flux data
         for band, color in zip(BANDS, palette):
             band_data = self.sim_data[self.sim_data['band'] == band]
             x = band_data['time']
             y = band_data['flux']
             yerr = band_data['fluxerr']
 
-            circ = self.figure.circle(x=x, y=y, color=color)
+            circ = self.main_figure.circle(x=x, y=y, color=color)
             self.plotted_data.append(circ)
 
             if 0 in self.checkbox.active:
-                err_bar = self.figure.multi_line(
+                err_bar = self.main_figure.multi_line(
                     np.transpose([x, x]).tolist(),
                     np.transpose([y - yerr, y + yerr]).tolist(),
                     color=color)
 
                 self.plotted_data.append(err_bar)
+
+        # Update plot of fitted spectrum
+        model = modeling.get_model_with_pwv(self.source, **params)
+        wave = np.arange(model.minwave(), model.maxwave())
+        spec_line = self.spec_figure.line(x=wave, y=model.flux(0, wave))
+        self.plotted_data.append(spec_line)
 
         # Match fitted param sliders to sim param sliders
         self.fit_t0_slider.update(value=self.sim_t0_slider.value)
@@ -211,24 +228,12 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         text += f'<br>peak standard::b (AB): {fitted_model.source_peakabsmag("standard::b", "AB")}'
         self.fit_results_div.update(text=text)
 
-        # Plot the fitted model
-        self._clear_fitted_lines()
-        time_arr = np.arange(-25, 55, .5)
-        for band, color in zip(BANDS, palette):
-            line = self.figure.line(
-                x=time_arr,
-                y=fitted_model.bandflux(band, time_arr, zp=25, zpsys='ab'),
-                color=color,
-                # legend_label=band
-            )
-
-            self.plotted_fits.append(line)
-
         # Match fitted param sliders to sim param sliders
         self.fit_t0_slider.update(value=self.sim_t0_slider.value)
         self.fit_x0_slider.update(value=self.sim_x0_slider.value)
         self.fit_x1_slider.update(value=self.sim_x1_slider.value)
         self.fit_c_slider.update(value=self.sim_c_slider.value)
+        self.plot_current_model()
 
     def plot_current_model(self, event=None):
         """Plot the model using the initial guess parameters"""
@@ -246,7 +251,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         self.fit_results_div.update(text='')
         time_arr = np.arange(-25, 55, .5)
         for band, color in zip(BANDS, palette):
-            line = self.figure.line(
+            line = self.main_figure.line(
                 x=time_arr,
                 y=model.bandflux(band, time_arr, zp=25, zpsys='ab'),
                 color=color,
@@ -255,19 +260,25 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
 
             self.plotted_fits.append(line)
 
+        wave = np.arange(model.minwave(), min(model.maxwave(), 12000))
+        spec_line = self.spec_figure.line(x=wave, y=model.flux(0, wave), color='red')
+        self.plotted_fits.append(spec_line)
+
 
 ###############################################################################
 # Assign Callbacks
 ###############################################################################
 
-# The figure to plot on
-figure = figure(plot_height=400, plot_width=700, sizing_mode='scale_both', toolbar_location='above')
-figure.legend.location = "top_left"
-figure.legend.click_policy = "hide"
+# The figure objects to plot on
+main_figure = figure(plot_height=400, plot_width=700, sizing_mode='scale_both', toolbar_location='above')
+spectrum_figure = figure(plot_height=200, plot_width=700, sizing_mode='scale_both')
+for fig in (main_figure, spectrum_figure):
+    fig.legend.location = "top_left"
+    fig.legend.click_policy = "hide"
 
 # Div for displaying fitted ``Results`` object
 fit_results_div = models.Div()
-callbacks = Callbacks(figure, fit_results_div, SOURCE)
+callbacks = Callbacks(main_figure, spectrum_figure, fit_results_div, SOURCE)
 
 ###############################################################################
 # Layout the page
@@ -285,9 +296,10 @@ left_column = column(
     sizing_mode="fixed")
 
 center_column = column(
-    figure,
+    main_figure,
+    spectrum_figure,
     fit_results_div,
-    height=1000, sizing_mode="scale_width")
+    height=1200, sizing_mode="scale_width")
 
 right_column = column(
     *callbacks.fitted_params_widgets_list,
