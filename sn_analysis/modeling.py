@@ -238,6 +238,7 @@ def simulate_lc(observations, source, params, scatter=True):
 
     fluxerr = np.sqrt(observations['skynoise'] ** 2 + np.abs(flux) / observations['gain'])
     if scatter:
+        print('scattering lc')
         flux = np.atleast_1d(np.random.normal(flux, fluxerr))
 
     data = [
