@@ -4,7 +4,6 @@
 """This module handles the simulation of SN light-curves."""
 
 import itertools
-from copy import copy
 from pathlib import Path
 
 import numpy as np
@@ -80,7 +79,7 @@ def get_model_with_pwv(source, **params):
     return model
 
 
-class TimeVariablePWV(sncosmo.Source):
+class PWVSource(sncosmo.Source):
     """Wrapper for SNCosmo sources that introduces time variable PWV effects"""
 
     def __init__(self, parent_source, pwv_func):
@@ -90,6 +89,7 @@ class TimeVariablePWV(sncosmo.Source):
             parent_source (str, Source): sncosmo source to use as a base
             pwv_func          (callable): Vectorized callable that returns PWV at given date
         """
+
         self.parent_source = sncosmo.get_source(parent_source)
         self.pwv_func = pwv_func
 
@@ -101,15 +101,13 @@ class TimeVariablePWV(sncosmo.Source):
         self._param_names = self.parent_source._param_names
         self.param_names_latex = self.parent_source.param_names_latex
 
-    # Todo: This is a placeholder function. Adds the actual flux calculation with PWV effects
     def _flux(self, phase, wave):
-        time = phase + self.__getitem__('t0')
+        time = phase + self.parent_model.get('t0')
         pwv = self.pwv_func(time)
         transmission = trans_for_pwv(pwv, wave)
 
-        model = sncosmo.Model(self.parent_source)
-        model._parameters = self._parameters
-        flux = model._flux(phase, wave)
+        self.parent_source._parameters = self._parameters
+        flux = self.parent_source._flux(phase, wave)
         return flux * transmission
 
 
