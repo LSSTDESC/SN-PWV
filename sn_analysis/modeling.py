@@ -4,6 +4,7 @@
 """This module handles the simulation of SN light-curves."""
 
 import itertools
+from copy import copy
 from pathlib import Path
 
 import numpy as np
@@ -196,7 +197,12 @@ def realize_lc(obs, source, snr=.05, **params):
         Astropy table for each PWV and redshift
     """
 
-    model = get_model_with_pwv(source)
+    if isinstance(source, sncosmo.Model):
+        model = copy(source)
+
+    else:
+        model = get_model_with_pwv(source)
+
     model.update(params)
 
     # Set default x0 value according to assumed cosmology and the model redshift
@@ -227,7 +233,14 @@ def simulate_lc(observations, source, params, scatter=True):
         An astropy table formatted for use with sncosmo
     """
 
-    model = sncosmo.Model(source)
+    if isinstance(source, sncosmo.Model):
+        model = copy(source)
+
+    else:
+        model = sncosmo.Model(source)
+
+    model.update(params)  # Todo: Target a test at this line
+
     flux = model.bandflux(
         observations['band'],
         observations['time'],

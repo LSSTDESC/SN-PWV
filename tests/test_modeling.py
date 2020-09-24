@@ -71,15 +71,16 @@ class GetModelWithPWV(TestCase):
         self.assertEqual(test_resolution, model['res'], 'Model has incorrect PWV resolution')
 
 
-class TimeVariablePWV(TestCase):
-    """Tests for the ``TimeVariablePWV`` class"""
+class PWVSource(TestCase):
+    """Tests for the ``PWVSource`` class"""
 
     def setUp(self):
-        """Create a ``TimeVariablePWV`` source"""
+        """Create a ``PWVSource`` source"""
 
-        dummy_func = lambda *args: None
-        self.base_source = sncosmo.get_source('Salt2')
-        self.time_variable_source = modeling.TimeVariablePWV(self.base_source, dummy_func)
+        self.test_pwv = 5
+        dummy_func = lambda *args: self.test_pwv
+        self.base_source = sncosmo.get_source('salt2-extended')
+        self.time_variable_source = modeling.PWVSource(self.base_source, dummy_func)
 
     def test_wavelength_limits_accessible(self):
         """Test the maximum and minimum wavelength values match the base source"""
@@ -92,6 +93,15 @@ class TimeVariablePWV(TestCase):
 
         self.assertEqual(self.base_source.minphase(), self.time_variable_source.minphase())
         self.assertEqual(self.base_source.maxphase(), self.time_variable_source.maxphase())
+
+    def test_returned_model_includes_transmission(self):
+
+        wave = np.arange(6000, 10000)
+        flux_without_pwv = self.base_source.flux(0, wave)
+        flux_with_pwv = self.time_variable_source.flux(0, wave)
+        recovered_transmission = flux_with_pwv / flux_without_pwv
+        expected_transmission = trans_for_pwv(self.test_pwv, wave, 5)
+        np.testing.assert_allclose(recovered_transmission, expected_transmission)
 
 
 class CalcX0ForZ(TestCase):
