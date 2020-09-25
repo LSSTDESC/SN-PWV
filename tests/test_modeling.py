@@ -12,8 +12,43 @@ from astropy.table import Table
 
 from sn_analysis import modeling
 from sn_analysis.filters import register_decam_filters
+from sn_analysis.transmission import trans_for_pwv
 
 register_decam_filters(force=True)
+
+
+class TestPWVTrans(TestCase):
+    """Tests for the addition of PWV to sncosmo models"""
+
+    def setUp(self):
+        self.transmission_effect = modeling.PWVTrans()
+
+    def test_default_pwv_is_zero(self):
+        """Test the default ``pwv`` parameter is 0"""
+
+        self.assertEqual(0, self.transmission_effect['pwv'])
+
+    def test_default_resolution_is_five(self):
+        """Test the default ``res`` parameter is 5"""
+
+        self.assertEqual(5, self.transmission_effect['res'])
+
+    def test_propagation_applies_pwv_transmission(self):
+        """Test the ``propagate`` applies PWV absorption"""
+
+        # Get the expected transmission
+        pwv = res = 5
+        wave = np.arange(4000, 5000)
+        transmission = trans_for_pwv(pwv=pwv, wave=wave, resolution=res)
+
+        # Get the expected flux
+        flux = np.ones_like(wave)
+        expected_flux = flux * transmission
+
+        # Get the returned flux
+        self.transmission_effect._parameters = [pwv, res]
+        propagated_flux = self.transmission_effect.propagate(wave, flux)
+        self.assertListEqual(expected_flux.tolist(), propagated_flux.tolist())
 
 
 class GetModelWithPWV(TestCase):
@@ -36,23 +71,67 @@ class GetModelWithPWV(TestCase):
         self.assertEqual(test_resolution, model['res'], 'Model has incorrect PWV resolution')
 
 
+class PWVSource(TestCase):
+    """Tests for the ``PWVSource`` class"""
+
+    def setUp(self):
+        """Create a ``PWVSource`` source"""
+
+        self.test_pwv = 5
+        dummy_func = lambda *args: self.test_pwv
+        self.base_source = sncosmo.get_source('salt2-extended')
+        self.time_variable_source = modeling.PWVSource(self.base_source, dummy_func)
+
+    def test_wavelength_limits_accessible(self):
+        """Test the maximum and minimum wavelength values match the base source"""
+
+        self.assertEqual(self.base_source.minwave(), self.time_variable_source.minwave())
+        self.assertEqual(self.base_source.maxwave(), self.time_variable_source.maxwave())
+
+    def test_phase_limits_accessible(self):
+        """Test the maximum and minimum wavelength phase values match the base source"""
+
+        self.assertEqual(self.base_source.minphase(), self.time_variable_source.minphase())
+        self.assertEqual(self.base_source.maxphase(), self.time_variable_source.maxphase())
+
+    def test_modeled_flux_includes_pwv_transmission(self):
+        """Test the source includes PWV transmission effects"""
+
+        # Create supernova models with and without PWV
+        base_model = sncosmo.Model(self.base_source)
+        time_variable_model = sncosmo.Model(self.time_variable_source)
+        time_variable_model.source.parent_model = time_variable_model
+
+        # Model flux with and without PWV
+        wave = np.arange(6000, 10000)
+        flux_without_pwv = base_model.flux(0, wave)
+        flux_with_pwv = time_variable_model.flux(0, wave)
+
+        # Recover PWV transmission and compare against the expected model
+        recovered_transmission = flux_with_pwv / flux_without_pwv
+        expected_transmission = trans_for_pwv(self.test_pwv, wave, 5)
+        np.testing.assert_allclose(recovered_transmission, expected_transmission)
+
+
 class CalcX0ForZ(TestCase):
     """Tests for the ``calc_x0_for_z`` function"""
 
-    @skip
     def test_x0_recovers_absolute_mag(self):
         """Test returned x0 corresponds to specified magnitude"""
 
-        z = 1.5
-        source = 'salt2-extended'
+        z = 0.5
         abs_mag = -18
         band = 'standard::b'
+        source = 'salt2-extended'
         x0 = modeling.calc_x0_for_z(z, source, abs_mag=abs_mag)
 
         model = sncosmo.Model(source)
         model.set(z=z, x0=x0)
         recovered_mag = model.source_peakabsmag(band, 'AB')
-        self.assertEqual(abs_mag, recovered_mag)
+
+        # We need to specify a large enough absolute tolerance to account for
+        # interpolation error within sncosmo
+        np.testing.assert_allclose(abs_mag, recovered_mag, rtol=0, atol=.03)
 
 
 class CreateObservationsTable(TestCase):
@@ -124,18 +203,10 @@ class RealizeLC(TestCase):
 
         z = 0.5
         self.snr = 12
-        self.params = dict(
-            pwv=0.01,
-            x1=.8,
-            c=-.5,
-            z=z,
-            t0=1,
-            x0=modeling.calc_x0_for_z(z, self.source),
-            res=5
-        )
-
+        self.params = dict(pwv=0.01, x1=.8, c=-.5, z=z, t0=1, x0=1, res=5)
         self.obs = modeling.create_observations_table()
-        self.simulated_lc = modeling.realize_lc(self.obs, self.source, self.snr, **self.params)
+        self.simulated_lc = modeling.realize_lc(
+            self.obs, self.source, self.snr, **self.params)
 
     def test_simulated_snr(self):
         """Test SNR of simulated light-curve equals snr kwarg"""
@@ -193,9 +264,29 @@ class RealizeLC(TestCase):
         self.assertListEqual(expected_params, meta_params)
 
     def test_raises_for_z_equals_0(self):
-        """Test a value error is raised for simulating z==0"""
+        """Test a value error is raised for simulating z == 0"""
 
         self.assertRaises(ValueError, modeling.realize_lc, self.obs, self.source, z=0)
+
+
+class SimulateLC(RealizeLC):
+    """Tests for the ``simulate_lc`` function"""
+
+    def setUp(self):
+        """Simulate a cadence and associated light-curve"""
+
+        self.observations = modeling.create_observations_table()
+        self.source = 'salt2-extended'
+
+        z = 0.5
+        self.snr = 12
+        self.params = dict(x1=.8, c=-.5, z=z, t0=1, x0=1)
+        self.obs = modeling.create_observations_table()
+        self.simulated_lc = modeling.simulate_lc(self.obs, self.source, self.params)
+
+    @skip  # Todo: Overload this test and check the flux err matches expected distribution
+    def test_simulated_snr(self):
+        pass
 
 
 class IterLCS(TestCase):

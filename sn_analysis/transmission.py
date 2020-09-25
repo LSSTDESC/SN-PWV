@@ -5,13 +5,14 @@
 transmission as a function of wavelength and PWV.
 """
 
+# Todo: This module is temporary and should be replaced with the upcoming pwv_kpno major release
+
 import numpy as np
-import sncosmo
 from pwv_kpno import pwv_atm
 from scipy.stats import binned_statistic
 
 
-def trans_for_pwv(pwv, wave, resolution):
+def trans_for_pwv(pwv, wave, resolution=5):
     """Retrieve the pwv_kpno transmission at given wavelengths and resolution
 
     Args:
@@ -54,31 +55,3 @@ def trans_for_pwv(pwv, wave, resolution):
 
     # Evaluate the transmission at the desired wavelengths
     return np.interp(wave, bin_centers, statistic)
-
-
-# Todo: We should bin the PWV transmission to the same resolution as the template
-class PWVTrans(sncosmo.PropagationEffect):
-    """Atmospheric PWV propagation effect for sncosmo"""
-
-    _minwave = 3000.0
-    _maxwave = 12000.0
-
-    def __init__(self):
-        self._param_names = ['pwv', 'res']
-        self.param_names_latex = ['PWV', 'resolution']
-        self._parameters = np.array([0., 5])
-
-    def propagate(self, wave, flux):
-        """Propagate the flux through the atmosphere
-
-        Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-
-        Returns:
-            An array of flux values after suffering propagation effects
-        """
-
-        pwv, res = self.parameters
-        transmission = trans_for_pwv(pwv, wave, res)
-        return flux * transmission

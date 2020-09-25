@@ -13,7 +13,7 @@ from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Table
 from tqdm import tqdm
 
-from .transmission import PWVTrans
+from sn_analysis.transmission import trans_for_pwv
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
@@ -30,6 +30,33 @@ betoule_cosmo = FlatLambdaCDM(H0=H0, Om0=omega_m)
 ###############################################################################
 # For building sncosmo models with a PWV component
 ###############################################################################
+
+# Todo: We should bin the PWV transmission to the same resolution as the template
+class PWVTrans(sncosmo.PropagationEffect):
+    """Atmospheric PWV propagation effect for sncosmo"""
+
+    _minwave = 3000.0
+    _maxwave = 12000.0
+
+    def __init__(self):
+        self._param_names = ['pwv', 'res']
+        self.param_names_latex = ['PWV', 'resolution']
+        self._parameters = np.array([0., 5])
+
+    def propagate(self, wave, flux):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+
+        Returns:
+            An array of flux values after suffering propagation effects
+        """
+
+        pwv, res = self.parameters
+        transmission = trans_for_pwv(pwv, wave, res)
+        return flux * transmission
 
 
 # Todo: Extend this to include other atm models as a kwarg
@@ -51,6 +78,38 @@ def get_model_with_pwv(source, **params):
     model.add_effect(PWVTrans(), '', 'obs')
     model.update(params)
     return model
+
+
+class PWVSource(sncosmo.Source):
+    """Wrapper for SNCosmo sources that introduces time variable PWV effects"""
+
+    def __init__(self, parent_source, pwv_func):
+        """Wraps an sncosmo Source object with time variable PWV transmission effects
+
+        Args:
+            parent_source (str, Source): sncosmo source to use as a base
+            pwv_func          (callable): Vectorized callable that returns PWV at given date
+        """
+
+        self.parent_source = sncosmo.get_source(parent_source)
+        self.pwv_func = pwv_func
+
+        self.name = self.parent_source.name + '_VariablePWV'
+        self._wave = self.parent_source._wave
+        self._phase = self.parent_source._phase
+
+        self._parameters = self.parent_source._parameters
+        self._param_names = self.parent_source._param_names
+        self.param_names_latex = self.parent_source.param_names_latex
+
+    def _flux(self, phase, wave):
+        time = phase + self.parent_model.get('t0')
+        pwv = self.pwv_func(time)
+        transmission = trans_for_pwv(pwv, wave)
+
+        self.parent_source._parameters = self._parameters
+        flux = self.parent_source._flux(phase, wave)
+        return flux * transmission
 
 
 ###############################################################################
@@ -138,7 +197,12 @@ def realize_lc(obs, source, snr=.05, **params):
         Astropy table for each PWV and redshift
     """
 
-    model = get_model_with_pwv(source)
+    if isinstance(source, sncosmo.Model):
+        model = copy(source)
+
+    else:
+        model = get_model_with_pwv(source)
+
     model.update(params)
 
     # Set default x0 value according to assumed cosmology and the model redshift
@@ -152,7 +216,7 @@ def realize_lc(obs, source, snr=.05, **params):
     return light_curve
 
 
-def simulate_lc(observations, model, params, scatter=True):
+def simulate_lc(observations, source, params, scatter=True):
     """Simulate a SN light-curve given a set of observations.
 
     If ``scatter`` is ``True``, then simulated flux values include an added
@@ -161,16 +225,21 @@ def simulate_lc(observations, model, params, scatter=True):
 
     Args:
         observations (Table): Table of observations.
-        model        (Model): The supernova model to use in the simulation
-        params        (dict): parameters to feed to the model for realizing the light-curve
-        scatter       (bool): Add random noise to the flux values
+        source       (Source): The sncosmo source to use in the simulations
+        params       (dict): parameters to feed to the model for realizing the light-curve
+        scatter      (bool): Add random noise to the flux values
 
     Returns:
         An astropy table formatted for use with sncosmo
     """
 
-    model = copy(model)
-    model.update(params)
+    if isinstance(source, sncosmo.Model):
+        model = copy(source)
+
+    else:
+        model = sncosmo.Model(source)
+
+    model.update(params)  # Todo: Target a test at this line
 
     flux = model.bandflux(
         observations['band'],
@@ -180,6 +249,7 @@ def simulate_lc(observations, model, params, scatter=True):
 
     fluxerr = np.sqrt(observations['skynoise'] ** 2 + np.abs(flux) / observations['gain'])
     if scatter:
+        print('scattering lc')
         flux = np.atleast_1d(np.random.normal(flux, fluxerr))
 
     data = [

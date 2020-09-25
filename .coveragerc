@@ -1,0 +1,6 @@
+[report]
+omit =
+    */sn_analysis/plotting.py
+
+include =
+    */sn_analysis/*
