@@ -13,7 +13,9 @@ install:
   - pip install pytest
   - pip install coverage
   - pip install pytest-cov
+  - pip install coveralls
 
 script:
   - coverage run -m unittest
   - coverage report
+  - coveralls
