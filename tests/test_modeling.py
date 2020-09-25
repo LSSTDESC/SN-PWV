@@ -94,11 +94,20 @@ class PWVSource(TestCase):
         self.assertEqual(self.base_source.minphase(), self.time_variable_source.minphase())
         self.assertEqual(self.base_source.maxphase(), self.time_variable_source.maxphase())
 
-    def test_returned_model_includes_transmission(self):
+    def test_modeled_flux_includes_pwv_transmission(self):
+        """Test the source includes PWV transmission effects"""
 
+        # Create supernova models with and without PWV
+        base_model = sncosmo.Model(self.base_source)
+        time_variable_model = sncosmo.Model(self.time_variable_source)
+        time_variable_model.source.parent_model = time_variable_model
+
+        # Model flux with and without PWV
         wave = np.arange(6000, 10000)
-        flux_without_pwv = self.base_source.flux(0, wave)
-        flux_with_pwv = self.time_variable_source.flux(0, wave)
+        flux_without_pwv = base_model.flux(0, wave)
+        flux_with_pwv = time_variable_model.flux(0, wave)
+
+        # Recover PWV transmission and compare against the expected model
         recovered_transmission = flux_with_pwv / flux_without_pwv
         expected_transmission = trans_for_pwv(self.test_pwv, wave, 5)
         np.testing.assert_allclose(recovered_transmission, expected_transmission)
