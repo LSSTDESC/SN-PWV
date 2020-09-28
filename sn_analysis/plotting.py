@@ -56,7 +56,7 @@ import numpy as np
 import sncosmo
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
-from pwv_kpno import pwv_atm
+from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
 from . import modeling, filters
@@ -244,7 +244,7 @@ def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
     return r"${0:.{2}f}\cdot10^{{{1:d}}}$".format(coeff, exponent, precision)
 
 
-def plot_spectral_template(source, wave_arr, z_arr, pwv, phase=0, resolution=10, figsize=(6, 4)):
+def plot_spectral_template(source, wave_arr, z_arr, pwv, phase=0, resolution=2, figsize=(6, 4)):
     """Plot the a spectral template at several redshifts overlaid with PWV
 
     Args:
@@ -279,13 +279,9 @@ def plot_spectral_template(source, wave_arr, z_arr, pwv, phase=0, resolution=10,
         top_ax.plot(wave_arr, flux, label=f'z = {z}', color=color, zorder=0)
 
     # Plot transmission function on twin axis at given wavelength resolution
-    transmission_bins = np.arange(min(wave_arr), max(wave_arr) + 1, resolution)
-    trans_table = pwv_atm.trans_for_pwv(pwv, bins=transmission_bins)
-    transmission = np.interp(
-        wave_arr, trans_table['wavelength'], trans_table['transmission'])
-
+    transmission = v1_transmission(pwv, res=resolution)
     twin_axis = top_ax.twinx()
-    twin_axis.plot(wave_arr, transmission, alpha=0.75, color='grey')
+    twin_axis.plot(transmission.index, transmission, alpha=0.75, color='grey')
 
     # Plot the band passes
     for b in 'rizy':

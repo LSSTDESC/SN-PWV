@@ -39,7 +39,7 @@ class TestPWVTrans(TestCase):
         # Get the expected transmission
         pwv = res = 5
         wave = np.arange(4000, 5000)
-        transmission = v1_transmission(pwv=pwv, wave=wave, resolution=res)
+        transmission = v1_transmission(pwv=pwv, wave=wave, res=res)
 
         # Get the expected flux
         flux = np.ones_like(wave)
@@ -48,7 +48,7 @@ class TestPWVTrans(TestCase):
         # Get the returned flux
         self.transmission_effect._parameters = [pwv, res]
         propagated_flux = self.transmission_effect.propagate(wave, flux)
-        self.assertListEqual(expected_flux.tolist(), propagated_flux.tolist())
+        np.testing.assert_equal(expected_flux, propagated_flux[0])
 
 
 class GetModelWithPWV(TestCase):
