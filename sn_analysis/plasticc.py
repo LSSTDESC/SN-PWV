@@ -8,7 +8,6 @@ from pathlib import Path
 from warnings import warn
 
 import pandas as pd
-import sncosmo
 from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm

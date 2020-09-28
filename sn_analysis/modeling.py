@@ -11,9 +11,8 @@ import numpy as np
 import sncosmo
 from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Table
+from pwv_kpno.defaults import v1_transmission
 from tqdm import tqdm
-
-from sn_analysis.transmission import trans_for_pwv
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
@@ -55,7 +54,7 @@ class PWVTrans(sncosmo.PropagationEffect):
         """
 
         pwv, res = self.parameters
-        transmission = trans_for_pwv(pwv, wave, res)
+        transmission = v1_transmission(pwv, wave, res)
         return flux * transmission
 
 
