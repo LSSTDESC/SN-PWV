@@ -4,7 +4,7 @@ matplotlib
 iminuit
 numpy>=1.16.0
 pandas
-pwv_kpno
+pwv_kpno==2.0.0.dev3
 pytz
 pyyaml
 scipy
