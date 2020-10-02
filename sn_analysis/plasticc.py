@@ -14,11 +14,11 @@ from tqdm import tqdm
 
 from . import modeling
 
-default_data_dir = Path('/mnt/md0/snsims/')
 try:
     plasticc_simulations_directory = Path(os.environ['plasticc_sim_dir'])
 
 except KeyError:
+    default_data_dir = Path(__file__).resolve().parent.parent / 'data' / 'plasticc'
     warn(f'``plasticc_sim_dir`` is not set in environment. Defaulting to {default_data_dir}')
     plasticc_simulations_directory = default_data_dir
 
