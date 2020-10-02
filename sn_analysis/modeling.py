@@ -11,9 +11,8 @@ import numpy as np
 import sncosmo
 from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Table
+from pwv_kpno.defaults import v1_transmission
 from tqdm import tqdm
-
-from sn_analysis.transmission import trans_for_pwv
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
@@ -54,9 +53,12 @@ class PWVTrans(sncosmo.PropagationEffect):
             An array of flux values after suffering propagation effects
         """
 
+        # The class guarantees PWV is a scalar, so the transmission is 1D
         pwv, res = self.parameters
-        transmission = trans_for_pwv(pwv, wave, res)
-        return flux * transmission
+        transmission = v1_transmission(pwv, wave, res)
+
+        # The flux is 2D, so we do a quick cast
+        return flux * transmission.values[None, :]
 
 
 # Todo: Extend this to include other atm models as a kwarg
@@ -103,9 +105,13 @@ class PWVSource(sncosmo.Source):
         self.param_names_latex = self.parent_source.param_names_latex
 
     def _flux(self, phase, wave):
+
+        raise NotImplementedError
+
+        # Phase is guaranteed to be a 2d array, so transmission will be a dataframe
         time = phase + self.parent_model.get('t0')
         pwv = self.pwv_func(time)
-        transmission = trans_for_pwv(pwv, wave)
+        transmission = v1_transmission(pwv, wave)
 
         self.parent_source._parameters = self._parameters
         flux = self.parent_source._flux(phase, wave)

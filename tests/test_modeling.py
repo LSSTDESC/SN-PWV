@@ -9,10 +9,10 @@ from unittest import TestCase, skip
 import numpy as np
 import sncosmo
 from astropy.table import Table
+from pwv_kpno.defaults import v1_transmission
 
 from sn_analysis import modeling
 from sn_analysis.filters import register_decam_filters
-from sn_analysis.transmission import trans_for_pwv
 
 register_decam_filters(force=True)
 
@@ -39,7 +39,7 @@ class TestPWVTrans(TestCase):
         # Get the expected transmission
         pwv = res = 5
         wave = np.arange(4000, 5000)
-        transmission = trans_for_pwv(pwv=pwv, wave=wave, resolution=res)
+        transmission = v1_transmission(pwv=pwv, wave=wave, res=res)
 
         # Get the expected flux
         flux = np.ones_like(wave)
@@ -48,7 +48,7 @@ class TestPWVTrans(TestCase):
         # Get the returned flux
         self.transmission_effect._parameters = [pwv, res]
         propagated_flux = self.transmission_effect.propagate(wave, flux)
-        self.assertListEqual(expected_flux.tolist(), propagated_flux.tolist())
+        np.testing.assert_equal(expected_flux, propagated_flux[0])
 
 
 class GetModelWithPWV(TestCase):
@@ -94,6 +94,7 @@ class PWVSource(TestCase):
         self.assertEqual(self.base_source.minphase(), self.time_variable_source.minphase())
         self.assertEqual(self.base_source.maxphase(), self.time_variable_source.maxphase())
 
+    @skip
     def test_modeled_flux_includes_pwv_transmission(self):
         """Test the source includes PWV transmission effects"""
 
@@ -109,7 +110,7 @@ class PWVSource(TestCase):
 
         # Recover PWV transmission and compare against the expected model
         recovered_transmission = flux_with_pwv / flux_without_pwv
-        expected_transmission = trans_for_pwv(self.test_pwv, wave, 5)
+        expected_transmission = v1_transmission(self.test_pwv, wave, 5)
         np.testing.assert_allclose(recovered_transmission, expected_transmission)
 
 
