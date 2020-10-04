@@ -100,22 +100,36 @@ class PWVSource(sncosmo.Source):
         self._wave = self.parent_source._wave
         self._phase = self.parent_source._phase
 
-        self._parameters = self.parent_source._parameters
-        self._param_names = self.parent_source._param_names
-        self.param_names_latex = self.parent_source.param_names_latex
+        self._parameters = list(self.parent_source._parameters) + [5]
+        self._param_names = list(self.parent_source._param_names) + ['res']
+        self.param_names_latex = list(self.parent_source.param_names_latex) + ['res']
 
     def _flux(self, phase, wave):
 
-        raise NotImplementedError
+        # Calculate base flux
+        *base_params, atm_resolution = self._parameters
+        self.parent_source._parameters = base_params
+        flux = self.parent_source._flux(phase, wave)
 
-        # Phase is guaranteed to be a 2d array, so transmission will be a dataframe
+        # Calculate atmospheric transmission
         time = phase + self.parent_model.get('t0')
         pwv = self.pwv_func(time)
-        transmission = v1_transmission(pwv, wave)
+        transmission = v1_transmission(pwv, wave, atm_resolution)
 
-        self.parent_source._parameters = self._parameters
-        flux = self.parent_source._flux(phase, wave)
-        return flux * transmission
+        # Todo: The following need better testing, a better solution, or ideally both.
+        # Assume pwv is either scalar or 1d
+        # Assume flux is either 1d or 2d
+        if np.isscalar(phase):
+            if np.ndim(flux) == 1:
+                return flux * transmission
+
+            if np.ndim(flux) == 2:
+                return flux * np.atleast_2d(transmission)
+
+        if np.ndim(phase) == 1 and np.ndim(flux) == 2:
+            return flux * transmission.values.T
+
+        raise NotImplementedError('Could not identify how to match dimensions of Atm. model to source flux.')
 
 
 ###############################################################################
