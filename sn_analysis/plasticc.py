@@ -29,7 +29,7 @@ def get_available_cadences():
     return [p.name for p in plasticc_simulations_directory.glob('*') if p.is_dir()]
 
 
-def get_model_headers(cadence, model=11):
+def get_model_headers(cadence, model):
     """Return a list of all header files for a given cadence and model
 
     Default is model 11 (Normal SNe)
@@ -84,7 +84,7 @@ def iter_lc_for_header(header_path, verbose=True):
         yield lc
 
 
-def iter_lc_for_cadence_model(cadence, model=11, verbose=True):
+def iter_lc_for_cadence_model(cadence, model, verbose=True):
     """Iterate over simulated light-curves  for a given cadence
 
     Args:
