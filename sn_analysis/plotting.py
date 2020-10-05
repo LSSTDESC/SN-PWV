@@ -50,9 +50,11 @@ Plot summaries:
 """
 
 from datetime import datetime
+from datetime import timedelta
 
 import matplotlib.dates as mdates
 import numpy as np
+import pandas as pd
 import sncosmo
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
@@ -486,16 +488,21 @@ def plot_delta_mu(source, mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
     plt.tight_layout()
 
 
-def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4)):
+def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
     """Plot PWV measurements taken over a single year as a function of time
+
+    Set ``missing=None`` to disable plotting of missing data windows.
 
     Args:
         pwv_series (Series): Measured PWV index by datetime
         figsize     (tuple): Size of the figure in inches
+        missing     (float): Highlight time ranges larger than given number of
+                             days with missing PWV
 
     Returns:
         - A matplotlib figure
         - A matplotlib axis
+        - A Pandas DataFrame with the start and end times of missing data shown in the figure
     """
 
     # Calculate rolling average of PWV time series
@@ -523,14 +530,36 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4)):
     print(f'Summer Average: {summer_pwv.mean(): .2f} +\- {summer_pwv.std() : .2f} mm')
     print(f'Fall Average:  {fall_pwv.mean(): .2f} +\- {fall_pwv.std() : .2f} mm')
 
-    # Plot measured PWV
     fig, axis = plt.subplots(figsize=figsize)
+    axis.set_ylabel('Median Folded PWV (mm)')
+    axis.set_xlabel('Time of Year')
+    axis.set_ylim(0, 20)
+    ylow, yhigh = axis.get_ylim()
+
+    # Plot windows of missing pwv
+    if missing:
+        pwv_series = pwv_series.sort_index()
+        delta_t = pwv_series.index[1:] - pwv_series.index[:-1]
+        start_indices = np.where(delta_t > timedelta(days=missing))[0]
+        missing_windows_df = pd.DataFrame(dict(
+            start=pwv_series.index[start_indices],
+            end=pwv_series.index[start_indices + 1]
+        ))
+        for start_time, end_time in zip(missing_windows_df.start, missing_windows_df.end):
+            axis.fill_between(
+                x=[start_time, end_time], y1=[ylow, ylow], y2=[yhigh, yhigh],
+                color='lightgrey', alpha=0.5, zorder=0)
+
+    else:
+        missing_windows_df = None
+
+    # Plot measured PWV
     for equinox_date in (mar_equinox, jun_equinox, sep_equinox, dec_equinox):
-        axis.axvline(equinox_date, linestyle='--', color='grey', zorder=0)
+        axis.axvline(equinox_date, linestyle='--', color='k', zorder=1)
 
     # Plot rolling average
-    axis.scatter(pwv_series.index, pwv_series, s=1, alpha=.2, label='Median PWV', zorder=1)
-    axis.plot(pwv_series.index, rolling_mean_pwv, color='C1', label='Rolling Avg.', zorder=2, linewidth=2)
+    axis.scatter(pwv_series.index, pwv_series, s=1, alpha=.2, label='Median PWV', zorder=2)
+    axis.plot(pwv_series.index, rolling_mean_pwv, color='C1', label='Rolling Avg.', zorder=3, linewidth=2)
 
     # Plot seasonal average
     # winter is plotted separately because it spans the new year
@@ -538,19 +567,15 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4)):
     winter_std = winter_pwv.std()
     winter_subset = pwv_series[pwv_series.index < mar_equinox]
     winter_x = winter_subset.index.max() - (winter_subset.index.max() - winter_subset.index.min()) / 2
-    axis.errorbar([winter_x], [winter_avg], yerr=[winter_std], color='k', zorder=3, linewidth=2, capsize=10, capthick=2)
-    axis.scatter([winter_x], [winter_avg], color='k', s=100, marker='+', zorder=3, label='Seasonal Avg.')
+    axis.errorbar([winter_x], [winter_avg], yerr=[winter_std], color='k', zorder=4, linewidth=2, capsize=10, capthick=2)
+    axis.scatter([winter_x], [winter_avg], color='k', s=100, marker='+', zorder=4, label='Seasonal Avg.')
 
     for season in (spring_pwv, summer_pwv, fall_pwv):
         avg = season.mean()
         std = season.std()
         x = season.index.max() - (season.index.max() - season.index.min()) / 2
-        axis.errorbar([x], [avg], yerr=[std], color='k', zorder=3, linewidth=2, capsize=10, capthick=2)
-        axis.scatter([x], [avg], color='k', s=100, marker='+', zorder=3)
-
-    plt.ylabel('Median Folded PWV (mm)')
-    plt.xlabel('Time of Year')
-    plt.ylim(0, 20)
+        axis.errorbar([x], [avg], yerr=[std], color='k', zorder=4, linewidth=2, capsize=10, capthick=2)
+        axis.scatter([x], [avg], color='k', s=100, marker='+', zorder=4)
 
     # Format x labels to be three letter month abbreviations
     locator = mdates.MonthLocator()
@@ -560,4 +585,4 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4)):
     axis.legend(framealpha=1)
 
     axis.twinx().set_ylim(axis.get_ylim())
-    return fig, axis
+    return fig, axis, missing_windows_df
