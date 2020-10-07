@@ -51,7 +51,7 @@ class GetModelHeaders(TestCase):
         """Test the returned list is empty for a cadence with no available data"""
 
         self.assertListEqual(
-            [], plasticc.get_model_headers('fake_cadence'),
+            [], plasticc.get_model_headers('fake_cadence', model=11),
             'Returned list is not empty')
 
 
