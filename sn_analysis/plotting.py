@@ -54,7 +54,6 @@ from datetime import timedelta
 
 import matplotlib.dates as mdates
 import numpy as np
-import pandas as pd
 import sncosmo
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
@@ -505,12 +504,10 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
         - A Pandas DataFrame with the start and end times of missing data shown in the figure
     """
 
+    pwv_series = pwv_series.sort_index()
+
     # Calculate rolling average of PWV time series
-    sampling_in_hour = 4
-    hour_in_day = 24
-    day_in_window = 7
-    window_size = sampling_in_hour * hour_in_day * day_in_window
-    rolling_mean_pwv = pwv_series.rolling(window=window_size).mean()
+    rolling_mean_pwv = pwv_series.rolling(window='7D').mean()
 
     # In practice these dates vary by year so the values used here are approximate
     year = pwv_series.index[0].year
@@ -538,20 +535,30 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
 
     # Plot windows of missing pwv
     if missing:
-        pwv_series = pwv_series.sort_index()
+        missing_interval = timedelta(days=missing)
+        year_start = datetime(year, 1, 1, tzinfo=utc)
+        year_end = datetime(year, 12, 31, 23, 59, 59, tzinfo=utc)
+
         delta_t = pwv_series.index[1:] - pwv_series.index[:-1]
-        start_indices = np.where(delta_t > timedelta(days=missing))[0]
-        missing_windows_df = pd.DataFrame(dict(
-            start=pwv_series.index[start_indices],
-            end=pwv_series.index[start_indices + 1]
-        ))
-        for start_time, end_time in zip(missing_windows_df.start, missing_windows_df.end):
+        start_indices = np.where(delta_t > missing_interval)[0]
+        for index in start_indices:
+            start_time = pwv_series.index[index]
+            end_time = pwv_series.index[index + 1]
             axis.fill_between(
                 x=[start_time, end_time], y1=[ylow, ylow], y2=[yhigh, yhigh],
                 color='lightgrey', alpha=0.5, zorder=0)
 
-    else:
-        missing_windows_df = None
+        if (pwv_series.index[0] - year_start) > missing_interval:
+            axis.fill_between(
+                x=[year_start, pwv_series.index[0]],
+                y1=[ylow, ylow], y2=[yhigh, yhigh],
+                color='lightgrey', alpha=0.5, zorder=0)
+
+        if (year_end - pwv_series.index[-1]) > missing_interval:
+            axis.fill_between(
+                x=[pwv_series.index[-1], year_end],
+                y1=[ylow, ylow], y2=[yhigh, yhigh],
+                color='lightgrey', alpha=0.5, zorder=0)
 
     # Plot measured PWV
     for equinox_date in (mar_equinox, jun_equinox, sep_equinox, dec_equinox):
@@ -559,18 +566,23 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
 
     # Plot rolling average
     axis.scatter(pwv_series.index, pwv_series, s=1, alpha=.2, label='Median PWV', zorder=2)
-    axis.plot(pwv_series.index, rolling_mean_pwv, color='C1', label='Rolling Avg.', zorder=3, linewidth=2)
+    axis.plot(rolling_mean_pwv.index, rolling_mean_pwv, color='C1', label='Rolling Avg.', zorder=3, linewidth=2)
 
     # Plot seasonal average
     # winter is plotted separately because it spans the new year
-    winter_avg = winter_pwv.mean()
-    winter_std = winter_pwv.std()
-    winter_subset = pwv_series[pwv_series.index < mar_equinox]
-    winter_x = winter_subset.index.max() - (winter_subset.index.max() - winter_subset.index.min()) / 2
-    axis.errorbar([winter_x], [winter_avg], yerr=[winter_std], color='k', zorder=4, linewidth=2, capsize=10, capthick=2)
-    axis.scatter([winter_x], [winter_avg], color='k', s=100, marker='+', zorder=4, label='Seasonal Avg.')
+    if not winter_pwv.empty:
+        winter_avg = winter_pwv.mean()
+        winter_std = winter_pwv.std()
+        winter_subset = pwv_series[pwv_series.index < mar_equinox]
+        winter_x = winter_subset.index.max() - (winter_subset.index.max() - winter_subset.index.min()) / 2
+        axis.errorbar([winter_x], [winter_avg], yerr=[winter_std], color='k', zorder=4, linewidth=2, capsize=10,
+                      capthick=2)
+        axis.scatter([winter_x], [winter_avg], color='k', s=100, marker='+', zorder=4, label='Seasonal Avg.')
 
     for season in (spring_pwv, summer_pwv, fall_pwv):
+        if season.empty:
+            continue
+
         avg = season.mean()
         std = season.std()
         x = season.index.max() - (season.index.max() - season.index.min()) / 2
@@ -585,4 +597,4 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
     axis.legend(framealpha=1)
 
     axis.twinx().set_ylim(axis.get_ylim())
-    return fig, axis, missing_windows_df
+    return fig, axis
