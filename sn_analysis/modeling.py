@@ -30,7 +30,7 @@ betoule_cosmo = FlatLambdaCDM(H0=H0, Om0=omega_m)
 # For building sncosmo models with a PWV component
 ###############################################################################
 
-# Todo: We should bin the PWV transmission to the same resolution as the template
+
 class PWVTrans(sncosmo.PropagationEffect):
     """Atmospheric PWV propagation effect for sncosmo"""
 
@@ -39,7 +39,7 @@ class PWVTrans(sncosmo.PropagationEffect):
 
     def __init__(self):
         self._param_names = ['pwv', 'res']
-        self.param_names_latex = ['PWV', 'resolution']
+        self.param_names_latex = ['PWV', 'Resolution']
         self._parameters = np.array([0., 5])
 
     def propagate(self, wave, flux):
@@ -62,6 +62,7 @@ class PWVTrans(sncosmo.PropagationEffect):
 
 
 class PWVVariableModel(sncosmo.Model):
+    """Clone of the ``sncosmo.Model`` class but with time variable PWV effects"""
 
     def __init__(self, source, pwv_func, effects=None, effect_names=None, effect_frames=None):
         """An observer-frame supernova model that incorporates time variable PWV transmission
@@ -77,16 +78,22 @@ class PWVVariableModel(sncosmo.Model):
             effect_frames (list): The frame that each effect is in (same length as `effects`).
                 Must be one of {'rest', 'obs'}."""
 
-        # Set parameter names, initial values (initial values set to zero)
-
         super().__init__(source, effects, effect_names, effect_frames)
         self._pwv_func = pwv_func
         self._param_names.append('res')
-        self.param_names_latex.append('res')
+        self.param_names_latex.append('Resolution')
         self._parameters = np.concatenate([self._parameters, [5.]])
 
-    def __flux(self, time, wave):
-        """Array flux function."""
+    def _flux_without_pwv(self, time, wave):
+        """Propagate source flux through transmission effects
+
+        Args:
+            time (float, np.array): Array of time values
+            wave (float, np.array): Array of wavelength values
+
+        Returns:
+            An array of flux values
+        """
 
         a = 1. / (1. + self['z'])
         phase = (time - self['t0']) * a
@@ -111,10 +118,23 @@ class PWVVariableModel(sncosmo.Model):
 
         return f
 
+    def calc_pwv_los(self, time):
+        """Return the PWV along the line of sight for a given time
+
+        Args:
+            time (float, np.array): Array of time values
+
+        Returns:
+            An array of PWV values in mm
+        """
+
+        # Todo: Add RA and Dec parameters. Use them to scale PWV to the appropriate airmass
+        return self._pwv_func(time)
+
     def _flux(self, time, wave):
 
-        flux = self.__flux(time, wave)
-        pwv = self._pwv_func(time)
+        pwv = self.calc_pwv_los(time)
+        flux = self._flux_without_pwv(time, wave)
         transmission = v1_transmission(pwv, wave, self['res'])
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
@@ -128,6 +148,15 @@ class PWVVariableModel(sncosmo.Model):
             return flux * transmission.values.T
 
         raise NotImplementedError('Could not identify how to match dimensions of Atm. model to source flux.')
+
+    def __copy__(self):
+        """Like a normal shallow copy, but makes an actual copy of the
+        parameter array."""
+        new_model = self.__new__(self.__class__)
+        for key, val in self.__dict__.items():
+            new_model.__dict__[key] = val
+        new_model._parameters = copy(self._parameters)
+        return new_model
 
 
 ###############################################################################
@@ -199,7 +228,7 @@ def create_observations_table(
     return observations
 
 
-def realize_lc(obs, source, snr=.05, **params):
+def realize_lc(obs, model, snr=.05, **params):
     """Simulate a SN light-curve for given parameters
 
     Light-curves are simulated for the given parameters without any of
@@ -207,7 +236,7 @@ def realize_lc(obs, source, snr=.05, **params):
 
     Args:
         obs       (Table): Observation cadence
-        source   (Source): The sncosmo source to use in the simulations
+        model     (Model): The sncosmo model to use in the simulations
         snr       (float): Signal to noise ratio
         **params         : Values for any model parameters
 
@@ -215,16 +244,11 @@ def realize_lc(obs, source, snr=.05, **params):
         Astropy table for each PWV and redshift
     """
 
-    if isinstance(source, sncosmo.Model):
-        model = copy(source)
-
-    else:
-        model = get_model_with_pwv(source)
-
+    model = copy(model)
     model.update(params)
 
     # Set default x0 value according to assumed cosmology and the model redshift
-    x0 = params.get('x0', calc_x0_for_z(model['z'], source))
+    x0 = params.get('x0', calc_x0_for_z(model['z'], model.source))
     model.set(x0=x0)
 
     light_curve = obs[['time', 'band', 'zp', 'zpsys']]
@@ -234,7 +258,7 @@ def realize_lc(obs, source, snr=.05, **params):
     return light_curve
 
 
-def simulate_lc(observations, source, params, scatter=True):
+def simulate_lc(observations, model, params, scatter=True):
     """Simulate a SN light-curve given a set of observations.
 
     If ``scatter`` is ``True``, then simulated flux values include an added
@@ -243,7 +267,7 @@ def simulate_lc(observations, source, params, scatter=True):
 
     Args:
         observations (Table): Table of observations.
-        source       (Source): The sncosmo source to use in the simulations
+        model     (Model): The sncosmo model to use in the simulations
         params       (dict): parameters to feed to the model for realizing the light-curve
         scatter      (bool): Add random noise to the flux values
 
@@ -251,12 +275,7 @@ def simulate_lc(observations, source, params, scatter=True):
         An astropy table formatted for use with sncosmo
     """
 
-    if isinstance(source, sncosmo.Model):
-        model = source
-
-    else:
-        model = sncosmo.Model(source)
-
+    model = copy(model)
     model.update(params)  # Todo: Target a test at this line
 
     flux = model.bandflux(
@@ -281,7 +300,7 @@ def simulate_lc(observations, source, params, scatter=True):
     return Table(data, names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'), meta=params)
 
 
-def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
+def iter_lcs(obs, model, pwv_arr, z_arr, snr=10, verbose=True):
     """Iterator over SN light-curves for combination of PWV and z values
 
     Light-curves are simulated for the given parameters without any of
@@ -289,7 +308,7 @@ def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
 
     Args:
         obs       (Table): Observation cadence
-        source   (Source): The sncosmo source to use in the simulations
+        model     (Model): The sncosmo model to use in the simulations
         pwv_arr (ndarray): Array of PWV values
         z_arr   (ndarray): Array of redshift values
         snr       (float): Signal to noise ratio
@@ -299,11 +318,12 @@ def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
         Astropy table for each PWV and redshift
     """
 
+    model = copy(model)
     arg_iter = itertools.product(pwv_arr, z_arr)
     if verbose:  # pragma: no cover
         iter_total = len(pwv_arr) * len(z_arr)
         arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
 
     for pwv, z in arg_iter:
-        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, source)}
-        yield realize_lc(obs, source, snr, **params)
+        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, model.source)}
+        yield realize_lc(obs, model, snr, **params)

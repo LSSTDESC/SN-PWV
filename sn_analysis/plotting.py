@@ -449,11 +449,10 @@ def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
 
 
 # noinspection PyUnusedLocal
-def plot_delta_mu(source, mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
+def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
     """Plot the variation in fitted distance modulus as a function of redshift and PWV
 
     Args:
-        source   (Source): Source corresponding to the provided mu values
         mu      (ndarray): Array of distance moduli
         pwv_arr (ndarray): Array of PWV values
         z_arr   (ndarray): Array of redshift values
