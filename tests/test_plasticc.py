@@ -139,7 +139,8 @@ class DuplicatePlasticcSncosmo(TestCase):
             )
 
     def test_x0_overwritten_by_cosmo_arg(self):
-        """Test """
+        """Test the x0 parameter is overwritten according to the given cosmology"""
+
         duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, source=self.source)
         expected_x0 = calc_x0_for_z(duplicated_lc.meta['z'], source=self.source)
         np.testing.assert_allclose(expected_x0, duplicated_lc.meta['x0'])
