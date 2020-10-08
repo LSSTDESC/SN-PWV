@@ -152,9 +152,11 @@ class PWVVariableModel(sncosmo.Model):
     def __copy__(self):
         """Like a normal shallow copy, but makes an actual copy of the
         parameter array."""
+
         new_model = self.__new__(self.__class__)
         for key, val in self.__dict__.items():
             new_model.__dict__[key] = val
+
         new_model._parameters = copy(self._parameters)
         return new_model
 
@@ -267,17 +269,16 @@ def simulate_lc(observations, model, params, scatter=True):
 
     Args:
         observations (Table): Table of observations.
-        model     (Model): The sncosmo model to use in the simulations
-        params       (dict): parameters to feed to the model for realizing the light-curve
-        scatter      (bool): Add random noise to the flux values
+        model        (Model): The sncosmo model to use in the simulations
+        params        (dict): parameters to feed to the model for realizing the light-curve
+        scatter       (bool): Add random noise to the flux values
 
     Returns:
         An astropy table formatted for use with sncosmo
     """
 
     model = copy(model)
-    model.update(params)  # Todo: Target a test at this line
-
+    model.update(params)
     flux = model.bandflux(
         observations['band'],
         observations['time'],
