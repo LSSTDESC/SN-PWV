@@ -61,72 +61,70 @@ class PWVTrans(sncosmo.PropagationEffect):
         return flux * transmission.values[None, :]
 
 
-# Todo: Extend this to include other atm models as a kwarg
-def get_model_with_pwv(source, **params):
-    """Return an sncosmo model with PWV effects
+class PWVVariableModel(sncosmo.Model):
 
-    The returned model has the additional parameters:
-        pwv: The zenith PWV density in mm
+    def __init__(self, source, pwv_func, effects=None, effect_names=None, effect_frames=None):
+        """An observer-frame supernova model that incorporates time variable PWV transmission
 
-    Args:
-        source: An sncosmo source
-        Any parameter values to set in the model
-
-    Returns:
-        An sncosmo model
-    """
-
-    model = sncosmo.Model(source)
-    model.add_effect(PWVTrans(), '', 'obs')
-    model.update(params)
-    return model
-
-
-class PWVSource(sncosmo.Source):
-    """Wrapper for SNCosmo sources that introduces time variable PWV effects"""
-
-    def __init__(self, parent_source, pwv_func):
-        """Wraps an sncosmo Source object with time variable PWV transmission effects
+        .. important:: Arguments for the ``t0`` parameter and the ``pwv_func``
+           callable must be in the same units.
 
         Args:
-            parent_source (str, Source): sncosmo source to use as a base
-            pwv_func          (callable): Vectorized callable that returns PWV at given date
-        """
+            source (Source, str): The model for the spectral evolution of the source.
+            pwv_func  (callable): Function that returns PWV for a given time values. Must support vectors
+            effects       (list): list of ``sncosmo.PropagationEffect``
+            effect_names  (list): Names of each propagation effect (same length as `effects`).
+            effect_frames (list): The frame that each effect is in (same length as `effects`).
+                Must be one of {'rest', 'obs'}."""
 
-        self.parent_source = sncosmo.get_source(parent_source)
-        self.pwv_func = pwv_func
+        # Set parameter names, initial values (initial values set to zero)
 
-        self.name = self.parent_source.name + '_VariablePWV'
-        self._wave = self.parent_source._wave
-        self._phase = self.parent_source._phase
+        super().__init__(source, effects, effect_names, effect_frames)
+        self._pwv_func = pwv_func
+        self._param_names.append('res')
+        self.param_names_latex.append('res')
+        self._parameters = np.concatenate([self._parameters, [5.]])
 
-        self._parameters = list(self.parent_source._parameters) + [5]
-        self._param_names = list(self.parent_source._param_names) + ['res']
-        self.param_names_latex = list(self.parent_source.param_names_latex) + ['res']
+    def __flux(self, time, wave):
+        """Array flux function."""
 
-    def _flux(self, phase, wave):
+        a = 1. / (1. + self['z'])
+        phase = (time - self['t0']) * a
+        restwave = wave * a
 
-        # Calculate base flux
-        *base_params, atm_resolution = self._parameters
-        self.parent_source._parameters = base_params
-        flux = self.parent_source._flux(phase, wave)
+        # Note that below we multiply by the scale factor to conserve
+        # bolometric luminosity.
+        f = a * self._source._flux(phase, restwave)
 
-        # Calculate atmospheric transmission
-        time = phase + self.parent_model.get('t0')
-        pwv = self.pwv_func(time)
-        transmission = v1_transmission(pwv, wave, atm_resolution)
+        # Pass the flux through the PropagationEffects.
+        for effect, frame, zindex in zip(self._effects, self._effect_frames,
+                                         self._effect_zindicies):
+            if frame == 'obs':
+                effect_wave = wave
+            elif frame == 'rest':
+                effect_wave = restwave
+            else:  # frame == 'free'
+                effect_a = 1. / (1. + self._parameters[zindex])
+                effect_wave = wave * effect_a
 
-        # Todo: The following need better testing, a better solution, or ideally both.
-        # Assume pwv is either scalar or 1d
-        # Assume flux is either 1d or 2d
-        if np.isscalar(phase):
+            f = effect.propagate(effect_wave, f)
+
+        return f
+
+    def _flux(self, time, wave):
+
+        flux = self.__flux(time, wave)
+        pwv = self._pwv_func(time)
+        transmission = v1_transmission(pwv, wave, self['res'])
+
+        if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
             if np.ndim(flux) == 1:
                 return flux * transmission
 
             if np.ndim(flux) == 2:
                 return flux * np.atleast_2d(transmission)
 
-        if np.ndim(phase) == 1 and np.ndim(flux) == 2:
+        if np.ndim(time) == 1 and np.ndim(flux) == 2:  # PWV will be a vector and transmission will be a DataFrame
             return flux * transmission.values.T
 
         raise NotImplementedError('Could not identify how to match dimensions of Atm. model to source flux.')
@@ -254,7 +252,7 @@ def simulate_lc(observations, source, params, scatter=True):
     """
 
     if isinstance(source, sncosmo.Model):
-        model = copy(source)
+        model = source
 
     else:
         model = sncosmo.Model(source)
