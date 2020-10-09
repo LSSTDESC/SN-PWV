@@ -75,13 +75,6 @@ class PWVVariableModel(TestCase):
         from copy import copy
         copy(self.variable_model)
 
-    def test_base_flux_matches_base_model(self):
-        """Test the flux without PWV effects matches the underlying source"""
-
-        base_model_flux = self.base_model.flux(time=0, wave=np.arange(3000, 12000))
-        variable_model_base_flux = self.variable_model._flux_without_pwv(time=0, wave=np.arange(3000, 12000))
-        np.testing.assert_allclose(variable_model_base_flux, base_model_flux)
-
     def test_modeled_flux_includes_pwv_transmission(self):
         """Test modeled flux includes PWV transmission effects"""
 
