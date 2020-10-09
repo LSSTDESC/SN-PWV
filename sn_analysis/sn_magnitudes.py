@@ -217,7 +217,8 @@ def fit_fiducial_mag(sim_model, fit_model, obs, vparams, z_arr, bands, fid_pwv_d
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
 
     Args:
-        model            (Model): The sncosmo model to use when fitting
+        sim_model        (Model): The sncosmo model to use when simulating light-curves
+        fit_model        (Model): The sncosmo model to use when fitting
         obs              (Table): Array of light-curves to fit
         vparams           (list): Parameters to vary with the fit
         z_arr          (ndarray): Array of redshift values
@@ -350,7 +351,6 @@ def calc_calibration_factor_for_params(model, params):
     Returns:
         An array of calibration factors with one dimension less than ``params``
     """
-
 
     params_dict = {
         param: params[..., i] for
