@@ -6,6 +6,7 @@
 from unittest import TestCase
 
 import numpy as np
+import sncosmo
 
 from sn_analysis import modeling, sn_magnitudes
 from sn_analysis.filters import register_decam_filters
@@ -39,15 +40,16 @@ class GetConfigPWVValues(TestCase):
 class TestTabulateMagnitudes(TestCase):
     """Tests for the ``tabulate_mag`` function"""
 
-    @classmethod
-    def setUpClass(cls):
-        cls.source = 'salt2-extended'
-        cls.pwv_vals = 0.001, 5
-        cls.z_vals = 0.001, .5
-        cls.bands = ['sdssu', 'sdssg']
+    def setUp(self):
+        self.model = sncosmo.Model('salt2-extended')
+        self.model.add_effect(modeling.PWVTrans(), '', 'obs')
 
-        cls.mag_dict = sn_magnitudes.tabulate_mag(
-            cls.source, cls.pwv_vals, cls.z_vals, cls.bands)
+        self.pwv_vals = 0.001, 5
+        self.z_vals = 0.001, .5
+        self.bands = ['sdssu', 'sdssg']
+
+        self.mag_dict = sn_magnitudes.tabulate_mag(
+            self.model, self.pwv_vals, self.z_vals, self.bands)
 
     def test_values_match_sncosmo_simulation(self):
         """Test returned values equal simulated values from sncosmo"""
@@ -57,19 +59,18 @@ class TestTabulateMagnitudes(TestCase):
         tabulated_mag = self.mag_dict[test_band]
 
         # Determine magnitude values independently
-        model = modeling.get_model_with_pwv(self.source)
         expected_mag = []
         for i, pwv in enumerate(self.pwv_vals):
             mag_for_pwv = []
 
             for j, z in enumerate(self.z_vals):
-                model.set(pwv=pwv, z=z, x0=modeling.calc_x0_for_z(z, self.source))
-                mag = model.bandmag(test_band, 'ab', 0)
+                self.model.set(pwv=pwv, z=z, x0=modeling.calc_x0_for_z(z, self.model.source))
+                mag = self.model.bandmag(test_band, 'ab', 0)
                 mag_for_pwv.append(mag)
 
             expected_mag.append(mag_for_pwv)
 
-        np.testing.assert_equal(expected_mag, tabulated_mag)
+        np.testing.assert_allclose(expected_mag, tabulated_mag)
 
     def test_all_bands_returned(self):
         """Test values are returned for each input band"""

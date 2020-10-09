@@ -51,69 +51,6 @@ class TestPWVTrans(TestCase):
         np.testing.assert_equal(expected_flux, propagated_flux[0])
 
 
-class GetModelWithPWV(TestCase):
-    """Tests for the ``get_model_with_pwv`` function"""
-
-    def test_model_has_pwv_component(self):
-        """Test returned model has a PWV transmission component"""
-
-        model = modeling.get_model_with_pwv('salt2')
-        effect_types = [type(eff) for eff in model.effects]
-        self.assertIn(modeling.PWVTrans, effect_types)
-
-    def test_kwarg_params_are_set(self):
-        """Test kwargs are set as model parameters"""
-
-        test_pwv = 10
-        test_resolution = 6
-        model = modeling.get_model_with_pwv('salt2', pwv=test_pwv, res=test_resolution)
-        self.assertEqual(test_pwv, model['pwv'], 'Model has incorrect PWV value')
-        self.assertEqual(test_resolution, model['res'], 'Model has incorrect PWV resolution')
-
-
-class PWVSource(TestCase):
-    """Tests for the ``PWVSource`` class"""
-
-    def setUp(self):
-        """Create a ``PWVSource`` source"""
-
-        self.test_pwv = 5
-        dummy_func = lambda *args: self.test_pwv
-        self.base_source = sncosmo.get_source('salt2-extended')
-        self.time_variable_source = modeling.PWVSource(self.base_source, dummy_func)
-
-    def test_wavelength_limits_accessible(self):
-        """Test the maximum and minimum wavelength values match the base source"""
-
-        self.assertEqual(self.base_source.minwave(), self.time_variable_source.minwave())
-        self.assertEqual(self.base_source.maxwave(), self.time_variable_source.maxwave())
-
-    def test_phase_limits_accessible(self):
-        """Test the maximum and minimum wavelength phase values match the base source"""
-
-        self.assertEqual(self.base_source.minphase(), self.time_variable_source.minphase())
-        self.assertEqual(self.base_source.maxphase(), self.time_variable_source.maxphase())
-
-    @skip
-    def test_modeled_flux_includes_pwv_transmission(self):
-        """Test the source includes PWV transmission effects"""
-
-        # Create supernova models with and without PWV
-        base_model = sncosmo.Model(self.base_source)
-        time_variable_model = sncosmo.Model(self.time_variable_source)
-        time_variable_model.source.parent_model = time_variable_model
-
-        # Model flux with and without PWV
-        wave = np.arange(6000, 10000)
-        flux_without_pwv = base_model.flux(0, wave)
-        flux_with_pwv = time_variable_model.flux(0, wave)
-
-        # Recover PWV transmission and compare against the expected model
-        recovered_transmission = flux_with_pwv / flux_without_pwv
-        expected_transmission = v1_transmission(self.test_pwv, wave, 5)
-        np.testing.assert_allclose(recovered_transmission, expected_transmission)
-
-
 class CalcX0ForZ(TestCase):
     """Tests for the ``calc_x0_for_z`` function"""
 
@@ -200,14 +137,14 @@ class RealizeLC(TestCase):
         """Simulate a cadence and associated light-curve"""
 
         self.observations = modeling.create_observations_table()
-        self.source = 'salt2-extended'
+        self.model = sncosmo.Model('salt2-extended')
 
         z = 0.5
         self.snr = 12
-        self.params = dict(pwv=0.01, x1=.8, c=-.5, z=z, t0=1, x0=1, res=5)
+        self.params = dict(x1=.8, c=-.5, z=z, t0=1, x0=1)
         self.obs = modeling.create_observations_table()
         self.simulated_lc = modeling.realize_lc(
-            self.obs, self.source, self.snr, **self.params)
+            self.obs, self.model, self.snr, **self.params)
 
     def test_simulated_snr(self):
         """Test SNR of simulated light-curve equals snr kwarg"""
@@ -226,8 +163,7 @@ class RealizeLC(TestCase):
     def test_runs_with_sncosmo(self):
         """Test the Simulated LC can be fit with ``sncosmo``"""
 
-        model = sncosmo.Model(self.source)
-        sncosmo.fit_lc(self.simulated_lc, model, vparam_names=['x0', 'x1', 'c'])
+        sncosmo.fit_lc(self.simulated_lc, self.model, vparam_names=['x0', 'x1', 'c'])
 
     def test_correct_meta_data_values(self):
         """Test simulated LC table has model parameters in meta data"""
@@ -250,8 +186,8 @@ class RealizeLC(TestCase):
         """Test default x0 is dependent on z"""
 
         z = 0.5
-        expected_x0 = modeling.calc_x0_for_z(z, self.source)
-        simulated_lc = modeling.realize_lc(self.obs, self.source, z=z)
+        expected_x0 = modeling.calc_x0_for_z(z, self.model.source)
+        simulated_lc = modeling.realize_lc(self.obs, self.model, z=z)
         self.assertEqual(expected_x0, simulated_lc.meta['x0'])
 
     def test_meta_includes_all_params(self):
@@ -259,15 +195,15 @@ class RealizeLC(TestCase):
         specified as kwargs.
         """
 
-        expected_params = modeling.get_model_with_pwv(self.source).param_names
-        simulated_lc = modeling.realize_lc(self.obs, self.source, z=0.5)
+        expected_params = self.model.param_names
+        simulated_lc = modeling.realize_lc(self.obs, self.model, z=0.5)
         meta_params = list(simulated_lc.meta.keys())
         self.assertListEqual(expected_params, meta_params)
 
     def test_raises_for_z_equals_0(self):
         """Test a value error is raised for simulating z == 0"""
 
-        self.assertRaises(ValueError, modeling.realize_lc, self.obs, self.source, z=0)
+        self.assertRaises(ValueError, modeling.realize_lc, self.obs, self.model, z=0)
 
 
 class SimulateLC(RealizeLC):
@@ -277,13 +213,13 @@ class SimulateLC(RealizeLC):
         """Simulate a cadence and associated light-curve"""
 
         self.observations = modeling.create_observations_table()
-        self.source = 'salt2-extended'
+        self.model = sncosmo.Model('salt2-extended')
 
         z = 0.5
         self.snr = 12
         self.params = dict(x1=.8, c=-.5, z=z, t0=1, x0=1)
         self.obs = modeling.create_observations_table()
-        self.simulated_lc = modeling.simulate_lc(self.obs, self.source, self.params)
+        self.simulated_lc = modeling.simulate_lc(self.obs, self.model, self.params)
 
     @skip  # Todo: Overload this test and check the flux err matches expected distribution
     def test_simulated_snr(self):
@@ -298,11 +234,13 @@ class IterLCS(TestCase):
 
         self.pwv_vals = 0.01, 5
         self.z_vals = 0.01, 1
-        self.source = 'salt2-extended'
+        self.model = sncosmo.Model('salt2-extended')
+        self.model.add_effect(modeling.PWVTrans(), '', 'obs')
+
         self.observations = modeling.create_observations_table()
         self.lc_iter = modeling.iter_lcs(
             self.observations,
-            self.source,
+            self.model,
             self.pwv_vals,
             self.z_vals,
             verbose=False)
