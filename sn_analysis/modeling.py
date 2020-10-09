@@ -78,45 +78,96 @@ class PWVVariableModel(sncosmo.Model):
             effect_frames (list): The frame that each effect is in (same length as `effects`).
                 Must be one of {'rest', 'obs'}."""
 
-        super().__init__(source, effects, effect_names, effect_frames)
+
         self._pwv_func = pwv_func
-        self._param_names.append('res')
-        self.param_names_latex.append('Resolution')
-        self._parameters = np.concatenate([self._parameters, [5.]])
 
-    def _flux_without_pwv(self, time, wave):
-        """Propagate source flux through transmission effects
+        # Set parameter names, initial values (inital values set to zero)
+        self._param_names = ['z', 't0', 'res']
+        self.param_names_latex = ['z', 't_0', 'Resolution']
+        self._parameters = np.array([0, 0, 5])
 
-        Args:
-            time (float, np.array): Array of time values
-            wave (float, np.array): Array of wavelength values
+        # Set source and add source parameter names
+        self._source = sncosmo.get_source(source, copy=True)
+        self._param_names.extend(self._source.param_names)
+        self.param_names_latex.extend(self._source.param_names_latex)
 
-        Returns:
-            An array of flux values
+        # Add PropagationEffects
+        self._effects = []
+        self._effect_names = []
+        self._effect_frames = []
+        if (effects is not None or effect_names is not None or
+                effect_frames is not None):
+            try:
+                same_length = (len(effects) == len(effect_names) and
+                               len(effects) == len(effect_frames))
+            except TypeError:
+                raise TypeError('effects, effect_names, and effect_frames '
+                                'should all be iterables.')
+            if not same_length:
+                raise ValueError('effects, effect_names and effect_frames '
+                                 'must have matching lengths')
+
+            for effect, name, frame in zip(effects, effect_names,
+                                           effect_frames):
+                self._add_effect_partial(effect, name, frame)
+
+        # sync
+        self._sync_parameter_arrays()
+        self._update_description()
+
+    def _sync_parameter_arrays(self):
+        """Synchronize parameter names and parameter arrays between
+        the aggregated parameters and those of the individual source and
+        effects.
         """
 
-        a = 1. / (1. + self['z'])
-        phase = (time - self['t0']) * a
-        restwave = wave * a
+        num_additional_params = 3
 
-        # Note that below we multiply by the scale factor to conserve
-        # bolometric luminosity.
-        f = a * self._source._flux(phase, restwave)
+        # save a reference to old parameter values, in case there are
+        # effect redshifts that have been set.
+        old_parameters = self._parameters
 
-        # Pass the flux through the PropagationEffects.
-        for effect, frame, zindex in zip(self._effects, self._effect_frames,
-                                         self._effect_zindicies):
-            if frame == 'obs':
-                effect_wave = wave
-            elif frame == 'rest':
-                effect_wave = restwave
-            else:  # frame == 'free'
-                effect_a = 1. / (1. + self._parameters[zindex])
-                effect_wave = wave * effect_a
+        # Calculate total length of model's parameter array
+        l = num_additional_params + len(self._source._parameters)
+        for effect, frame in zip(self._effects, self._effect_frames):
+            l += (frame == 'free') + len(effect._parameters)
 
-            f = effect.propagate(effect_wave, f)
+        # allocate new array (zeros so that new 'free' effects redshifts
+        # initialize to 0)
+        self._parameters = np.zeros(l, dtype=np.float)
 
-        return f
+        # copy old parameters: we do this to make sure we copy
+        # non-default values of any parameters that the model alone
+        # holds, such as z, t0 and effect redshifts.
+        self._parameters[0:len(old_parameters)] = old_parameters
+
+        # cross-reference source's parameters
+        pos = num_additional_params
+        l = len(self._source._parameters)
+        self._parameters[pos:pos+l] = self._source._parameters  # copy
+        self._source._parameters = self._parameters[pos:pos+l]  # reference
+        pos += l
+
+        # initialize a list of ints that keeps track of where the redshift
+        # parameter of each effect is. Value is 0 if effect_frame is not 'free'
+        self._effect_zindicies = []
+
+        # for each effect, cross-reference the effect's parameters
+        for i in range(len(self._effects)):
+            effect = self._effects[i]
+
+            # for 'free' effects, add a redshift parameter
+            if self._effect_frames[i] == 'free':
+                self._effect_zindicies.append(pos)
+                pos += 1
+            else:
+                self._effect_zindicies.append(-1)
+
+            # add all of this effect's parameters
+            l = len(effect._parameters)
+            self._parameters[pos:pos+l] = effect._parameters  # copy
+            effect._parameters = self._parameters[pos:pos+l]  # reference
+            pos += l
 
     def calc_pwv_los(self, time):
         """Return the PWV along the line of sight for a given time
@@ -135,7 +186,7 @@ class PWVVariableModel(sncosmo.Model):
     def _flux(self, time, wave):
 
         pwv = self.calc_pwv_los(time)
-        flux = self._flux_without_pwv(time, wave)
+        flux = super()._flux(time, wave)
         transmission = v1_transmission(pwv, wave, self['res'])
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
