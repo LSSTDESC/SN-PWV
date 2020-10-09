@@ -129,6 +129,7 @@ class PWVVariableModel(sncosmo.Model):
         """
 
         # Todo: Add RA and Dec parameters. Use them to scale PWV to the appropriate airmass
+        # Extend tests appropriately
         return self._pwv_func(time)
 
     def _flux(self, time, wave):
@@ -320,11 +321,8 @@ def iter_lcs(obs, model, pwv_arr, z_arr, snr=10, verbose=True):
     """
 
     model = copy(model)
+    iter_total = len(pwv_arr) * len(z_arr)
     arg_iter = itertools.product(pwv_arr, z_arr)
-    if verbose:  # pragma: no cover
-        iter_total = len(pwv_arr) * len(z_arr)
-        arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
-
-    for pwv, z in arg_iter:
+    for pwv, z in tqdm(arg_iter, total=iter_total, desc='Light-Curves', disable=not verbose):
         params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, model.source)}
         yield realize_lc(obs, model, snr, **params)

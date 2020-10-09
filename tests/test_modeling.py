@@ -51,6 +51,54 @@ class TestPWVTrans(TestCase):
         np.testing.assert_equal(expected_flux, propagated_flux[0])
 
 
+class PWVVariableModel(TestCase):
+    """Tests for the ``PWVVariableModel`` class"""
+
+    def setUp(self):
+        """Create a ``PWVVariableModel`` instance"""
+
+        self.test_pwv = 5
+        self.source = 'salt2-extended'
+        self.base_model = sncosmo.Model(self.source)
+
+        constant_pwv_func = lambda *args: self.test_pwv
+        self.variable_model = modeling.PWVVariableModel(self.source, constant_pwv_func)
+
+    def test_source_attr_matches_init_arg(self):
+        """Test the source attribute matches the source init argument"""
+
+        self.assertEqual(self.variable_model.source.name, self.source)
+
+    def test_can_be_copied(self):
+        """Test an error isn't raised when making a copy"""
+
+        from copy import copy
+        copy(self.variable_model)
+
+    def test_base_flux_matches_base_model(self):
+        """Test the flux without PWV effects matches the underlying source"""
+
+        base_model_flux = self.base_model.flux(time=0, wave=np.arange(3000, 12000))
+        variable_model_base_flux = self.variable_model._flux_without_pwv(time=0, wave=np.arange(3000, 12000))
+        np.testing.assert_allclose(variable_model_base_flux, base_model_flux)
+
+    def test_modeled_flux_includes_pwv_transmission(self):
+        """Test modeled flux includes PWV transmission effects"""
+
+        # Create supernova models with and without PWV
+        base_model = sncosmo.Model(self.variable_model.source)
+
+        # Model flux with and without PWV
+        wave = np.arange(6000, 10000)
+        flux_without_pwv = base_model.flux(0, wave)
+        flux_with_pwv = self.variable_model.flux(0, wave)
+
+        # Recover PWV transmission and compare against the expected model
+        recovered_transmission = flux_with_pwv / flux_without_pwv
+        expected_transmission = v1_transmission(self.test_pwv, wave, 5)
+        np.testing.assert_allclose(recovered_transmission, expected_transmission)
+
+
 class CalcX0ForZ(TestCase):
     """Tests for the ``calc_x0_for_z`` function"""
 
