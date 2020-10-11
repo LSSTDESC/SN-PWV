@@ -21,7 +21,7 @@ class TestPWVTrans(TestCase):
     """Tests for the addition of PWV to sncosmo models"""
 
     def setUp(self):
-        self.transmission_effect = modeling.PWVTrans()
+        self.transmission_effect = modeling.StaticPWVTrans()
 
     def test_default_pwv_is_zero(self):
         """Test the default ``pwv`` parameter is 0"""
@@ -49,47 +49,6 @@ class TestPWVTrans(TestCase):
         self.transmission_effect._parameters = [pwv, res]
         propagated_flux = self.transmission_effect.propagate(wave, flux)
         np.testing.assert_equal(expected_flux, propagated_flux[0])
-
-
-class PWVVariableModel(TestCase):
-    """Tests for the ``PWVVariableModel`` class"""
-
-    def setUp(self):
-        """Create a ``PWVVariableModel`` instance"""
-
-        self.test_pwv = 5
-        self.source = 'salt2-extended'
-        self.base_model = sncosmo.Model(self.source)
-
-        constant_pwv_func = lambda *args: self.test_pwv
-        self.variable_model = modeling.PWVVariableModel(self.source, constant_pwv_func)
-
-    def test_source_attr_matches_init_arg(self):
-        """Test the source attribute matches the source init argument"""
-
-        self.assertEqual(self.variable_model.source.name, self.source)
-
-    def test_can_be_copied(self):
-        """Test an error isn't raised when making a copy"""
-
-        from copy import copy
-        copy(self.variable_model)
-
-    def test_modeled_flux_includes_pwv_transmission(self):
-        """Test modeled flux includes PWV transmission effects"""
-
-        # Create supernova models with and without PWV
-        base_model = sncosmo.Model(self.variable_model.source)
-
-        # Model flux with and without PWV
-        wave = np.arange(6000, 10000)
-        flux_without_pwv = base_model.flux(0, wave)
-        flux_with_pwv = self.variable_model.flux(0, wave)
-
-        # Recover PWV transmission and compare against the expected model
-        recovered_transmission = flux_with_pwv / flux_without_pwv
-        expected_transmission = v1_transmission(self.test_pwv, wave, 5)
-        np.testing.assert_allclose(recovered_transmission, expected_transmission)
 
 
 class CalcX0ForZ(TestCase):
@@ -276,7 +235,7 @@ class IterLCS(TestCase):
         self.pwv_vals = 0.01, 5
         self.z_vals = 0.01, 1
         self.model = sncosmo.Model('salt2-extended')
-        self.model.add_effect(modeling.PWVTrans(), '', 'obs')
+        self.model.add_effect(modeling.StaticPWVTrans(), '', 'obs')
 
         self.observations = modeling.create_observations_table()
         self.lc_iter = modeling.iter_lcs(

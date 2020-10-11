@@ -42,7 +42,7 @@ class TestTabulateMagnitudes(TestCase):
 
     def setUp(self):
         self.model = sncosmo.Model('salt2-extended')
-        self.model.add_effect(modeling.PWVTrans(), '', 'obs')
+        self.model.add_effect(modeling.StaticPWVTrans(), '', 'obs')
 
         self.pwv_vals = 0.001, 5
         self.z_vals = 0.001, .5
