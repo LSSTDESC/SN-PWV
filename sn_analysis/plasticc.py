@@ -46,6 +46,27 @@ def get_model_headers(cadence, model):
     return list(sim_dir.glob('*HEAD.FITS'))
 
 
+def count_light_curves(cadence, model):
+    """Return the number of available light-curve simulations for a given cadence and model
+
+    Args:
+        cadence (str): Name of the cadence to list header files for
+        model   (int): Model number to retrieve header paths for
+
+    Returns:
+        Number of simulated light-curves available in the working environment
+    """
+
+    cadence_header_files = get_model_headers(cadence, model)
+
+    total_lc = 0
+    for header_path in cadence_header_files:
+        with fits.open(header_path) as _temp:
+            total_lc += len(_temp[1].data)
+
+    return total_lc
+
+
 def iter_lc_for_header(header_path, verbose=True):
     """Iterate over light-curves from a given header file
 
