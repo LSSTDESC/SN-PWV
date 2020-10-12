@@ -30,6 +30,43 @@ class TestVariablePropagationEffect(TestCase):
         self.assertEqual(params[-1], 'time')
 
 
+class TestVariablePWVTrans(TestCase):
+    """Tests for the ``modeling.VariablePWVTrans`` class"""
+
+    def setUp(self):
+        self.default_pwv = 5
+        self.constant_pwv_func = lambda *args: self.default_pwv
+        self.propagation_effect = modeling.VariablePWVTrans(self.constant_pwv_func)
+
+    def test_transmission_version_support(self):
+        """Test the propagation object uses the atmospheric model corresponding specified at init"""
+
+        from pwv_kpno.transmission import CrossSectionTransmission, TransmissionModel
+
+        default_effect = modeling.VariablePWVTrans(self.constant_pwv_func)
+        self.assertIsInstance(default_effect._transmission_model, CrossSectionTransmission)
+
+        v1_effect = modeling.VariablePWVTrans(self.constant_pwv_func, transmission_version='v1')
+        self.assertIsInstance(v1_effect._transmission_model, CrossSectionTransmission)
+
+        # Todo: When the v2 model is available, add a test condition
+        # v2_effect = modeling.VariablePWVTrans(self.constant_pwv_func, transmission_version='v2')
+        # self.assertIsInstance(v2_effect._transmission_model, TransmissionModel)
+
+        with self.assertRaises(ValueError):
+            modeling.VariablePWVTrans(self.constant_pwv_func, transmission_version='NotAVersion')
+
+    def test_propagation_includes_pwv_transmission(self):
+        """Test propagated flux includes absorption from PWV"""
+
+        wave = np.arange(3000, 12000)
+        flux = np.ones_like(wave)
+        transmission = self.propagation_effect._transmission_model(self.default_pwv, wave, self.propagation_effect['res'])
+
+        propagated_flux = self.propagation_effect.propagate(wave, flux, time=0)
+        np.testing.assert_equal(propagated_flux, transmission.values)
+
+
 class TestModel(sncosmo_test_models.TestModel, TestCase):
     """Tests for the ``modeling.Model`` class
 
