@@ -16,7 +16,7 @@ from tqdm import tqdm
 
 from sn_analysis import filters
 from sn_analysis.reference import get_stellar_spectra
-from sn_analysis.transmission import trans_for_pwv
+from pwv_kpno.defaults import v1_transmission
 
 filters.register_lsst_filters()
 
@@ -41,7 +41,7 @@ def calculate_lsst_fluxes(spectrum, pwv):
         List of flux values for the LSST ugrizy bands
     """
 
-    transmission = trans_for_pwv(pwv, spectrum.index, resolution=5)
+    transmission = v1_transmission(pwv, spectrum.index, res=5)
     spec_with_trans = spectrum * transmission
 
     # Integrate spectrum in each bandpass
@@ -67,7 +67,7 @@ def run(out_dir, spec_types=SPEC_TYPES, pwv_vals=PWV_VALS):
         pwv_vals   (iter): PWV values to sample for if not default values
     """
 
-    output_file_header = 'PWV(mm) u g r i z y'
+    output_file_header = 'PWV uflux gflux rflux iflux zflux yflux'
     total_iters = len(spec_types) * len(pwv_vals)
     with tqdm(total=total_iters) as pbar:
         for i, spectype in enumerate(spec_types):
