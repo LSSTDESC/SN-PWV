@@ -49,7 +49,7 @@ class VariablePropagationEffect(sncosmo.PropagationEffect):
             An array of flux values after suffering propagation effects
         """
 
-        pass
+        pass  # pragma: no cover
 
 
 class StaticPWVTrans(sncosmo.PropagationEffect):

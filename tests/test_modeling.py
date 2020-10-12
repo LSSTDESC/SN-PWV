@@ -4,17 +4,63 @@
 """Tests for the ``modeling`` module"""
 
 import types
+from copy import copy
 from unittest import TestCase, skip
 
 import numpy as np
 import sncosmo
 from astropy.table import Table
 from pwv_kpno.defaults import v1_transmission
+from sncosmo.tests import test_models as sncosmo_test_models
 
 from sn_analysis import modeling
 from sn_analysis.filters import register_decam_filters
 
 register_decam_filters(force=True)
+
+
+class TestModel(sncosmo_test_models.TestModel, TestCase):
+    """Tests for the ``modeling.Model`` class
+
+    Includes all tests written for the ``sncosmo.Model`` class.
+    """
+
+    def setUp(self):
+        self.model = modeling.Model(
+            source=sncosmo_test_models.flatsource(),
+            effects=[sncosmo.CCM89Dust()],
+            effect_frames=['obs'],
+            effect_names=['mw'])
+
+        self.model.set(z=0.0001)
+
+    def test_copy_returns_correct_type(self):
+        """Test copied objects are of ``modeling.Model`` type"""
+
+        copied = copy(self.model)
+        self.assertIsInstance(copied, modeling.Model)
+
+    def test_copy_copies_parameters(self):
+        """Test parameter values are copied to new id values"""
+
+        copied = copy(self.model)
+        for original_param, copied_param in zip(self.model._parameters, copied.parameters):
+            self.assertNotEqual(id(original_param), id(copied_param))
+
+    def test_error_for_bad_frame(self):
+        """Test an error is raised for a band reference frame name"""
+
+        model = modeling.Model(source='salt2')
+        with self.assertRaises(ValueError):
+            model.add_effect(effect=sncosmo.CCM89Dust(), frame='bad_frame_name', name='mw')
+
+    def test_free_effect_adds_z_parameter(self):
+        """Test effects in the ``free`` frame of reference include an added redshift parameter"""
+
+        effect_name = 'freeMW'
+        model = modeling.Model(source='salt2')
+        model.add_effect(effect=sncosmo.CCM89Dust(), frame='free', name=effect_name)
+        self.assertIn(effect_name + 'z', model.param_names)
 
 
 class TestPWVTrans(TestCase):
