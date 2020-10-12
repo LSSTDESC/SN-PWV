@@ -50,6 +50,7 @@ Plot summaries:
 """
 
 from datetime import datetime
+from datetime import timedelta
 
 import matplotlib.dates as mdates
 import numpy as np
@@ -448,11 +449,10 @@ def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
 
 
 # noinspection PyUnusedLocal
-def plot_delta_mu(source, mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
+def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
     """Plot the variation in fitted distance modulus as a function of redshift and PWV
 
     Args:
-        source   (Source): Source corresponding to the provided mu values
         mu      (ndarray): Array of distance moduli
         pwv_arr (ndarray): Array of PWV values
         z_arr   (ndarray): Array of redshift values
@@ -486,24 +486,27 @@ def plot_delta_mu(source, mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
     plt.tight_layout()
 
 
-def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4)):
+def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
     """Plot PWV measurements taken over a single year as a function of time
+
+    Set ``missing=None`` to disable plotting of missing data windows.
 
     Args:
         pwv_series (Series): Measured PWV index by datetime
         figsize     (tuple): Size of the figure in inches
+        missing     (float): Highlight time ranges larger than given number of
+                             days with missing PWV
 
     Returns:
         - A matplotlib figure
         - A matplotlib axis
+        - A Pandas DataFrame with the start and end times of missing data shown in the figure
     """
 
+    pwv_series = pwv_series.sort_index()
+
     # Calculate rolling average of PWV time series
-    sampling_in_hour = 4
-    hour_in_day = 24
-    day_in_window = 7
-    window_size = sampling_in_hour * hour_in_day * day_in_window
-    rolling_mean_pwv = pwv_series.rolling(window=window_size).mean()
+    rolling_mean_pwv = pwv_series.rolling(window='7D').mean()
 
     # In practice these dates vary by year so the values used here are approximate
     year = pwv_series.index[0].year
@@ -523,34 +526,67 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4)):
     print(f'Summer Average: {summer_pwv.mean(): .2f} +\- {summer_pwv.std() : .2f} mm')
     print(f'Fall Average:  {fall_pwv.mean(): .2f} +\- {fall_pwv.std() : .2f} mm')
 
-    # Plot measured PWV
     fig, axis = plt.subplots(figsize=figsize)
+    axis.set_ylabel('Median Folded PWV (mm)')
+    axis.set_xlabel('Time of Year')
+    axis.set_ylim(0, 20)
+    ylow, yhigh = axis.get_ylim()
+
+    # Plot windows of missing pwv
+    if missing:
+        missing_interval = timedelta(days=missing)
+        year_start = datetime(year, 1, 1, tzinfo=utc)
+        year_end = datetime(year, 12, 31, 23, 59, 59, tzinfo=utc)
+
+        delta_t = pwv_series.index[1:] - pwv_series.index[:-1]
+        start_indices = np.where(delta_t > missing_interval)[0]
+        for index in start_indices:
+            start_time = pwv_series.index[index]
+            end_time = pwv_series.index[index + 1]
+            axis.fill_between(
+                x=[start_time, end_time], y1=[ylow, ylow], y2=[yhigh, yhigh],
+                color='lightgrey', alpha=0.5, zorder=0)
+
+        if (pwv_series.index[0] - year_start) > missing_interval:
+            axis.fill_between(
+                x=[year_start, pwv_series.index[0]],
+                y1=[ylow, ylow], y2=[yhigh, yhigh],
+                color='lightgrey', alpha=0.5, zorder=0)
+
+        if (year_end - pwv_series.index[-1]) > missing_interval:
+            axis.fill_between(
+                x=[pwv_series.index[-1], year_end],
+                y1=[ylow, ylow], y2=[yhigh, yhigh],
+                color='lightgrey', alpha=0.5, zorder=0)
+
+    # Plot measured PWV
     for equinox_date in (mar_equinox, jun_equinox, sep_equinox, dec_equinox):
-        axis.axvline(equinox_date, linestyle='--', color='grey', zorder=0)
+        axis.axvline(equinox_date, linestyle='--', color='k', zorder=1)
 
     # Plot rolling average
-    axis.scatter(pwv_series.index, pwv_series, s=1, alpha=.2, label='Median PWV', zorder=1)
-    axis.plot(pwv_series.index, rolling_mean_pwv, color='C1', label='Rolling Avg.', zorder=2, linewidth=2)
+    axis.scatter(pwv_series.index, pwv_series, s=1, alpha=.2, label='Median PWV', zorder=2)
+    axis.plot(rolling_mean_pwv.index, rolling_mean_pwv, color='C1', label='Rolling Avg.', zorder=3, linewidth=2)
 
     # Plot seasonal average
     # winter is plotted separately because it spans the new year
-    winter_avg = winter_pwv.mean()
-    winter_std = winter_pwv.std()
-    winter_subset = pwv_series[pwv_series.index < mar_equinox]
-    winter_x = winter_subset.index.max() - (winter_subset.index.max() - winter_subset.index.min()) / 2
-    axis.errorbar([winter_x], [winter_avg], yerr=[winter_std], color='k', zorder=3, linewidth=2, capsize=10, capthick=2)
-    axis.scatter([winter_x], [winter_avg], color='k', s=100, marker='+', zorder=3, label='Seasonal Avg.')
+    if not winter_pwv.empty:
+        winter_avg = winter_pwv.mean()
+        winter_std = winter_pwv.std()
+        winter_subset = pwv_series[pwv_series.index < mar_equinox]
+        winter_x = winter_subset.index.max() - (winter_subset.index.max() - winter_subset.index.min()) / 2
+        axis.errorbar([winter_x], [winter_avg], yerr=[winter_std], color='k', zorder=4, linewidth=2, capsize=10,
+                      capthick=2)
+        axis.scatter([winter_x], [winter_avg], color='k', s=100, marker='+', zorder=4, label='Seasonal Avg.')
 
     for season in (spring_pwv, summer_pwv, fall_pwv):
+        if season.empty:
+            continue
+
         avg = season.mean()
         std = season.std()
         x = season.index.max() - (season.index.max() - season.index.min()) / 2
-        axis.errorbar([x], [avg], yerr=[std], color='k', zorder=3, linewidth=2, capsize=10, capthick=2)
-        axis.scatter([x], [avg], color='k', s=100, marker='+', zorder=3)
-
-    plt.ylabel('Median Folded PWV (mm)')
-    plt.xlabel('Time of Year')
-    plt.ylim(0, 20)
+        axis.errorbar([x], [avg], yerr=[std], color='k', zorder=4, linewidth=2, capsize=10, capthick=2)
+        axis.scatter([x], [avg], color='k', s=100, marker='+', zorder=4)
 
     # Format x labels to be three letter month abbreviations
     locator = mdates.MonthLocator()

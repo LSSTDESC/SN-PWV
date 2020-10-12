@@ -6,6 +6,7 @@
 from unittest import TestCase
 
 import numpy as np
+import sncosmo
 from astropy.table import Table
 from numpy.testing import assert_equal
 
@@ -51,7 +52,7 @@ class GetModelHeaders(TestCase):
         """Test the returned list is empty for a cadence with no available data"""
 
         self.assertListEqual(
-            [], plasticc.get_model_headers('fake_cadence'),
+            [], plasticc.get_model_headers('fake_cadence', model=11),
             'Returned list is not empty')
 
 
@@ -118,7 +119,7 @@ class DuplicatePlasticcSncosmo(TestCase):
     """Tests for the ``duplicate_plasticc_sncosmo`` function"""
 
     def setUp(self):
-        self.source = 'salt2-extended'
+        self.model = sncosmo.Model('salt2-extended')
         self.plasticc_lc = create_mock_plasticc_light_curve()
         self.param_mapping = {  # Maps sncosmo param names to plasticc names
             't0': 'SIM_PEAKMJD',
@@ -131,7 +132,7 @@ class DuplicatePlasticcSncosmo(TestCase):
     def test_lc_meta_matches_params(self):
         """Test parameters in returned meta data match the input light_curve"""
 
-        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, source=self.source, cosmo=None)
+        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, model=self.model, cosmo=None)
         for sncosmo_param, plasticc_param in self.param_mapping.items():
             self.assertEqual(
                 duplicated_lc.meta[sncosmo_param], self.plasticc_lc.meta[plasticc_param],
@@ -139,7 +140,8 @@ class DuplicatePlasticcSncosmo(TestCase):
             )
 
     def test_x0_overwritten_by_cosmo_arg(self):
-        """Test """
-        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, source=self.source)
-        expected_x0 = calc_x0_for_z(duplicated_lc.meta['z'], source=self.source)
+        """Test the x0 parameter is overwritten according to the given cosmology"""
+
+        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, model=self.model)
+        expected_x0 = calc_x0_for_z(duplicated_lc.meta['z'], source=self.model.source)
         np.testing.assert_allclose(expected_x0, duplicated_lc.meta['x0'])

@@ -15,11 +15,11 @@ from tqdm import tqdm
 from . import modeling
 
 try:
-    plasticc_simulations_directory = Path(os.environ['plasticc_sim_dir'])
+    plasticc_simulations_directory = Path(os.environ['CADENCE_SIMS'])
 
 except KeyError:
     default_data_dir = Path(__file__).resolve().parent.parent / 'data' / 'plasticc'
-    warn(f'``plasticc_sim_dir`` is not set in environment. Defaulting to {default_data_dir}')
+    warn(f'``CADENCE_SIMS`` is not set in environment. Defaulting to {default_data_dir}')
     plasticc_simulations_directory = default_data_dir
 
 
@@ -29,7 +29,7 @@ def get_available_cadences():
     return [p.name for p in plasticc_simulations_directory.glob('*') if p.is_dir()]
 
 
-def get_model_headers(cadence, model=11):
+def get_model_headers(cadence, model):
     """Return a list of all header files for a given cadence and model
 
     Default is model 11 (Normal SNe)
@@ -44,6 +44,27 @@ def get_model_headers(cadence, model=11):
 
     sim_dir = plasticc_simulations_directory / cadence / f'LSST_WFD_{cadence}_MODEL{model}'
     return list(sim_dir.glob('*HEAD.FITS'))
+
+
+def count_light_curves(cadence, model):
+    """Return the number of available light-curve simulations for a given cadence and model
+
+    Args:
+        cadence (str): Name of the cadence to list header files for
+        model   (int): Model number to retrieve header paths for
+
+    Returns:
+        Number of simulated light-curves available in the working environment
+    """
+
+    cadence_header_files = get_model_headers(cadence, model)
+
+    total_lc = 0
+    for header_path in cadence_header_files:
+        with fits.open(header_path) as _temp:
+            total_lc += len(_temp[1].data)
+
+    return total_lc
 
 
 def iter_lc_for_header(header_path, verbose=True):
@@ -84,7 +105,7 @@ def iter_lc_for_header(header_path, verbose=True):
         yield lc
 
 
-def iter_lc_for_cadence_model(cadence, model=11, verbose=True):
+def iter_lc_for_cadence_model(cadence, model, verbose=True):
     """Iterate over simulated light-curves  for a given cadence
 
     Args:
@@ -157,12 +178,12 @@ def extract_cadence_data(light_curve, drop_nondetection=False, zp=25, gain=5, sk
 
 
 def duplicate_plasticc_sncosmo(
-        light_curve, source='Salt2-extended', gain=5, skynr=100, scatter=True, cosmo=modeling.betoule_cosmo):
+        light_curve, model, gain=5, skynr=100, scatter=True, cosmo=modeling.betoule_cosmo):
     """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
 
     Args:
         light_curve  (Table): Astropy table with PLaSTICC light-curve data
-        source (str, Source): Source to use when simulating light-curve flux
+        model        (Model): Model to use when simulating light-curve flux
         gain           (int): Gain to use during simulation
         skynr          (int): Simulate skynoise by scaling plasticc ``SKY_SIG`` by 1 / skynr
         scatter       (bool): Add random noise to the flux values
@@ -188,4 +209,4 @@ def duplicate_plasticc_sncosmo(
     }
 
     observations = extract_cadence_data(light_curve, skynr=skynr, gain=gain)
-    return modeling.simulate_lc(observations, source, params, scatter=scatter)
+    return modeling.simulate_lc(observations, model, params, scatter=scatter)

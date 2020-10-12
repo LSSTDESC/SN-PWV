@@ -3,6 +3,7 @@
 
 """This module handles the simulation of SN light-curves."""
 
+import abc
 import itertools
 from copy import copy
 from pathlib import Path
@@ -30,19 +31,39 @@ betoule_cosmo = FlatLambdaCDM(H0=H0, Om0=omega_m)
 # For building sncosmo models with a PWV component
 ###############################################################################
 
-# Todo: We should bin the PWV transmission to the same resolution as the template
-class PWVTrans(sncosmo.PropagationEffect):
-    """Atmospheric PWV propagation effect for sncosmo"""
+class VariablePropagationEffect(sncosmo.PropagationEffect):
+    """Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
+    method accepts a ``time`` argument.
+    """
+
+    @abc.abstractmethod
+    def propagate(self, wave, flux, time):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+            time (ndarray): Optional array of time values
+
+        Returns:
+            An array of flux values after suffering propagation effects
+        """
+
+        pass  # pragma: no cover
+
+
+class StaticPWVTrans(sncosmo.PropagationEffect):
+    """Atmospheric propagation effect for temporally static PWV"""
 
     _minwave = 3000.0
     _maxwave = 12000.0
 
     def __init__(self):
         self._param_names = ['pwv', 'res']
-        self.param_names_latex = ['PWV', 'resolution']
+        self.param_names_latex = ['PWV', 'Resolution']
         self._parameters = np.array([0., 5])
 
-    def propagate(self, wave, flux):
+    def propagate(self, wave, flux, *args):
         """Propagate the flux through the atmosphere
 
         Args:
@@ -61,61 +82,152 @@ class PWVTrans(sncosmo.PropagationEffect):
         return flux * transmission.values[None, :]
 
 
-# Todo: Extend this to include other atm models as a kwarg
-def get_model_with_pwv(source, **params):
-    """Return an sncosmo model with PWV effects
+class VariablePWVTrans(VariablePropagationEffect):
+    """Atmospheric propagation effect for temporally variable PWV"""
 
-    The returned model has the additional parameters:
-        pwv: The zenith PWV density in mm
-
-    Args:
-        source: An sncosmo source
-        Any parameter values to set in the model
-
-    Returns:
-        An sncosmo model
-    """
-
-    model = sncosmo.Model(source)
-    model.add_effect(PWVTrans(), '', 'obs')
-    model.update(params)
-    return model
-
-
-class PWVSource(sncosmo.Source):
-    """Wrapper for SNCosmo sources that introduces time variable PWV effects"""
-
-    def __init__(self, parent_source, pwv_func):
-        """Wraps an sncosmo Source object with time variable PWV transmission effects
+    def __init__(self, pwv_interpolator, transmission_version='v1'):
+        """Time variable atmospheric transmission due to PWV
 
         Args:
-            parent_source (str, Source): sncosmo source to use as a base
-            pwv_func          (callable): Vectorized callable that returns PWV at given date
+            pwv_interpolator (callable[float]): Returns PWV along line of sight for given time
+            transmission_version         (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
         """
 
-        self.parent_source = sncosmo.get_source(parent_source)
-        self.pwv_func = pwv_func
+        # Store init arguments
+        self._pwv_interpolator = pwv_interpolator
+        if transmission_version == 'v1':
+            from pwv_kpno.defaults import v1_transmission
+            self._transmission_model = v1_transmission
 
-        self.name = self.parent_source.name + '_VariablePWV'
-        self._wave = self.parent_source._wave
-        self._phase = self.parent_source._phase
+        elif transmission_version == 'v2':
+            from pwv_kpno.defaults import v2_transmission
+            self._transmission_model = v2_transmission
 
-        self._parameters = self.parent_source._parameters
-        self._param_names = self.parent_source._param_names
-        self.param_names_latex = self.parent_source.param_names_latex
+        else:
+            raise ValueError(f'Unidentified transmission model version: {transmission_version}')
 
-    def _flux(self, phase, wave):
+        # Define wavelength range of propagation effect
+        self._minwave = self._transmission_model.samp_wave.min()
+        self._maxwave = self._transmission_model.samp_wave.max()
 
-        raise NotImplementedError
+        # Define and store default modeling parameters
+        self._param_names = ['res']  # Todo: ['ra', 'dec', 'res']
+        self.param_names_latex = ['Resolution']  # Todo: ['RA', 'Dec', 'Resolution']
+        self._parameters = np.array([5.])  # Todo: np.array([0., 0., 5.])
 
-        # Phase is guaranteed to be a 2d array, so transmission will be a dataframe
-        time = phase + self.parent_model.get('t0')
-        pwv = self.pwv_func(time)
-        transmission = v1_transmission(pwv, wave)
+    def calc_pwv_los(self, time):
+        """Return the PWV along the line of sight for a given time
 
-        self.parent_source._parameters = self._parameters
-        flux = self.parent_source._flux(phase, wave)
-        return flux * transmission
+        Args:
+            time (float, np.array): Array of time values
+
+        Returns:
+            An array of PWV values in mm
+        """
+
+        # Todo: Add RA and Dec parameters. Use them to scale PWV to the appropriate airmass
+        # Extend tests appropriately
+        return self._pwv_interpolator(time)
+
+    def propagate(self, wave, flux, time):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+            time (ndarray): Array of time values to determine PWV for
+
+        Returns:
+            An array of flux values after suffering propagation effects
+        """
+
+        pwv = self.calc_pwv_los(time)
+        transmission = self._transmission_model(pwv, wave, self['res'])
+
+        if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
+            if np.ndim(flux) == 1:
+                return flux * transmission
+
+            if np.ndim(flux) == 2:
+                return flux * np.atleast_2d(transmission)
+
+        if np.ndim(time) == 1 and np.ndim(flux) == 2:  # PWV will be a vector and transmission will be a DataFrame
+            return flux * transmission.values.T
+
+        raise NotImplementedError('Could not identify how to match dimensions of Atm. model to source flux.')
+
+
+class Model(sncosmo.Model):
+    """Similar to ``sncosmo.Model`` class, but removes type checks from
+    methods to allow duck-typing.
+    """
+
+    # Same as parent except allows duck-typing of ``effect`` arg
+    def _add_effect_partial(self, effect, name, frame):
+        """Like 'add effect', but don't sync parameter arrays"""
+
+        if frame not in ['rest', 'obs', 'free']:
+            raise ValueError("frame must be one of: {'rest', 'obs', 'free'}")
+
+        self._effects.append(copy(effect))
+        self._effect_names.append(name)
+        self._effect_frames.append(frame)
+
+        # for 'free' effects, add a redshift parameter
+        if frame == 'free':
+            self._param_names.append(name + 'z')
+            self.param_names_latex.append('{\\rm ' + name + '}\\,z')
+
+        # add all of this effect's parameters
+        for param_name in effect.param_names:
+            self._param_names.append(name + param_name)
+            self.param_names_latex.append('{\\rm ' + name + '}\\,' + param_name)
+
+    # Same as parent except adds support for ``VariablePropagationEffect`` effects
+    def _flux(self, time, wave):
+        """Array flux function."""
+
+        a = 1. / (1. + self._parameters[0])
+        phase = (time - self._parameters[1]) * a
+        restwave = wave * a
+
+        # Note that below we multiply by the scale factor to conserve
+        # bolometric luminosity.
+        f = a * self._source._flux(phase, restwave)
+
+        # Pass the flux through the PropagationEffects.
+        for effect, frame, zindex in zip(self._effects, self._effect_frames, self._effect_zindicies):
+            if frame == 'obs':
+                effect_wave = wave
+
+            elif frame == 'rest':
+                effect_wave = restwave
+
+            else:  # frame == 'free'
+                effect_a = 1. / (1. + self._parameters[zindex])
+                effect_wave = wave * effect_a
+
+            # This code block is new to the child class
+            if isinstance(effect, VariablePropagationEffect):
+                f = effect.propagate(effect_wave, f, time)
+
+            else:
+                f = effect.propagate(effect_wave, f)
+
+        return f
+
+    # Parent class copy enforces return is a parent class instance
+    # Allow child classes to return copies of their own type
+    def __copy__(self):
+        """Like a normal shallow copy, but makes an actual copy of the
+        parameter array."""
+
+        new_model = self.__new__(self.__class__)
+        for key, val in self.__dict__.items():
+            new_model.__dict__[key] = val
+
+        new_model._parameters = self._parameters.copy()
+        return new_model
 
 
 ###############################################################################
@@ -187,7 +299,7 @@ def create_observations_table(
     return observations
 
 
-def realize_lc(obs, source, snr=.05, **params):
+def realize_lc(obs, model, snr=.05, **params):
     """Simulate a SN light-curve for given parameters
 
     Light-curves are simulated for the given parameters without any of
@@ -195,7 +307,7 @@ def realize_lc(obs, source, snr=.05, **params):
 
     Args:
         obs       (Table): Observation cadence
-        source   (Source): The sncosmo source to use in the simulations
+        model     (Model): The sncosmo model to use in the simulations
         snr       (float): Signal to noise ratio
         **params         : Values for any model parameters
 
@@ -203,16 +315,11 @@ def realize_lc(obs, source, snr=.05, **params):
         Astropy table for each PWV and redshift
     """
 
-    if isinstance(source, sncosmo.Model):
-        model = copy(source)
-
-    else:
-        model = get_model_with_pwv(source)
-
+    model = copy(model)
     model.update(params)
 
     # Set default x0 value according to assumed cosmology and the model redshift
-    x0 = params.get('x0', calc_x0_for_z(model['z'], source))
+    x0 = params.get('x0', calc_x0_for_z(model['z'], model.source))
     model.set(x0=x0)
 
     light_curve = obs[['time', 'band', 'zp', 'zpsys']]
@@ -222,7 +329,7 @@ def realize_lc(obs, source, snr=.05, **params):
     return light_curve
 
 
-def simulate_lc(observations, source, params, scatter=True):
+def simulate_lc(observations, model, params, scatter=True):
     """Simulate a SN light-curve given a set of observations.
 
     If ``scatter`` is ``True``, then simulated flux values include an added
@@ -231,21 +338,16 @@ def simulate_lc(observations, source, params, scatter=True):
 
     Args:
         observations (Table): Table of observations.
-        source       (Source): The sncosmo source to use in the simulations
-        params       (dict): parameters to feed to the model for realizing the light-curve
-        scatter      (bool): Add random noise to the flux values
+        model        (Model): The sncosmo model to use in the simulations
+        params        (dict): parameters to feed to the model for realizing the light-curve
+        scatter       (bool): Add random noise to the flux values
 
     Returns:
         An astropy table formatted for use with sncosmo
     """
 
-    if isinstance(source, sncosmo.Model):
-        model = copy(source)
-
-    else:
-        model = sncosmo.Model(source)
-
-    model.update(params)  # Todo: Target a test at this line
+    model = copy(model)
+    model.update(params)
 
     flux = model.bandflux(
         observations['band'],
@@ -269,7 +371,7 @@ def simulate_lc(observations, source, params, scatter=True):
     return Table(data, names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'), meta=params)
 
 
-def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
+def iter_lcs(obs, model, pwv_arr, z_arr, snr=10, verbose=True):
     """Iterator over SN light-curves for combination of PWV and z values
 
     Light-curves are simulated for the given parameters without any of
@@ -277,7 +379,7 @@ def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
 
     Args:
         obs       (Table): Observation cadence
-        source   (Source): The sncosmo source to use in the simulations
+        model     (Model): The sncosmo model to use in the simulations
         pwv_arr (ndarray): Array of PWV values
         z_arr   (ndarray): Array of redshift values
         snr       (float): Signal to noise ratio
@@ -287,11 +389,9 @@ def iter_lcs(obs, source, pwv_arr, z_arr, snr=10, verbose=True):
         Astropy table for each PWV and redshift
     """
 
+    model = copy(model)
+    iter_total = len(pwv_arr) * len(z_arr)
     arg_iter = itertools.product(pwv_arr, z_arr)
-    if verbose:  # pragma: no cover
-        iter_total = len(pwv_arr) * len(z_arr)
-        arg_iter = tqdm(arg_iter, total=iter_total, desc='Light-Curves')
-
-    for pwv, z in arg_iter:
-        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, source)}
-        yield realize_lc(obs, source, snr, **params)
+    for pwv, z in tqdm(arg_iter, total=iter_total, desc='Light-Curves', disable=not verbose):
+        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, model.source)}
+        yield realize_lc(obs, model, snr, **params)
