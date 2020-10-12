@@ -3,6 +3,7 @@
 
 """Tests for the ``modeling`` module"""
 
+import inspect
 import types
 from copy import copy
 from unittest import TestCase, skip
@@ -17,6 +18,16 @@ from sn_analysis import modeling
 from sn_analysis.filters import register_decam_filters
 
 register_decam_filters(force=True)
+
+
+class TestVariablePropagationEffect(TestCase):
+    """Tests for the ``modeling.VariablePropagationEffect`` class"""
+
+    def test_time_arg_in_signature(self):
+        """Test the ``propagate`` method includes a time parameters"""
+
+        params = list(inspect.signature(modeling.VariablePropagationEffect.propagate).parameters.keys())
+        self.assertEqual(params[-1], 'time')
 
 
 class TestModel(sncosmo_test_models.TestModel, TestCase):
