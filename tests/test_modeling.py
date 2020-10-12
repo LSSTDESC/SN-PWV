@@ -44,7 +44,7 @@ class TestVariablePWVTrans(TestCase):
         self.assertIsNone(self.propagation_effect['coord'])
 
     def test_default_location_is_vro(self):
-        """Test the default value for the ``coord`` model parameter matches ``VRO``"""
+        """Test the default value for the ``location`` model parameter matches ``VRO``"""
 
         from astropy.coordinates import EarthLocation
         import astropy.units as u
