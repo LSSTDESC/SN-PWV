@@ -86,6 +86,12 @@ class VariablePWVTrans(VariablePropagationEffect):
     """Atmospheric propagation effect for temporally variable PWV"""
 
     def __init__(self, pwv_interpolator, transmission_version='v1'):
+        """Time variable atmospheric transmission due to PWV
+
+        Args:
+            pwv_interpolator (callable[float]): Returns PWV along line of sight for given time
+            transmission_version         (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
+        """
 
         # Store init arguments
         self._pwv_interpolator = pwv_interpolator
@@ -105,9 +111,9 @@ class VariablePWVTrans(VariablePropagationEffect):
         self._maxwave = self._transmission_model.samp_wave.max()
 
         # Define and store default modeling parameters
-        self._param_names = ['ra', 'dec', 'res']
-        self.param_names_latex = ['RA', 'Dec', 'Resolution']
-        self._parameters = np.array([0., 0., 5])
+        self._param_names = ['res']  # Todo: ['ra', 'dec', 'res']
+        self.param_names_latex = ['Resolution']  # Todo: ['RA', 'Dec', 'Resolution']
+        self._parameters = np.array([5.])  # Todo: np.array([0., 0., 5.])
 
     def calc_pwv_los(self, time):
         """Return the PWV along the line of sight for a given time
