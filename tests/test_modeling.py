@@ -38,6 +38,20 @@ class TestVariablePWVTrans(TestCase):
         self.constant_pwv_func = lambda *args: self.default_pwv
         self.propagation_effect = modeling.VariablePWVTrans(self.constant_pwv_func)
 
+    def test_default_coord_is_none(self):
+        """Test the default value for the ``coord`` model parameter is ``None``"""
+
+        self.assertIsNone(self.propagation_effect['coord'])
+
+    def test_default_location_is_vro(self):
+        """Test the default value for the ``coord`` model parameter matches ``VRO``"""
+
+        from astropy.coordinates import EarthLocation
+        import astropy.units as u
+
+        lsst_location = EarthLocation(lat=-30.244573 * u.deg, lon=-70.7499537 * u.deg, height=1024 * u.m)
+        self.assertEqual(self.propagation_effect['location'], lsst_location)
+
     def test_transmission_version_support(self):
         """Test the propagation object uses the atmospheric model corresponding specified at init"""
 
