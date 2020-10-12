@@ -11,7 +11,9 @@ from pathlib import Path
 
 import numpy as np
 import sncosmo
+from astropy import units as u
 from astropy.coordinates import AltAz
+from astropy.coordinates import EarthLocation
 from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Table
 from astropy.time import Time
@@ -116,9 +118,10 @@ class VariablePWVTrans(VariablePropagationEffect):
         self._maxwave = self._transmission_model.samp_wave.max()
 
         # Define and store default modeling parameters
+        default_lsst_location = EarthLocation(lat=-30.244573 * u.deg, lon=-70.7499537 * u.deg, height=1024 * u.m)
         self._param_names = ['location', 'coord', 'res']
         self.param_names_latex = ['Location', 'Coordinate', 'Resolution']
-        self._parameters = np.array([None, None, 5.])
+        self._parameters = np.array([default_lsst_location, None, 5.])
 
     def calc_pwv_los(self, time):
         """Return the PWV along the line of sight for a given time
@@ -131,7 +134,7 @@ class VariablePWVTrans(VariablePropagationEffect):
         """
 
         pwv_zenith = self._pwv_interpolator(time)
-        if self['location'] is None:
+        if self['coord'] is None:
             return pwv_zenith
 
         with warnings.catch_warnings():
