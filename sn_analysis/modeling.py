@@ -5,26 +5,52 @@
 
 import abc
 import itertools
+import warnings
 from copy import copy
 from pathlib import Path
 
 import numpy as np
 import sncosmo
-from astropy.cosmology import FlatLambdaCDM
+from astropy import units as u
+from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.table import Table
+from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
 from tqdm import tqdm
 
+from . import constants as const
+
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
-# From Betoule 2014
-alpha = 0.141
-beta = 3.101
-omega_m = 0.295
-abs_mb = -19.05
-H0 = 70
 
-betoule_cosmo = FlatLambdaCDM(H0=H0, Om0=omega_m)
+def calc_airmass(time, ra, dec, lat, lon, alt, time_format='mjd'):
+    """Calculate the airmass through which a target is observed
+
+    Args:
+        time (float): Time at which the target is observed
+        ra   (float): Right Ascension of the target (Deg)
+        dec  (float): Declination of the target (Deg)
+        lat  (float): Latitude of the observer (Deg)
+        lon  (float): Longitude of the observer (Deg)
+        alt  (float): Altitude of the observer (m)
+        time_format (str): Format of the time value (Default 'mjd')
+
+    Returns:
+        Airmass in units of Sec(z)
+    """
+
+    with warnings.catch_warnings():  # Astropy time manipulations raise annoying ERFA warnings
+        warnings.filterwarnings('ignore')
+
+        obs_time = Time(time, format=time_format)
+        observer_location = EarthLocation(
+            lat=lat * u.deg,
+            lon=lon * u.deg,
+            height=alt * u.m)
+
+        target_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg)
+        altaz = AltAz(obstime=obs_time, location=observer_location)
+        return target_coord.transform_to(altaz).secz.value
 
 
 ###############################################################################
@@ -43,7 +69,7 @@ class VariablePropagationEffect(sncosmo.PropagationEffect):
         Args:
             wave (ndarray): An array of wavelength values
             flux (ndarray): An array of flux values
-            time (ndarray): Optional array of time values
+            time (ndarray): Array of time values
 
         Returns:
             An array of flux values after suffering propagation effects
@@ -85,16 +111,31 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 class VariablePWVTrans(VariablePropagationEffect):
     """Atmospheric propagation effect for temporally variable PWV"""
 
-    def __init__(self, pwv_interpolator, transmission_version='v1'):
+    def __init__(self, pwv_interpolator, time_format='mjd', transmission_version='v1', scale_airmass=True):
         """Time variable atmospheric transmission due to PWV
 
+        Set ``scale_airmass`` to ``False`` if ``pwv_interpolator`` returns PWV values along the
+        line of sight.
+
+        Effect Parameters:
+            ra: Target Right Ascension in degrees
+            dec: Target Declination in degrees
+            lat: Observer latitude in degrees (defaults to location of VRO)
+            lon: Observer longitude in degrees (defaults to location of VRO)
+            alt: Observer altitude in meters  (defaults to height of VRO)
+
         Args:
-            pwv_interpolator (callable[float]): Returns PWV along line of sight for given time
+            pwv_interpolator (callable[float]): Returns PWV at zenith for a given time value
+            time_format                  (str): Astropy recognized time format used by the ``pwv_interpolator``
             transmission_version         (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
+            scale_airmass               (bool): Disable airmass scaling.
         """
 
         # Store init arguments
+        self.scale_airmass = scale_airmass
+        self._time_format = time_format
         self._pwv_interpolator = pwv_interpolator
+
         if transmission_version == 'v1':
             from pwv_kpno.defaults import v1_transmission
             self._transmission_model = v1_transmission
@@ -111,9 +152,35 @@ class VariablePWVTrans(VariablePropagationEffect):
         self._maxwave = self._transmission_model.samp_wave.max()
 
         # Define and store default modeling parameters
-        self._param_names = ['res']  # Todo: ['ra', 'dec', 'res']
-        self.param_names_latex = ['Resolution']  # Todo: ['RA', 'Dec', 'Resolution']
-        self._parameters = np.array([5.])  # Todo: np.array([0., 0., 5.])
+        self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt', 'res']
+        self.param_names_latex = [
+            'Target RA', 'Target Dec', 'Observer Latitude (deg)', 'Observer Longitude (deg)',
+            'Observer Altitude (m)', 'Coordinate', 'Resolution']
+        self._parameters = np.array(
+            [0., 0.,
+             const.vro_latitude.to(u.deg).value,
+             const.vro_longitude.to(u.deg).value,
+             const.vro_altitude.to(u.m).value,
+             1024, 5.])
+
+    def airmass(self, time):
+        """Return the airmass as a function of time
+
+        Args:
+            time (float, np.array): Array of time values
+
+        Returns:
+            An array of airmass values
+        """
+
+        return calc_airmass(
+            time,
+            ra=self['ra'],
+            dec=self['dec'],
+            lat=self['lat'],
+            lon=self['lon'],
+            alt=self['alt'],
+            time_format=self._time_format)
 
     def calc_pwv_los(self, time):
         """Return the PWV along the line of sight for a given time
@@ -125,9 +192,11 @@ class VariablePWVTrans(VariablePropagationEffect):
             An array of PWV values in mm
         """
 
-        # Todo: Add RA and Dec parameters. Use them to scale PWV to the appropriate airmass
-        # Extend tests appropriately
-        return self._pwv_interpolator(time)
+        pwv = self._pwv_interpolator(time)
+        if self.scale_airmass:
+            pwv *= self.airmass(time)
+
+        return pwv
 
     def propagate(self, wave, flux, time):
         """Propagate the flux through the atmosphere
@@ -142,7 +211,7 @@ class VariablePWVTrans(VariablePropagationEffect):
         """
 
         pwv = self.calc_pwv_los(time)
-        transmission = self._transmission_model(pwv, wave, self['res'])
+        transmission = self._transmission_model(pwv, np.atleast_1d(wave), self['res'])
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
             if np.ndim(flux) == 1:
@@ -227,6 +296,10 @@ class Model(sncosmo.Model):
             new_model.__dict__[key] = val
 
         new_model._parameters = self._parameters.copy()
+
+        # Link ids of new parameters in memory
+        # Otherwise parameters wont update correctly in the copied object
+        new_model._sync_parameter_arrays()
         return new_model
 
 
@@ -236,7 +309,7 @@ class Model(sncosmo.Model):
 
 
 def calc_x0_for_z(
-        z, source, cosmo=betoule_cosmo, abs_mag=abs_mb,
+        z, source, cosmo=const.betoule_cosmo, abs_mag=const.betoule_abs_mb,
         band='standard::b', magsys='AB', **params):
     """Determine x0 for a given redshift and model
 

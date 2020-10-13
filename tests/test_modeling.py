@@ -33,15 +33,31 @@ class TestVariablePropagationEffect(TestCase):
 class TestVariablePWVTrans(TestCase):
     """Tests for the ``modeling.VariablePWVTrans`` class"""
 
+    vro_latitude = -30.244573  # degrees
+    vro_lingitude = -70.7499537  # degrees
+    vro_altitude = 1024  # meters
+
     def setUp(self):
         self.default_pwv = 5
         self.constant_pwv_func = lambda *args: self.default_pwv
         self.propagation_effect = modeling.VariablePWVTrans(self.constant_pwv_func)
 
+    def test_default_location_params_match_vro(self):
+        """Test the default values for the observer location match VRO"""
+
+        self.assertEqual(self.propagation_effect['lat'], self.vro_latitude)
+        self.assertEqual(self.propagation_effect['lon'], self.vro_lingitude)
+        self.assertEqual(self.propagation_effect['alt'], self.vro_altitude)
+
+    def test_airmass_scaling_on_by_default(self):
+        """Test airmass scaling is turned on by default"""
+
+        self.assertTrue(self.propagation_effect.scale_airmass)
+
     def test_transmission_version_support(self):
         """Test the propagation object uses the atmospheric model corresponding specified at init"""
 
-        from pwv_kpno.transmission import CrossSectionTransmission, TransmissionModel
+        from pwv_kpno.transmission import CrossSectionTransmission
 
         default_effect = modeling.VariablePWVTrans(self.constant_pwv_func)
         self.assertIsInstance(default_effect._transmission_model, CrossSectionTransmission)
@@ -61,10 +77,22 @@ class TestVariablePWVTrans(TestCase):
 
         wave = np.arange(3000, 12000)
         flux = np.ones_like(wave)
-        transmission = self.propagation_effect._transmission_model(self.default_pwv, wave, self.propagation_effect['res'])
+
+        self.propagation_effect.scale_airmass = False
+        transmission = self.propagation_effect._transmission_model(
+            self.default_pwv, wave, self.propagation_effect['res'])
 
         propagated_flux = self.propagation_effect.propagate(wave, flux, time=0)
         np.testing.assert_equal(propagated_flux, transmission.values)
+
+    def test_pwv_los_is_scaled_by_airmass(self):
+        """Test PWV is scaled by airmass when the ``scale_airmass`` attribute is ``True``"""
+
+        self.propagation_effect.scale_airmass = True
+        self.propagation_effect.set(ra=2, dec=2)
+        airmass = self.propagation_effect.airmass(time=0)
+        pwv_los = self.propagation_effect.calc_pwv_los(time=0)
+        self.assertEqual(pwv_los, self.default_pwv * airmass)
 
 
 class TestModel(sncosmo_test_models.TestModel, TestCase):
@@ -109,6 +137,22 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
         model = modeling.Model(source='salt2')
         model.add_effect(effect=sncosmo.CCM89Dust(), frame='free', name=effect_name)
         self.assertIn(effect_name + 'z', model.param_names)
+
+    def test_variable_propagation_support(self):
+        """Test a time variable effect can be added and called without error"""
+
+        effect = modeling.VariablePWVTrans(lambda *args: 5)
+        model = modeling.Model(sncosmo_test_models.flatsource())
+        model.add_effect(effect=effect, frame='obs', name='Variable PWV')
+        model.flux(time=0, wave=[4000])
+
+    def test_sed_matches_sncosmo_model(self):
+        wave = np.arange(3000, 12000)
+        sncosmo_model = sncosmo.Model('salt2-extended')
+        sncosmo_flux = sncosmo_model.flux(0, wave)
+        custom_model = modeling.Model(sncosmo_model.source)
+        custom_flux = custom_model.flux(0, wave)
+        np.testing.assert_equal(custom_flux, sncosmo_flux)
 
 
 class TestPWVTrans(TestCase):

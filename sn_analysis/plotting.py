@@ -60,7 +60,7 @@ from matplotlib.ticker import MultipleLocator
 from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
-from . import modeling, filters
+from . import modeling, filters, constants as const
 
 filters.register_lsst_filters(force=True)
 
@@ -372,10 +372,10 @@ def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
         axis.set_xlabel('Redshift')
         axis.set_ylabel(param)
 
-    correction_factor = modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']
+    correction_factor = const.betoule_alpha * params_dict['x1'] - const.betoule_beta * params_dict['c']
     multi_line_plot(z_arr, correction_factor, pwv_arr, axes[-1][-1], label='PWV = {:g} mm')
 
-    label = f'{modeling.alpha} * $x_1$ - {modeling.beta} * $c$'
+    label = f'{const.betoule_alpha} * $x_1$ - {const.betoule_beta} * $c$'
     axes[-1][-1].set_ylabel(label)
     axes[-1][-1].legend(bbox_to_anchor=(1, 1.1))
 
@@ -449,7 +449,7 @@ def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
 
 
 # noinspection PyUnusedLocal
-def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=modeling.betoule_cosmo):
+def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=const.betoule_cosmo):
     """Plot the variation in fitted distance modulus as a function of redshift and PWV
 
     Args:

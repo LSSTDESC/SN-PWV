@@ -17,7 +17,7 @@ import sncosmo
 import yaml
 from tqdm import tqdm
 
-from . import modeling
+from . import modeling, constants as const
 
 _PARENT = Path(__file__).resolve()
 _CONFIG_PATH = _PARENT.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
@@ -134,7 +134,7 @@ def tabulate_fiducial_mag(model, z_arr, bands, fid_pwv_dict=None):
 ###############################################################################
 
 
-def correct_mag(model, mag, params, alpha=modeling.alpha, beta=modeling.beta):
+def correct_mag(model, mag, params, alpha=const.betoule_alpha, beta=const.betoule_beta):
     """Correct fitted supernova magnitude for stretch and color
 
     calibrated mag = mag + α * x1 - β * c
@@ -292,11 +292,12 @@ def calc_delta_mag(mag, fiducial_mag, fiducial_pwv):
 # Distance Modulus Calculations
 ###############################################################################
 
-def calc_mu_for_model(model):
+def calc_mu_for_model(model, cosmo=const.betoule_cosmo):
     """Calculate the distance modulus of a model
 
     Args:
-        model (Model): An sncosmo model
+        mode    l (Model): An sncosmo model
+        cosmo (Cosmology): Cosmology to use in the calculation
 
     Returns:
         mu = m_B - M_B
@@ -309,7 +310,7 @@ def calc_mu_for_model(model):
     rest_band = b_band.shifted(dilation_factor)
 
     apparent_mag = model.bandmag(rest_band, 'ab', 0) - time_dilation_mag_offset
-    absolute_mag = model.source_peakabsmag(b_band, 'ab', cosmo=modeling.betoule_cosmo)
+    absolute_mag = model.source_peakabsmag(b_band, 'ab', cosmo=cosmo)
     return apparent_mag - absolute_mag
 
 
@@ -357,4 +358,4 @@ def calc_calibration_factor_for_params(model, params):
         i, param in enumerate(model.param_names)
     }
 
-    return modeling.alpha * params_dict['x1'] - modeling.beta * params_dict['c']
+    return const.betoule_alpha * params_dict['x1'] - const.betoule_beta * params_dict['c']
