@@ -117,6 +117,13 @@ class VariablePWVTrans(VariablePropagationEffect):
         Set ``scale_airmass`` to ``False`` if ``pwv_interpolator`` returns PWV values along the
         line of sight.
 
+        Effect Parameters:
+            ra: Target Right Ascension in degrees
+            dec: Target Declination in degrees
+            lat: Observer latitude in degrees (defaults to location of VRO)
+            lon: Observer longitude in degrees (defaults to location of VRO)
+            alt: Observer altitude in meters  (defaults to height of VRO)
+
         Args:
             pwv_interpolator (callable[float]): Returns PWV at zenith for a given time value
             time_format                  (str): Astropy recognized time format used by the ``pwv_interpolator``
