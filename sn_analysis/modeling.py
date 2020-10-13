@@ -13,22 +13,14 @@ import numpy as np
 import sncosmo
 from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
-from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Table
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
 from tqdm import tqdm
 
+from . import constants as const
+
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
-
-# From Betoule 2014
-alpha = 0.141
-beta = 3.101
-omega_m = 0.295
-abs_mb = -19.05
-H0 = 70
-
-betoule_cosmo = FlatLambdaCDM(H0=H0, Om0=omega_m)
 
 
 ###############################################################################
@@ -127,7 +119,12 @@ class VariablePWVTrans(VariablePropagationEffect):
         self.param_names_latex = [
             'Target RA', 'Target Dec', 'Observer Latitude', 'Observer Longitude',
             'Observer Altitude', 'Coordinate', 'Resolution']
-        self._parameters = np.array([0., 0., -30.244573, -70.7499537, 1024, 5.])
+        self._parameters = np.array(
+            [0., 0.,
+             const.vro_latitude.to(u.deg).value,
+             const.vro_longitude.to(u.deg).value,
+             const.vro_altitude.to(u.deg).value,
+             1024, 5.])
 
     def airmass(self, time):
         """Return the airmass as a function of time
@@ -144,7 +141,9 @@ class VariablePWVTrans(VariablePropagationEffect):
 
             obs_time = Time(time, format=self._time_format)
             observer_location = EarthLocation(
-                lat=self['lat'] * u.deg, lon=self['lon'] * u.deg, height=self['alt'] * u.m)
+                lat=self['lat'] * u.deg,
+                lon=self['lon'] * u.deg,
+                height=self['alt'] * u.m)
 
             target_coord = SkyCoord(ra=self['ra'] * u.deg, dec=self['dec'] * u.deg)
             altaz = AltAz(obstime=obs_time, location=observer_location)
@@ -273,7 +272,7 @@ class Model(sncosmo.Model):
 
 
 def calc_x0_for_z(
-        z, source, cosmo=betoule_cosmo, abs_mag=abs_mb,
+        z, source, cosmo=const.betoule_cosmo, abs_mag=const.betoule_abs_mb,
         band='standard::b', magsys='AB', **params):
     """Determine x0 for a given redshift and model
 

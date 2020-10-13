@@ -12,7 +12,7 @@ from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
-from . import modeling
+from . import modeling, constants as const
 
 try:
     plasticc_simulations_directory = Path(os.environ['CADENCE_SIMS'])
@@ -178,7 +178,7 @@ def extract_cadence_data(light_curve, drop_nondetection=False, zp=25, gain=5, sk
 
 
 def duplicate_plasticc_sncosmo(
-        light_curve, model, gain=5, skynr=100, scatter=True, cosmo=modeling.betoule_cosmo):
+        light_curve, model, gain=5, skynr=100, scatter=True, cosmo=const.betoule_cosmo):
     """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
 
     Args:
