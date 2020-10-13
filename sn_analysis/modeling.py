@@ -289,6 +289,10 @@ class Model(sncosmo.Model):
             new_model.__dict__[key] = val
 
         new_model._parameters = self._parameters.copy()
+
+        # Link ids of new parameters in memory
+        # Otherwise parameters wont update correctly in the copied object
+        new_model._sync_parameter_arrays()
         return new_model
 
 
