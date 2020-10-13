@@ -23,6 +23,36 @@ from . import constants as const
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
 
+def calc_airmass(time, ra, dec, lat, lon, alt, time_format='mjd'):
+    """Calculate the airmass through which a target is observed
+
+    Args:
+        time (float): Time at which the target is observed
+        ra   (float): Right Ascension of the target (Deg)
+        dec  (float): Declination of the target (Deg)
+        lat  (float): Latitude of the observer (Deg)
+        lon  (float): Longitude of the observer (Deg)
+        alt  (float): Altitude of the observer (m)
+        time_format (str): Format of the time value (Default 'mjd')
+
+    Returns:
+        Airmass in units of Sec(z)
+    """
+
+    with warnings.catch_warnings():  # Astropy time manipulations raise annoying ERFA warnings
+        warnings.filterwarnings('ignore')
+
+        obs_time = Time(time, format=time_format)
+        observer_location = EarthLocation(
+            lat=lat * u.deg,
+            lon=lon * u.deg,
+            height=alt * u.m)
+
+        target_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg)
+        altaz = AltAz(obstime=obs_time, location=observer_location)
+        return target_coord.transform_to(altaz).secz.value
+
+
 ###############################################################################
 # For building sncosmo models with a PWV component
 ###############################################################################
@@ -117,13 +147,13 @@ class VariablePWVTrans(VariablePropagationEffect):
         # Define and store default modeling parameters
         self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt', 'res']
         self.param_names_latex = [
-            'Target RA', 'Target Dec', 'Observer Latitude', 'Observer Longitude',
-            'Observer Altitude', 'Coordinate', 'Resolution']
+            'Target RA', 'Target Dec', 'Observer Latitude (deg)', 'Observer Longitude (deg)',
+            'Observer Altitude (m)', 'Coordinate', 'Resolution']
         self._parameters = np.array(
             [0., 0.,
              const.vro_latitude.to(u.deg).value,
              const.vro_longitude.to(u.deg).value,
-             const.vro_altitude.to(u.deg).value,
+             const.vro_altitude.to(u.m).value,
              1024, 5.])
 
     def airmass(self, time):
@@ -136,18 +166,14 @@ class VariablePWVTrans(VariablePropagationEffect):
             An array of airmass values
         """
 
-        with warnings.catch_warnings():  # Astropy time manipulations raise annoying ERFA warnings
-            warnings.filterwarnings('ignore')
-
-            obs_time = Time(time, format=self._time_format)
-            observer_location = EarthLocation(
-                lat=self['lat'] * u.deg,
-                lon=self['lon'] * u.deg,
-                height=self['alt'] * u.m)
-
-            target_coord = SkyCoord(ra=self['ra'] * u.deg, dec=self['dec'] * u.deg)
-            altaz = AltAz(obstime=obs_time, location=observer_location)
-            return target_coord.transform_to(altaz).secz.value
+        return calc_airmass(
+            time,
+            ra=self['ra'],
+            dec=self['dec'],
+            lat=self['lat'],
+            lon=self['lon'],
+            alt=self['alt'],
+            time_format=self._time_format)
 
     def calc_pwv_los(self, time):
         """Return the PWV along the line of sight for a given time
