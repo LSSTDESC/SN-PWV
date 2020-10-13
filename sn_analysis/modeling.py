@@ -12,8 +12,7 @@ from pathlib import Path
 import numpy as np
 import sncosmo
 from astropy import units as u
-from astropy.coordinates import AltAz
-from astropy.coordinates import EarthLocation
+from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.cosmology import FlatLambdaCDM
 from astropy.table import Table
 from astropy.time import Time
@@ -48,7 +47,7 @@ class VariablePropagationEffect(sncosmo.PropagationEffect):
         Args:
             wave (ndarray): An array of wavelength values
             flux (ndarray): An array of flux values
-            time (ndarray): Optional array of time values
+            time (ndarray): Array of time values
 
         Returns:
             An array of flux values after suffering propagation effects
@@ -90,18 +89,24 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 class VariablePWVTrans(VariablePropagationEffect):
     """Atmospheric propagation effect for temporally variable PWV"""
 
-    def __init__(self, pwv_interpolator, time_format='mjd', transmission_version='v1'):
+    def __init__(self, pwv_interpolator, time_format='mjd', transmission_version='v1', scale_airmass=True):
         """Time variable atmospheric transmission due to PWV
 
+        Set ``scale_airmass`` to ``False`` if ``pwv_interpolator`` returns PWV values along the
+        line of sight.
+
         Args:
-            pwv_interpolator (callable[float]): Returns PWV along line of sight for given time
+            pwv_interpolator (callable[float]): Returns PWV at zenith for a given time value
             time_format                  (str): Astropy recognized time format used by the ``pwv_interpolator``
             transmission_version         (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
+            scale_airmass               (bool): Disable airmass scaling.
         """
 
         # Store init arguments
+        self.scale_airmass = scale_airmass
         self._time_format = time_format
         self._pwv_interpolator = pwv_interpolator
+
         if transmission_version == 'v1':
             from pwv_kpno.defaults import v1_transmission
             self._transmission_model = v1_transmission
@@ -118,10 +123,32 @@ class VariablePWVTrans(VariablePropagationEffect):
         self._maxwave = self._transmission_model.samp_wave.max()
 
         # Define and store default modeling parameters
-        default_lsst_location = EarthLocation(lat=-30.244573 * u.deg, lon=-70.7499537 * u.deg, height=1024 * u.m)
-        self._param_names = ['location', 'coord', 'res']
-        self.param_names_latex = ['Location', 'Coordinate', 'Resolution']
-        self._parameters = np.array([default_lsst_location, None, 5.])
+        self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt', 'res']
+        self.param_names_latex = [
+            'Target RA', 'Target Dec', 'Observer Latitude', 'Observer Longitude',
+            'Observer Altitude', 'Coordinate', 'Resolution']
+        self._parameters = np.array([0., 0., -30.244573, -70.7499537, 1024, 5.])
+
+    def airmass(self, time):
+        """Return the airmass as a function of time
+
+        Args:
+            time (float, np.array): Array of time values
+
+        Returns:
+            An array of airmass values
+        """
+
+        with warnings.catch_warnings():  # Astropy time manipulations raise annoying ERFA warnings
+            warnings.filterwarnings('ignore')
+
+            obs_time = Time(time, format=self._time_format)
+            observer_location = EarthLocation(
+                lat=self['lat'] * u.deg, lon=self['lon'] * u.deg, height=self['alt'] * u.m)
+
+            target_coord = SkyCoord(ra=self['ra'] * u.deg, dec=self['dec'] * u.deg)
+            altaz = AltAz(obstime=obs_time, location=observer_location)
+            return target_coord.transform_to(altaz).secz.value
 
     def calc_pwv_los(self, time):
         """Return the PWV along the line of sight for a given time
@@ -133,17 +160,11 @@ class VariablePWVTrans(VariablePropagationEffect):
             An array of PWV values in mm
         """
 
-        pwv_zenith = self._pwv_interpolator(time)
-        if self['coord'] is None:
-            return pwv_zenith
+        pwv = self._pwv_interpolator(time)
+        if self.scale_airmass:
+            pwv *= self.airmass(time)
 
-        with warnings.catch_warnings():
-            warnings.filterwarnings('error')
-            obs_time = Time(time, format=self._time_format)
-
-        altaz = AltAz(obstime=obs_time, location=self['location'])
-        airmass = self['coord'].transform_to(altaz).secz
-        return pwv_zenith * airmass
+        return pwv
 
     def propagate(self, wave, flux, time):
         """Propagate the flux through the atmosphere
@@ -158,7 +179,7 @@ class VariablePWVTrans(VariablePropagationEffect):
         """
 
         pwv = self.calc_pwv_los(time)
-        transmission = self._transmission_model(pwv, wave, self['res'])
+        transmission = self._transmission_model(pwv, np.atleast_1d(wave), self['res'])
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
             if np.ndim(flux) == 1:
