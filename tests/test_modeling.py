@@ -146,6 +146,14 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
         model.add_effect(effect=effect, frame='obs', name='Variable PWV')
         model.flux(time=0, wave=[4000])
 
+    def test_sed_matches_sncosmo_model(self):
+        wave = np.arange(3000, 12000)
+        sncosmo_model = sncosmo.Model('salt2-extended')
+        sncosmo_flux = sncosmo_model.flux(0, wave)
+        custom_model = modeling.Model(sncosmo_model.source)
+        custom_flux = custom_model.flux(0, wave)
+        np.testing.assert_equal(custom_flux, sncosmo_flux)
+
 
 class TestPWVTrans(TestCase):
     """Tests for the addition of PWV to sncosmo models"""
