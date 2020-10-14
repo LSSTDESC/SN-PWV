@@ -4,6 +4,9 @@
 """The ``sn_magnitudes.py`` module is responsible for calculating supernova
 magnitudes as a function of PWV and redshift. Functionality is provided to
 determine magnitudes directly from a SN model and via a light-curve fit.
+
+Module API
+----------
 """
 
 import itertools

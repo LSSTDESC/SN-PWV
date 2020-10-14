@@ -1,7 +1,12 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-"""This module handles the simulation of SN light-curves."""
+"""This module handles the simulation of SN light-curves.
+
+
+Module API
+----------
+"""
 
 import abc
 import itertools

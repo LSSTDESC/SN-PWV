@@ -3,7 +3,8 @@
 
 """Plotting functions for SNe results
 
-Plot summaries:
+Plotting Function Summaries
+---------------------------
 
 +------------------------------+----------------------------------------------+
 | Function                     | Description                                  |
@@ -39,14 +40,17 @@ Plot summaries:
 |                              | redshift and PWV.                            |
 +------------------------------+----------------------------------------------+
 | ``plot_delta_mu``            | Plot the variation in fitted distance modulus|
-|                              |  as a function of redshift and PWV.          |
+|                              | as a function of redshift and PWV.           |
 +------------------------------+----------------------------------------------+
 | ``plot_delta_colors``        | Plot the change in fitted SN color           |
-|                              |  as a function of redshift and PWV.          |
+|                              | as a function of redshift and PWV.           |
 +------------------------------+----------------------------------------------+
 | ``plot_delta_colors``        | Plot PWV measurements taken over a single    |
 |                              | year as a function of time.                  |
 +------------------------------+----------------------------------------------+
+
+Module API
+----------
 """
 
 from datetime import datetime

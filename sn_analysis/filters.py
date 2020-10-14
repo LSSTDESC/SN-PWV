@@ -3,6 +3,9 @@
 
 """This module provides general utilities for plotting data and registering
 ``sncosmo`` filters.
+
+Module API
+----------
 """
 
 from pathlib import Path

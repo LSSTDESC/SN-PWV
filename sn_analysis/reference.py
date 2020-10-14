@@ -3,6 +3,9 @@
 
 """Utilities for calculating magnitudes relative to a reference star or
 fiducial atmosphere (i.e., fiducial PWV).
+
+Module API
+----------
 """
 
 from functools import lru_cache
