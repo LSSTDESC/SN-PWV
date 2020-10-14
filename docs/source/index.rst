@@ -45,6 +45,16 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
 .. toctree::
    :hidden:
    :maxdepth: 1
+   :caption: Notebooks / Usage Examples
+
+   notebooks/lsst_filters.nblink
+   notebooks/pwv_eff_on_black_body.nblink
+   notebooks/sne_delta_mag.nblink
+   notebooks/simulating_lc_with_cadence.nblink
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
    :caption: API Reference
 
    api/sn_analysis.rst

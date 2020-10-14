@@ -32,8 +32,14 @@ extensions = [
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
-    'sphinx_copybutton'
+    'sphinx_copybutton',
+    'nbsphinx',
+    'nbsphinx_link'
 ]
+
+# Setting for rendering jupyter notebooks
+nbsphinx_execute = 'never'
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
