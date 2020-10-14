@@ -7,9 +7,10 @@ Welcome to DESC-SN-PWV's documentation!
 =======================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
    :caption: Contents:
 
+   project_notes/setup.rst
 
 
 Indices and tables
