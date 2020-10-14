@@ -1,7 +1,43 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-"""Defines values for constants used across the parent package."""
+"""The ``constants`` module defines values for constants used across the
+parent package.
+
+Value Summaries
+---------------
+
++------------------------------+----------------------------------------------+
+| Value                        | Description                                  |
++==============================+==============================================+
+| ``vro_latitude``             | Latitude of the Vera Rubin Observatory in    |
+|                              | degrees.                                     |
++------------------------------+----------------------------------------------+
+| ``vro_longitude``            | Longitude of the Vera Rubin Observatory in   |
+|                              | degrees.                                     |
++------------------------------+----------------------------------------------+
+| ``vro_altitude``             | Altitude of the Vera Rubin Observatory in    |
+|                              | meters.                                      |
++------------------------------+----------------------------------------------+
+| ``betoule_alpha``            | Nuisance parameter alpha                     |
+|                              | from Betoule+ 2014.                          |
++------------------------------+----------------------------------------------+
+| ``betoule_beta``             | Nuisance parameter beta                      |
+|                              | from Betoule+ 2014.                          |
++------------------------------+----------------------------------------------+
+| ``betoule_omega_m``          | Cosmological mater density as determined in  |
+|                              | Betoule+ 2014.                               |
++------------------------------+----------------------------------------------+
+| ``betoule_abs_mb``           | Intrinsic absolute magnitude of SNe Ia as    |
+|                              | determined in Betoule+ 2014.                 |
++------------------------------+----------------------------------------------+
+| ``betoule_H0``               | Cosmological Hubble parameter as             |
+|                              | determined in Betoule+ 2014.                 |
++------------------------------+----------------------------------------------+
+| ``betoule_cosmo``            | ``astropy.Cosmology`` object representing    |
+|                              | the best fit cosmology in Betoule+ 2014.     |
++------------------------------+----------------------------------------------+
+"""
 
 from astropy import units as _u
 from astropy.cosmology import FlatLambdaCDM as _FlatLambdaCDM
