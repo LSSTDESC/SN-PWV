@@ -48,7 +48,7 @@ def _register_sncosmo_filter(wave: np.ndarray, trans: np.ndarray, name: str, for
     sncosmo.register(sncosmo_ccd, force=force)
 
 
-def register_decam_filters(force: bool = False) -> None:
+def register_decam_filters(force=False):
     """Register DECam filter profiles, CCD response, and fiducial ATM with sncosmo
 
     Registered Filters:
@@ -57,7 +57,7 @@ def register_decam_filters(force: bool = False) -> None:
         - DECam_ccd: DECam CCD Response curve
 
     Args:
-        force: Re-register a band if it is already registered
+        force (bool): Re-register a band if it is already registered
     """
 
     # Register each filter
@@ -82,7 +82,7 @@ def register_decam_filters(force: bool = False) -> None:
     _register_sncosmo_filter(throughput['wave'], throughput['atm'], 'DECam_atm', force)
 
 
-def register_lsst_filters(force: bool = False) -> None:
+def register_lsst_filters(force=False):
     """Register LSST filter profiles, hardware responses, and fiducial ATM with sncosmo
 
     Registered Filters:
@@ -99,7 +99,7 @@ def register_lsst_filters(force: bool = False) -> None:
         - lsst_<ugrizy>_no_atm: Throughput in each band without a fiducial atmosphere
 
     Args:
-        force: Re-register a band if it is already registered
+        force (bool): Re-register a band if it is already registered
     """
 
     lsst_filter_dir = FILTER_DIR / 'lsst_baseline'
