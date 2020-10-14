@@ -62,6 +62,7 @@ class VariablePropagationEffect(sncosmo.PropagationEffect):
     method accepts a ``time`` argument.
     """
 
+    # noinspection PyMethodOverriding
     @abc.abstractmethod
     def propagate(self, wave, flux, time):
         """Propagate the flux through the atmosphere

@@ -86,11 +86,14 @@ def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
             mag_arr.append(mag)
 
             if verbose:
+                # noinspection PyUnboundLocalVariable
                 pbar.update(1)
 
         magnitudes[band] = np.reshape(mag_arr, return_array_shape)
 
-    pbar.close()
+    if verbose:
+        pbar.close()
+
     return magnitudes
 
 
@@ -296,7 +299,7 @@ def calc_mu_for_model(model, cosmo=const.betoule_cosmo):
     """Calculate the distance modulus of a model
 
     Args:
-        mode    l (Model): An sncosmo model
+        model     (Model): An sncosmo model
         cosmo (Cosmology): Cosmology to use in the calculation
 
     Returns:

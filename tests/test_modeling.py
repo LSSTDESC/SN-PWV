@@ -16,6 +16,7 @@ from sncosmo.tests import test_models as sncosmo_test_models
 
 from sn_analysis import modeling
 from sn_analysis.filters import register_decam_filters
+from sn_analysis import constants as const
 
 register_decam_filters(force=True)
 
@@ -33,10 +34,6 @@ class TestVariablePropagationEffect(TestCase):
 class TestVariablePWVTrans(TestCase):
     """Tests for the ``modeling.VariablePWVTrans`` class"""
 
-    vro_latitude = -30.244573  # degrees
-    vro_lingitude = -70.7499537  # degrees
-    vro_altitude = 1024  # meters
-
     def setUp(self):
         self.default_pwv = 5
         self.constant_pwv_func = lambda *args: self.default_pwv
@@ -45,9 +42,9 @@ class TestVariablePWVTrans(TestCase):
     def test_default_location_params_match_vro(self):
         """Test the default values for the observer location match VRO"""
 
-        self.assertEqual(self.propagation_effect['lat'], self.vro_latitude)
-        self.assertEqual(self.propagation_effect['lon'], self.vro_lingitude)
-        self.assertEqual(self.propagation_effect['alt'], self.vro_altitude)
+        self.assertEqual(self.propagation_effect['lat'], const.vro_latitude.value)
+        self.assertEqual(self.propagation_effect['lon'], const.vro_longitude.value)
+        self.assertEqual(self.propagation_effect['alt'], const.vro_altitude.value)
 
     def test_airmass_scaling_on_by_default(self):
         """Test airmass scaling is turned on by default"""
@@ -156,6 +153,8 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
         model.flux(time=0, wave=[4000])
 
     def test_sed_matches_sncosmo_model(self):
+        """Test the SED returned by the ``modeling.Model`` class matches the ``sncosmo.Model`` class"""
+
         wave = np.arange(3000, 12000)
         sncosmo_model = sncosmo.Model('salt2-extended')
         sncosmo_flux = sncosmo_model.flux(0, wave)
@@ -201,7 +200,8 @@ class TestPWVTrans(TestCase):
 class CalcX0ForZ(TestCase):
     """Tests for the ``calc_x0_for_z`` function"""
 
-    def test_x0_recovers_absolute_mag(self):
+    @staticmethod
+    def test_x0_recovers_absolute_mag():
         """Test returned x0 corresponds to specified magnitude"""
 
         z = 0.5

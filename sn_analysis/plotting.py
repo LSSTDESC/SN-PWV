@@ -340,7 +340,6 @@ def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
 
     # Add legends
     top_ax.legend(bbox_to_anchor=(1, 1.1))
-
     handles, labels = bottom_ax.get_legend_handles_labels()
     labels = labels[::5]
     handles = handles[::5]
