@@ -1,15 +1,13 @@
+# Data Model
 
-
-# Light-Curve Simulations
-
-Light-curve simulations are not included with the source code of this project. For instructions on how to download light-curve simulations, see the parent README for this project.
-
-## Data Model
-
-Simulated light-curves are divided into directories based on the model used in the simulation. For certain types of astronomical objects, multiple models were used. Light-curves from different directories/models should not be taken to represent distinct types or subtypes of objects. A summary of the models is as follows:
+Simulated light-curves are divided into directories based on the model used
+in the simulation. For certain types of astronomical objects, multiple models
+were used. Light-curves from different directories/models should not be taken
+to represent distinct types or subtypes of objects. A summary of the models
+is as follows:
 
 |  Model Number             |  Model Name     |
-|                :--:       |           :--:  |
+| ------------------------- | --------------- |
 |                  11       |    SNIa-normal  |
 |                   2       |        SNCC-II  |
 |                   3       |       SNCC-Ibc  |
@@ -36,7 +34,12 @@ Simulated light-curves are divided into directories based on the model used in t
 
 
 
-Light-curves are saved using the `SNANA` file format where files come in pairs: a header file postfixed with `HEAD.fits` and a photometry file postfixed with `PHOT.fits`. The header file provides meta-data about the observed targets (e.g., `RA` and `Dec`). The photometry file contains the simulated light-curve. Each file containing information for multiple supernovae. Definitions are provided below for a handful of columns in each file type:
+Light-curves are saved using the `SNANA` file format where files come in
+pairs: a header file postfixed with `HEAD.fits` and a photometry file
+postfixed with `PHOT.fits`. The header file provides meta-data about the
+observed targets (e.g., `RA` and `Dec`). The photometry file contains the
+simulated light-curve. Each file containing information for multiple
+supernovae. Definitions are provided below for a handful of columns in each file type:
 
 
 | Header File Column | Value Description                                            |

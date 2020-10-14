@@ -7,15 +7,30 @@ Welcome to DESC-SN-PWV's documentation!
 =======================================
 
 .. toctree::
-   :maxdepth: 1
-   :caption: Contents:
+   :hidden:
+   :maxdepth: 0
 
+   Overview<self>
    project_notes/setup.rst
 
+.. toctree::
+   :hidden:
+   :maxdepth: 0
+   :caption: Project Notes
 
-Indices and tables
-==================
+   project_notes/data_provenance.rst
+   project_notes/plasticc_model.rst
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+.. toctree::
+   :hidden:
+   :maxdepth: 0
+   :caption: API Reference
+
+   api/sn_analysis.rst
+   api/constants.rst
+   api/filters.rst
+   api/modeling.rst
+   api/plasticc.rst
+   api/plotting.rst
+   api/reference.rst
+   api/sn_magnitudes.rst

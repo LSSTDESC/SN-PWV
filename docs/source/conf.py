@@ -6,16 +6,13 @@
 
 # -- Path setup --------------------------------------------------------------
 
-# If extensions (or modules to document with autodoc) are in another directory,
-# add these directories to sys.path here. If the directory is relative to the
-# documentation root, use os.path.abspath to make it absolute, like shown here.
-#
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import sys
+from pathlib import Path
+
+package_source_path = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(package_source_path))
 
 import guzzle_sphinx_theme
-
 
 # -- Project information -----------------------------------------------------
 
@@ -29,7 +26,13 @@ author = 'DESC'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'guzzle_sphinx_theme'
+    'sphinx.ext.autodoc',
+    'sphinx.ext.coverage',
+    'sphinx.ext.mathjax',
+    'sphinx.ext.viewcode',
+    'sphinx.ext.autosummary',
+    'sphinx.ext.napoleon',
+    'sphinx_copybutton'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -51,10 +54,10 @@ html_theme = 'guzzle_sphinx_theme'
 html_title = "SN-PWV"
 html_short_title = "SN-PWV"
 html_sidebars = {
-    '**': ['logo-text.html', 'searchbox.html', 'localtoc.html']
+    '**': ['logo-text.html', 'searchbox.html', 'globaltoc.html']
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['static']

@@ -1,15 +1,19 @@
-Setup
-=====
+Installation and Setup
+======================
 
-Downloading Source Code
------------------------
+This page will walk your through the process of downloading and configuring the
+project source code.
 
-Source code for this project is available on GitHub and can be downloaded
-the GitHub command line utility:
+Downloading the Source
+----------------------
+
+Source code for this project is available on
+`GitHub <https://github.com/LSSTDESC/SN-PWV>` and can be downloaded directly
+from the GitHub repository page or using the ``git`` command line utility:
 
 .. code-block:: bash
 
-   gh repo clone LSSTDESC/SN-PWV
+   git clone https://github.com/LSSTDESC/SN-PWV.git
 
 Project dependencies are listed in the ``requirements.txt`` file included with
 the source code. Dependencies can be installed using pip:
@@ -19,14 +23,13 @@ the source code. Dependencies can be installed using pip:
    pip install -r SN-PWV/requirements.txt
 
 
-Download Light-Curve Simulations
---------------------------------
+Downloading Light-Curve Sims
+----------------------------
 
-.. important:: Not all parts of this project use DESC light-curve simulations.
-   The complete data set will take up several hundred GB of storage.
+.. important:: Not all parts of this project require existing light-curve
+   simulations. The complete data set takes up several hundred GB of storage.
    To avoid future headaches, please ensure you actually need this data and
    don't already have it available in your working environment.
-
 
 Simulated light-curve data is hosted on Zenodo and can be downloaded using
 the ``wget`` command. URL's for various subsets of the data is listed are
@@ -39,19 +42,19 @@ included to avoid restarting a failed download from scratch.
 
    wget --continue --timeout 0 --tries 0 -i data/plasticc/file_list.txt -P /desired/output/directory/
 
-If you have difficulty downloading all the data at once, or if you don't need the entire data set,
-please try downloading each URL from ``file_list.txt`` individually.
-The downloaded files will be nested, compressed files using a mix of the
-``.gz`` and ``.tar.gz`` compression formats. You can decompress them using
-the following commands:
+If you have difficulty downloading all the data at once, or if you don't
+need the entire data set, please try individually downloading the files listed
+in ``file_list.txt`` . The downloaded files will be nested, compressed
+files using a mix of the ``.gz`` and ``.tar.gz`` compression formats.
+You can decompress them using the following commands:
 
 .. code-block:: bash
 
    tar -xvzf [FILE TO DECOMPRESS].tar.gz --verbose
    gunzip [FILE TO DECOMPRESS]/*/*.gz --verbose
 
-Configuring the Working Environment
------------------------------------
+Configuring Your Environment
+----------------------------
 
 The path of the downloaded data needs to be specified in the project
 environment so that the software knows where to find the simulated
