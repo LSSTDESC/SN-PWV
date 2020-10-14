@@ -122,6 +122,15 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
         copied = copy(self.model)
         for original_param, copied_param in zip(self.model._parameters, copied.parameters):
             self.assertNotEqual(id(original_param), id(copied_param))
+            self.assertEqual(original_param, copied_param)
+
+    def test_copied_parameters_are_not_linked(self):
+        """Test parameters of a copied model are independent from the original model"""
+
+        old_params = copy(self.model.parameters)
+        copied_model = copy(self.model)
+        copied_model.set(z=1)
+        np.testing.assert_equal(old_params, self.model.parameters)
 
     def test_error_for_bad_frame(self):
         """Test an error is raised for a band reference frame name"""
