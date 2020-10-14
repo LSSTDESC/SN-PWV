@@ -27,12 +27,12 @@ def calc_airmass(time, ra, dec, lat, lon, alt, time_format='mjd'):
     """Calculate the airmass through which a target is observed
 
     Args:
-        time (float): Time at which the target is observed
-        ra   (float): Right Ascension of the target (Deg)
-        dec  (float): Declination of the target (Deg)
-        lat  (float): Latitude of the observer (Deg)
-        lon  (float): Longitude of the observer (Deg)
-        alt  (float): Altitude of the observer (m)
+        time      (float): Time at which the target is observed
+        ra        (float): Right Ascension of the target (Deg)
+        dec       (float): Declination of the target (Deg)
+        lat       (float): Latitude of the observer (Deg)
+        lon       (float): Longitude of the observer (Deg)
+        alt       (float): Altitude of the observer (m)
         time_format (str): Format of the time value (Default 'mjd')
 
     Returns:
@@ -291,15 +291,8 @@ class Model(sncosmo.Model):
         """Like a normal shallow copy, but makes an actual copy of the
         parameter array."""
 
-        new_model = self.__new__(self.__class__)
-        for key, val in self.__dict__.items():
-            new_model.__dict__[key] = val
-
-        new_model._parameters = self._parameters.copy()
-
-        # Link ids of new parameters in memory
-        # Otherwise parameters wont update correctly in the copied object
-        new_model._sync_parameter_arrays()
+        new_model = type(self)(self.source, self.effects, self.effect_names, self._effect_frames)
+        new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
 
 
