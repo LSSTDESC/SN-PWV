@@ -349,7 +349,7 @@ def calc_mu_for_params(model, params):
 def calc_calibration_factor_for_params(model, params):
     """Calculate the distance modulus for an array of fitted params
 
-    returns modeling.alpha * x_1 - modeling.beta * c
+    returns constants.alpha * x_1 - constants.beta * c
 
     Args:
         model          (Model): The sncosmo model to use in the simulations
