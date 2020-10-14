@@ -1,21 +1,42 @@
-lc.. DESC-SN-PWV documentation master file, created by
-   sphinx-quickstart on Wed Oct 14 11:26:45 2020.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
-Welcome to DESC-SN-PWV's documentation!
+Impact of Chromatic Effects on LSST SNe
 =======================================
+
+Understanding the time variable behavior of the atmosphere is an important step
+in calibrating data from ground-based astronomical surveys. This project explores
+how chromatic effects induced by the atmosphere will impact observation taken
+of Type Ia Supernova by the Legacy Survey of Space and Time (LSST).
+
+API Usage
+---------
+
+This project is supported by a custom Python API that if free for public use
+under the terms and conditions of the GNU General Public License (V 3.0, see
+here). For questions concerning the Python API, please see the API section of
+these docs or raise an issue on `GitHub <https://github.com/lsstdesc/sn-pwv>`_.
+If your question is of a scientific nature, please also see the Project Notes
+section.
+
+
+Contributing
+------------
+
+All involvement with this project is subject to the policies of the Dark Energy Science
+Collaboration, with particular emphasis on the **Code of Conduct** and
+**Software Development Policy**. More information is available
+`here <https://lsstdesc.org/pages/policies.html>`_.
+
 
 .. toctree::
    :hidden:
    :maxdepth: 0
+   :caption: Project Docs
 
    Overview<self>
    overview/setup.rst
 
 .. toctree::
    :hidden:
-   :maxdepth: 0
+   :maxdepth: 1
    :caption: Project Notes
 
    project_notes/data_provenance.rst
@@ -23,7 +44,7 @@ Welcome to DESC-SN-PWV's documentation!
 
 .. toctree::
    :hidden:
-   :maxdepth: 0
+   :maxdepth: 1
    :caption: API Reference
 
    api/sn_analysis.rst
