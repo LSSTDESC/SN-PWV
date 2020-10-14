@@ -1,8 +1,21 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-"""This module provides general utilities for plotting data and registering
-``sncosmo`` filters.
+"""The ``filters`` module is responsible for registering custom filter profiles
+with the ``sncosmo`` package. When registering filters for a given survey,
+please check the documentation of the corresponding function to determine
+the names of the newly registered filter.
+
+Usage Example
+-------------
+
+.. code-block:: python
+
+   import sncosmo
+   from sn_analysis.filters import register_lsst_filters
+
+   register_lsst_filters()
+   lsst_u_band = sncosmo.get_bandpass('lsst_total_u')
 
 Module API
 ----------
@@ -18,7 +31,7 @@ from astropy.table import Table
 FILTER_DIR = Path(__file__).resolve().parent.parent / 'data' / 'filters'
 
 
-def register_sncosmo_filter(wave: np.ndarray, trans: np.ndarray, name: str, force: bool = False):
+def _register_sncosmo_filter(wave: np.ndarray, trans: np.ndarray, name: str, force: bool = False) -> None:
     """Register an filter profile with sncosmo
 
     Args:
@@ -35,8 +48,13 @@ def register_sncosmo_filter(wave: np.ndarray, trans: np.ndarray, name: str, forc
     sncosmo.register(sncosmo_ccd, force=force)
 
 
-def register_decam_filters(force: bool = False):
+def register_decam_filters(force: bool = False) -> None:
     """Register DECam filter profiles, CCD response, and fiducial ATM with sncosmo
+
+    Registered Filters:
+        - DECam_<ugrizY>_filter: DECam optical response curves
+        - DECam_atm: Fiducial atmosphere assumed for the optical response curves
+        - DECam_ccd: DECam CCD Response curve
 
     Args:
         force: Re-register a band if it is already registered
@@ -51,21 +69,34 @@ def register_decam_filters(force: bool = False):
             filter_path = ctio_filter_dir / f'CTIO_DECam.{band_name}.dat'
 
             wave, transmission = np.genfromtxt(filter_path).T
-            register_sncosmo_filter(wave, transmission, 'DECam_' + band_name, force)
+            _register_sncosmo_filter(wave, transmission, 'DECam_' + band_name, force)
 
     # Register the CCD response function
     ccd_path = ctio_filter_dir / 'DECam_CCD_QE.txt'
     ccd_wave, ccd_trans = np.genfromtxt(ccd_path).T
     ccd_wave_angstroms = ccd_wave * 10  # Convert from nm to Angstroms.
-    register_sncosmo_filter(ccd_wave_angstroms, ccd_trans, 'DECam_ccd', force)
+    _register_sncosmo_filter(ccd_wave_angstroms, ccd_trans, 'DECam_ccd', force)
 
     # Register the fiducial atmosphere used for the filters
     throughput = Table.read(ctio_filter_dir / f'CTIO_DECam.throughput.dat', format='ascii')
-    register_sncosmo_filter(throughput['wave'], throughput['atm'], 'DECam_atm', force)
+    _register_sncosmo_filter(throughput['wave'], throughput['atm'], 'DECam_atm', force)
 
 
-def register_lsst_filters(force: bool = False):
-    """Register DECam filter profiles, CCD response, and fiducial ATM with sncosmo
+def register_lsst_filters(force: bool = False) -> None:
+    """Register LSST filter profiles, hardware responses, and fiducial ATM with sncosmo
+
+    Registered Filters:
+        - lsst_detector: Detector sensitivity defined in the LSST SRD
+        - lsst_atmos_10: Fiducial atmosphere over a 10 year baseline
+        - lsst_atmos_std: Fiducial atmosphere likely for LSST at 1.2 airmasses
+        - lsst_filter_<ugrizy>: Throughput of the glass filters only
+        - lsst_hardware_<ugrizy>: Hardware contribution response curve in each band
+        - lsst_total_<ugrizy>: Total response curve in each band
+        - lsst_m<123>: Response curve contribution from each mirror
+        - lsst_lens<123>: Response curve contribution from each lense
+        - lsst_mirrors: Combined result from all mirrors
+        - lsst_lenses: Combined response from all lenses
+        - lsst_<ugrizy>_no_atm: Throughput in each band without a fiducial atmosphere
 
     Args:
         force: Re-register a band if it is already registered
@@ -90,7 +121,7 @@ def register_lsst_filters(force: bool = False):
         file_path = lsst_filter_dir / fname
         wave, trans = np.loadtxt(file_path).T
         wave *= nm_in_angstrom
-        register_sncosmo_filter(wave, trans, 'lsst_' + file_path.stem, force)
+        _register_sncosmo_filter(wave, trans, 'lsst_' + file_path.stem, force)
 
         # Store filter profiles for later calculations
         filter_series = pd.Series(data=trans, index=wave, name=file_path.stem)
@@ -106,12 +137,12 @@ def register_lsst_filters(force: bool = False):
     #   and the zenith atmos_std.dat atmosphere.
 
     mirrors = response_df.m1 * response_df.m2 * response_df.m3
-    register_sncosmo_filter(mirrors.index, mirrors, 'lsst_mirrors', force)
+    _register_sncosmo_filter(mirrors.index, mirrors, 'lsst_mirrors', force)
 
     lenses = response_df.lens1 * response_df.lens2 * response_df.lens3
-    register_sncosmo_filter(lenses.index, lenses, 'lsst_lenses', force)
+    _register_sncosmo_filter(lenses.index, lenses, 'lsst_lenses', force)
 
     for band in 'ugrizy':
         filt_name = f'lsst_{band}_no_atm'
         trans = response_df[f'filter_{band}'] * mirrors * lenses * response_df.detector
-        register_sncosmo_filter(trans.index, trans, filt_name, force)
+        _register_sncosmo_filter(trans.index, trans, filt_name, force)
