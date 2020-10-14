@@ -1,4 +1,4 @@
-.. DESC-SN-PWV documentation master file, created by
+lc.. DESC-SN-PWV documentation master file, created by
    sphinx-quickstart on Wed Oct 14 11:26:45 2020.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
@@ -11,7 +11,7 @@ Welcome to DESC-SN-PWV's documentation!
    :maxdepth: 0
 
    Overview<self>
-   project_notes/setup.rst
+   overview/setup.rst
 
 .. toctree::
    :hidden:

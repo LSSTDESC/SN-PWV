@@ -1,29 +1,28 @@
 Data Provenance
 ===============
 
-This project takes advantage of multiple pre-existing research efforts, some
-which are external to the DESC. Listed below is a summary of data sets used
-by this project and their origins.
+This project takes advantage of results from multiple pre-existing research
+efforts, some which are external to the DESC. Listed below is a summary of
+data sets used by this project and their origins.
 
-Atmospheric Measurments
------------------------
+Atmospheric Measurements
+------------------------
 
-**Repository Path:** *Not included with project source code*
+**Repository Path:** Data access provided by the ``pwv_kpno`` `API <https://mwvgroup.github.io/pwv_kpno/>`_.
 
-**Data Source:** https://www.suominet.ucar.edu/
+**Data Source:** `The SuomiNet Project <https://www.suominet.ucar.edu/>`_
 
 **Description:**
-    Meteorological measurements taken and various global positions are used to
+    Meteorological measurements taken at various global positions are used to
     characterize atmospheric variability over time. This data is taken by
-    the SuomiNet project and it's affiliated teams / projects. Data access is
-    provided using the `pwv_kpno` `API <https://mwvgroup.github.io/pwv_kpno/>`_.
+    the SuomiNet project and it's affiliated teams / projects.
 
 CTIO Filters
 ------------
 
 **Repository Path:** *data/filters/ctio/**
 
-**Data Source:**
+**Data Source:** `SVO Filter Profile Service <http://svo2.cab.inta-csic.es/theory/fps/>`_
 
 **Description:**
     Filter response curves corresponding to the Dark Energy Camera (DECam) used
@@ -35,7 +34,7 @@ LSST Filters
 
 **Repository Path:** *data/filters/lsst/**
 
-**Data Source:** cloned from https://github.com/lsst/throughputs .
+**Data Source:** Cloned from https://github.com/lsst/throughputs .
 
 **Description:**
     Filter response curves curves considered as the 'baseline' performance of LSST.
