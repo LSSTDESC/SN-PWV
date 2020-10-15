@@ -48,7 +48,7 @@ Light-Curve Simulations
 **Data Source:**
 
 **Description:**
-
+    Developers can reference the assumed data model `here <plasticc_model.html>`_.
 
 Stellar Spectra
 ---------------
