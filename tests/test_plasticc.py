@@ -10,9 +10,9 @@ import sncosmo
 from astropy.table import Table
 from numpy.testing import assert_equal
 
-from sn_analysis import plasticc
-from sn_analysis.filters import register_lsst_filters
-from sn_analysis.modeling import calc_x0_for_z
+from snat_sim import plasticc
+from snat_sim.filters import register_lsst_filters
+from snat_sim.modeling import calc_x0_for_z
 
 register_lsst_filters(force=True)
 

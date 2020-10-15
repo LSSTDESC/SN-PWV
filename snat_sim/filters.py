@@ -12,7 +12,7 @@ Usage Example
 .. code-block:: python
 
    import sncosmo
-   from sn_analysis.filters import register_lsst_filters
+   from snat_sim.filters import register_lsst_filters
 
    register_lsst_filters()
    lsst_u_band = sncosmo.get_bandpass('lsst_total_u')

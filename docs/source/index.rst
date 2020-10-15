@@ -51,7 +51,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    :caption: API Reference
    :titlesonly:
 
-   api/sn_analysis.rst
+   api/snat_sim.rst
    api/constants.rst
    api/filters.rst
    api/modeling.rst

@@ -3,3 +3,4 @@ nbsphinx
 nbsphinx_link
 sphinx
 sphinx-copybutton
+IPython  # Ensures syntax highlighting in notebook docs

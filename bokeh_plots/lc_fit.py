@@ -17,8 +17,8 @@ from bokeh.plotting import figure
 _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
-from sn_analysis.filters import register_lsst_filters
-from sn_analysis import modeling, reference
+from snat_sim.filters import register_lsst_filters
+from snat_sim import modeling, reference
 
 # SNCosmo source to use when plotting
 SOURCE = 'salt2-extended'

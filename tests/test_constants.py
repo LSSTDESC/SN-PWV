@@ -7,7 +7,7 @@ from unittest import TestCase
 
 import astropy.units as u
 
-from sn_analysis import constants as const
+from snat_sim import constants as const
 
 
 class Dimensions(TestCase):

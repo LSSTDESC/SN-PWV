@@ -14,8 +14,8 @@ import sncosmo
 from scipy.integrate import trapz
 from tqdm import tqdm
 
-from sn_analysis import filters
-from sn_analysis.reference import get_stellar_spectra
+from snat_sim import filters
+from snat_sim.reference import get_stellar_spectra
 from pwv_kpno.defaults import v1_transmission
 
 filters.register_lsst_filters()

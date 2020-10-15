@@ -1,5 +1,5 @@
-sn_analysis.modeling
-====================
+snat_sim.modeling
+=================
 
-.. automodule:: sn_analysis.modeling
+.. automodule:: snat_sim.modeling
    :members:

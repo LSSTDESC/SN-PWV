@@ -1,5 +1,5 @@
-sn_analysis.plotting
-====================
+snat_sim.plotting
+=================
 
-.. automodule:: sn_analysis.plotting
+.. automodule:: snat_sim.plotting
    :members:

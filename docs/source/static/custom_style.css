@@ -45,3 +45,5 @@ div.sidebar-block p {
     font-weight: bold;
     color: #606060;
 }
+
+table.field-list {border: none;}

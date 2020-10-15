@@ -16,11 +16,12 @@ sys.path.insert(0, str(package_source_path))
 
 # -- Project information -----------------------------------------------------
 
-project = 'DESC-SN-PWV'
-copyright = '2020, DESC'
+project = 'SNAT_SIM'
+copyright = '2020, Dark Energy Science Collaboration'
 author = 'DESC'
 
 # -- General configuration ---------------------------------------------------
+master_doc = 'index'
 
 # Add any Sphinx extension module names here, as strings.
 extensions = [
@@ -56,8 +57,8 @@ html_css_files = [
 
 html_theme_path = guzzle_sphinx_theme.html_theme_path()
 html_theme = 'guzzle_sphinx_theme'
-html_title = "SN-PWV"
-html_short_title = "SN-PWV"
+html_title = 'Supernova Atmospheric Simulation'
+html_short_title = 'SNAT-SIM'
 html_sidebars = {
     '**': ['logo-text.html', 'globaltoc.html', 'searchbox.html']
 }

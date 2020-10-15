@@ -1,5 +1,5 @@
-sn_analysis.reference
-=====================
+snat_sim.reference
+==================
 
-.. automodule:: sn_analysis.reference
+.. automodule:: snat_sim.reference
    :members:

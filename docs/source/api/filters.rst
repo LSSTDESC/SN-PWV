@@ -1,5 +1,5 @@
-sn_analysis.filters
-===================
+snat_sim.filters
+================
 
-.. automodule:: sn_analysis.filters
+.. automodule:: snat_sim.filters
    :members:
