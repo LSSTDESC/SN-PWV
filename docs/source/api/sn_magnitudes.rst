@@ -1,5 +1,5 @@
-sn_analysis.sn_magnitudes
-=========================
+snat_sim.sn_magnitudes
+======================
 
-.. automodule:: sn_analysis.sn_magnitudes
+.. automodule:: snat_sim.sn_magnitudes
    :members:

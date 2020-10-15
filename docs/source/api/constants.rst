@@ -1,5 +1,5 @@
-sn_analysis.constants
-=====================
+snat_sim.constants
+==================
 
-.. automodule:: sn_analysis.constants
+.. automodule:: snat_sim.constants
    :members:

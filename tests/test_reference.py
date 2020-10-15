@@ -9,7 +9,7 @@ import numpy as np
 from astropy.table import Table
 from pandas.testing import assert_series_equal
 
-from sn_analysis import reference
+from snat_sim import reference
 
 
 class StellarSpectraParsing(TestCase):

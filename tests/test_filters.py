@@ -8,7 +8,7 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from sn_analysis import filters
+from snat_sim import filters
 
 
 class RegisterSncosmoFilter(TestCase):

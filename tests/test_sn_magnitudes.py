@@ -8,8 +8,8 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from sn_analysis import modeling, sn_magnitudes
-from sn_analysis.filters import register_decam_filters
+from snat_sim import modeling, sn_magnitudes
+from snat_sim.filters import register_decam_filters
 
 register_decam_filters(force=True)
 

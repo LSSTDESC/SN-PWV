@@ -14,9 +14,9 @@ from astropy.table import Table
 from pwv_kpno.defaults import v1_transmission
 from sncosmo.tests import test_models as sncosmo_test_models
 
-from sn_analysis import modeling
-from sn_analysis.filters import register_decam_filters
-from sn_analysis import constants as const
+from snat_sim import modeling
+from snat_sim.filters import register_decam_filters
+from snat_sim import constants as const
 
 register_decam_filters(force=True)
 

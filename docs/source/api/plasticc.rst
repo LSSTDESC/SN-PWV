@@ -1,5 +1,5 @@
-sn_analysis.plasticc
-====================
+snat_sim.plasticc
+=================
 
-.. automodule:: sn_analysis.plasticc
+.. automodule:: snat_sim.plasticc
    :members:

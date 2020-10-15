@@ -1,6 +1,6 @@
 [report]
 omit =
-    */sn_analysis/plotting.py
+    */snat_sim/plotting.py
 
 include =
-    */sn_analysis/*
+    */snat_sim/*
