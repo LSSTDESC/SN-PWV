@@ -1,0 +1,30 @@
+#right-column {
+    max-width: 60%;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
+div.section {
+    padding-bottom: 15px
+}
+
+.mi {
+    color: unset;
+}
+
+.mo {
+    color: unset;
+}
+
+.mfrac {
+    color: unset;
+}
+
+dl {
+    margin-bottom: 40px;
+}
+

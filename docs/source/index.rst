@@ -29,18 +29,11 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
 .. toctree::
    :hidden:
    :maxdepth: 0
-   :caption: Project Docs
+   :titlesonly:
 
    Overview<self>
    overview/setup.rst
-
-.. toctree::
-   :hidden:
-   :maxdepth: 1
-   :caption: Project Notes
-
    project_notes/data_provenance.rst
-   project_notes/plasticc_model.rst
 
 .. toctree::
    :hidden:
@@ -56,6 +49,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    :hidden:
    :maxdepth: 1
    :caption: API Reference
+   :titlesonly:
 
    api/sn_analysis.rst
    api/constants.rst

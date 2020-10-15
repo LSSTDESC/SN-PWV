@@ -37,12 +37,22 @@ extensions = [
     'nbsphinx_link'
 ]
 
+pygments_style = 'sphinx'  # Syntax highlighting style
+highlight_language = 'python3'
+
 # Setting for rendering jupyter notebooks
 nbsphinx_execute = 'never'
 
-
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
+html_static_path = ['./static/']
+
+
+# These paths are either relative to html_static_path
+# or fully qualified paths (eg. https://...)
+html_css_files = [
+    'css/custom.css',
+]
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
@@ -63,7 +73,12 @@ html_sidebars = {
     '**': ['logo-text.html', 'searchbox.html', 'globaltoc.html']
 }
 
+
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 # html_static_path = ['static']
+
+# Add custom css code
+def setup(app):
+    app.add_css_file('custom_style.css')
