@@ -4,6 +4,9 @@
 """The ``sn_magnitudes.py`` module is responsible for calculating supernova
 magnitudes as a function of PWV and redshift. Functionality is provided to
 determine magnitudes directly from a SN model and via a light-curve fit.
+
+Module API
+----------
 """
 
 import itertools
@@ -346,7 +349,7 @@ def calc_mu_for_params(model, params):
 def calc_calibration_factor_for_params(model, params):
     """Calculate the distance modulus for an array of fitted params
 
-    returns modeling.alpha * x_1 - modeling.beta * c
+    returns constants.alpha * x_1 - constants.beta * c
 
     Args:
         model          (Model): The sncosmo model to use in the simulations

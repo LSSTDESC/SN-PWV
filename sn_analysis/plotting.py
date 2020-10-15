@@ -1,9 +1,11 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-"""Plotting functions for SNe results
+"""The ``plotting`` module provides functions for generating plots of
+analysis results that are visually consistent and easily reproducible.
 
-Plot summaries:
+Plotting Function Summaries
+---------------------------
 
 +------------------------------+----------------------------------------------+
 | Function                     | Description                                  |
@@ -39,14 +41,17 @@ Plot summaries:
 |                              | redshift and PWV.                            |
 +------------------------------+----------------------------------------------+
 | ``plot_delta_mu``            | Plot the variation in fitted distance modulus|
-|                              |  as a function of redshift and PWV.          |
+|                              | as a function of redshift and PWV.           |
 +------------------------------+----------------------------------------------+
 | ``plot_delta_colors``        | Plot the change in fitted SN color           |
-|                              |  as a function of redshift and PWV.          |
+|                              | as a function of redshift and PWV.           |
 +------------------------------+----------------------------------------------+
 | ``plot_delta_colors``        | Plot PWV measurements taken over a single    |
 |                              | year as a function of time.                  |
 +------------------------------+----------------------------------------------+
+
+Module API
+----------
 """
 
 from datetime import datetime
@@ -166,8 +171,7 @@ def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 
         figsize    (tuple): The size of the figure
 
     returns:
-        - A matplotlib figure
-        - An array of matplotlib axes
+        Tuple with a matplotlib figure and axis
     """
 
     fig, axes = plt.subplots(3, len(delta_mag), figsize=figsize)
@@ -258,8 +262,7 @@ def plot_spectral_template(source, wave_arr, z_arr, pwv, phase=0, resolution=2, 
         figsize      (tuple): The size of the figure
 
     Returns:
-        - A matplotlib figure
-        - A matplotlib axis
+        Tuple with a matplotlib figure and axis
     """
 
     fig, (top_ax, bottom_ax) = plt.subplots(
@@ -322,8 +325,7 @@ def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
         figsize (tuple): Size of the figure
 
     Returns:
-        - A matplotlib figure
-        - A matplotlib axis
+        Tuple with a matplotlib figure and axis
     """
 
     fig, axes = plt.subplots(2, len(mags), figsize=figsize, sharey='row')
@@ -497,9 +499,7 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
                              days with missing PWV
 
     Returns:
-        - A matplotlib figure
-        - A matplotlib axis
-        - A Pandas DataFrame with the start and end times of missing data shown in the figure
+        Tuple with a matplotlib figure and axis
     """
 
     pwv_series = pwv_series.sort_index()

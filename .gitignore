@@ -2,6 +2,7 @@
 tests/test_data
 notebooks/cerro_tololo.ecsv
 data/plasticc/*/
+
 # OS Files
 *.DS_Store
 
@@ -28,3 +29,5 @@ docs/build
 
 # Rendered figures
 *.pdf
+
+docs/build

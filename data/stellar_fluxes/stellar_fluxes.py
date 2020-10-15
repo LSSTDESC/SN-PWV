@@ -85,6 +85,6 @@ def run(out_dir, spec_types=SPEC_TYPES, pwv_vals=PWV_VALS):
 
 
 if __name__ == '__main__':
-    local_out_dir = Path(__file__).parent / 'stellar_fluxes'
-    local_out_dir.mkdir(exist_ok=True)
+    local_out_dir = Path(__file__).parent
+    # local_out_dir.mkdir(exist_ok=True)
     run(local_out_dir)
