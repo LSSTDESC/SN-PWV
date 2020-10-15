@@ -10,12 +10,11 @@ from setuptools import find_packages, setup
 with open('requirements.txt') as f:
     requirements = f.read().splitlines()
 
-# Create long description
 url = 'https://desc-sn-pwv.readthedocs.io/en/latest/'
 
 # Get package version
 init_path = Path(__file__).resolve().parent / 'snat_sim/__init__.py'
-with open(init_path, 'r') as f:
+with init_path.open('r') as f:
     s = f.read()
 
 versionRegExp = re.compile("__version__ = '(.*?)'")
