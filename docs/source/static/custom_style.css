@@ -9,7 +9,7 @@ table {
 }
 
 div.section {
-    padding-bottom: 15px
+    padding-bottom: 10px
 }
 
 .mi {
@@ -27,4 +27,19 @@ div.section {
 dl {
     margin-bottom: 40px;
 }
+
+div.sidebar-block h2 {
+    padding: 0;
+}
+
+div.sidebar-block p {
+    border-bottom: none;
+    font-size: 14px;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    padding: 0 0 0 10px;
+    font-weight: bold;
+    color: #606060;
+}
+
+
 

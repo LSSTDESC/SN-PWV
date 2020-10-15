@@ -43,7 +43,7 @@ highlight_language = 'python3'
 nbsphinx_execute = 'never'
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['templates']
 html_static_path = ['./static/']
 
 # These paths are either relative to html_static_path
@@ -59,5 +59,5 @@ html_theme = 'guzzle_sphinx_theme'
 html_title = "SN-PWV"
 html_short_title = "SN-PWV"
 html_sidebars = {
-    '**': ['logo-text.html', 'searchbox.html', 'globaltoc.html']
+    '**': ['logo-text.html', 'globaltoc.html', 'searchbox.html']
 }
