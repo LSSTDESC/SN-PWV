@@ -32,8 +32,8 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    :titlesonly:
 
    Overview<self>
-   overview/setup.rst
-   project_notes/data_provenance.rst
+   overview/install.rst
+   overview/data_provenance.rst
 
 .. toctree::
    :hidden:

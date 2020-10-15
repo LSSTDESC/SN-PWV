@@ -8,7 +8,7 @@ Downloading the Source
 ----------------------
 
 Source code for this project is available on
-`GitHub <https://github.com/LSSTDESC/SN-PWV>` and can be downloaded directly
+`GitHub <https://github.com/LSSTDESC/SN-PWV>`_ and can be downloaded directly
 from the GitHub repository page or using the ``git`` command line utility:
 
 .. code-block:: bash
@@ -16,7 +16,7 @@ from the GitHub repository page or using the ``git`` command line utility:
    git clone https://github.com/LSSTDESC/SN-PWV.git
 
 Project dependencies are listed in the ``requirements.txt`` file included with
-the source code. Dependencies can be installed using pip:
+the source code. Dependencies can be installed using ``pip``:
 
 .. code-block:: bash
 
