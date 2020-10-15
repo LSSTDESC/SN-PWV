@@ -57,8 +57,8 @@ html_css_files = [
 
 html_theme_path = guzzle_sphinx_theme.html_theme_path()
 html_theme = 'guzzle_sphinx_theme'
-html_title = 'SNAT_SIM'
-html_short_title = 'SNAT_SIM'
+html_title = 'Supernova Atmospheric Simulation'
+html_short_title = 'SNAT-SIM'
 html_sidebars = {
     '**': ['logo-text.html', 'globaltoc.html', 'searchbox.html']
 }
