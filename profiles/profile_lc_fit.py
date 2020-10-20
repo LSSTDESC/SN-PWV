@@ -1,5 +1,9 @@
+import sys
+
 import sncosmo
 from astropy.table import Table
+
+sys.path.insert(0, '../')
 
 from snat_sim import filters, plasticc, sn_magnitudes, modeling
 
