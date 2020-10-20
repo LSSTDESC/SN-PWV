@@ -1,7 +1,7 @@
 # !/usr/bin/env python3
 # -*- coding: UTF-8 -*-
 
-"""The ``filters`` module is responsible for registering custom filter scripts
+"""The ``filters`` module is responsible for registering custom filter profiles
 with the ``sncosmo`` package. When registering filters for a given survey,
 please check the documentation of the corresponding function to determine
 the names of the newly registered filter.
