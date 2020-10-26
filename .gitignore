@@ -1,7 +1,8 @@
-# Scratch data
+# Data files
 tests/test_data
 notebooks/cerro_tololo.ecsv
 data/plasticc/*/
+results/
 
 # OS Files
 *.DS_Store
