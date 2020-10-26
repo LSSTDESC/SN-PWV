@@ -38,7 +38,8 @@ class FittingPipeline:
             skynr: int = 100,
             quality_callback: callable = None,
             max_queue=25,
-            pool_size: int = None):
+            pool_size: int = None,
+            iter_lim=float('inf')):
         """Fit light-curves using multiple processes and combine results into an output file
 
         The ``max_queue`` argument can be used to limit **duplicate**
@@ -57,6 +58,7 @@ class FittingPipeline:
             quality_callback: Skip light-curves if this function returns False
             max_queue: Maximum number of light-curves to store in memory at once
             pool_size: Total number of workers to spawn. Defaults to CPU count
+            iter_lim: Limit number of processed light-curves (Useful for profiling)
         """
 
         self.pool_size = mp.cpu_count() if pool_size is None else pool_size
@@ -70,6 +72,7 @@ class FittingPipeline:
         self.gain = gain
         self.skynr = skynr
         self.quality_callback = quality_callback
+        self.iter_lim = iter_lim
         self.out_path = None  # To be set when ``run`` is called
 
         manager = mp.Manager()
@@ -93,7 +96,11 @@ class FittingPipeline:
         """Load light-curves from a given PLaSTICC cadence into a the pipeline"""
 
         # The queue will block the for loop when it is full, limiting our memory usage
-        for light_curve in plasticc.iter_lc_for_cadence_model(self.cadence, model=11, verbose=True):
+        light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=11, verbose=True)
+        for i, light_curve in enumerate(light_curve_iter):
+            if i >= self.iter_lim:
+                break
+
             self.queue_plasticc_lc.put(light_curve)
 
         # Signal the rest of the pipeline that there are no more light-curves
@@ -126,7 +133,8 @@ class FittingPipeline:
 
             self.queue_duplicated_lc.put(duplicated_lc)
 
-        self.queue_duplicated_lc.put('KILL')
+        # Propagate kill signal
+        self.queue_duplicated_lc.put(light_curve)
 
     def _fit_light_curves(self) -> None:
         """Fit light-curves using the given model"""
@@ -144,7 +152,8 @@ class FittingPipeline:
             out_vals.extend(fitted_model.parameters)
             self.queue_fit_results.put(out_vals)
 
-        self.queue_fit_results.put('KILL')
+        # Propagate kill signal
+        self.queue_fit_results.put(light_curve)
 
     def _unload_output_queue(self) -> None:
         """Retrieve fit results from the output queue and write results to file"""
@@ -246,5 +255,6 @@ if __name__ == '__main__':
         sim_model=model_with_pwv,
         fit_model=model_without_pwv,
         vparams=['x0', 'x1', 'c'],
-        pool_size=10
+        pool_size=10,
+        iter_lim=100
     ).run(out_path=output)
