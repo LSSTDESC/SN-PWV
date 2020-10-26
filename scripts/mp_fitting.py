@@ -93,7 +93,7 @@ class FittingPipeline:
         return self.pool_size - self.fitting_pool_size
 
     def _load_queue_plasticc_lc(self) -> None:
-        """Load light-curves from a given PLaSTICC cadence into a the pipeline"""
+        """Load light-curves from a given PLaSTICC cadence into the pipeline"""
 
         # The queue will block the for loop when it is full, limiting our memory usage
         light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=11, verbose=True)
