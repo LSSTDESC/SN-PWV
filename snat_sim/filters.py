@@ -49,7 +49,7 @@ def _register_sncosmo_filter(wave: np.ndarray, trans: np.ndarray, name: str, for
 
 
 def register_decam_filters(force=False):
-    """Register DECam filter profiles, CCD response, and fiducial ATM with sncosmo
+    """Register DECam filter scripts, CCD response, and fiducial ATM with sncosmo
 
     Registered Filters:
         - DECam_<ugrizY>_filter: DECam optical response curves
@@ -83,7 +83,7 @@ def register_decam_filters(force=False):
 
 
 def register_lsst_filters(force=False):
-    """Register LSST filter profiles, hardware responses, and fiducial ATM with sncosmo
+    """Register LSST filter scripts, hardware responses, and fiducial ATM with sncosmo
 
     Registered Filters:
         - lsst_detector: Detector sensitivity defined in the LSST SRD
@@ -123,7 +123,7 @@ def register_lsst_filters(force=False):
         wave *= nm_in_angstrom
         _register_sncosmo_filter(wave, trans, 'lsst_' + file_path.stem, force)
 
-        # Store filter profiles for later calculations
+        # Store filter scripts for later calculations
         filter_series = pd.Series(data=trans, index=wave, name=file_path.stem)
         response_curves.append(filter_series)
 
