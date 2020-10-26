@@ -13,6 +13,7 @@ The processing pipeline is as follows:
 
 import multiprocessing as mp
 import sys
+import warnings
 from copy import copy
 from pathlib import Path
 from typing import Union
@@ -25,9 +26,6 @@ from snat_sim import modeling, plasticc, filters
 
 model_type = Union[sncosmo.Model, modeling.Model]
 filters.register_lsst_filters()
-
-OUT_PATH = Path(__file__).resolve().parent / 'fit_results.csv'
-
 
 class FittingPipeline:
     def __init__(
@@ -43,6 +41,12 @@ class FittingPipeline:
             pool_size: int = None):
         """Fit light-curves using multiple processes and combine results into an output file
 
+        The ``max_queue`` argument can be used to limit **duplicate**
+        memory usage by restricting the number of light-curves that are read
+        into the  pipeline at once. However, it does not effect memory usage
+        by the underlying file parser. In general increasing the pool size
+        has minimal performance impact.
+
         Args:
             cadence: Cadence to use when simulating light-curves
             sim_model: Model to use when simulating light-curves
@@ -57,7 +61,7 @@ class FittingPipeline:
 
         self.pool_size = mp.cpu_count() if pool_size is None else pool_size
         if self.pool_size < 4:
-            raise RuntimeError('Cannot spawn multiprocessing with less than 4 processes.')
+            raise RuntimeError('Cannot spawn pipeline with less than 4 processes.')
 
         self.cadence = cadence
         self.sim_model = sim_model
@@ -69,19 +73,31 @@ class FittingPipeline:
         self.out_path = None  # To be set when ``run`` is called
 
         manager = mp.Manager()
-        self._pool_size = max_queue // 2
-        self.queue_plasticc_lc = manager.Queue(self._pool_size)
-        self.queue_duplicated_lc = manager.Queue(self._pool_size)
+        self.queue_plasticc_lc = manager.Queue(max_queue // 2)
+        self.queue_duplicated_lc = manager.Queue(max_queue // 2)
         self.queue_fit_results = manager.Queue()
+
+    @property
+    def fitting_pool_size(self) -> int:
+        """Number of processes used for fitting light-curves"""
+
+        return (self.pool_size - 2) // 2
+
+    @property
+    def simulation_pool_size(self) -> int:
+        """Number of processes used for simulating light-curves"""
+
+        return self.pool_size - self.fitting_pool_size
 
     def _load_queue_plasticc_lc(self) -> None:
         """Load light-curves from a given PLaSTICC cadence into a the pipeline"""
 
-        # The queue will block the for loop when it is fool, limiting our memory usage
+        # The queue will block the for loop when it is full, limiting our memory usage
         for light_curve in plasticc.iter_lc_for_cadence_model(self.cadence, model=11, verbose=True):
             self.queue_plasticc_lc.put(light_curve)
 
         # Signal the rest of the pipeline that there are no more light-curves
+        # Load more than enough kill commands to make it through the pipeline
         for _ in range(self.pool_size):
             self.queue_plasticc_lc.put('KILL')
 
@@ -93,11 +109,7 @@ class FittingPipeline:
         source_low = self.sim_model.source.minwave()
         z_limit = (u_band_low / source_low) - 1
 
-        while True:
-            light_curve = self.queue_plasticc_lc.get()
-            if light_curve == 'KILL':
-                self.queue_duplicated_lc.put('KILL')
-                break
+        while light_curve := self.queue_plasticc_lc.get() != 'KILL':
 
             # Skip the light-curve if it is outside the redshift range
             if light_curve.meta['SIM_REDSHIFT_CMB'] >= z_limit:
@@ -114,27 +126,25 @@ class FittingPipeline:
 
             self.queue_duplicated_lc.put(duplicated_lc)
 
+        self.queue_duplicated_lc.put('KILL')
+
     def _fit_light_curves(self) -> None:
         """Fit light-curves using the given model"""
 
         fit_model = copy(self.fit_model)
-
-        while True:
-            lc = self.queue_duplicated_lc.get()
-            if lc == 'KILL':
-                self.queue_fit_results.put('KILL')
-                break
-
-            out_vals = list(lc.meta.values())
+        while light_curve := self.queue_duplicated_lc.get() != 'KILL':
+            out_vals = list(light_curve.meta.values())
 
             # Use the true light-curve parameters as the initial guess
-            fit_model.update({k: v for k, v in lc.meta.items() if k in fit_model.param_names})
+            fit_model.update({k: v for k, v in light_curve.meta.items() if k in fit_model.param_names})
 
             # Fit the model without PWV
-            _, fitted_model = sncosmo.fit_lc(lc, fit_model, self.vparams)
+            _, fitted_model = sncosmo.fit_lc(light_curve, fit_model, self.vparams)
 
             out_vals.extend(fitted_model.parameters)
             self.queue_fit_results.put(out_vals)
+
+        self.queue_fit_results.put('KILL')
 
     def _unload_output_queue(self) -> None:
         """Retrieve fit results from the output queue and write results to file"""
@@ -142,16 +152,12 @@ class FittingPipeline:
         kill_count = 0
         with self.out_path.open('w') as outfile:
             while True:
-                results = map(str, self.queue_fit_results.get())
-                if results == 'KILL':
+                if (results := self.queue_fit_results.get()) == 'KILL':
                     kill_count += 1
+                    if kill_count >= self.fitting_pool_size:
+                        return  # No more fits are being run
 
-                    if kill_count >= self._pool_size - 2:
-                        return
-
-                    continue
-
-                new_line = ','.join(results) + '\n'
+                new_line = ','.join(map(str, results)) + '\n'
                 outfile.write(new_line)
 
     def run(self, out_path: Path) -> None:
@@ -166,25 +172,18 @@ class FittingPipeline:
         out_path.parent.mkdir(exist_ok=True, parents=True)
         self.out_path = out_path.with_suffix('.csv')
 
-        # Collect processes so they can be joined at the end
-        processes = []
-
-        # Save two processes for reading / writing to disk. All others
-        # Used for simulation / fitting
-        processes_available_for_pools = self.pool_size - 2
-        simulation_pool_size = processes_available_for_pools // 2
-        fitting_pool_size = self.pool_size - simulation_pool_size
+        processes = []  # Accumulator for processes so they can be joined at the end
 
         load_plasticc_process = mp.Process(target=self._load_queue_plasticc_lc)
         load_plasticc_process.start()
         processes.append(load_plasticc_process)
 
-        for _ in range(simulation_pool_size):
+        for _ in range(self.simulation_pool_size):
             duplicate_lc_process = mp.Process(target=self._duplicate_light_curves)
             duplicate_lc_process.start()
             processes.append(duplicate_lc_process)
 
-        for _ in range(fitting_pool_size):
+        for _ in range(self.fitting_pool_size):
             fitting_process = mp.Process(target=self._fit_light_curves)
             fitting_process.start()
             processes.append(fitting_process)
@@ -241,10 +240,11 @@ if __name__ == '__main__':
         effect_frames=['obs']
     )
 
+    output = Path(__file__).resolve().parent.parent / 'results' / 'fit_results.csv'
     FittingPipeline(
         cadence=cadence_name,
         sim_model=model_with_pwv,
         fit_model=model_without_pwv,
         vparams=['x0', 'x1', 'c'],
-        pool_size=2 * mp.cpu_count()
-    ).run(out_path=OUT_PATH)
+        pool_size=10
+    ).run(out_path=output)
