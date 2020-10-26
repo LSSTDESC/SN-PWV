@@ -1,3 +1,3 @@
-sn-pwv/bokeh_plots/* linguist-vendored
-sn-pwv/data/* linguist-vendored
-sn-pwv/notebooks/* linguist-vendored
+bokeh_plots/* linguist-vendored
+data/* linguist-vendored
+notebooks/* linguist-vendored
