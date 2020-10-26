@@ -20,7 +20,7 @@ from typing import Union
 import sncosmo
 from astropy.table import Table
 
-sys.path.insert(0, '../')
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from snat_sim import modeling, plasticc, filters
 
 model_type = Union[sncosmo.Model, modeling.Model]
@@ -207,8 +207,9 @@ def passes_quality_cuts(light_curve: Table) -> bool:
 if __name__ == '__main__':
 
     available_cadences = plasticc.get_available_cadences()
-    if sys.argv[1] not in available_cadences:
-        raise ValueError(f'Cadence {sys.argv[1]} not available from local cadences {available_cadences}')
+    cadence_name = sys.argv[1]
+    if cadence_name not in available_cadences:
+        raise ValueError(f'Cadence {cadence_name} not available from local cadences: {available_cadences}')
 
     # Characterize the atmospheric variability
     # Set PWV to a constant while developing
@@ -227,7 +228,7 @@ if __name__ == '__main__':
     model_without_pwv = sncosmo.Model('Salt2-extended')
 
     FittingPipeline(
-        cadence=sys.argv[1],
+        cadence=cadence_name,
         sim_model=model_with_pwv,
         fit_model=model_without_pwv,
         vparams=['x0', 'x1', 'c'],
