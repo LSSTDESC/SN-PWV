@@ -27,7 +27,6 @@ model_type = Union[sncosmo.Model, modeling.Model]
 filters.register_lsst_filters()
 
 OUT_PATH = Path(__file__).resolve().parent / 'fit_results.csv'
-CADENCE = 'alt_sched'  # Todo: Make this a command line argument
 
 
 class FittingPipeline:
@@ -206,7 +205,13 @@ def passes_quality_cuts(light_curve: Table) -> bool:
 
 
 if __name__ == '__main__':
+
+    available_cadences = plasticc.get_available_cadences()
+    if sys.argv[1] not in available_cadences:
+        raise ValueError(f'Cadence {sys.argv[1]} not available from local cadences {available_cadences}')
+
     # Characterize the atmospheric variability
+    # Set PWV to a constant while developing
     pwv_interpolator = lambda *args: 5
     variable_pwv_effect = modeling.VariablePWVTrans(pwv_interpolator)
     variable_pwv_effect.set(res=5)
@@ -222,7 +227,7 @@ if __name__ == '__main__':
     model_without_pwv = sncosmo.Model('Salt2-extended')
 
     FittingPipeline(
-        cadence='alt_sched',
+        cadence=sys.argv[1],
         sim_model=model_with_pwv,
         fit_model=model_without_pwv,
         vparams=['x0', 'x1', 'c'],
