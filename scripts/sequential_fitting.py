@@ -1,4 +1,12 @@
+# !/usr/bin/env python3
+# -*- coding: UTF-8 -*-
+
+"""Single process script for simulating light-curves with atmospheric effects
+and then fitting them with a given SN model.
+"""
+
 import sys
+from copy import copy
 
 import sncosmo
 from astropy.table import Table
@@ -10,20 +18,20 @@ from snat_sim import filters, plasticc, sn_magnitudes, modeling
 filters.register_lsst_filters(force=True)
 
 
-def iter_custom_lcs(
-        model, cadence, iter_lim=None, gain=20, skynr=100, quality_callback=None, verbose=True):
+def iter_custom_lcs(model, cadence, iter_lim=None, gain=20, skynr=100, quality_callback=None, verbose=True):
     """Simulate light-curves for a given PLaSTICC cadence
 
     Args:
         model               (Model): Model to use in the simulations
         cadence               (str): Cadence to use when simulating light-curves
+        iter_lim:             (int): Limit number of processed light-curves (Useful for profiling)
         gain                  (int): Gain to use during simulation
         skynr                 (int): Simulate skynoise by scaling plasticc ``SKY_SIG`` by 1 / skynr
         quality_callback (callable): Skip light-curves if this function returns False
         verbose              (bool): Display a progress bar
     """
 
-    # model = copy(model)
+    model = copy(model)
 
     # Determine redshift limit of the given model
     u_band_low = sncosmo.get_bandpass('lsst_hardware_u').minwave()
@@ -71,22 +79,25 @@ def passes_quality_cuts(light_curve):
     return sum(passed_cuts) >= 2
 
 
-pwv_interpolator = lambda *args: 5
-variable_pwv_effect = modeling.VariablePWVTrans(pwv_interpolator)
-variable_pwv_effect.set(res=5)
-
-sn_model_with_pwv = modeling.Model(
-    source='salt2-extended',
-    effects=[variable_pwv_effect],
-    effect_names=[''],
-    effect_frames=['obs']
-)
-
-light_curves = iter_custom_lcs(
-    sn_model_with_pwv, cadence='alt_sched', iter_lim=100, quality_callback=passes_quality_cuts)
-
 if __name__ == '__main__':
+    # Characterize the atmospheric variability
+    # Set PWV to a constant while developing
+    pwv_interpolator = lambda *args: 5
+    variable_pwv_effect = modeling.VariablePWVTrans(pwv_interpolator)
+    variable_pwv_effect.set(res=5)
+
+    # Build models with and without atmospheric effects
     model_without_pwv = sncosmo.Model('salt2-extended')
+    sn_model_with_pwv = modeling.Model(
+        source='salt2-extended',
+        effects=[variable_pwv_effect],
+        effect_names=[''],
+        effect_frames=['obs']
+    )
+
+    light_curves = iter_custom_lcs(
+        sn_model_with_pwv, cadence='alt_sched', iter_lim=100, quality_callback=passes_quality_cuts)
+
     fitted_mag, fitted_params = sn_magnitudes.fit_mag(
         model=model_without_pwv,
         light_curves=light_curves,
