@@ -39,7 +39,8 @@ class FittingPipeline:
             gain: int = 20,
             skynr: int = 100,
             quality_callback: callable = None,
-            max_queue=25):
+            max_queue=25,
+            pool_size: int = None):
         """Fit light-curves using multiple processes and combine results into an output file
 
         Args:
@@ -51,7 +52,12 @@ class FittingPipeline:
             skynr: Simulate skynoise by scaling plasticc ``SKY_SIG`` by 1 / skynr
             quality_callback: Skip light-curves if this function returns False
             max_queue: Maximum number of light-curves to store in memory at once
+            pool_size: Total number of workers to spawn. Defaults to CPU count
         """
+
+        self.pool_size = mp.cpu_count() if pool_size is None else pool_size
+        if self.pool_size < 4:
+            raise RuntimeError('Cannot spawn multiprocessing with less than 4 processes.')
 
         self.cadence = cadence
         self.sim_model = sim_model
@@ -63,8 +69,9 @@ class FittingPipeline:
         self.out_path = None  # To be set when ``run`` is called
 
         manager = mp.Manager()
-        self.queue_plasticc_lc = manager.Queue(max_queue // 2)
-        self.queue_duplicated_lc = manager.Queue(max_queue // 2)
+        self._pool_size = max_queue // 2
+        self.queue_plasticc_lc = manager.Queue(self._pool_size)
+        self.queue_duplicated_lc = manager.Queue(self._pool_size)
         self.queue_fit_results = manager.Queue()
 
     def _load_queue_plasticc_lc(self) -> None:
@@ -75,7 +82,8 @@ class FittingPipeline:
             self.queue_plasticc_lc.put(light_curve)
 
         # Signal the rest of the pipeline that there are no more light-curves
-        self.queue_plasticc_lc.put('KILL')
+        for _ in range(self.pool_size):
+            self.queue_plasticc_lc.put('KILL')
 
     def _duplicate_light_curves(self) -> None:
         """Simulate light-curves for a given PLaSTICC cadence with atmospheric effects"""
@@ -131,28 +139,29 @@ class FittingPipeline:
     def _unload_output_queue(self) -> None:
         """Retrieve fit results from the output queue and write results to file"""
 
+        kill_count = 0
         with self.out_path.open('w') as outfile:
             while True:
                 results = map(str, self.queue_fit_results.get())
                 if results == 'KILL':
-                    break
+                    kill_count += 1
+
+                    if kill_count >= self._pool_size - 2:
+                        return
+
+                    continue
 
                 new_line = ','.join(results) + '\n'
                 outfile.write(new_line)
 
-    def run(self, out_path: Path, pool_size: int = None) -> None:
+    def run(self, out_path: Path) -> None:
         """Run fits of each light-curve and write results to file
 
         A ``.csv`` extension is enforced on the output file.
 
         Args:
             out_path: Path to write results to
-            pool_size: Total number of workers to spawn. Defaults to CPU count
         """
-
-        pool_size = mp.cpu_count() if pool_size is None else pool_size
-        if pool_size < 4:
-            raise RuntimeError('Cannot spawn multiprocessing with less than 4 processes.')
 
         out_path.parent.mkdir(exist_ok=True, parents=True)
         self.out_path = out_path.with_suffix('.csv')
@@ -162,9 +171,9 @@ class FittingPipeline:
 
         # Save two processes for reading / writing to disk. All others
         # Used for simulation / fitting
-        processes_available_for_pools = pool_size - 2
+        processes_available_for_pools = self.pool_size - 2
         simulation_pool_size = processes_available_for_pools // 2
-        fitting_pool_size = pool_size - simulation_pool_size
+        fitting_pool_size = self.pool_size - simulation_pool_size
 
         load_plasticc_process = mp.Process(target=self._load_queue_plasticc_lc)
         load_plasticc_process.start()
@@ -237,7 +246,5 @@ if __name__ == '__main__':
         sim_model=model_with_pwv,
         fit_model=model_without_pwv,
         vparams=['x0', 'x1', 'c'],
-    ).run(
-        out_path=OUT_PATH,
         pool_size=2 * mp.cpu_count()
-    )
+    ).run(out_path=OUT_PATH)
