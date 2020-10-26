@@ -112,15 +112,12 @@ class FittingPipeline:
 
         while self.keep_running or not self.queue_duplicated_lc.empty():
             lc = self.queue_duplicated_lc.get()
-            print('fitting', lc.meta['SNID'])
-            out_vals = list(lc.meta.values)
+            out_vals = list(lc.meta.values())
 
             # Use the true light-curve parameters as the initial guess
-            lc.meta.pop('pwv', None)
-            lc.meta.pop('res', None)
+            fit_model.update({k: v for k, v in lc.meta.items() if k in fit_model.param_names})
 
             # Fit the model without PWV
-            fit_model.update(lc.meta)
             _, fitted_model = sncosmo.fit_lc(lc, fit_model, self.vparams)
 
             out_vals.extend(fitted_model.parameters)
@@ -131,7 +128,8 @@ class FittingPipeline:
 
         with self.out_path.open('w') as outfile:
             while self.keep_running or not self.queue_fit_results.empty():
-                new_line = ','.join(self.queue_fit_results.get()) + '\n'
+                results = map(str, self.queue_fit_results.get())
+                new_line = ','.join(results) + '\n'
                 outfile.write(new_line)
 
     def run(self, out_path: Path, pool_size: int = None) -> None:
