@@ -13,7 +13,6 @@ The processing pipeline is as follows:
 
 import multiprocessing as mp
 import sys
-import warnings
 from copy import copy
 from pathlib import Path
 from typing import Union
@@ -26,6 +25,7 @@ from snat_sim import modeling, plasticc, filters
 
 model_type = Union[sncosmo.Model, modeling.Model]
 filters.register_lsst_filters()
+
 
 class FittingPipeline:
     def __init__(
@@ -109,7 +109,7 @@ class FittingPipeline:
         source_low = self.sim_model.source.minwave()
         z_limit = (u_band_low / source_low) - 1
 
-        while light_curve := self.queue_plasticc_lc.get() != 'KILL':
+        while (light_curve := self.queue_plasticc_lc.get()) != 'KILL':
 
             # Skip the light-curve if it is outside the redshift range
             if light_curve.meta['SIM_REDSHIFT_CMB'] >= z_limit:
@@ -132,7 +132,7 @@ class FittingPipeline:
         """Fit light-curves using the given model"""
 
         fit_model = copy(self.fit_model)
-        while light_curve := self.queue_duplicated_lc.get() != 'KILL':
+        while (light_curve := self.queue_duplicated_lc.get()) != 'KILL':
             out_vals = list(light_curve.meta.values())
 
             # Use the true light-curve parameters as the initial guess
