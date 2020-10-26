@@ -5,7 +5,7 @@
 and then fitting them with a given SN model.
 
 The processing pipeline is as follows:
-  x- WORKER: Load plasticc light-curves -> Queue
+  x- WORKER: Load plasticc light-curves from disk -> Queue
   -> POOL: Retrieve Plastic light-curves and add atmospheric effects -> Queue
   -> POOL: Fit duplicated light-curves and determine fitted parameters -> Queue
   -x WORKER: Write fitted parameters to file
@@ -27,7 +27,7 @@ model_type = Union[sncosmo.Model, modeling.Model]
 filters.register_lsst_filters()
 
 OUT_PATH = Path(__file__).resolve().parent / 'fit_results.csv'
-CADENCE = 'alt_sched'
+CADENCE = 'alt_sched'  # Todo: Make this a command line argument
 
 
 class FittingPipeline:
@@ -106,11 +106,6 @@ class FittingPipeline:
 
         self.queue_duplicated_lc.put(duplicated_lc)
 
-    def _fit_light_curves_mp_wrapper(self, args) -> None:
-        """Wrapper for ``_fit_light_curves`` with a signature suitable for a processing pool"""
-
-        self._fit_light_curves()
-
     def _fit_light_curves(self) -> None:
         """Fit light-curves using the given model"""
 
@@ -140,31 +135,44 @@ class FittingPipeline:
                 new_line = ','.join(self.queue_fit_results.get()) + '\n'
                 outfile.write(new_line)
 
-    def run(self, out_path: Path) -> None:
+    def run(self, out_path: Path, pool_size: int = None) -> None:
         """Run fits of each light-curve and write results to file
 
         A ``.csv`` extension is enforced on the output file.
 
         Args:
             out_path: Path to write results to
+            pool_size: Total number of workers to spawn. Defaults to CPU count
         """
+
+        pool_size = mp.cpu_count() if pool_size is None else pool_size
+        if pool_size < 4:
+            raise RuntimeError('Cannot spawn multiprocessing with less than 4 processes.')
 
         out_path.parent.mkdir(exist_ok=True, parents=True)
         self.out_path = out_path.with_suffix('.csv')
 
+        # Collect processes so they can be joined at the end
         processes = []
-        pool_size = mp.cpu_count()
+
+        # Save two processes for reading / writing to disk. All others
+        # Used for simulation / fitting
+        processes_available_for_pools = pool_size - 2
+        simulation_pool_size = processes_available_for_pools // 2
+        fitting_pool_size = pool_size - simulation_pool_size
 
         load_plasticc_process = mp.Process(target=self._load_queue_plasticc_lc)
         load_plasticc_process.start()
         processes.append(load_plasticc_process)
 
-        for _ in range(pool_size):
+        for _ in range(simulation_pool_size):
             duplicate_lc_process = mp.Process(target=self._duplicate_light_curves)
             duplicate_lc_process.start()
             processes.append(duplicate_lc_process)
 
-            fitting_process = mp.Process(target=self._fit_light_curves_mp_wrapper)
+        for _ in range(fitting_pool_size):
+            fitting_process = mp.Process(target=self._fit_light_curves)
+            fitting_process.start()
             processes.append(fitting_process)
 
         unload_results_process = mp.Process(target=self._unload_output_queue)
