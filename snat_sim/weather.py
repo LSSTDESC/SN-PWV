@@ -83,7 +83,7 @@ def index_series_by_seconds(series):
     are interpolated for.
 
     Args:
-        series (pd.Series): A series with a Datatime index
+        series (pd.Series): A series with a Datetime index
 
     Returns:
         A copy of the passed series with a new index
