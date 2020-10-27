@@ -46,7 +46,7 @@ class TestTabulateMagnitudes(TestCase):
         self.bands = ['sdssu', 'sdssg']
 
         self.mag_dict = sn_magnitudes.tabulate_mag(
-            self.model, self.pwv_vals, self.z_vals, self.bands)
+            self.model, self.pwv_vals, self.z_vals, self.bands, verbose=False)
 
     def test_values_match_sncosmo_simulation(self):
         """Test returned values equal simulated values from sncosmo"""
