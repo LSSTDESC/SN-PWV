@@ -1,5 +1,4 @@
-# !/usr/bin/env python3
-# -*- coding: UTF-8 -*-
+#!/usr/bin/env python3
 
 """Tabulate and save to disk stellar flux values through LSST bandpasses at
 various PWV concentrations.

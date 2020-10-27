@@ -1,6 +1,3 @@
-# !/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 """The ``constants`` module defines values for constants used across the
 parent package.
 
