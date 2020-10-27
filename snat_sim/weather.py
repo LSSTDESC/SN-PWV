@@ -4,6 +4,9 @@
 """The ``weather`` module is used to characterize atmospheric variability
 by modeling the time variable precipitate water vapor (PWV) as a function of
 time.
+
+Module API
+----------
 """
 
 import warnings
