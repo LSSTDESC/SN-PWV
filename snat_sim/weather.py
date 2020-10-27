@@ -72,7 +72,7 @@ def supplemented_data(input_data, primary_year, supp_years, resample_rate='30min
     return stacked_pwv.resample(resample_rate, offset=timedelta(minutes=15)).interpolate()
 
 
-def index_pwv_by_seconds(pwv_series):
+def index_series_by_seconds(series):
     """Return a copy of a pandas Datetime series indexed by seconds elapsed
     in the year
 
@@ -80,28 +80,28 @@ def index_pwv_by_seconds(pwv_series):
     are interpolated for.
 
     Args:
-        pwv_series (pd.Series): A series with a Datatime index
+        series (pd.Series): A series with a Datatime index
 
     Returns:
         A copy of the passed series with a new index
     """
 
     # Convert index values to seconds
-    pwv_model = pwv_series.copy()
-    pwv_model.index = datetime_to_sec_in_year(pwv_model.index)
+    series = series.copy()
+    series.index = datetime_to_sec_in_year(series.index)
 
     # Resample the index to span the whole year
     end_of_year = 365.25 * 24 * 60 * 60  # Days in year * hours * min * sec
-    delta = pwv_model.index[1] - pwv_model.index[0]
-    offset = pwv_model.index[1] % delta
+    delta = series.index[1] - series.index[0]
+    offset = series.index[1] % delta
     new_indices = np.arange(-offset, end_of_year + offset + 2 * delta, delta)
-    pwv_model = pwv_model.reindex(new_indices)
+    series = series.reindex(new_indices)
 
     # Wrap values across the boundaries and fill nans with interpolation
-    first_not_nan, *_, last_not_nan = np.where(~pwv_model.isna())[0]
-    pwv_model.iloc[0] = pwv_model.iloc[last_not_nan]
-    pwv_model.iloc[-1] = pwv_model.iloc[first_not_nan]
-    return pwv_model.interpolate()
+    first_not_nan, *_, last_not_nan = np.where(~series.isna())[0]
+    series.iloc[0] = series.iloc[last_not_nan]
+    series.iloc[-1] = series.iloc[first_not_nan]
+    return series.interpolate()
 
 
 def build_pwv_model(pwv_series):
@@ -114,7 +114,7 @@ def build_pwv_model(pwv_series):
         An interpolation function that accepts MJD
     """
 
-    pwv_model_data = index_pwv_by_seconds(pwv_series)
+    pwv_model_data = index_series_by_seconds(pwv_series)
 
     def interp(mjd):
         with warnings.catch_warnings():
