@@ -1,6 +1,3 @@
-#!/usr/bin/env python3.7
-# -*- coding: UTF-8 -*-
-
 """Read and parse simulated light-curves for different cadences.
 
 Module API

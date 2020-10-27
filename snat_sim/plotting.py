@@ -1,6 +1,3 @@
-# !/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 """The ``plotting`` module provides functions for generating plots of
 analysis results that are visually consistent and easily reproducible.
 

@@ -1,5 +1,4 @@
-# !/usr/bin/env python3
-# -*- coding: UTF-8 -*-
+#!/usr/bin/env python3
 
 """Single process script for simulating light-curves with atmospheric effects
 and then fitting them with a given SN model.
