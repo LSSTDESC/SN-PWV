@@ -19,8 +19,8 @@ from tqdm import tqdm
 
 from . import modeling, constants as const
 
-_PARENT = Path(__file__).resolve()
-_CONFIG_PATH = _PARENT.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
+# Reference pwv values
+_CONFIG_PATH = Path(__file__).resolve().parent / 'defaults' / 'ref_pwv.yaml'
 
 
 @lru_cache()  # Cache I/O
