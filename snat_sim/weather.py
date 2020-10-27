@@ -14,28 +14,29 @@ from datetime import timedelta
 
 import numpy as np
 import pandas as pd
+from astropy import units as u
 from astropy.time import Time
 
 
 def datetime_to_sec_in_year(dates):
     """Calculate number of seconds elapsed modulo 1 year
 
+    Accurate to within a microsecond
+
     Args:
-        dates (array, pd.Datetime): Pandas datetime array
+        dates (datetime, array, pd.Datetime): Pandas datetime array
 
     Returns:
-        A numpy array of integers
+        A single float or a numpy array of integers
     """
 
     dates = pd.to_datetime(dates)
-
-    hour_in_day = 24
-    min_in_hour = sec_in_min = 60
     return (
-            dates.dayofyear * hour_in_day * min_in_hour * sec_in_min
-            + dates.hour * min_in_hour * sec_in_min
-            + dates.minute * sec_in_min
-    )
+            (dates.dayofyear - 1) * u.day +
+            dates.hour * u.hour +
+            dates.second * u.s +
+            dates.microsecond * u.ms
+    ).to(u.s).value
 
 
 def supplemented_data(input_data, primary_year, supp_years, resample_rate='30min'):

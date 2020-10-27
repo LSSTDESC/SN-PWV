@@ -9,7 +9,7 @@ from snat_sim import filters
 
 
 class RegisterSncosmoFilter(TestCase):
-    """Tests for the ``register_sncosmo_filter``"""
+    """Tests for the ``register_sncosmo_filter`` function"""
 
     def setUp(self):
         self.wave = np.arange(1000, 10_000)
@@ -42,7 +42,7 @@ class RegisterSncosmoFilter(TestCase):
 
 
 class RegisterDECAMFilters(TestCase):
-    """Tests for the ``register_decam_filters``"""
+    """Tests for the ``register_decam_filters`` function"""
 
     @classmethod
     def setUpClass(cls):
