@@ -1,6 +1,3 @@
-# !/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 """The ``sn_magnitudes.py`` module is responsible for calculating supernova
 magnitudes as a function of PWV and redshift. Functionality is provided to
 determine magnitudes directly from a SN model and via a light-curve fit.
@@ -22,8 +19,8 @@ from tqdm import tqdm
 
 from . import modeling, constants as const
 
-_PARENT = Path(__file__).resolve()
-_CONFIG_PATH = _PARENT.parent.parent / 'ref_pwv.yaml'  # Reference pwv values
+# Reference pwv values
+_CONFIG_PATH = Path(__file__).resolve().parent / 'defaults' / 'ref_pwv.yaml'
 
 
 @lru_cache()  # Cache I/O

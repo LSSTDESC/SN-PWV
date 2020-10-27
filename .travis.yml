@@ -1,21 +1,18 @@
 language: python
 
 python:
-  - 3.6
-  - 3.7
   - 3.8
 
 os:
   - linux
 
+before-install:
+  # Extra dependencies for running tests
+  - pip install coverage
+  - pip install coveralls
+
 install:
   - pip install -r requirements.txt
-
-  # Extra dependencies for running tests
-  - pip install pytest
-  - pip install coverage
-  - pip install pytest-cov
-  - pip install coveralls
 
 script:
   - coverage run -m unittest

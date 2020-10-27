@@ -1,6 +1,3 @@
-# !/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 """Utilities for calculating magnitudes relative to a reference star or
 fiducial atmosphere (i.e., fiducial PWV).
 

@@ -1,6 +1,3 @@
-#!/usr/bin/env python3.7
-# -*- coding: UTF-8 -*-
-
 """Read and parse simulated light-curves for different cadences.
 
 Module API
@@ -121,8 +118,10 @@ def iter_lc_for_cadence_model(cadence, model, verbose=True):
         An Astropy table with the MJD and filter for each observation
     """
 
-    for header_path in tqdm(get_model_headers(cadence, model), desc=cadence, disable=not verbose):
-        for lc in iter_lc_for_header(header_path, verbose):
+    total = count_light_curves(cadence, model)
+    light_curve_iter = get_model_headers(cadence, model)
+    for header_path in tqdm(light_curve_iter, desc=cadence, total=total, disable=not verbose):
+        for lc in iter_lc_for_header(header_path, verbose=False):
             yield lc
 
 
