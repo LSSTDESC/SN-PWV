@@ -107,6 +107,8 @@ def resample_data_across_year(series):
 def build_pwv_model(pwv_series):
     """Build interpolator for the PWV at a given point of the year
 
+    Returned interpolator defaults to expecting datetime in MJD format.
+
     Args:
         pwv_series (Series): PWV values with a datetime index
 
@@ -114,12 +116,20 @@ def build_pwv_model(pwv_series):
         An interpolation function that accepts MJD
     """
 
-    pwv_model_data = index_series_by_seconds(pwv_series)
+    pwv_model_data = resample_data_across_year(pwv_series)
+    pwv_model_data.index = datetime_to_sec_in_year(pwv_model_data.index)
 
-    def interp(mjd):
+    def interp_pwv(date, format='mjd'):
+        f"""Interpolate the PWV as a function of time
+        
+        Args:
+            date (float): The date to interpolate PWV for
+            format (str): Astropy supported time format of the ``date`` argument
+        """
+
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore")
-            x_as_datetime = Time(mjd, format='mjd').to_datetime()
+            x_as_datetime = Time(date, format=format).to_datetime()
             x_in_seconds = datetime_to_sec_in_year(x_as_datetime)
 
         return np.interp(
@@ -128,4 +138,4 @@ def build_pwv_model(pwv_series):
             fp=pwv_model_data.values
         )
 
-    return interp
+    return interp_pwv
