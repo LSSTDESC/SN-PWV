@@ -10,7 +10,7 @@ Module API
 """
 
 import warnings
-from datetime import timedelta
+from datetime import datetime, timedelta
 
 import numpy as np
 import pandas as pd
@@ -39,14 +39,18 @@ def datetime_to_sec_in_year(dates):
     ).to(u.s).value
 
 
-def supplemented_data(input_data, primary_year, supp_years, resample_rate='30min'):
+def supplemented_data(input_data, primary_year, supp_years, resample_rate='30min', offset=timedelta(minutes=15)):
     """Return a subset of data for a given year supplemented with data from other years
+
+    Default values for the ``resample`` and ``offset`` arguments are chosen to
+    reflect
 
     Args:
         input_data (pandas.Series): Series of data to use indexed by datetime
         primary_year       (float): Year to supplement data for
         supp_years         (float): Year to supplement data with
         resample_rate        (str): Resample and interpolate supplemented data at the given rate
+        offset         (timedelta): Linear offset applied to the resampled index
 
     Returns:
         A pandas Series object
@@ -73,39 +77,31 @@ def supplemented_data(input_data, primary_year, supp_years, resample_rate='30min
     stacked_pwv = stacked_pwv[~stacked_pwv.index.duplicated(keep='first')]
 
     # Resample and interpolate any missing values
-    return stacked_pwv.resample(resample_rate, offset=timedelta(minutes=15)).interpolate()
+    return stacked_pwv.resample(resample_rate, offset=offset).interpolate()
 
 
-def index_series_by_seconds(series):
-    """Return a copy of a pandas Datetime series indexed by seconds elapsed
-    in the year
-
-    Missing values, including those at the beginning and end of the year
-    are interpolated for.
+def resample_data_across_year(series):
+    """Return a copy of a pandas Datetime series resampled evenly from the
+    beginning to the end of the year
 
     Args:
         series (pd.Series): A series with a Datetime index
 
     Returns:
-        A copy of the passed series with a new index
+        A copy of the passed series interpolated for January first through December 31st
     """
 
-    # Convert index values to seconds
-    series = series.copy()
-    series.index = datetime_to_sec_in_year(series.index)
-
-    # Resample the index to span the whole year
-    end_of_year = 365.25 * 24 * 60 * 60  # Days in year * hours * min * sec
+    start_time = series.index[0].replace(month=1, day=1, hour=0, second=0)
+    end_time = series.index[-1].replace(month=12, day=31, hour=23, minute=59, second=59)
     delta = series.index[1] - series.index[0]
-    offset = series.index[1] % delta
-    new_indices = np.arange(-offset, end_of_year + offset + 2 * delta, delta)
-    series = series.reindex(new_indices)
 
-    # Wrap values across the boundaries and fill nans with interpolation
-    first_not_nan, *_, last_not_nan = np.where(~series.isna())[0]
-    series.iloc[0] = series.iloc[last_not_nan]
-    series.iloc[-1] = series.iloc[first_not_nan]
-    return series.interpolate()
+    # Modulo operation to determine any linear offset in the temporal sampling
+    offset = series.index[0] - start_time
+    while offset > delta:
+        offset -= delta
+
+    new_indices = np.arange(start_time, end_time, delta).astype(datetime) + offset
+    return series.reindex(new_indices).interpolate()
 
 
 def build_pwv_model(pwv_series):
