@@ -63,7 +63,7 @@ def supplemented_data(input_data, year, supp_years=tuple()):
     # Check for years with no available data
     missing_years = years[~np.isin(years, input_data.index.year)]
     if missing_years:
-        warnings.warn(f'No data for years: {missing_years}')
+        raise ValueError(f'No data for years: {missing_years}')
 
     # Keep only data for the given years while maintaining priority order
     stacked_pwv = pd.concat(
