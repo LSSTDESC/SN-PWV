@@ -90,6 +90,12 @@ class SupplementedData(TestCase):
 
         self.assertNotIn(2023, self.supplemented.index.year)
 
+    def test_raises_error_for_missing_year(self):
+        """Test an error is through if a year is passed that is not in the data index"""
+
+        with self.assertRaises(ValueError):
+            weather.supplemented_data(self.input_data, 2020, (2019,))
+
 
 class ResampleDataAcrossYear(TestCase):
     """Tests for the ``resample_data_across_year`` function"""
