@@ -41,6 +41,38 @@ class DatetimeToSecInYear(TestCase):
         self.assertEqual(return_for_pandas, return_for_datetime)
 
 
+class SupplementedData(TestCase):
+    """Tests for the ``supplemented_data`` function"""
+
+    @classmethod
+    def setUpClass(cls):
+        """Create a supplemented dataframe using two secondary dataframes"""
+
+        pass
+
+    def test_primary_year_takes_priority(self):
+        """Test entries from the primary dataframe are kept in favor of the secondary data"""
+
+        self.fail()
+
+    def test_priority_maintained_for_supplemental_years(self):
+        """Test entries from secondary dataframes follow priority order
+        of the ``supp_years`` argument.
+        """
+
+        self.fail()
+
+    def test_returned_data_has_no_nans(self):
+        """Test returned data has no missing values"""
+
+        self.fail()
+
+    def test_resampling_rate_enforced_on_returned_dataframe(self):
+        """Test returned values are resampled using the passed rate and offset"""
+
+        self.fail()
+
+
 class ResampleDataAcrossYear(TestCase):
     """Tests for the ``index_series_by_seconds`` function"""
 
@@ -78,6 +110,32 @@ class ResampleDataAcrossYear(TestCase):
         expected_end = expected_start.replace(year=expected_start.year + 1) - self.delta
         self.assertEqual(expected_end, self.resampled_series.index.max(), 'Incorrect end value for range.')
 
-# Todo:
-# weather.supplemented_data()
-# weather.build_pwv_model()
+    def test_input_with_zero_offset(self):
+        """Test returned offset is zero for input series with zero offset"""
+
+        self.fail()
+
+
+class BuildPWVModel(TestCase):
+    """Tests for the ``build_pwv_model`` function"""
+
+    def setUpClass(cls):
+        """Build a linear PWV interpolation model"""
+
+        pass
+
+    def test_return_matches_input_on_grid_points(self):
+        """Test the interpolation function returns the original
+        sampled values on the grid points"""
+
+        self.fail()
+
+    def test_interpolation_between_grid_points(self):
+        """Test values between grid points are linearly interpolated"""
+
+        self.fail()
+
+    def test_returns_invariant_with_time_format(self):
+        """Test changing the time format does not change the returned value"""
+
+        self.fail()
