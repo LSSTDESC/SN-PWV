@@ -33,12 +33,20 @@ class DatetimeToSecInYear(TestCase):
         returned_seconds = weather.datetime_to_sec_in_year(self.test_date)
         self.assertEqual(returned_seconds, self.seconds)
 
-    def test_pandas_support(self):
-        """Test returned values are the same when passing pandas and datetime objects"""
+    def test_pandas_timestamp_support(self):
+        """Test returned values are the same for Timestamp datetime objects"""
 
         return_for_datetime = weather.datetime_to_sec_in_year(self.test_date)
-        return_for_pandas = weather.datetime_to_sec_in_year(pd.to_datetime(self.test_date))
-        self.assertEqual(return_for_pandas, return_for_datetime)
+        return_timestamp = weather.datetime_to_sec_in_year(pd.Timestamp(self.test_date))
+        self.assertEqual(return_timestamp, return_for_datetime)
+
+    def test_pandas_datetime_index_support(self):
+        """Test returned values are the same for DatetimeIndex and list objects"""
+
+        date_as_list = [self.test_date, self.test_date]
+        return_for_list = weather.datetime_to_sec_in_year(date_as_list)
+        return_datetime_index = weather.datetime_to_sec_in_year(pd.DatetimeIndex(date_as_list))
+        np.testing.assert_array_equal(return_datetime_index, return_for_list)
 
 
 class SupplementedData(TestCase):
@@ -147,16 +155,25 @@ class ResampleDataAcrossYear(TestCase):
 class BuildPWVModel(TestCase):
     """Tests for the ``build_pwv_model`` function"""
 
+    @classmethod
     def setUpClass(cls):
         """Build a linear PWV interpolation model"""
 
-        pass
+        index = np.arange(datetime(2020, 1, 1), datetime(2020, 12, 31), timedelta(days=1)).astype(datetime)
+        data = np.ones_like(index)
+        data[::2] = 0.5
+
+        cls.test_data = pd.Series(data, index=index)
+        cls.modeling_function = staticmethod(weather.build_pwv_model(cls.test_data))
 
     def test_return_matches_input_on_grid_points(self):
         """Test the interpolation function returns the original
         sampled values on the grid points"""
 
-        self.fail()
+        np.testing.assert_array_equal(
+            self.modeling_function(self.test_data.index, format='datetime'),
+            self.test_data.values
+        )
 
     def test_interpolation_between_grid_points(self):
         """Test values between grid points are linearly interpolated"""
