@@ -92,7 +92,7 @@ def resample_data_across_year(series):
 
     # Modulo operation to determine any linear offset in the temporal sampling
     offset = series.index[0] - start_time
-    while offset > delta:
+    while offset >= delta:
         offset -= delta
 
     new_indices = np.arange(start_time, end_time, delta).astype(datetime) + offset

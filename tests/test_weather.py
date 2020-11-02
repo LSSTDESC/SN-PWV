@@ -46,7 +46,7 @@ class SupplementedData(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Create a supplemented Series using two supplementary Series"""
+        """Create a mock data set for testing"""
 
         # Create data where every year has an overlapping datapoint with 0, 1,
         # and 2 other years. Also include one data point from a year that
@@ -68,29 +68,31 @@ class SupplementedData(TestCase):
         self.assertEqual(self.supplemented.loc[datetime(2020, 1, 1)], 0)
 
     def test_priority_maintained_for_supplemental_years(self):
-        """Test entries from secondary Series' follow priority order
+        """Test entries from the secondary Series' follow priority order
         of the ``supp_years`` argument.
         """
 
         self.assertEqual(self.supplemented.loc[datetime(2020, 1, 5)], 2)
 
     def test_call_with_no_supp_years(self):
+        """Test passing no supplimentary years returns only the primary year"""
+
         supplemented = weather.supplemented_data(self.input_data, 2020)
         self.assertTrue((supplemented.index.year == 2020).all())
 
-    def test_returned_data_has_no_nans(self):
-        """Test returned data has no missing values"""
+    def test_nans_dropped_from_primary(self):
+        """Test nan values in the primary year are replaced by supplimentary years"""
 
         self.assertEqual(self.supplemented.loc[datetime(2020, 1, 3)], 2)
 
     def test_unselected_years_are_ignored(self):
-        """Test years not passes as arguments are ignored"""
+        """Test years not passed as arguments are ignored"""
 
         self.assertNotIn(2023, self.supplemented.index.year)
 
 
 class ResampleDataAcrossYear(TestCase):
-    """Tests for the ``index_series_by_seconds`` function"""
+    """Tests for the ``resample_data_across_year`` function"""
 
     @classmethod
     def setUpClass(cls):
@@ -134,9 +136,6 @@ class ResampleDataAcrossYear(TestCase):
         resampled_series = weather.resample_data_across_year(input_series)
         offset = resampled_series.index[0] - datetime(2020, 1, 1)
         self.assertEqual(offset, timedelta(days=0))
-
-    def test_data_is_interpolated(self):
-        self.assertTrue((self.resampled_series == 1).all())
 
 
 class BuildPWVModel(TestCase):
