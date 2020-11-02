@@ -18,25 +18,37 @@ from astropy import units as u
 from astropy.time import Time
 
 
-def datetime_to_sec_in_year(dates):
+def datetime_to_sec_in_year(date):
     """Calculate number of seconds elapsed modulo 1 year
 
     Accurate to within a microsecond
 
     Args:
-        dates (datetime, array, pd.Datetime): Pandas datetime array
+        date (datetime, array, pd.Datetime): Pandas datetime array
 
     Returns:
         A single float or a numpy array of integers
     """
 
-    dates = pd.to_datetime(dates)
-    return (
-            (dates.dayofyear - 1) * u.day +
-            dates.hour * u.hour +
-            dates.second * u.s +
-            dates.microsecond * u.ms
+    # Using ``atleast_1d`` with ``to_datetime`` guarantees a ``DatetimeIndex``
+    # object is returned, otherwise we get a ``TimeStamp`` object for scalars
+    # which has different attributes names than the ones we use below
+    pandas_dates = pd.to_datetime(np.atleast_1d(date))
+
+    # The ``values`` attributes returns a numpy array. Pandas objects
+    # are not generically compatible with astropy units
+    seconds = (
+            (pandas_dates.dayofyear.values - 1) * u.day +
+            pandas_dates.hour.values * u.hour +
+            pandas_dates.second.values * u.s +
+            pandas_dates.microsecond.values * u.ms
     ).to(u.s).value
+
+    # If the argument was a scalar, return a scalar
+    if np.ndim(date) == 0:
+        seconds = np.asscalar(seconds)
+
+    return seconds
 
 
 def supplemented_data(input_data, year, supp_years=tuple()):
