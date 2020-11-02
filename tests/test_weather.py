@@ -34,7 +34,7 @@ class DatetimeToSecInYear(TestCase):
         self.assertEqual(returned_seconds, self.seconds)
 
     def test_pandas_support(self):
-        """Test returned values are the same for pandas and datetime objects"""
+        """Test returned values are the same when passing pandas and datetime objects"""
 
         return_for_datetime = weather.datetime_to_sec_in_year(self.test_date)
         return_for_pandas = weather.datetime_to_sec_in_year(pd.to_datetime(self.test_date))
@@ -46,31 +46,47 @@ class SupplementedData(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """Create a supplemented dataframe using two secondary dataframes"""
+        """Create a supplemented Series using two supplementary Series"""
 
-        pass
+        # Create data where every year has an overlapping datapoint with 0, 1,
+        # and 2 other years. Also include one data point from a year that
+        # should be ignored by the function call.
+        index = [datetime(2020, 1, 1), datetime(2020, 1, 2), datetime(2020, 1, 3), datetime(2020, 1, 4),
+                 datetime(2021, 1, 1), datetime(2021, 1, 2), datetime(2021, 1, 5), datetime(2021, 1, 6),
+                 datetime(2022, 1, 1), datetime(2022, 1, 3), datetime(2022, 1, 5), datetime(2022, 1, 7),
+                 datetime(2023, 1, 8)]
+
+        data = np.concatenate([np.zeros(4), np.ones(4), np.full(5, 2)])
+        data[2] = np.nan  # We expect data at this point to be overwritten even though it is in the primary year
+
+        cls.input_data = pd.Series(data=data, index=index)
+        cls.supplemented = weather.supplemented_data(cls.input_data, 2020, (2022, 2021))
 
     def test_primary_year_takes_priority(self):
-        """Test entries from the primary dataframe are kept in favor of the secondary data"""
+        """Test entries from the primary Series are kept in favor of the secondary data"""
 
-        self.fail()
+        self.assertEqual(self.supplemented.loc[datetime(2020, 1, 1)], 0)
 
     def test_priority_maintained_for_supplemental_years(self):
-        """Test entries from secondary dataframes follow priority order
+        """Test entries from secondary Series' follow priority order
         of the ``supp_years`` argument.
         """
 
-        self.fail()
+        self.assertEqual(self.supplemented.loc[datetime(2020, 1, 5)], 2)
+
+    def test_call_with_no_supp_years(self):
+        supplemented = weather.supplemented_data(self.input_data, 2020)
+        self.assertTrue((supplemented.index.year == 2020).all())
 
     def test_returned_data_has_no_nans(self):
         """Test returned data has no missing values"""
 
-        self.fail()
+        self.assertEqual(self.supplemented.loc[datetime(2020, 1, 3)], 2)
 
-    def test_resampling_rate_enforced_on_returned_dataframe(self):
-        """Test returned values are resampled using the passed rate and offset"""
+    def test_unselected_years_are_ignored(self):
+        """Test years not passes as arguments are ignored"""
 
-        self.fail()
+        self.assertNotIn(2023, self.supplemented.index.year)
 
 
 class ResampleDataAcrossYear(TestCase):
@@ -113,7 +129,14 @@ class ResampleDataAcrossYear(TestCase):
     def test_input_with_zero_offset(self):
         """Test returned offset is zero for input series with zero offset"""
 
-        self.fail()
+        index = np.arange(datetime(2020, 1, 2), self.end_time, timedelta(days=1)).astype(datetime)
+        input_series = pd.Series(np.ones_like(index), index=index)
+        resampled_series = weather.resample_data_across_year(input_series)
+        offset = resampled_series.index[0] - datetime(2020, 1, 1)
+        self.assertEqual(offset, timedelta(days=0))
+
+    def test_data_is_interpolated(self):
+        self.assertTrue((self.resampled_series == 1).all())
 
 
 class BuildPWVModel(TestCase):

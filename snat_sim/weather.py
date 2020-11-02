@@ -10,7 +10,7 @@ Module API
 """
 
 import warnings
-from datetime import datetime, timedelta
+from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -39,50 +39,45 @@ def datetime_to_sec_in_year(dates):
     ).to(u.s).value
 
 
-def supplemented_data(input_data, primary_year, supp_years, resample_rate='30min', offset=timedelta(minutes=15)):
-    """Return a subset of data for a given year supplemented with data from other years
+def supplemented_data(input_data, year, supp_years=tuple()):
+    """Return a subset of a dataframe corresponding to a given year
 
-    Default values for the ``resample`` and ``offset`` arguments are chosen to
-    reflect
+    Missing data for the given year is supplemented using data from
+    supplementary years by asserting that the measured values from
+    supplementary years are exactly the same as they would be if taken during
+    the primary year. Priority is given to supplementary years in the order
+    specified by the ``supp_years`` argument.
 
     Args:
-        input_data (pandas.Series): Series of data to use indexed by datetime
-        primary_year       (float): Year to supplement data for
-        supp_years         (float): Year to supplement data with
-        resample_rate        (str): Resample and interpolate supplemented data at the given rate
-        offset         (timedelta): Linear offset applied to the resampled index
+        input_data     (pandas.Series): Series of data to use indexed by datetime
+        year                   (float): Year to supplement data for
+        supp_years (collection[float]): Years to supplement data with when missing from ``year``
 
     Returns:
         A pandas Series object
     """
 
-    years = np.array([primary_year, *supp_years])
+    input_data = input_data.dropna().sort_index()
+    years = np.array([year, *supp_years])
 
     # Check for years with no available data
     missing_years = years[~np.isin(years, input_data.index.year)]
     if missing_years:
         warnings.warn(f'No data for years: {missing_years}')
 
-    # Keep only data for the given hears
-    stacked_pwv = input_data[np.isin(input_data.index.year, years)]
-    stacked_pwv = stacked_pwv.sort_index()
+    # Keep only data for the given years while maintaining priority order
+    stacked_pwv = pd.concat(
+        [input_data[input_data.index.year == yr] for yr in years]
+    )
 
-    # Mak all dates have the same year
-    new_index = []
-    for date_idx in stacked_pwv.index:
-        new_index.append(date_idx.replace(year=years[0]))
-
-    # Keep only unique dates
-    stacked_pwv.index = new_index
-    stacked_pwv = stacked_pwv[~stacked_pwv.index.duplicated(keep='first')]
-
-    # Resample and interpolate any missing values
-    return stacked_pwv.resample(resample_rate, offset=offset).interpolate()
+    # Make all dates have the same year and keep only unique dates
+    stacked_pwv.index = [date_idx.replace(year=years[0]) for date_idx in stacked_pwv.index]
+    return stacked_pwv[~stacked_pwv.index.duplicated(keep='first')]
 
 
 def resample_data_across_year(series):
     """Return a copy of a pandas Datetime series resampled evenly from the
-    beginning to the end of the year
+    beginning of the earliest year through the end of the latest year.
 
     Args:
         series (pd.Series): A series with a Datetime index
@@ -113,7 +108,7 @@ def build_pwv_model(pwv_series):
         pwv_series (Series): PWV values with a datetime index
 
     Returns:
-        An interpolation function that accepts MJD
+        An interpolation function that accepts ``date`` and ``format`` arguments
     """
 
     pwv_model_data = resample_data_across_year(pwv_series)
@@ -139,3 +134,22 @@ def build_pwv_model(pwv_series):
         )
 
     return interp_pwv
+
+
+def build_suominet_model(receiver, year, supp_years):
+    """Similar to the ``build_pwv_model`` function, but automatically builds a
+    model from a data taken by a SuomiNet GPS receiver
+
+    Args:
+        receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
+        year                    (float): Year to use data from when building the model
+        supp_years              (float): Years to supplement data with when missing from ``year``
+
+    Returns:
+        An interpolation function that accepts ``date`` and ``format`` arguments
+    """
+
+    weather_data = receiver.weather_data().PWV
+    supp_data = supplemented_data(weather_data, year, supp_years)
+    resampled_data = resample_data_across_year(supp_data)
+    return build_pwv_model(resampled_data)
