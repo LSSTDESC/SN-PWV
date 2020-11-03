@@ -5,6 +5,7 @@ from unittest import TestCase
 
 import numpy as np
 import pandas as pd
+from astropy.time import Time
 
 from snat_sim import weather
 
@@ -194,16 +195,23 @@ class BuildPWVModel(TestCase):
         sampled values on the grid points"""
 
         np.testing.assert_array_equal(
-            self.modeling_function(self.test_data.index, format=None),
+            self.modeling_function(self.test_data.index),
             self.test_data.values
         )
 
     def test_interpolation_between_grid_points(self):
         """Test values between grid points are linearly interpolated"""
 
-        self.fail()
+        # Pick a point halfway between the first and second grid point
+        test_date = self.test_data.index[0] + (self.test_data.index[1] - self.test_data.index[0]) / 2
+        expected_value = (self.test_data.iloc[0] + self.test_data.iloc[1]) / 2
+        self.assertEqual(self.modeling_function(test_date), expected_value)
 
     def test_return_is_invariant_with_time_format(self):
         """Test changing the time format does not change the returned value"""
 
-        self.fail()
+        # Pick a non-grid point
+        test_date = self.test_data.index[0] + (self.test_data.index[1] - self.test_data.index[0]) / 2
+        return_for_datetime = self.modeling_function(test_date)
+        return_for_mjd = self.modeling_function(Time(test_date).to_value('mjd'), format='mjd')
+        self.assertEqual(return_for_mjd, return_for_datetime)
