@@ -54,7 +54,7 @@ def datetime_to_sec_in_year(date):
 def supplemented_data(input_data, year, supp_years=tuple()):
     """Return a subset of a dataframe corresponding to a given year
 
-    Missing data for the given year is supplemented using data from
+    Data for the given year is supplemented with any available data from
     supplementary years by asserting that the measured values from
     supplementary years are exactly the same as they would be if taken during
     the primary year. Priority is given to supplementary years in the order
@@ -87,6 +87,34 @@ def supplemented_data(input_data, year, supp_years=tuple()):
     return stacked_pwv[~stacked_pwv.index.duplicated(keep='first')]
 
 
+def periodic_interpolation(series):
+    """Similar to linear interpolation on a pandas array, but missing values
+    at the beginning and end of the series are interpolated assuming a periodic
+    boundary condition.
+
+    Args:
+        series (pandas.Series): A Pandas Series to infill by linear interpolation
+
+    Returns:
+        An interpolated copy of the passed series
+    """
+
+    # Identify non-NAN values closest to the edges of the series
+    series = series.sort_index()
+    delta = series.index[1] - series.index[0]
+    start_idx, end_idx = series.iloc[[0, -1]].index
+    first_not_nan, last_not_nan = series.dropna().iloc[[0, -1]]
+
+    # Extend the series with temporary values so we can interpolate any missing values
+    series.loc[start_idx - 2 * delta] = last_not_nan
+    series.loc[start_idx - delta] = np.nan
+    series.loc[end_idx + delta] = np.nan
+    series.loc[end_idx + 2 * delta] = first_not_nan
+
+    # Drop the temporary values
+    return series.sort_index().interpolate().truncate(start_idx, end_idx)
+
+
 def resample_data_across_year(series):
     """Return a copy of a pandas Datetime series resampled evenly from the
     beginning of the earliest year through the end of the latest year.
@@ -108,7 +136,7 @@ def resample_data_across_year(series):
         offset -= delta
 
     new_indices = np.arange(start_time, end_time, delta).astype(datetime) + offset
-    return series.reindex(new_indices).interpolate()
+    return periodic_interpolation(series.reindex(new_indices))
 
 
 def build_pwv_model(pwv_series):
