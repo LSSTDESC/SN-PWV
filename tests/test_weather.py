@@ -8,7 +8,7 @@ import pandas as pd
 from astropy.time import Time
 
 from snat_sim import weather
-
+from pytz import UTC
 
 class DatetimeToSecInYear(TestCase):
     """Tests for the ``datetime_to_sec_in_year`` function"""
@@ -145,6 +145,21 @@ class ResampleDataAcrossYear(TestCase):
         cls.test_series = pd.Series(np.ones_like(index), index=index)
         cls.resampled_series = weather.resample_data_across_year(cls.test_series)
 
+    def test_timezone_supported(self):
+        """Test the function is timezone aware"""
+
+        # Assigning the timezone before resampling should be the same as
+        # assigning it afterword
+        test_series_with_tz = self.test_series.copy()
+        test_series_with_tz.index = test_series_with_tz.index.tz_localize(UTC)
+
+        resampled_series_with_tz = self.resampled_series.copy()
+        resampled_series_with_tz.index = resampled_series_with_tz.index.tz_localize(UTC)
+
+        pd.testing.assert_series_equal(
+            resampled_series_with_tz,
+            weather.resample_data_across_year(test_series_with_tz))
+
     def test_offset_of_returned_index(self):
         """Test returned index has same linear offset as input series"""
 
@@ -177,7 +192,7 @@ class ResampleDataAcrossYear(TestCase):
 
 
 class BuildPWVModel(TestCase):
-    """Tests for the ``build_pwv_model`` function"""
+    """Tests for the model returned by the ``build_pwv_model`` function"""
 
     @classmethod
     def setUpClass(cls):

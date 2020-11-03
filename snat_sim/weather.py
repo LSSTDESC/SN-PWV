@@ -12,7 +12,6 @@ Module API
 """
 
 import warnings
-from datetime import datetime
 
 import numpy as np
 import pandas as pd
@@ -131,7 +130,7 @@ def resample_data_across_year(series):
         A copy of the passed series interpolated for January first through December 31st
     """
 
-    start_time = series.index[0].replace(month=1, day=1, hour=0, second=0)
+    start_time = series.index[0].replace(month=1, day=1, hour=0, minute=0, second=0)
     end_time = series.index[-1].replace(month=12, day=31, hour=23, minute=59, second=59)
     delta = series.index[1] - series.index[0]
 
@@ -140,8 +139,9 @@ def resample_data_across_year(series):
     while offset >= delta:
         offset -= delta
 
-    new_indices = np.arange(start_time, end_time, delta).astype(datetime) + offset
-    return periodic_interpolation(series.reindex(new_indices))
+    index_values = np.arange(start_time, end_time, delta).astype(pd.Timestamp) + offset
+    new_index = pd.to_datetime(index_values).tz_localize(series.index.tz)
+    return series.reindex(new_index)
 
 
 def build_pwv_model(pwv_series):
@@ -156,7 +156,7 @@ def build_pwv_model(pwv_series):
         An interpolation function that accepts ``date`` and ``format`` arguments
     """
 
-    pwv_model_data = resample_data_across_year(pwv_series)
+    pwv_model_data = periodic_interpolation(resample_data_across_year(pwv_series))
     pwv_model_data.index = datetime_to_sec_in_year(pwv_model_data.index)
 
     def interp_pwv(date, format=None):
