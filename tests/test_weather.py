@@ -83,13 +83,13 @@ class SupplementedData(TestCase):
         self.assertEqual(self.supplemented.loc[datetime(2020, 1, 5)], 2)
 
     def test_call_with_no_supp_years(self):
-        """Test passing no supplimentary years returns only the primary year"""
+        """Test passing no supplementary years returns only the primary year"""
 
         supplemented = weather.supplemented_data(self.input_data, 2020)
         self.assertTrue((supplemented.index.year == 2020).all())
 
     def test_nans_dropped_from_primary(self):
-        """Test nan values in the primary year are replaced by supplimentary years"""
+        """Test nan values in the primary year are replaced by supplementary years"""
 
         self.assertEqual(self.supplemented.loc[datetime(2020, 1, 3)], 2)
 
@@ -180,7 +180,7 @@ class BuildPWVModel(TestCase):
 
         self.fail()
 
-    def test_returns_invariant_with_time_format(self):
+    def test_return_is_invariant_with_time_format(self):
         """Test changing the time format does not change the returned value"""
 
         self.fail()
