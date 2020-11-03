@@ -170,8 +170,11 @@ class BuildPWVModel(TestCase):
         """Test the interpolation function returns the original
         sampled values on the grid points"""
 
+        # This is failing because of a NAN value on line 156 of the weather module
+        # (See marked comment). I'm signing off for tonight, but will hunt down
+        # why it isn't automatically removed tomorrow.
         np.testing.assert_array_equal(
-            self.modeling_function(self.test_data.index, format='datetime'),
+            self.modeling_function(self.test_data.index, format=None),
             self.test_data.values
         )
 

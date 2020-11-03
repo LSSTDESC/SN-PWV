@@ -1,6 +1,3 @@
-# !/usr/bin/env python3
-# -*- coding: UTF-8 -*-
-
 """The ``weather`` module is used to characterize atmospheric variability
 by modeling the time variable precipitate water vapor (PWV) as a function of
 time. It also provides limited functionality for manipulating temporal data as
@@ -156,6 +153,9 @@ def build_pwv_model(pwv_series):
         An interpolation function that accepts ``date`` and ``format`` arguments
     """
 
+    # Debugging note: The return of resample_data_across_year should not have
+    # NANs, but when running the test suite the somehow get through.
+    # See test BuildPWVModel.test_return_matches_input_on_grid_points
     pwv_model_data = resample_data_across_year(pwv_series)
     pwv_model_data.index = datetime_to_sec_in_year(pwv_model_data.index)
 
