@@ -101,6 +101,9 @@ def periodic_interpolation(series):
         An interpolated copy of the passed series
     """
 
+    if series.dtype is np.dtype('O'):
+        warnings.warn('Interpolation may not work for object data types', RuntimeWarning)
+
     # Identify non-NAN values closest to the edges of the series
     series = series.sort_index()
     delta = series.index[1] - series.index[0]
@@ -109,8 +112,8 @@ def periodic_interpolation(series):
 
     # Extend the series with temporary values so we can interpolate any missing values
     series.loc[start_idx - 2 * delta] = last_not_nan
-    series.loc[start_idx - delta] = np.nan
-    series.loc[end_idx + delta] = np.nan
+    series.loc[start_idx - delta] = np.NAN
+    series.loc[end_idx + delta] = np.NAN
     series.loc[end_idx + 2 * delta] = first_not_nan
 
     # Drop the temporary values
@@ -153,9 +156,6 @@ def build_pwv_model(pwv_series):
         An interpolation function that accepts ``date`` and ``format`` arguments
     """
 
-    # Debugging note: The return of resample_data_across_year should not have
-    # NANs, but when running the test suite the somehow get through.
-    # See test BuildPWVModel.test_return_matches_input_on_grid_points
     pwv_model_data = resample_data_across_year(pwv_series)
     pwv_model_data.index = datetime_to_sec_in_year(pwv_model_data.index)
 

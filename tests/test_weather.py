@@ -105,6 +105,29 @@ class SupplementedData(TestCase):
             weather.supplemented_data(self.input_data, 2020, (2019,))
 
 
+class PeriodicInterpolation(TestCase):
+    """Tests for the ``periodic_interpolation`` function"""
+
+    def setUp(self):
+        """Create a series with missing data at the boundaries"""
+
+        self.test_series = pd.Series(np.arange(9, 21))
+        self.test_series.iloc[[0, -1]] = np.nan
+
+    def test_warns_if_dtype_is_object(self):
+        """A Runtime warning should be raised if the input series data is object dtype"""
+
+        with self.assertWarns(RuntimeWarning):
+            weather.periodic_interpolation(self.test_series.astype(np.dtype('O')))
+
+    def test_boundary_values_are_interpolated(self):
+        """Test boundary values are filled using a linear interpolation"""
+
+        interpolated_series = weather.periodic_interpolation(self.test_series)
+        self.assertEqual(interpolated_series.iloc[0], 13)
+        self.assertEqual(interpolated_series.iloc[-1], 16)
+
+
 class ResampleDataAcrossYear(TestCase):
     """Tests for the ``resample_data_across_year`` function"""
 
@@ -160,7 +183,7 @@ class BuildPWVModel(TestCase):
         """Build a linear PWV interpolation model"""
 
         index = np.arange(datetime(2020, 1, 1), datetime(2020, 12, 31), timedelta(days=1)).astype(datetime)
-        data = np.ones_like(index)
+        data = np.ones_like(index, dtype=float)
         data[::2] = 0.5
 
         cls.test_data = pd.Series(data, index=index)
@@ -170,9 +193,6 @@ class BuildPWVModel(TestCase):
         """Test the interpolation function returns the original
         sampled values on the grid points"""
 
-        # This is failing because of a NAN value on line 156 of the weather module
-        # (See marked comment). I'm signing off for tonight, but will hunt down
-        # why it isn't automatically removed tomorrow.
         np.testing.assert_array_equal(
             self.modeling_function(self.test_data.index, format=None),
             self.test_data.values
