@@ -159,9 +159,12 @@ def build_pwv_model(pwv_series):
     pwv_model_data = resample_data_across_year(pwv_series)
     pwv_model_data.index = datetime_to_sec_in_year(pwv_model_data.index)
 
-    def interp_pwv(date, format='mjd'):
-        f"""Interpolate the PWV as a function of time
-        
+    def interp_pwv(date, format=None):
+        """Interpolate the PWV as a function of time
+
+        The datetime format will by guessed. If it cannot be identified, set
+        the ``format`` kwarg to the desired input format.
+
         Args:
             date (float): The date to interpolate PWV for
             format (str): Astropy supported time format of the ``date`` argument
@@ -196,5 +199,4 @@ def build_suominet_model(receiver, year, supp_years):
 
     weather_data = receiver.weather_data().PWV
     supp_data = supplemented_data(weather_data, year, supp_years)
-    resampled_data = resample_data_across_year(supp_data)
-    return build_pwv_model(resampled_data)
+    return build_pwv_model(supp_data)
