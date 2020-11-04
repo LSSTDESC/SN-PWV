@@ -216,9 +216,7 @@ def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 
     # Add legends
     top_ax.legend(bbox_to_anchor=(1, 1.1))
     handles, labels = middle_ax.get_legend_handles_labels()
-    labels = labels[::5]
-    handles = handles[::5]
-    middle_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
+    middle_ax.legend(handles[::5], labels[::5], bbox_to_anchor=(1, 1.1))
 
     # Add y labels
     top_reference_ax.set_ylabel(r'$\Delta m \, \left(PWV,\, z\right)$', fontsize=12)
@@ -340,9 +338,7 @@ def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
     # Add legends
     top_ax.legend(bbox_to_anchor=(1, 1.1))
     handles, labels = bottom_ax.get_legend_handles_labels()
-    labels = labels[::5]
-    handles = handles[::5]
-    bottom_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
+    bottom_ax.legend(handles[::5], labels[::5], bbox_to_anchor=(1, 1.1))
 
     plt.tight_layout()
     return fig, axes

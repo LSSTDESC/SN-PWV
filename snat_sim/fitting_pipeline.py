@@ -121,7 +121,7 @@ class FittingPipeline:
         """Load light-curves from a given PLaSTICC cadence into the pipeline"""
 
         # The queue will block the for loop when it is full, limiting our memory usage
-        light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=11, verbose=True)
+        light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=11)
         for i, light_curve in enumerate(light_curve_iter):
             if i >= self.iter_lim:
                 break
