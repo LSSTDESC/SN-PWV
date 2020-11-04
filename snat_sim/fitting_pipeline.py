@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 
-"""Multi-processed pipeline for simulating light-curves with atmospheric
-effects and then fitting them with a given SN model.
+"""The ``fitting_pipeline`` module is built to support a parallelized approach
+to simulating light-curves with atmospheric effects and then fitting them with
+a given SN model.
+
+Module API
+----------
 """
 
 import multiprocessing as mp
