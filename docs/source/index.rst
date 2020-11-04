@@ -43,7 +43,8 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    notebooks/lsst_filters.nblink
    notebooks/pwv_eff_on_black_body.nblink
    notebooks/sne_delta_mag.nblink
-   notebooks/simulating_lc_with_cadence.nblink
+   notebooks/pwv_modeling.nblink
+   notebooks/simulating_lc_for_cadence.nblink
 
 .. toctree::
    :hidden:
