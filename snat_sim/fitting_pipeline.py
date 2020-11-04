@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-"""Multiprocess script for simulating light-curves with atmospheric effects
-and then fitting them with a given SN model.
+"""Multi-processed pipeline for simulating light-curves with atmospheric
+effects and then fitting them with a given SN model.
 """
 
 import multiprocessing as mp
@@ -40,7 +40,7 @@ def passes_quality_cuts(light_curve: Table) -> bool:
 
 
 class FittingPipeline:
-    """
+    """Series of workers and pools for simulating and fitting light-curves
 
     The processing pipeline is as follows:
         x- WORKER: Load plasticc light-curves from disk -> Queue
