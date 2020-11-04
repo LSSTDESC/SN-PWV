@@ -60,5 +60,5 @@ html_theme = 'guzzle_sphinx_theme'
 html_title = 'Supernova Atmospheric Simulation'
 html_short_title = 'SNAT-SIM'
 html_sidebars = {
-    '**': ['logo-text.html', 'globaltoc.html', 'searchbox.html']
+    '**': ['logo-text.html', 'searchbox.html', 'globaltoc.html']
 }
