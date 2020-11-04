@@ -166,6 +166,7 @@ class DivideRefFromLc(TestCase):
         reference.divide_ref_from_lc(self.test_table, pwv=15)
         self.assertTrue(all(original_table == self.test_table))
 
+    # Todo: Expand test to included vectorized PWV
     def test_returned_flux_is_scaled(self):
         """Test returned table has scaled flux"""
 
