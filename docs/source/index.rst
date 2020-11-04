@@ -54,6 +54,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    api/snat_sim.rst
    api/constants.rst
    api/filters.rst
+   api/fitting_pipeline.rst
    api/modeling.rst
    api/plasticc.rst
    api/plotting.rst
