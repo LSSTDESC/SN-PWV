@@ -141,15 +141,15 @@ def average_norm_flux(band, pwv, reference_types=('G2', 'M5', 'K2')):
     """Return the average normalized reference star flux
 
     Args:
-        band            (str): Band to get flux for
-        pwv  (float, ndarray): PWV values to get magnitudes for
-        reference_types (str): Types of reference stars to average over
+        band                        (str): Band to get flux for
+        pwv              (float, ndarray): PWV values to get magnitudes for
+        reference_types (collection[str]): Types of reference stars to average over
 
     Returns:
         The normalized flux at the given PWV value(s)
     """
 
-    return np.average([interp_norm_flux(band, pwv, stype) for stype in reference_types])
+    return np.average([interp_norm_flux(band, pwv, stype) for stype in reference_types], axis=0)
 
 
 def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):

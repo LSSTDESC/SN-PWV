@@ -121,6 +121,32 @@ class InterpNormFlux(TestCase):
         self.assertRaises(ValueError, reference.interp_norm_flux, self.test_band, 100)
 
 
+class AverageNormFlux(TestCase):
+    """Tests for the ``average_norm_flux`` function"""
+
+    test_band = 'lsst_hardware_z'
+
+    def test_average_matches_ref_stars_for_float(self):
+        """Test the return matches the average norm flux at a single PWV for two reference types"""
+
+        test_pwv = 5
+        avg_flux = reference.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
+        g2_flux = reference.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
+        m52_flux = reference.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
+        self.assertEqual(avg_flux, np.average((g2_flux, m52_flux)))
+
+    def test_average_matches_ref_star_for_array(self):
+        """Test the return matches the average norm flux at an array of PWV for two reference types"""
+
+        test_pwv = [5, 6]
+        avg_flux = reference.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
+        g2_flux = reference.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
+        m52_flux = reference.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
+
+        self.assertIsInstance(avg_flux, np.ndarray, 'Returned average was not an array')
+        np.testing.assert_array_equal(avg_flux, np.average((g2_flux, m52_flux), axis=0))
+
+
 class DivideRefFromLc(TestCase):
     """Tests for the ``divide_ref_from_lc`` function"""
 
