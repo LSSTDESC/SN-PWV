@@ -94,6 +94,9 @@ class FittingPipeline:
         if self.pool_size < 4:
             raise RuntimeError('Cannot spawn pipeline with less than 4 processes.')
 
+        if (reference_stars is None) and not (pwv_model is None):
+            raise ValueError('Cannot perform reference star subtraction with ``pwv_model`` argument')
+
         self.cadence = cadence
         self.sim_model = sim_model
         self.fit_model = fit_model
