@@ -11,9 +11,9 @@ from astropy.table import Table
 from pwv_kpno.defaults import v1_transmission
 from sncosmo.tests import test_models as sncosmo_test_models
 
+from snat_sim import constants as const
 from snat_sim import modeling
 from snat_sim.filters import register_decam_filters
-from snat_sim import constants as const
 
 register_decam_filters(force=True)
 
@@ -33,7 +33,7 @@ class TestVariablePWVTrans(TestCase):
 
     def setUp(self):
         self.default_pwv = 5
-        self.constant_pwv_func = lambda *args: self.default_pwv
+        self.constant_pwv_func = lambda date, format: self.default_pwv
         self.propagation_effect = modeling.VariablePWVTrans(self.constant_pwv_func)
 
     def test_default_location_params_match_vro(self):
@@ -144,7 +144,7 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
     def test_variable_propagation_support(self):
         """Test a time variable effect can be added and called without error"""
 
-        effect = modeling.VariablePWVTrans(lambda *args: 5)
+        effect = modeling.VariablePWVTrans(lambda date, format: 5)
         model = modeling.Model(sncosmo_test_models.flatsource())
         model.add_effect(effect=effect, frame='obs', name='Variable PWV')
         model.flux(time=0, wave=[4000])
