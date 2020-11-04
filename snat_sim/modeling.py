@@ -130,10 +130,10 @@ class VariablePWVTrans(VariablePropagationEffect):
             alt: Observer altitude in meters  (defaults to height of VRO)
 
         Args:
-            pwv_interpolator (callable[float]): Returns PWV at zenith for a given time value
+            pwv_interpolator (callable[float]): Returns PWV at zenith for a given time value and time format
             time_format                  (str): Astropy recognized time format used by the ``pwv_interpolator``
             transmission_version         (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
-            scale_airmass               (bool): Disable airmass scaling.
+            scale_airmass               (bool): En/disable airmass scaling.
         """
 
         # Store init arguments
@@ -197,7 +197,7 @@ class VariablePWVTrans(VariablePropagationEffect):
             An array of PWV values in mm
         """
 
-        pwv = self._pwv_interpolator(time)
+        pwv = self._pwv_interpolator(time, format='mjd')
         if self.scale_airmass:
             pwv *= self.airmass(time)
 
