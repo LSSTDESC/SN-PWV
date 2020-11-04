@@ -44,6 +44,7 @@ def _read_stellar_spectra_path(fpath):
         spec = infile[0].data
 
     # Load data used to convert spectra to new units
+    # noinspection SpellCheckingInspection
     with fits.open(fpath.parent / 'WAVE_PHOENIX-ACES-AGSS-COND-2011.fits') as infile:
         lam = infile[0].data  # angstroms
 
@@ -59,14 +60,14 @@ def _read_stellar_spectra_path(fpath):
     return pd.Series(spec[indices], index=lam[indices])
 
 
-def get_stellar_spectra(spectype):
+def get_stellar_spectra(spec_type):
     """Load spectrum for given spectral type
 
     Flux values are returned in phot/cm2/s/angstrom and are index by
     wavelength values in Angstroms.
 
     Args:
-        spectype (str): Spectral type (e.g., G2)
+        spec_type (str): Spectral type (e.g., G2)
 
     Returns:
         Flux values as a pandas Series
@@ -74,7 +75,7 @@ def get_stellar_spectra(spectype):
 
     # Load spectra for different spectral types
     stellar_spectra_dir = _STELLAR_SPECTRA_DIR
-    path = next(stellar_spectra_dir.glob(spectype + '*.fits'))
+    path = next(stellar_spectra_dir.glob(spec_type + '*.fits'))
     return _read_stellar_spectra_path(path)
 
 

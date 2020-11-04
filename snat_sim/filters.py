@@ -90,7 +90,7 @@ def register_lsst_filters(force=False):
         - lsst_hardware_<ugrizy>: Hardware contribution response curve in each band
         - lsst_total_<ugrizy>: Total response curve in each band
         - lsst_m<123>: Response curve contribution from each mirror
-        - lsst_lens<123>: Response curve contribution from each lense
+        - lsst_lens<123>: Response curve contribution from each lens
         - lsst_mirrors: Combined result from all mirrors
         - lsst_lenses: Combined response from all lenses
         - lsst_<ugrizy>_no_atm: Throughput in each band without a fiducial atmosphere
@@ -140,6 +140,6 @@ def register_lsst_filters(force=False):
     _register_sncosmo_filter(lenses.index, lenses, 'lsst_lenses', force)
 
     for band in 'ugrizy':
-        filt_name = f'lsst_{band}_no_atm'
+        filter_name = f'lsst_{band}_no_atm'
         trans = response_df[f'filter_{band}'] * mirrors * lenses * response_df.detector
-        _register_sncosmo_filter(trans.index, trans, filt_name, force)
+        _register_sncosmo_filter(trans.index, trans, filter_name, force)
