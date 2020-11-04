@@ -7,6 +7,7 @@ Module API
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Collection
 
 import astropy.io.fits as fits
 import numpy as np
@@ -167,9 +168,18 @@ def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):
         A modified copy of ``lc_table``
     """
 
+    if isinstance(pwv, Collection):
+        if len(pwv) != len(lc_table):
+            raise ValueError('PWV must be a float or have the same length as ``lc_table``')
+
+        pwv = np.array(pwv)
+
+    else:
+        pwv = np.full(len(lc_table), pwv)
+
     table_copy = lc_table.copy()
     for band in set(table_copy['band']):
-        ref_flux = average_norm_flux(band, pwv, reference_types)
-        table_copy['flux'][table_copy['band'] == band] /= ref_flux
+        band_indices = np.where(table_copy['band'] == band)[0]
+        table_copy['flux'][band_indices] /= average_norm_flux(band, pwv[band_indices], reference_types)
 
     return table_copy
