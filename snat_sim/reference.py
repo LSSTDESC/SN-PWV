@@ -7,6 +7,7 @@ Module API
 
 from functools import lru_cache
 from pathlib import Path
+from typing import Collection
 
 import astropy.io.fits as fits
 import numpy as np
@@ -44,6 +45,7 @@ def _read_stellar_spectra_path(fpath):
         spec = infile[0].data
 
     # Load data used to convert spectra to new units
+    # noinspection SpellCheckingInspection
     with fits.open(fpath.parent / 'WAVE_PHOENIX-ACES-AGSS-COND-2011.fits') as infile:
         lam = infile[0].data  # angstroms
 
@@ -59,14 +61,14 @@ def _read_stellar_spectra_path(fpath):
     return pd.Series(spec[indices], index=lam[indices])
 
 
-def get_stellar_spectra(spectype):
+def get_stellar_spectra(spec_type):
     """Load spectrum for given spectral type
 
     Flux values are returned in phot/cm2/s/angstrom and are index by
     wavelength values in Angstroms.
 
     Args:
-        spectype (str): Spectral type (e.g., G2)
+        spec_type (str): Spectral type (e.g., G2)
 
     Returns:
         Flux values as a pandas Series
@@ -74,7 +76,7 @@ def get_stellar_spectra(spectype):
 
     # Load spectra for different spectral types
     stellar_spectra_dir = _STELLAR_SPECTRA_DIR
-    path = next(stellar_spectra_dir.glob(spectype + '*.fits'))
+    path = next(stellar_spectra_dir.glob(spec_type + '*.fits'))
     return _read_stellar_spectra_path(path)
 
 
@@ -140,15 +142,15 @@ def average_norm_flux(band, pwv, reference_types=('G2', 'M5', 'K2')):
     """Return the average normalized reference star flux
 
     Args:
-        band            (str): Band to get flux for
-        pwv  (float, ndarray): PWV values to get magnitudes for
-        reference_types (str): Types of reference stars to average over
+        band                        (str): Band to get flux for
+        pwv              (float, ndarray): PWV values to get magnitudes for
+        reference_types (collection[str]): Types of reference stars to average over
 
     Returns:
         The normalized flux at the given PWV value(s)
     """
 
-    return np.average([interp_norm_flux(band, pwv, stype) for stype in reference_types])
+    return np.average([interp_norm_flux(band, pwv, stype) for stype in reference_types], axis=0)
 
 
 def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):
@@ -158,17 +160,26 @@ def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):
     reference stars.
 
     Args:
-        lc_table      (Table): Astropy table with columns ``flux`` and ``band``
-        pwv           (float): PWV value to subtract reference star for
-        reference_types (str): Type of reference stars to use in calibration
+        lc_table                  (Table): Astropy table with columns ``flux`` and ``band``
+        pwv                       (float): PWV value to subtract reference star for
+        reference_types (Collection[str]): Type of reference stars to use in calibration
 
     Returns:
         A modified copy of ``lc_table``
     """
 
+    if isinstance(pwv, Collection):
+        if len(pwv) != len(lc_table):
+            raise ValueError('PWV must be a float or have the same length as ``lc_table``')
+
+        pwv = np.array(pwv)
+
+    else:
+        pwv = np.full(len(lc_table), pwv)
+
     table_copy = lc_table.copy()
     for band in set(table_copy['band']):
-        ref_flux = average_norm_flux(band, pwv, reference_types)
-        table_copy['flux'][table_copy['band'] == band] /= ref_flux
+        band_indices = np.where(table_copy['band'] == band)[0]
+        table_copy['flux'][band_indices] /= average_norm_flux(band, pwv[band_indices], reference_types)
 
     return table_copy

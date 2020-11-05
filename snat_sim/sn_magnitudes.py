@@ -87,7 +87,7 @@ def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
 
             if verbose:
                 # noinspection PyUnboundLocalVariable
-                pbar.update(1)
+                pbar.update()
 
         magnitudes[band] = np.reshape(mag_arr, return_array_shape)
 
