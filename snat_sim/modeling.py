@@ -1,6 +1,5 @@
 """This module handles the simulation of SN light-curves.
 
-
 Module API
 ----------
 """

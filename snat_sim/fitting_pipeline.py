@@ -151,19 +151,23 @@ class FittingPipeline:
         z_limit = (u_band_low / source_low) - 1
 
         while (light_curve := self.queue_plasticc_lc.get()) != 'KILL':
+            z = light_curve.meta['SIM_REDSHIFT_CMB']
+            ra = light_curve.meta['RA']
+            dec = light_curve.meta['DECL']
 
             # Skip the light-curve if it is outside the redshift range
-            if light_curve.meta['SIM_REDSHIFT_CMB'] >= z_limit:
+            if z >= z_limit:
                 continue
 
             # Simulate a duplicate light-curve with atmospheric effects
-            self.sim_model.set(ra=light_curve.meta['RA'], dec=light_curve.meta['DECL'])
+            self.sim_model.set(ra=ra, dec=dec)
             duplicated_lc = plasticc.duplicate_plasticc_sncosmo(
                 light_curve, self.sim_model, gain=self.gain, skynr=self.skynr)
 
             if self.reference_stars is not None:
                 pwv = self.pwv_model(duplicated_lc['time'], format='mjd')
-                duplicated_lc = reference.divide_ref_from_lc(duplicated_lc, pwv, self.reference_stars)
+                pwv_los = pwv * modeling.calc_airmass(duplicated_lc['time'], ra, dec)
+                duplicated_lc = reference.divide_ref_from_lc(duplicated_lc, pwv_los, self.reference_stars)
 
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):
