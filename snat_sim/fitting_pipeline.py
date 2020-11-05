@@ -11,7 +11,7 @@ Module API
 import multiprocessing as mp
 from copy import copy
 from pathlib import Path
-from typing import Collection, Union
+from typing import Union
 
 import sncosmo
 from astropy.table import Table
@@ -21,11 +21,11 @@ from . import modeling, plasticc, reference
 model_type = Union[sncosmo.Model, modeling.Model]
 
 
-def passes_quality_cuts(light_curve: Table) -> bool:
+def passes_quality_cuts(light_curve):
     """Return whether light-curve has 2+ two bands each with 1+ data point with SNR > 5
 
     Args:
-        light_curve: Astropy table with sncosmo formatted light-curve data
+        light_curve (Table): Astropy table with sncosmo formatted light-curve data
 
     Returns:
         A boolean
@@ -44,29 +44,12 @@ def passes_quality_cuts(light_curve: Table) -> bool:
 
 
 class FittingPipeline:
-    """Series of workers and pools for simulating and fitting light-curves
+    """Series of workers and pools for simulating and fitting light-curves"""
 
-    The processing pipeline is as follows:
-        x- WORKER: Load plasticc light-curves from disk -> Queue
-        -> POOL: Retrieve Plastic light-curves and add atmospheric effects -> Queue
-        -> POOL: Fit duplicated light-curves and determine fitted parameters -> Queue
-        -x WORKER: Write fitted parameters to file
-    """
-
-    def __init__(
-            self,
-            cadence: str,
-            sim_model: model_type,
-            fit_model: model_type,
-            vparams: list,
-            gain: int = 20,
-            skynr: int = 100,
-            quality_callback: callable = None,
-            max_queue=25,
-            pool_size: int = None,
-            iter_lim=float('inf'),
-            reference_stars: Collection[str] = None,
-            pwv_model: callable = None):
+    def __init__(self, cadence, sim_model, fit_model, vparams, gain=20,
+                 skynr=100, quality_callback=None, max_queue=25,
+                 pool_size=None, iter_lim=float('inf'), ref_stars=None,
+                 pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
 
         The ``max_queue`` argument can be used to limit **duplicate**
@@ -76,25 +59,25 @@ class FittingPipeline:
         has minimal performance impact.
 
         Args:
-            cadence: Cadence to use when simulating light-curves
-            sim_model: Model to use when simulating light-curves
-            fit_model: Model to use when fitting light-curves
-            vparams: List of parameter names to vary in the fit
-            gain: Gain to use during simulation
-            skynr: Simulate sky noise by scaling plasticc ``SKY_SIG`` by 1 / skynr
-            quality_callback: Skip light-curves if this function returns False
-            max_queue: Maximum number of light-curves to store in memory at once
-            pool_size: Total number of workers to spawn. Defaults to CPU count
-            iter_lim: Limit number of processed light-curves (Useful for profiling)
-            reference_stars: List of reference star types to calibrate simulated supernova with
-            pwv_model: Model for the PWV concentration the reference star is observed at
+            cadence               (str): Cadence to use when simulating light-curves
+            sim_model           (Model): Model to use when simulating light-curves
+            fit_model           (Model): Model to use when fitting light-curves
+            vparams         (list[str]): List of parameter names to vary in the fit
+            gain                (float): Gain to use during simulation
+            skynr               (float): Simulate sky noise by scaling plasticc ``SKY_SIG`` by 1 / skynr
+            quality_callback (callable): Skip light-curves if this function returns False
+            max_queue             (int): Maximum number of light-curves to store in memory at once
+            pool_size             (int): Total number of workers to spawn. Defaults to CPU count
+            iter_lim              (int): Limit number of processed light-curves (Useful for profiling)
+            ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with
+            pwv_model        (callable): Model for the PWV concentration the reference star is observed at
         """
 
         self.pool_size = mp.cpu_count() if pool_size is None else pool_size
         if self.pool_size < 4:
             raise RuntimeError('Cannot spawn pipeline with less than 4 processes.')
 
-        if (reference_stars is None) and not (pwv_model is None):
+        if (ref_stars is None) and not (pwv_model is None):
             raise ValueError('Cannot perform reference star subtraction with ``pwv_model`` argument')
 
         self.cadence = cadence
@@ -105,7 +88,7 @@ class FittingPipeline:
         self.skynr = skynr
         self.quality_callback = quality_callback
         self.iter_lim = iter_lim
-        self.reference_stars = reference_stars
+        self.reference_stars = ref_stars
         self.pwv_model = pwv_model
         self.out_path = None  # To be set when ``run`` is called
 
@@ -126,7 +109,7 @@ class FittingPipeline:
 
         return self.pool_size - self.fitting_pool_size
 
-    def _load_queue_plasticc_lc(self) -> None:
+    def _load_queue_plasticc_lc(self):
         """Load light-curves from a given PLaSTICC cadence into the pipeline"""
 
         # The queue will block the for loop when it is full, limiting our memory usage
@@ -142,7 +125,7 @@ class FittingPipeline:
         for _ in range(self.pool_size):
             self.queue_plasticc_lc.put('KILL')
 
-    def _duplicate_light_curves(self) -> None:
+    def _duplicate_light_curves(self):
         """Simulate light-curves for a given PLaSTICC cadence with atmospheric effects"""
 
         # Determine redshift limit of the simulation model
@@ -178,7 +161,7 @@ class FittingPipeline:
         # Propagate kill signal
         self.queue_duplicated_lc.put(light_curve)
 
-    def _fit_light_curves(self) -> None:
+    def _fit_light_curves(self):
         """Fit light-curves using the given model"""
 
         fit_model = copy(self.fit_model)
@@ -197,7 +180,7 @@ class FittingPipeline:
         # Propagate kill signal
         self.queue_fit_results.put(light_curve)
 
-    def _unload_output_queue(self) -> None:
+    def _unload_output_queue(self):
         """Retrieve fit results from the output queue and write results to file"""
 
         kill_count = 0
@@ -211,13 +194,13 @@ class FittingPipeline:
                 new_line = ','.join(map(str, results)) + '\n'
                 outfile.write(new_line)
 
-    def run(self, out_path: Path) -> None:
+    def run(self, out_path):
         """Run fits of each light-curve and write results to file
 
         A ``.csv`` extension is enforced on the output file.
 
         Args:
-            out_path: Path to write results to
+            out_path (Path): Path to write results to
         """
 
         out_path.parent.mkdir(exist_ok=True, parents=True)
