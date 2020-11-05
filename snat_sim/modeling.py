@@ -25,8 +25,11 @@ from . import constants as const
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
 
-def calc_airmass(time, ra, dec, lat, lon, alt, time_format='mjd'):
+def calc_airmass(time, ra, dec, lat=const.vro_latitude,
+                 lon=const.vro_longitude, alt=const.vro_altitude, time_format='mjd'):
     """Calculate the airmass through which a target is observed
+
+    Default latitude, longitude, and altitude are set to the Rubin Observatory.
 
     Args:
         time      (float): Time at which the target is observed
@@ -354,13 +357,14 @@ def create_observations_table(
     zp_sys_arr = np.full_like(phase_arr, zpsys, dtype='U10')
 
     observations = Table(
-        {'time': phase_arr,
-         'band': band_arr,
-         'gain': gain_arr,
-         'skynoise': skynoise_arr,
-         'zp': zp_arr,
-         'zpsys': zp_sys_arr
-         },
+        {
+            'time': phase_arr,
+            'band': band_arr,
+            'gain': gain_arr,
+            'skynoise': skynoise_arr,
+            'zp': zp_arr,
+            'zpsys': zp_sys_arr
+        },
         dtype=[float, 'U1000', float, float, float, 'U100']
     )
 
