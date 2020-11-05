@@ -164,9 +164,9 @@ class VariablePWVTrans(VariablePropagationEffect):
             'Observer Altitude (m)', 'Coordinate', 'Resolution']
         self._parameters = np.array(
             [0., 0.,
-             const.vro_latitude.to(u.deg).value,
-             const.vro_longitude.to(u.deg).value,
-             const.vro_altitude.to(u.m).value,
+             const.vro_latitude,
+             const.vro_longitude,
+             const.vro_altitude,
              1024, 5.])
 
     def airmass(self, time):

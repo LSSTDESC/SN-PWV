@@ -40,9 +40,9 @@ from astropy import units as _u
 from astropy.cosmology import FlatLambdaCDM as _FlatLambdaCDM
 
 # Vera Rubin Observatory coordinates from Google Maps
-vro_latitude = -30.244573 * _u.deg
-vro_longitude = -70.7499537 * _u.deg
-vro_altitude = 1024 * _u.m
+vro_latitude = -30.244573
+vro_longitude = -70.7499537
+vro_altitude = 1024
 
 # Fitted parameters from the cosmological analysis of Betoule et al. 2014
 betoule_alpha = 0.141

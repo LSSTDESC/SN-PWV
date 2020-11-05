@@ -11,9 +11,9 @@ from astropy.table import Table
 from pwv_kpno.defaults import v1_transmission
 from sncosmo.tests import test_models as sncosmo_test_models
 
+from snat_sim import constants as const
 from snat_sim import modeling
 from snat_sim.filters import register_decam_filters
-from snat_sim import constants as const
 
 register_decam_filters(force=True)
 
@@ -39,9 +39,9 @@ class TestVariablePWVTrans(TestCase):
     def test_default_location_params_match_vro(self):
         """Test the default values for the observer location match VRO"""
 
-        self.assertEqual(self.propagation_effect['lat'], const.vro_latitude.value)
-        self.assertEqual(self.propagation_effect['lon'], const.vro_longitude.value)
-        self.assertEqual(self.propagation_effect['alt'], const.vro_altitude.value)
+        self.assertEqual(self.propagation_effect['lat'], const.vro_latitude)
+        self.assertEqual(self.propagation_effect['lon'], const.vro_longitude)
+        self.assertEqual(self.propagation_effect['alt'], const.vro_altitude)
 
     def test_airmass_scaling_on_by_default(self):
         """Test airmass scaling is turned on by default"""
