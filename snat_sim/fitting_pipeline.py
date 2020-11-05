@@ -11,12 +11,12 @@ Module API
 import multiprocessing as mp
 from copy import copy
 from pathlib import Path
-from typing import Union
+from typing import Collection, Union
 
 import sncosmo
 from astropy.table import Table
 
-from . import modeling, plasticc
+from . import modeling, plasticc, reference
 
 model_type = Union[sncosmo.Model, modeling.Model]
 
@@ -64,7 +64,9 @@ class FittingPipeline:
             quality_callback: callable = None,
             max_queue=25,
             pool_size: int = None,
-            iter_lim=float('inf')):
+            iter_lim=float('inf'),
+            reference_stars: Collection[str] = None,
+            pwv_model: callable = None):
         """Fit light-curves using multiple processes and combine results into an output file
 
         The ``max_queue`` argument can be used to limit **duplicate**
@@ -84,11 +86,16 @@ class FittingPipeline:
             max_queue: Maximum number of light-curves to store in memory at once
             pool_size: Total number of workers to spawn. Defaults to CPU count
             iter_lim: Limit number of processed light-curves (Useful for profiling)
+            reference_stars: List of reference star types to calibrate simulated supernova with
+            pwv_model: Model for the PWV concentration the reference star is observed at
         """
 
         self.pool_size = mp.cpu_count() if pool_size is None else pool_size
         if self.pool_size < 4:
             raise RuntimeError('Cannot spawn pipeline with less than 4 processes.')
+
+        if (reference_stars is None) and not (pwv_model is None):
+            raise ValueError('Cannot perform reference star subtraction with ``pwv_model`` argument')
 
         self.cadence = cadence
         self.sim_model = sim_model
@@ -98,6 +105,8 @@ class FittingPipeline:
         self.skynr = skynr
         self.quality_callback = quality_callback
         self.iter_lim = iter_lim
+        self.reference_stars = reference_stars
+        self.pwv_model = pwv_model
         self.out_path = None  # To be set when ``run`` is called
 
         manager = mp.Manager()
@@ -142,15 +151,23 @@ class FittingPipeline:
         z_limit = (u_band_low / source_low) - 1
 
         while (light_curve := self.queue_plasticc_lc.get()) != 'KILL':
+            z = light_curve.meta['SIM_REDSHIFT_CMB']
+            ra = light_curve.meta['RA']
+            dec = light_curve.meta['DECL']
 
             # Skip the light-curve if it is outside the redshift range
-            if light_curve.meta['SIM_REDSHIFT_CMB'] >= z_limit:
+            if z >= z_limit:
                 continue
 
             # Simulate a duplicate light-curve with atmospheric effects
-            self.sim_model.set(ra=light_curve.meta['RA'], dec=light_curve.meta['DECL'])
+            self.sim_model.set(ra=ra, dec=dec)
             duplicated_lc = plasticc.duplicate_plasticc_sncosmo(
                 light_curve, self.sim_model, gain=self.gain, skynr=self.skynr)
+
+            if self.reference_stars is not None:
+                pwv = self.pwv_model(duplicated_lc['time'], format='mjd')
+                pwv_los = pwv * modeling.calc_airmass(duplicated_lc['time'], ra, dec)
+                duplicated_lc = reference.divide_ref_from_lc(duplicated_lc, pwv_los, self.reference_stars)
 
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):
