@@ -15,7 +15,7 @@ _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
 from snat_sim.filters import register_lsst_filters
-from snat_sim import modeling, reference
+from snat_sim import models, reference
 
 # SNCosmo source to use when plotting
 SOURCE = 'salt2-extended'
@@ -150,8 +150,8 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         )
 
         # Simulate a light-curve
-        obs = modeling.create_observations_table(np.arange(-10, 51, float(self.sampling_input.value)), BANDS)
-        self.sim_data = modeling.realize_lc(obs, self.source, snr=float(self.snr_input.value), **params)
+        obs = models.create_observations_table(np.arange(-10, 51, float(self.sampling_input.value)), BANDS)
+        self.sim_data = models.realize_lc(obs, self.source, snr=float(self.snr_input.value), **params)
 
         # Scale flux by reference star
         if 1 in self.checkbox.active:
@@ -178,7 +178,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
                 self.plotted_data.append(err_bar)
 
         # Update plot of fitted spectrum
-        model = modeling.get_model_with_pwv(self.source, **params)
+        model = models.get_model_with_pwv(self.source, **params)
         wave = np.arange(model.minwave(), model.maxwave())
         spec_line = self.spec_figure.line(x=wave, y=model.flux(0, wave))
         self.plotted_data.append(spec_line)

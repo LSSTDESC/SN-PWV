@@ -6,9 +6,10 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 from astropy.time import Time
-
-from snat_sim import weather
 from pytz import UTC
+
+from snat_sim import models, time_series_utils
+
 
 class DatetimeToSecInYear(TestCase):
     """Tests for the ``datetime_to_sec_in_year`` function"""
@@ -26,27 +27,27 @@ class DatetimeToSecInYear(TestCase):
     def test_seconds_for_jan_1st(self):
         """Test the return is zero for midnight on January 1st"""
 
-        self.assertEqual(weather.datetime_to_sec_in_year(datetime(2020, 1, 1)), 0)
+        self.assertEqual(time_series_utils.datetime_to_sec_in_year(datetime(2020, 1, 1)), 0)
 
     def test_seconds_for_known_date(self):
         """Test correct number of seconds are returned for a pre-specified date"""
 
-        returned_seconds = weather.datetime_to_sec_in_year(self.test_date)
+        returned_seconds = time_series_utils.datetime_to_sec_in_year(self.test_date)
         self.assertEqual(returned_seconds, self.seconds)
 
     def test_pandas_timestamp_support(self):
         """Test returned values are the same for Timestamp datetime objects"""
 
-        return_for_datetime = weather.datetime_to_sec_in_year(self.test_date)
-        return_timestamp = weather.datetime_to_sec_in_year(pd.Timestamp(self.test_date))
+        return_for_datetime = time_series_utils.datetime_to_sec_in_year(self.test_date)
+        return_timestamp = time_series_utils.datetime_to_sec_in_year(pd.Timestamp(self.test_date))
         self.assertEqual(return_timestamp, return_for_datetime)
 
     def test_pandas_datetime_index_support(self):
         """Test returned values are the same for DatetimeIndex and list objects"""
 
         date_as_list = [self.test_date, self.test_date]
-        return_for_list = weather.datetime_to_sec_in_year(date_as_list)
-        return_datetime_index = weather.datetime_to_sec_in_year(pd.DatetimeIndex(date_as_list))
+        return_for_list = time_series_utils.datetime_to_sec_in_year(date_as_list)
+        return_datetime_index = time_series_utils.datetime_to_sec_in_year(pd.DatetimeIndex(date_as_list))
         np.testing.assert_array_equal(return_datetime_index, return_for_list)
 
 
@@ -69,7 +70,7 @@ class SupplementedData(TestCase):
         data[2] = np.nan  # We expect data at this point to be overwritten even though it is in the primary year
 
         cls.input_data = pd.Series(data=data, index=index)
-        cls.supplemented = weather.supplemented_data(cls.input_data, 2020, (2022, 2021))
+        cls.supplemented = time_series_utils.supplemented_data(cls.input_data, 2020, (2022, 2021))
 
     def test_primary_year_takes_priority(self):
         """Test entries from the primary Series are kept in favor of the secondary data"""
@@ -86,7 +87,7 @@ class SupplementedData(TestCase):
     def test_call_with_no_supp_years(self):
         """Test passing no supplementary years returns only the primary year"""
 
-        supplemented = weather.supplemented_data(self.input_data, 2020)
+        supplemented = time_series_utils.supplemented_data(self.input_data, 2020)
         self.assertTrue((supplemented.index.year == 2020).all())
 
     def test_nans_dropped_from_primary(self):
@@ -103,7 +104,7 @@ class SupplementedData(TestCase):
         """Test an error is through if a year is passed that is not in the data index"""
 
         with self.assertRaises(ValueError):
-            weather.supplemented_data(self.input_data, 2020, (2019,))
+            time_series_utils.supplemented_data(self.input_data, 2020, (2019,))
 
 
 class PeriodicInterpolation(TestCase):
@@ -119,12 +120,12 @@ class PeriodicInterpolation(TestCase):
         """A Runtime warning should be raised if the input series data is object dtype"""
 
         with self.assertWarns(RuntimeWarning):
-            weather.periodic_interpolation(self.test_series.astype(np.dtype('O')))
+            time_series_utils.periodic_interpolation(self.test_series.astype(np.dtype('O')))
 
     def test_boundary_values_are_interpolated(self):
         """Test boundary values are filled using a linear interpolation"""
 
-        interpolated_series = weather.periodic_interpolation(self.test_series)
+        interpolated_series = time_series_utils.periodic_interpolation(self.test_series)
         self.assertEqual(interpolated_series.iloc[0], 13)
         self.assertEqual(interpolated_series.iloc[-1], 16)
 
@@ -143,7 +144,7 @@ class ResampleDataAcrossYear(TestCase):
 
         index = np.arange(cls.start_time, cls.end_time, cls.delta).astype(datetime) + cls.offset
         cls.test_series = pd.Series(np.ones_like(index), index=index)
-        cls.resampled_series = weather.resample_data_across_year(cls.test_series)
+        cls.resampled_series = time_series_utils.resample_data_across_year(cls.test_series)
 
     def test_timezone_supported(self):
         """Test the function is timezone aware"""
@@ -158,7 +159,7 @@ class ResampleDataAcrossYear(TestCase):
 
         pd.testing.assert_series_equal(
             resampled_series_with_tz,
-            weather.resample_data_across_year(test_series_with_tz))
+            time_series_utils.resample_data_across_year(test_series_with_tz))
 
     def test_offset_of_returned_index(self):
         """Test returned index has same linear offset as input series"""
@@ -186,7 +187,7 @@ class ResampleDataAcrossYear(TestCase):
 
         index = np.arange(datetime(2020, 1, 2), self.end_time, timedelta(days=1)).astype(datetime)
         input_series = pd.Series(np.ones_like(index), index=index)
-        resampled_series = weather.resample_data_across_year(input_series)
+        resampled_series = time_series_utils.resample_data_across_year(input_series)
         offset = resampled_series.index[0] - datetime(2020, 1, 1)
         self.assertEqual(offset, timedelta(days=0))
 
@@ -203,14 +204,14 @@ class BuildPWVModel(TestCase):
         data[::2] = 0.5
 
         cls.test_data = pd.Series(data, index=index)
-        cls.modeling_function = staticmethod(weather.build_pwv_model(cls.test_data))
+        cls.pwv_model = models.PWVModel(cls.test_data)
 
     def test_return_matches_input_on_grid_points(self):
         """Test the interpolation function returns the original
         sampled values on the grid points"""
 
         np.testing.assert_array_equal(
-            self.modeling_function(self.test_data.index),
+            self.pwv_model.pwv_zenith(self.test_data.index),
             self.test_data.values
         )
 
@@ -220,13 +221,13 @@ class BuildPWVModel(TestCase):
         # Pick a point halfway between the first and second grid point
         test_date = self.test_data.index[0] + (self.test_data.index[1] - self.test_data.index[0]) / 2
         expected_value = (self.test_data.iloc[0] + self.test_data.iloc[1]) / 2
-        self.assertEqual(self.modeling_function(test_date), expected_value)
+        self.assertEqual(self.pwv_model.pwv_zenith(test_date), expected_value)
 
     def test_return_is_invariant_with_time_format(self):
         """Test changing the time format does not change the returned value"""
 
         # Pick a non-grid point
         test_date = self.test_data.index[0] + (self.test_data.index[1] - self.test_data.index[0]) / 2
-        return_for_datetime = self.modeling_function(test_date)
-        return_for_mjd = self.modeling_function(Time(test_date).to_value('mjd'), format='mjd')
+        return_for_datetime = self.pwv_model.pwv_zenith(test_date)
+        return_for_mjd = self.pwv_model.pwv_zenith(Time(test_date).to_value('mjd'), time_format='mjd')
         self.assertEqual(return_for_mjd, return_for_datetime)

@@ -1,4 +1,6 @@
-"""Read and parse simulated light-curves for different cadences.
+"""The ``plasticc`` module provides data access for locally available
+PLaSTICC simulations. Datta is accessible by specifying the cadence and
+model used in a given simulation.
 
 Module API
 ----------
@@ -13,7 +15,7 @@ from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
-from . import modeling, constants as const
+from . import constants as const, simulation
 
 try:
     plasticc_simulations_directory = Path(os.environ['CADENCE_SIMS'])
@@ -201,7 +203,7 @@ def duplicate_plasticc_sncosmo(
         x0 = light_curve.meta['SIM_SALT2x0']
 
     else:
-        x0 = modeling.calc_x0_for_z(light_curve.meta[use_redshift], 'salt2', cosmo=cosmo)
+        x0 = simulation.calc_x0_for_z(light_curve.meta[use_redshift], 'salt2', cosmo=cosmo)
 
     params = {
         't0': light_curve.meta['SIM_PEAKMJD'],
@@ -212,4 +214,4 @@ def duplicate_plasticc_sncosmo(
     }
 
     observations = extract_cadence_data(light_curve, skynr=skynr, gain=gain)
-    return modeling.simulate_lc(observations, model, params, scatter=scatter)
+    return simulation.simulate_lc(observations, model, params, scatter=scatter)

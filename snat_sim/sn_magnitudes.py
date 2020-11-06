@@ -17,7 +17,7 @@ import sncosmo
 import yaml
 from tqdm import tqdm
 
-from . import modeling, constants as const
+from . import constants as const, models, simulation
 
 # Reference pwv values
 _CONFIG_PATH = Path(__file__).resolve().parent / 'defaults' / 'ref_pwv.yaml'
@@ -81,7 +81,7 @@ def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
 
         mag_arr = []
         for pwv, z in itertools.product(pwv_arr, z_arr):
-            model.set(pwv=pwv, z=z, x0=modeling.calc_x0_for_z(z, model.source))
+            model.set(pwv=pwv, z=z, x0=simulation.calc_x0_for_z(z, model.source))
             mag = model.bandmag(band, 'ab', 0)
             mag_arr.append(mag)
 
@@ -243,7 +243,7 @@ def fit_fiducial_mag(sim_model, fit_model, obs, vparams, z_arr, bands, fid_pwv_d
 
     # Get mag at reference pwv values
     pwv_vals = [pwv_slope_start, pwv_fiducial, pwv_slope_end]
-    light_curves = modeling.iter_lcs(obs, sim_model, pwv_vals, z_arr)
+    light_curves = models.iter_lcs(obs, sim_model, pwv_vals, z_arr)
     fitted_mag, fitted_params = fit_mag(
         model=fit_model,
         light_curves=light_curves,

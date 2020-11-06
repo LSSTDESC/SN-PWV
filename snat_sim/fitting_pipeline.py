@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-
-"""The ``fitting_pipeline`` module is built to support a parallelized approach
-to simulating light-curves with atmospheric effects and then fitting them with
-a given SN model.
+"""The ``fitting_pipeline`` module defines the ``FittingPipeline`` class, which
+is built to support a parallelized approach to simulating and fitting
+light-curves with atmospheric effects.
 
 Module API
 ----------
@@ -16,9 +14,9 @@ from typing import Union
 import sncosmo
 from astropy.table import Table
 
-from . import modeling, plasticc, reference
+from . import models, plasticc, reference
 
-model_type = Union[sncosmo.Model, modeling.Model]
+model_type = Union[sncosmo.Model, models.Model]
 
 
 def passes_quality_cuts(light_curve):
@@ -149,7 +147,7 @@ class FittingPipeline:
 
             if self.reference_stars is not None:
                 pwv = self.pwv_model(duplicated_lc['time'], format='mjd')
-                pwv_los = pwv * modeling.calc_airmass(duplicated_lc['time'], ra, dec)
+                pwv_los = pwv * models.calc_airmass(duplicated_lc['time'], ra, dec)
                 duplicated_lc = reference.divide_ref_from_lc(duplicated_lc, pwv_los, self.reference_stars)
 
             # Skip if duplicated light-curve is not up to quality standards

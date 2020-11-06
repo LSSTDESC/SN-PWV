@@ -1,11 +1,13 @@
-"""This module handles the simulation of SN light-curves.
+"""The ``models`` module defines classes that act as models for different
+physical phenomena. This includes SNe Ia light-curves, the propagation of
+light through atmospheric water vapor (with and without variation in time),
+and the seasonal variation of water vapor vs time.
 
 Module API
 ----------
 """
 
 import abc
-import itertools
 import warnings
 from copy import copy
 from pathlib import Path
@@ -14,18 +16,18 @@ import numpy as np
 import sncosmo
 from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
-from astropy.table import Table
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
-from tqdm import tqdm
 
 from . import constants as const
+from . import time_series_utils as tsu
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
 
 def calc_airmass(time, ra, dec, lat=const.vro_latitude,
-                 lon=const.vro_longitude, alt=const.vro_altitude, time_format='mjd'):
+                 lon=const.vro_longitude, alt=const.vro_altitude,
+                 time_format='mjd'):
     """Calculate the airmass through which a target is observed
 
     Default latitude, longitude, and altitude are set to the Rubin Observatory.
@@ -57,9 +59,78 @@ def calc_airmass(time, ra, dec, lat=const.vro_latitude,
         return target_coord.transform_to(altaz).secz.value
 
 
-###############################################################################
-# For building sncosmo models with a PWV component
-###############################################################################
+class PWVModel:
+    """Interpolation model for the PWV at a given point of the year"""
+
+    def __init__(self, pwv_series):
+        """Build a model for time variable PWV by drawing from a given PWV time series
+
+        Args:
+            pwv_series (Series): PWV values with a datetime index
+        """
+
+        self.pwv_model_data = tsu.periodic_interpolation(tsu.resample_data_across_year(pwv_series))
+        self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
+
+    def from_suominet_receiver(self, receiver, year, supp_years):
+        """Similar to the ``build_pwv_model`` function, but automatically builds a
+        model from a data taken by a SuomiNet GPS receiver
+
+        Args:
+            receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
+            year                    (float): Year to use data from when building the model
+            supp_years              (float): Years to supplement data with when missing from ``year``
+
+        Returns:
+            An interpolation function that accepts ``date`` and ``format`` arguments
+        """
+
+        weather_data = receiver.weather_data().PWV
+        supp_data = tsu.supplemented_data(weather_data, year, supp_years)
+        return PWVModel(supp_data)
+
+    def pwv_zenith(self, date, time_format=None):
+        """Interpolate the PWV at zenith as a function of time
+
+        The datetime format will by guessed. If it cannot be identified, set
+        the ``time_format`` kwarg to the desired input format.
+
+        Args:
+            date (float): The date to interpolate PWV for
+            time_format (str): Astropy supported time format of the ``date`` argument
+        """
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings("ignore")
+            x_as_datetime = Time(date, format=time_format).to_datetime()
+            x_in_seconds = tsu.datetime_to_sec_in_year(x_as_datetime)
+
+        return np.interp(
+            x=x_in_seconds,
+            xp=self.pwv_model_data.index,
+            fp=self.pwv_model_data.values
+        )
+
+    def pwv_los(self, date, ra, dec, lat=const.vro_latitude,
+                lon=const.vro_longitude, alt=const.vro_altitude,
+                time_format='mjd'):
+        """Interpolate the PWV along the line of sight as a function of time
+
+        The datetime format will by guessed. If it cannot be identified, set
+        the ``time_format`` kwarg to the desired input format.
+
+        Args:
+            date      (float): The date to interpolate PWV for
+            ra        (float): Right Ascension of the target (Deg)
+            dec       (float): Declination of the target (Deg)
+            lat       (float): Latitude of the observer (Deg)
+            lon       (float): Longitude of the observer (Deg)
+            alt       (float): Altitude of the observer (m)
+            time_format (str): Astropy supported time format of the ``date`` argument
+        """
+
+        return self.pwv_zenith(date, time_format) * calc_airmass(ra, dec, lat, lon, alt, time_format)
+
 
 class VariablePropagationEffect(sncosmo.PropagationEffect):
     """Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
@@ -299,171 +370,3 @@ class Model(sncosmo.Model):
         new_model = type(self)(self.source, self.effects, self.effect_names, self._effect_frames)
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
-
-
-###############################################################################
-# For simulating light-curves
-###############################################################################
-
-
-def calc_x0_for_z(
-        z, source, cosmo=const.betoule_cosmo, abs_mag=const.betoule_abs_mb,
-        band='standard::b', magsys='AB', **params):
-    """Determine x0 for a given redshift and model
-
-    Args:
-         z            (float): Model redshift to set
-         source (Source, str): Model to use
-         cosmo    (Cosmology): Cosmology to use when determining x0
-         abs_mag      (float): Absolute peak magnitude of the SNe Ia
-         band           (str): Band to set absolute magnitude in
-         magsys         (str): Magnitude system to set absolute magnitude in
-         Any other params to set for the provided `source`
-    """
-
-    model = sncosmo.Model(source)
-    model.set(z=z, **params)
-    model.set_source_peakabsmag(abs_mag, band, magsys, cosmo=cosmo)
-    return model['x0']
-
-
-def create_observations_table(
-        phases=range(-20, 51),
-        bands=('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
-        zp=25,
-        zpsys='ab',
-        gain=100):
-    """Create an astropy table defining a uniform observation cadence for a single target
-
-    Time values are specified in units of phase
-
-    Args:
-        phases (ndarray): Array of phase values to include
-        bands  (ndarray): Array of bands to include
-        zp       (float): The zero point
-        zpsys      (str): The zero point system
-        gain     (float): The simulated gain
-
-    Returns:
-        An astropy table
-    """
-
-    phase_arr = np.concatenate([phases for _ in bands])
-    band_arr = np.concatenate([np.full_like(phases, b, dtype='U1000') for b in bands])
-    gain_arr = np.full_like(phase_arr, gain)
-    skynoise_arr = np.zeros_like(phase_arr)
-    zp_arr = np.full_like(phase_arr, zp, dtype=float)
-    zp_sys_arr = np.full_like(phase_arr, zpsys, dtype='U10')
-
-    observations = Table(
-        {
-            'time': phase_arr,
-            'band': band_arr,
-            'gain': gain_arr,
-            'skynoise': skynoise_arr,
-            'zp': zp_arr,
-            'zpsys': zp_sys_arr
-        },
-        dtype=[float, 'U1000', float, float, float, 'U100']
-    )
-
-    observations.sort('time')
-    return observations
-
-
-def realize_lc(obs, model, snr=.05, **params):
-    """Simulate a SN light-curve for given parameters
-
-    Light-curves are simulated for the given parameters without any of
-    the added effects from ``sncosmo.realize_lc``.
-
-    Args:
-        obs       (Table): Observation cadence
-        model     (Model): The sncosmo model to use in the simulations
-        snr       (float): Signal to noise ratio
-        **params         : Values for any model parameters
-
-    Yields:
-        Astropy table for each PWV and redshift
-    """
-
-    model = copy(model)
-    model.update(params)
-
-    # Set default x0 value according to assumed cosmology and the model redshift
-    x0 = params.get('x0', calc_x0_for_z(model['z'], model.source))
-    model.set(x0=x0)
-
-    light_curve = obs[['time', 'band', 'zp', 'zpsys']]
-    light_curve['flux'] = model.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
-    light_curve['fluxerr'] = light_curve['flux'] / snr
-    light_curve.meta = dict(zip(model.param_names, model.parameters))
-    return light_curve
-
-
-def simulate_lc(observations, model, params, scatter=True):
-    """Simulate a SN light-curve given a set of observations.
-
-    If ``scatter`` is ``True``, then simulated flux values include an added
-    random number drawn from a Normal Distribution with a standard deviation
-    equal to the error of the observation.
-
-    Args:
-        observations (Table): Table of observations.
-        model        (Model): The sncosmo model to use in the simulations
-        params        (dict): parameters to feed to the model for realizing the light-curve
-        scatter       (bool): Add random noise to the flux values
-
-    Returns:
-        An astropy table formatted for use with sncosmo
-    """
-
-    model = copy(model)
-    model.update(params)
-
-    flux = model.bandflux(
-        observations['band'],
-        observations['time'],
-        zp=observations['zp'],
-        zpsys=observations['zpsys'])
-
-    fluxerr = np.sqrt(observations['skynoise'] ** 2 + np.abs(flux) / observations['gain'])
-    if scatter:
-        flux = np.atleast_1d(np.random.normal(flux, fluxerr))
-
-    data = [
-        observations['time'],
-        observations['band'],
-        flux,
-        fluxerr,
-        observations['zp'],
-        observations['zpsys']
-    ]
-
-    return Table(data, names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'), meta=params)
-
-
-def iter_lcs(obs, model, pwv_arr, z_arr, snr=10, verbose=True):
-    """Iterator over SN light-curves for combination of PWV and z values
-
-    Light-curves are simulated for the given parameters without any of
-    the added effects from ``sncosmo.realize_lc``.
-
-    Args:
-        obs       (Table): Observation cadence
-        model     (Model): The sncosmo model to use in the simulations
-        pwv_arr (ndarray): Array of PWV values
-        z_arr   (ndarray): Array of redshift values
-        snr       (float): Signal to noise ratio
-        verbose    (bool): Show a progress bar
-
-    Yields:
-        Astropy table for each PWV and redshift
-    """
-
-    model = copy(model)
-    iter_total = len(pwv_arr) * len(z_arr)
-    arg_iter = itertools.product(pwv_arr, z_arr)
-    for pwv, z in tqdm(arg_iter, total=iter_total, desc='Light-Curves', disable=not verbose):
-        params = {'t0': 0.0, 'pwv': pwv, 'z': z, 'x0': calc_x0_for_z(z, model.source)}
-        yield realize_lc(obs, model, snr, **params)

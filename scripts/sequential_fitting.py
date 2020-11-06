@@ -12,7 +12,7 @@ from astropy.table import Table
 
 sys.path.insert(0, '../')
 
-from snat_sim import filters, plasticc, sn_magnitudes, modeling
+from snat_sim import filters, plasticc, sn_magnitudes, models
 
 filters.register_lsst_filters(force=True)
 
@@ -82,12 +82,12 @@ if __name__ == '__main__':
     # Characterize the atmospheric variability
     # Set PWV to a constant while developing
     pwv_interpolator = lambda *args: 5
-    variable_pwv_effect = modeling.VariablePWVTrans(pwv_interpolator)
+    variable_pwv_effect = models.VariablePWVTrans(pwv_interpolator)
     variable_pwv_effect.set(res=5)
 
     # Build models with and without atmospheric effects
     model_without_pwv = sncosmo.Model('salt2-extended')
-    sn_model_with_pwv = modeling.Model(
+    sn_model_with_pwv = models.Model(
         source='salt2-extended',
         effects=[variable_pwv_effect],
         effect_names=[''],

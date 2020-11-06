@@ -36,7 +36,6 @@ Value Summaries
 +------------------------------+----------------------------------------------+
 """
 
-from astropy import units as _u
 from astropy.cosmology import FlatLambdaCDM as _FlatLambdaCDM
 
 # Vera Rubin Observatory coordinates from Google Maps
