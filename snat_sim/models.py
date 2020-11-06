@@ -25,40 +25,6 @@ from . import time_series_utils as tsu
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
 
-def calc_airmass(time, ra, dec, lat=const.vro_latitude,
-                 lon=const.vro_longitude, alt=const.vro_altitude,
-                 time_format='mjd'):
-    """Calculate the airmass through which a target is observed
-
-    Default latitude, longitude, and altitude are set to the Rubin Observatory.
-
-    Args:
-        time      (float): Time at which the target is observed
-        ra        (float): Right Ascension of the target (Deg)
-        dec       (float): Declination of the target (Deg)
-        lat       (float): Latitude of the observer (Deg)
-        lon       (float): Longitude of the observer (Deg)
-        alt       (float): Altitude of the observer (m)
-        time_format (str): Format of the time value (Default 'mjd')
-
-    Returns:
-        Airmass in units of Sec(z)
-    """
-
-    with warnings.catch_warnings():  # Astropy time manipulations raise annoying ERFA warnings
-        warnings.filterwarnings('ignore')
-
-        obs_time = Time(time, format=time_format)
-        observer_location = EarthLocation(
-            lat=lat * u.deg,
-            lon=lon * u.deg,
-            height=alt * u.m)
-
-        target_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg)
-        altaz = AltAz(obstime=obs_time, location=observer_location)
-        return target_coord.transform_to(altaz).secz.value
-
-
 class PWVModel:
     """Interpolation model for the PWV at a given point of the year"""
 
@@ -72,9 +38,9 @@ class PWVModel:
         self.pwv_model_data = tsu.periodic_interpolation(tsu.resample_data_across_year(pwv_series))
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-    def from_suominet_receiver(self, receiver, year, supp_years):
-        """Similar to the ``build_pwv_model`` function, but automatically builds a
-        model from a data taken by a SuomiNet GPS receiver
+    @staticmethod
+    def from_suominet_receiver(receiver, year, supp_years):
+        """Construct a ``PWVModel`` instance using data from a SuomiNet receiver
 
         Args:
             receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
@@ -88,6 +54,40 @@ class PWVModel:
         weather_data = receiver.weather_data().PWV
         supp_data = tsu.supplemented_data(weather_data, year, supp_years)
         return PWVModel(supp_data)
+
+    @staticmethod
+    def calc_airmass(time, ra, dec, lat=const.vro_latitude,
+                     lon=const.vro_longitude, alt=const.vro_altitude,
+                     time_format='mjd'):
+        """Calculate the airmass through which a target is observed
+
+        Default latitude, longitude, and altitude are set to the Rubin Observatory.
+
+        Args:
+            time      (float): Time at which the target is observed
+            ra        (float): Right Ascension of the target (Deg)
+            dec       (float): Declination of the target (Deg)
+            lat       (float): Latitude of the observer (Deg)
+            lon       (float): Longitude of the observer (Deg)
+            alt       (float): Altitude of the observer (m)
+            time_format (str): Format of the time value (Default 'mjd')
+
+        Returns:
+            Airmass in units of Sec(z)
+        """
+
+        with warnings.catch_warnings():  # Astropy time manipulations raise annoying ERFA warnings
+            warnings.filterwarnings('ignore')
+
+            obs_time = Time(time, format=time_format)
+            observer_location = EarthLocation(
+                lat=lat * u.deg,
+                lon=lon * u.deg,
+                height=alt * u.m)
+
+            target_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg)
+            altaz = AltAz(obstime=obs_time, location=observer_location)
+            return target_coord.transform_to(altaz).secz.value
 
     def pwv_zenith(self, date, time_format=None):
         """Interpolate the PWV at zenith as a function of time
@@ -129,7 +129,8 @@ class PWVModel:
             time_format (str): Astropy supported time format of the ``date`` argument
         """
 
-        return self.pwv_zenith(date, time_format) * calc_airmass(ra, dec, lat, lon, alt, time_format)
+        return self.pwv_zenith(date, time_format) * \
+               self.calc_airmass(date, ra, dec, lat, lon, alt, time_format)
 
 
 class VariablePropagationEffect(sncosmo.PropagationEffect):
@@ -187,7 +188,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 class VariablePWVTrans(VariablePropagationEffect):
     """Atmospheric propagation effect for temporally variable PWV"""
 
-    def __init__(self, pwv_interpolator, time_format='mjd', transmission_version='v1', scale_airmass=True):
+    def __init__(self, pwv_model, time_format='mjd', transmission_version='v1', scale_airmass=True):
         """Time variable atmospheric transmission due to PWV
 
         Set ``scale_airmass`` to ``False`` if ``pwv_interpolator`` returns PWV values along the
@@ -201,16 +202,16 @@ class VariablePWVTrans(VariablePropagationEffect):
             alt: Observer altitude in meters  (defaults to height of VRO)
 
         Args:
-            pwv_interpolator (callable[float]): Returns PWV at zenith for a given time value and time format
-            time_format                  (str): Astropy recognized time format used by the ``pwv_interpolator``
-            transmission_version         (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
-            scale_airmass               (bool): En/disable airmass scaling.
+            pwv_model       (PWVModel): Returns PWV at zenith for a given time value and time format
+            time_format          (str): Astropy recognized time format used by the ``pwv_interpolator``
+            transmission_version (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
+            scale_airmass       (bool): En/disable airmass scaling.
         """
 
         # Store init arguments
         self.scale_airmass = scale_airmass
         self._time_format = time_format
-        self._pwv_interpolator = pwv_interpolator
+        self._pwv_model = pwv_model
 
         if transmission_version == 'v1':
             from pwv_kpno.defaults import v1_transmission
@@ -232,47 +233,13 @@ class VariablePWVTrans(VariablePropagationEffect):
         self.param_names_latex = [
             'Target RA', 'Target Dec', 'Observer Latitude (deg)', 'Observer Longitude (deg)',
             'Observer Altitude (m)', 'Coordinate', 'Resolution']
+
         self._parameters = np.array(
             [0., 0.,
              const.vro_latitude,
              const.vro_longitude,
              const.vro_altitude,
              1024, 5.])
-
-    def airmass(self, time):
-        """Return the airmass as a function of time
-
-        Args:
-            time (float, np.array): Array of time values
-
-        Returns:
-            An array of airmass values
-        """
-
-        return calc_airmass(
-            time,
-            ra=self['ra'],
-            dec=self['dec'],
-            lat=self['lat'],
-            lon=self['lon'],
-            alt=self['alt'],
-            time_format=self._time_format)
-
-    def calc_pwv_los(self, time):
-        """Return the PWV along the line of sight for a given time
-
-        Args:
-            time (float, np.array): Array of time values
-
-        Returns:
-            An array of PWV values in mm
-        """
-
-        pwv = self._pwv_interpolator(time, format='mjd')
-        if self.scale_airmass:
-            pwv *= self.airmass(time)
-
-        return pwv
 
     def propagate(self, wave, flux, time):
         """Propagate the flux through the atmosphere
@@ -286,7 +253,15 @@ class VariablePWVTrans(VariablePropagationEffect):
             An array of flux values after suffering propagation effects
         """
 
-        pwv = self.calc_pwv_los(time)
+        pwv = self._pwv_model.pwv_los(
+            time,
+            ra=self['ra'],
+            dec=self['dec'],
+            lat=self['lat'],
+            lon=self['lon'],
+            alt=self['alt'],
+            time_format=self._time_format)
+
         transmission = self._transmission_model(pwv, np.atleast_1d(wave), self['res'])
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series

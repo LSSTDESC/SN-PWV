@@ -68,7 +68,7 @@ class FittingPipeline:
             pool_size             (int): Total number of workers to spawn. Defaults to CPU count
             iter_lim              (int): Limit number of processed light-curves (Useful for profiling)
             ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with
-            pwv_model        (callable): Model for the PWV concentration the reference star is observed at
+            pwv_model        (PWVModel): Model for the PWV concentration the reference star is observed at
         """
 
         self.pool_size = mp.cpu_count() if pool_size is None else pool_size
@@ -146,8 +146,7 @@ class FittingPipeline:
                 light_curve, self.sim_model, gain=self.gain, skynr=self.skynr)
 
             if self.reference_stars is not None:
-                pwv = self.pwv_model(duplicated_lc['time'], format='mjd')
-                pwv_los = pwv * models.calc_airmass(duplicated_lc['time'], ra, dec)
+                pwv_los = self.pwv_model.pwv_los(duplicated_lc['time'], ra, dec, time_format='mjd')
                 duplicated_lc = reference.divide_ref_from_lc(duplicated_lc, pwv_los, self.reference_stars)
 
             # Skip if duplicated light-curve is not up to quality standards
