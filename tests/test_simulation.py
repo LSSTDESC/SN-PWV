@@ -7,7 +7,7 @@ import numpy as np
 import sncosmo
 from astropy.table import Table
 
-from snat_sim import models, simulation
+from snat_sim import models, lc_simulation
 from snat_sim.filters import register_decam_filters
 
 register_decam_filters(force=True)
@@ -24,7 +24,7 @@ class CalcX0ForZ(TestCase):
         abs_mag = -18
         band = 'standard::b'
         source = 'salt2-extended'
-        x0 = simulation.calc_x0_for_z(z, source, abs_mag=abs_mag)
+        x0 = lc_simulation.calc_x0_for_z(z, source, abs_mag=abs_mag)
 
         model = sncosmo.Model(source)
         model.set(z=z, x0=x0)
@@ -45,7 +45,7 @@ class CreateObservationsTable(TestCase):
         cls.zp = 15
         cls.zpsys = 'SDSS'
 
-        cls.observations_table = simulation.create_observations_table(
+        cls.observations_table = lc_simulation.create_observations_table(
             phases=cls.phases,
             bands=cls.bands,
             zp=cls.zp,
@@ -99,14 +99,14 @@ class RealizeLC(TestCase):
     def setUp(self):
         """Simulate a cadence and associated light-curve"""
 
-        self.observations = simulation.create_observations_table()
+        self.observations = lc_simulation.create_observations_table()
         self.model = sncosmo.Model('salt2-extended')
 
         z = 0.5
         self.snr = 12
         self.params = dict(x1=.8, c=-.5, z=z, t0=1, x0=1)
-        self.obs = simulation.create_observations_table()
-        self.simulated_lc = simulation.realize_lc(
+        self.obs = lc_simulation.create_observations_table()
+        self.simulated_lc = lc_simulation.realize_lc(
             self.obs, self.model, self.snr, **self.params)
 
     def test_simulated_snr(self):
@@ -149,8 +149,8 @@ class RealizeLC(TestCase):
         """Test default x0 is dependent on z"""
 
         z = 0.5
-        expected_x0 = simulation.calc_x0_for_z(z, self.model.source)
-        simulated_lc = simulation.realize_lc(self.obs, self.model, z=z)
+        expected_x0 = lc_simulation.calc_x0_for_z(z, self.model.source)
+        simulated_lc = lc_simulation.realize_lc(self.obs, self.model, z=z)
         self.assertEqual(expected_x0, simulated_lc.meta['x0'])
 
     def test_meta_includes_all_params(self):
@@ -159,14 +159,14 @@ class RealizeLC(TestCase):
         """
 
         expected_params = self.model.param_names
-        simulated_lc = simulation.realize_lc(self.obs, self.model, z=0.5)
+        simulated_lc = lc_simulation.realize_lc(self.obs, self.model, z=0.5)
         meta_params = list(simulated_lc.meta.keys())
         self.assertListEqual(expected_params, meta_params)
 
     def test_raises_for_z_equals_0(self):
         """Test a value error is raised for simulating z == 0"""
 
-        self.assertRaises(ValueError, simulation.realize_lc, self.obs, self.model, z=0)
+        self.assertRaises(ValueError, lc_simulation.realize_lc, self.obs, self.model, z=0)
 
 
 class SimulateLC(RealizeLC):
@@ -175,14 +175,14 @@ class SimulateLC(RealizeLC):
     def setUp(self):
         """Simulate a cadence and associated light-curve"""
 
-        self.observations = simulation.create_observations_table()
+        self.observations = lc_simulation.create_observations_table()
         self.model = sncosmo.Model('salt2-extended')
 
         z = 0.5
         self.snr = 12
         self.params = dict(x1=.8, c=-.5, z=z, t0=1, x0=1)
-        self.obs = simulation.create_observations_table()
-        self.simulated_lc = simulation.simulate_lc(self.obs, self.model, self.params)
+        self.obs = lc_simulation.create_observations_table()
+        self.simulated_lc = lc_simulation.simulate_lc(self.obs, self.model, self.params)
 
     @skip  # Todo: Overload this test and check the flux err matches expected distribution
     def test_simulated_snr(self):
@@ -200,8 +200,8 @@ class IterLCS(TestCase):
         self.model = sncosmo.Model('salt2-extended')
         self.model.add_effect(models.StaticPWVTrans(), '', 'obs')
 
-        self.observations = simulation.create_observations_table()
-        self.lc_iter = simulation.iter_lcs(
+        self.observations = lc_simulation.create_observations_table()
+        self.lc_iter = lc_simulation.iter_lcs(
             self.observations,
             self.model,
             self.pwv_vals,

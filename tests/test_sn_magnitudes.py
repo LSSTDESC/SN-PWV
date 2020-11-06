@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from snat_sim import models, simulation, sn_magnitudes
+from snat_sim import models, lc_simulation, sn_magnitudes
 from snat_sim.filters import register_decam_filters
 
 register_decam_filters(force=True)
@@ -61,7 +61,7 @@ class TestTabulateMagnitudes(TestCase):
             mag_for_pwv = []
 
             for j, z in enumerate(self.z_vals):
-                self.model.set(pwv=pwv, z=z, x0=simulation.calc_x0_for_z(z, self.model.source))
+                self.model.set(pwv=pwv, z=z, x0=lc_simulation.calc_x0_for_z(z, self.model.source))
                 mag = self.model.bandmag(test_band, 'ab', 0)
                 mag_for_pwv.append(mag)
 

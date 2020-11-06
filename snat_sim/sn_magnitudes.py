@@ -17,7 +17,7 @@ import sncosmo
 import yaml
 from tqdm import tqdm
 
-from . import constants as const, models, simulation
+from . import constants as const, models, lc_simulation
 
 # Reference pwv values
 _CONFIG_PATH = Path(__file__).resolve().parent / 'defaults' / 'ref_pwv.yaml'
@@ -81,7 +81,7 @@ def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
 
         mag_arr = []
         for pwv, z in itertools.product(pwv_arr, z_arr):
-            model.set(pwv=pwv, z=z, x0=simulation.calc_x0_for_z(z, model.source))
+            model.set(pwv=pwv, z=z, x0=lc_simulation.calc_x0_for_z(z, model.source))
             mag = model.bandmag(band, 'ab', 0)
             mag_arr.append(mag)
 
