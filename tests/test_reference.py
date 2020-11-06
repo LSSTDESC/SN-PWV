@@ -6,7 +6,7 @@ import numpy as np
 from astropy.table import Table
 from pandas.testing import assert_series_equal
 
-from snat_sim import reference
+from snat_sim import reference_stars
 
 
 class StellarSpectraParsing(TestCase):
@@ -36,9 +36,9 @@ class StellarSpectraParsing(TestCase):
 
     def runTest(self):
         for stellar_type, fname in zip(self.stellar_types, self.file_names):
-            full_path = reference._STELLAR_SPECTRA_DIR / fname
-            spec_by_path = reference._read_stellar_spectra_path(full_path)
-            spec_by_type = reference.get_stellar_spectra(stellar_type)
+            full_path = reference_stars._STELLAR_SPECTRA_DIR / fname
+            spec_by_path = reference_stars._read_stellar_spectra_path(full_path)
+            spec_by_type = reference_stars.get_stellar_spectra(stellar_type)
             assert_series_equal(spec_by_path, spec_by_type)
 
 
@@ -47,7 +47,7 @@ class GetReferenceStarDataframe(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.ref_star_dataframe = reference.get_ref_star_dataframe()
+        cls.ref_star_dataframe = reference_stars.get_ref_star_dataframe()
 
     def test_includes_unnormalized_flux(self):
         """Tests band flux columns are included in the dataframe"""
@@ -81,13 +81,13 @@ class GetReferenceStarDataframe(TestCase):
         """Test unknown stellar types raise a value error"""
 
         with self.assertRaises(ValueError):
-            reference.get_ref_star_dataframe('a_made_up_stellar_type')
+            reference_stars.get_ref_star_dataframe('a_made_up_stellar_type')
 
     def test_known_types_parsed(self):
         """Test all stellar types in ``_stellar_type_paths`` are parsed"""
 
-        for stellar_type in reference.available_types:
-            dataframe = reference.get_ref_star_dataframe(stellar_type)
+        for stellar_type in reference_stars.available_types:
+            dataframe = reference_stars.get_ref_star_dataframe(stellar_type)
             self.assertFalse(dataframe.empty)
 
 
@@ -99,26 +99,26 @@ class InterpNormFlux(TestCase):
     def test_norm_flux_is_1_at_zero_pwv(self):
         """Test flux is 1 at the PWV=0 in the test band"""
 
-        norm_flux = reference.interp_norm_flux(self.test_band, pwv=0)
+        norm_flux = reference_stars.interp_norm_flux(self.test_band, pwv=0)
         self.assertEqual(1, norm_flux)
 
     def test_pwv_is_float_return_is_float(self):
         """Test return is a float when pwv arg is a float"""
 
-        returned_flux = reference.interp_norm_flux(self.test_band, 5)
+        returned_flux = reference_stars.interp_norm_flux(self.test_band, 5)
         self.assertIsInstance(returned_flux, float)
 
     def test_pwv_is_array_return_is_array(self):
         """Test return is an array when pwv arg is an array"""
 
-        n1d_flux = reference.interp_norm_flux(self.test_band, [5, 6])
+        n1d_flux = reference_stars.interp_norm_flux(self.test_band, [5, 6])
         self.assertIsInstance(n1d_flux, np.ndarray)
         self.assertEqual(1, np.ndim(n1d_flux))
 
     def test_error_out_of_bound(self):
         """Test a value error is raise if PWV is out of range"""
 
-        self.assertRaises(ValueError, reference.interp_norm_flux, self.test_band, 100)
+        self.assertRaises(ValueError, reference_stars.interp_norm_flux, self.test_band, 100)
 
 
 class AverageNormFlux(TestCase):
@@ -130,18 +130,18 @@ class AverageNormFlux(TestCase):
         """Test the return matches the average norm flux at a single PWV for two reference types"""
 
         test_pwv = 5
-        avg_flux = reference.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
-        g2_flux = reference.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
-        m52_flux = reference.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
+        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
+        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
+        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
         self.assertEqual(avg_flux, np.average((g2_flux, m52_flux)))
 
     def test_average_matches_ref_star_for_array(self):
         """Test the return matches the average norm flux at an array of PWV for two reference types"""
 
         test_pwv = [5, 6]
-        avg_flux = reference.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
-        g2_flux = reference.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
-        m52_flux = reference.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
+        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
+        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
+        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
 
         self.assertIsInstance(avg_flux, np.ndarray, 'Returned average was not an array')
         np.testing.assert_array_equal(avg_flux, np.average((g2_flux, m52_flux), axis=0))
@@ -163,7 +163,7 @@ class DivideRefFromLc(TestCase):
         """Test argument table is not mutated"""
 
         original_table = self.test_table.copy()
-        reference.divide_ref_from_lc(self.test_table, pwv=15)
+        reference_stars.divide_ref_from_lc(self.test_table, pwv=15)
         self.assertTrue(all(original_table == self.test_table))
 
     # Todo: Expand test to included vectorized PWV
@@ -173,11 +173,11 @@ class DivideRefFromLc(TestCase):
         # Scale the flux values manually
         test_pwv = 15
         test_band = self.test_table['band'][0]
-        scale_factor = reference.average_norm_flux(test_band, test_pwv)
+        scale_factor = reference_stars.average_norm_flux(test_band, test_pwv)
         expected_flux = list(self.test_table['flux'] / scale_factor)
 
         # Scale the flux values with ``divide_ref_from_lc`` and check they
         # match manual results
-        scaled_table = reference.divide_ref_from_lc(self.test_table, pwv=test_pwv)
+        scaled_table = reference_stars.divide_ref_from_lc(self.test_table, pwv=test_pwv)
         returned_flux = list(scaled_table['flux'])
         self.assertListEqual(expected_flux, returned_flux)

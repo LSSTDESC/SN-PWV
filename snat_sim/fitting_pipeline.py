@@ -14,7 +14,7 @@ from typing import Union
 import sncosmo
 from astropy.table import Table
 
-from . import models, plasticc, reference
+from . import models, plasticc, reference_stars
 
 model_type = Union[sncosmo.Model, models.Model]
 
@@ -147,7 +147,7 @@ class FittingPipeline:
 
             if self.reference_stars is not None:
                 pwv_los = self.pwv_model.pwv_los(duplicated_lc['time'], ra, dec, time_format='mjd')
-                duplicated_lc = reference.divide_ref_from_lc(duplicated_lc, pwv_los, self.reference_stars)
+                duplicated_lc = reference_stars.divide_ref_from_lc(duplicated_lc, pwv_los, self.reference_stars)
 
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):

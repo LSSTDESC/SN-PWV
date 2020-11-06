@@ -15,7 +15,7 @@ _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
 from snat_sim.filters import register_lsst_filters
-from snat_sim import models, reference
+from snat_sim import models, reference_stars
 
 # SNCosmo source to use when plotting
 SOURCE = 'salt2-extended'
@@ -155,7 +155,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
 
         # Scale flux by reference star
         if 1 in self.checkbox.active:
-            self.sim_data = reference.divide_ref_from_lc(
+            self.sim_data = reference_stars.divide_ref_from_lc(
                 self.sim_data, self.sim_data.meta['pwv']
             )
 
