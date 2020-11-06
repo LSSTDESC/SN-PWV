@@ -188,7 +188,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 class VariablePWVTrans(VariablePropagationEffect):
     """Atmospheric propagation effect for temporally variable PWV"""
 
-    def __init__(self, pwv_model, time_format='mjd', transmission_version='v1', scale_airmass=True):
+    def __init__(self, pwv_model, time_format='mjd', transmission_version='v1'):
         """Time variable atmospheric transmission due to PWV
 
         Set ``scale_airmass`` to ``False`` if ``pwv_interpolator`` returns PWV values along the
@@ -205,11 +205,9 @@ class VariablePWVTrans(VariablePropagationEffect):
             pwv_model       (PWVModel): Returns PWV at zenith for a given time value and time format
             time_format          (str): Astropy recognized time format used by the ``pwv_interpolator``
             transmission_version (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
-            scale_airmass       (bool): En/disable airmass scaling.
         """
 
         # Store init arguments
-        self.scale_airmass = scale_airmass
         self._time_format = time_format
         self._pwv_model = pwv_model
 
