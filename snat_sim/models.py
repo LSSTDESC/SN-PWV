@@ -78,16 +78,16 @@ class PWVModel:
 
         with warnings.catch_warnings():  # Astropy time manipulations raise annoying ERFA warnings
             warnings.filterwarnings('ignore')
-
             obs_time = Time(time, format=time_format)
-            observer_location = EarthLocation(
-                lat=lat * u.deg,
-                lon=lon * u.deg,
-                height=alt * u.m)
 
-            target_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg)
-            altaz = AltAz(obstime=obs_time, location=observer_location)
-            return target_coord.transform_to(altaz).secz.value
+        observer_location = EarthLocation(
+            lat=lat * u.deg,
+            lon=lon * u.deg,
+            height=alt * u.m)
+
+        target_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg)
+        altaz = AltAz(obstime=obs_time, location=observer_location)
+        return target_coord.transform_to(altaz).secz.value
 
     def pwv_zenith(self, date, time_format=None):
         """Interpolate the PWV at zenith as a function of time
