@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """Copy a small subset of PLaSTIC data into the test suite.
 
 Usage:
