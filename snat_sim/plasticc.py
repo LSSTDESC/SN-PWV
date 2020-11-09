@@ -167,17 +167,17 @@ def format_plasticc_sncosmo(light_curve):
     return lc
 
 
-def extract_cadence_data(light_curve, drop_nondetection=False, zp=25, gain=5, skynr=100):
+def extract_cadence_data(light_curve, zp=25, gain=1, skynoise=0, drop_nondetection=False):
     """Extract the observational cadence from a PLaSTICC light-curve
 
     Returned table is formatted for use with ``sncosmo.realize_lcs``.
 
     Args:
         light_curve      (Table): Astropy table with PLaSTICC light-curve data
-        drop_nondetection (bool): Drop data with PHOTFLAG == 0
         zp        (float, array): Overwrite the PLaSTICC zero-point with this value
-        gain           (int): Gain to use during simulation
-        skynr          (int): Simulate skynoise by scaling plasticc ``SKY_SIG`` by 1 / skynr
+        gain               (int): Gain to use during simulation
+        skynoise    (int, array): Simulated skynoise in counts
+        drop_nondetection (bool): Drop data with PHOTFLAG == 0
 
     Returns:
         An astropy table with cadence data for the input light-curve
@@ -194,19 +194,20 @@ def extract_cadence_data(light_curve, drop_nondetection=False, zp=25, gain=5, sk
     observations['zp'] = zp
     observations['zpsys'] = 'ab'
     observations['gain'] = gain
-    observations['skynoise'] = light_curve['SKY_SIG'] / skynr
+    observations['skynoise'] = skynoise
     return observations
 
 
 def duplicate_plasticc_sncosmo(
-        light_curve, model, gain=5, skynr=100, scatter=True, cosmo=const.betoule_cosmo):
+        light_curve, model, zp=None, gain=1, skynoise=None, scatter=True, cosmo=const.betoule_cosmo):
     """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
 
     Args:
         light_curve  (Table): Astropy table with PLaSTICC light-curve data
         model        (Model): Model to use when simulating light-curve flux
+        zp    (float, array): Optionally overwrite the PLaSTICC zero-point with this value
         gain           (int): Gain to use during simulation
-        skynr          (int): Simulate skynoise by scaling plasticc ``SKY_SIG`` by 1 / skynr
+        skynoise       (int):  Optionally overwrite the PLaSTICC skynoise with this value
         scatter       (bool): Add random noise to the flux values
         cosmo    (Cosmology): Rescale the ``x0`` parameter according to the given cosmology
 
@@ -229,5 +230,8 @@ def duplicate_plasticc_sncosmo(
         'x0': x0
     }
 
-    observations = extract_cadence_data(light_curve, skynr=skynr, gain=gain)
+    zp = zp if zp is not None else light_curve['ZEROPT']
+    skynoise = skynoise if skynoise is not None else light_curve['SKY_SIG']
+
+    observations = extract_cadence_data(light_curve, zp=zp, gain=gain, skynoise=skynoise)
     return lc_simulation.simulate_lc(observations, model, params, scatter=scatter)
