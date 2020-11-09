@@ -1,7 +1,7 @@
 """Tests for the ``simulation`` module"""
 
 import types
-from unittest import TestCase, skip
+from unittest import TestCase
 
 import numpy as np
 import sncosmo
@@ -167,26 +167,6 @@ class RealizeLC(TestCase):
         """Test a value error is raised for simulating z == 0"""
 
         self.assertRaises(ValueError, lc_simulation.realize_lc, self.obs, self.model, z=0)
-
-
-class SimulateLC(RealizeLC):
-    """Tests for the ``simulate_lc`` function"""
-
-    def setUp(self):
-        """Simulate a cadence and associated light-curve"""
-
-        self.observations = lc_simulation.create_observations_table()
-        self.model = sncosmo.Model('salt2-extended')
-
-        z = 0.5
-        self.snr = 12
-        self.params = dict(x1=.8, c=-.5, z=z, t0=1, x0=1)
-        self.obs = lc_simulation.create_observations_table()
-        self.simulated_lc = lc_simulation.simulate_lc(self.obs, self.model, self.params)
-
-    @skip  # Todo: Overload this test and check the flux err matches expected distribution
-    def test_simulated_snr(self):
-        pass
 
 
 class IterLCS(TestCase):

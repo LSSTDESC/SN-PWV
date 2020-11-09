@@ -62,7 +62,7 @@ from matplotlib.ticker import MultipleLocator
 from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
-from . import constants as const, filters, models
+from . import constants as const, filters, lc_simulation
 
 filters.register_lsst_filters(force=True)
 
@@ -261,11 +261,8 @@ def plot_spectral_template(source, wave_arr, z_arr, pwv, phase=0, resolution=2, 
     """
 
     fig, (top_ax, bottom_ax) = plt.subplots(
-        2, 1,
-        figsize=figsize,
-        sharex=True,
-        gridspec_kw={'height_ratios': [4, 1.75]}
-    )
+        nrows=2, figsize=figsize, sharex='row',
+        gridspec_kw={'height_ratios': [4, 1.75]})
 
     # Plot spectral template at given redshifts
     model = sncosmo.Model(source)
@@ -388,10 +385,10 @@ def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
         params_dict (dict): Dictionary with fitted parameters for each pwv and z
     """
 
-    x0_cosmo = np.array([models.calc_x0_for_z(z, source) for z in z_arr])
+    x0_cosmo = np.array([lc_simulation.calc_x0_for_z(z, source) for z in z_arr])
     delta_x0 = -2.5 * np.log10(params_dict['x0'] / x0_cosmo)
 
-    fig, (left_ax, right_ax) = plt.subplots(1, 2, sharey=True, figsize=(8, 4))
+    fig, (left_ax, right_ax) = plt.subplots(ncols=2, sharey='col', figsize=(8, 4))
     multi_line_plot(z_arr, delta_x0, pwv_arr, left_ax, label='{} mm')
     multi_line_plot(pwv_arr, delta_x0.T, z_arr, right_ax, label='z = {:.2f}')
 
@@ -424,7 +421,7 @@ def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
     """
 
     num_cols = len(colors)
-    fig, axes = plt.subplots(1, num_cols, figsize=(4 * num_cols, 4), sharex=True, sharey=True)
+    fig, axes = plt.subplots(ncols=num_cols, figsize=(4 * num_cols, 4), sharey='col')
     if num_cols == 1:
         axes = [axes]
 
@@ -456,7 +453,7 @@ def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=const.betoule_cosmo):
     cosmo_mu = cosmo.distmod(z_arr).value
     delta_mu = mu - cosmo_mu
 
-    fig, axes = plt.subplots(1, 3, figsize=(9, 3))
+    fig, axes = plt.subplots(ncols=3, figsize=(9, 3))
     mu_ax, delta_mu_ax, relative_mu_ax = axes
 
     multi_line_plot(z_arr, mu, pwv_arr, mu_ax)
@@ -513,10 +510,10 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
     summer_pwv = pwv_series[(pwv_series.index > jun_equinox) & (pwv_series.index < sep_equinox)]
     fall_pwv = pwv_series[(pwv_series.index > sep_equinox) & (pwv_series.index < dec_equinox)]
 
-    print(f'Winter Average: {winter_pwv.mean(): .2f} +\- {winter_pwv.std() : .2f} mm')
-    print(f'Spring Average: {spring_pwv.mean(): .2f} +\- {spring_pwv.std() : .2f} mm')
-    print(f'Summer Average: {summer_pwv.mean(): .2f} +\- {summer_pwv.std() : .2f} mm')
-    print(f'Fall Average:  {fall_pwv.mean(): .2f} +\- {fall_pwv.std() : .2f} mm')
+    print(f'Winter Average: {winter_pwv.mean(): .2f} +\\- {winter_pwv.std() : .2f} mm')
+    print(f'Spring Average: {spring_pwv.mean(): .2f} +\\- {spring_pwv.std() : .2f} mm')
+    print(f'Summer Average: {summer_pwv.mean(): .2f} +\\- {summer_pwv.std() : .2f} mm')
+    print(f'Fall Average:  {fall_pwv.mean(): .2f} +\\- {fall_pwv.std() : .2f} mm')
 
     fig, axis = plt.subplots(figsize=figsize)
     axis.set_ylabel('Median Folded PWV (mm)')
