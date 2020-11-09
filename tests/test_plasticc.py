@@ -32,6 +32,7 @@ def setUpModule():
 def tearDownModule():
     """Restore the ``CADENCE_SIMS`` variable to it's value before testing"""
 
+    del os.environ[_ENVIRON_VAR_NAME]
     if _OLD_ENV_VALUE:
         os.environ[_ENVIRON_VAR_NAME] = _OLD_ENV_VALUE
 
