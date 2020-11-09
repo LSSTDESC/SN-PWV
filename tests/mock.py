@@ -9,6 +9,29 @@ from astropy.table import Table
 from snat_sim.models import PWVModel
 
 
+def create_mock_pwv_data(
+        start_time=datetime(2020, 1, 1),
+        end_time=datetime(2020, 12, 31),
+        delta=timedelta(days=1),
+        offset=timedelta(hours=0)):
+    """Return a ``Series`` of mock PWV values that alternate between .5 and 1
+
+    Args:
+        start_time (datetime): Start date of the returned series index
+        end_time   (datetime): End date of the returned series index
+        delta     (timedelta): Sampling rate of the datetime values
+        offset    (timedelta): Apply a linear offset to the returned values
+
+    Returns:
+        A pandas ``Series`` object
+    """
+
+    index = np.arange(start_time, end_time, delta).astype(datetime) + offset
+    pwv = np.ones_like(index, dtype=float)
+    pwv[::2] = 0.5
+    return pd.Series(pwv, index=index)
+
+
 def create_constant_pwv_model(constant_pwv_value=4):
     """Create a ``PWVModel`` instance that returns a constant PWV at zenith
 
