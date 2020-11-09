@@ -62,7 +62,7 @@ from matplotlib.ticker import MultipleLocator
 from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
-from . import modeling, filters, constants as const
+from . import constants as const, filters, models
 
 filters.register_lsst_filters(force=True)
 
@@ -388,7 +388,7 @@ def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
         params_dict (dict): Dictionary with fitted parameters for each pwv and z
     """
 
-    x0_cosmo = np.array([modeling.calc_x0_for_z(z, source) for z in z_arr])
+    x0_cosmo = np.array([models.calc_x0_for_z(z, source) for z in z_arr])
     delta_x0 = -2.5 * np.log10(params_dict['x0'] / x0_cosmo)
 
     fig, (left_ax, right_ax) = plt.subplots(1, 2, sharey=True, figsize=(8, 4))

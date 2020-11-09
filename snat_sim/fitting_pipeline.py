@@ -1,8 +1,6 @@
-#!/usr/bin/env python3
-
-"""The ``fitting_pipeline`` module is built to support a parallelized approach
-to simulating light-curves with atmospheric effects and then fitting them with
-a given SN model.
+"""The ``fitting_pipeline`` module defines the ``FittingPipeline`` class, which
+is built to support a parallelized approach to simulating and fitting
+light-curves with atmospheric effects.
 
 Module API
 ----------
@@ -16,9 +14,9 @@ from typing import Union
 import sncosmo
 from astropy.table import Table
 
-from . import modeling, plasticc, reference
+from . import models, plasticc, reference_stars
 
-model_type = Union[sncosmo.Model, modeling.Model]
+model_type = Union[sncosmo.Model, models.Model]
 
 
 def passes_quality_cuts(light_curve):
@@ -70,7 +68,7 @@ class FittingPipeline:
             pool_size             (int): Total number of workers to spawn. Defaults to CPU count
             iter_lim              (int): Limit number of processed light-curves (Useful for profiling)
             ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with
-            pwv_model        (callable): Model for the PWV concentration the reference star is observed at
+            pwv_model        (PWVModel): Model for the PWV concentration the reference star is observed at
         """
 
         self.pool_size = mp.cpu_count() if pool_size is None else pool_size
@@ -148,9 +146,8 @@ class FittingPipeline:
                 light_curve, self.sim_model, gain=self.gain, skynr=self.skynr)
 
             if self.reference_stars is not None:
-                pwv = self.pwv_model(duplicated_lc['time'], format='mjd')
-                pwv_los = pwv * modeling.calc_airmass(duplicated_lc['time'], ra, dec)
-                duplicated_lc = reference.divide_ref_from_lc(duplicated_lc, pwv_los, self.reference_stars)
+                pwv_los = self.pwv_model.pwv_los(duplicated_lc['time'], ra, dec, time_format='mjd')
+                duplicated_lc = reference_stars.divide_ref_from_lc(duplicated_lc, pwv_los, self.reference_stars)
 
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):

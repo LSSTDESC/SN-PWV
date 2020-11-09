@@ -1,11 +1,7 @@
-"""The ``weather`` module is used to characterize atmospheric variability
-by modeling the time variable precipitate water vapor (PWV) as a function of
-time. It also provides limited functionality for manipulating temporal data as
-required when building a time based model. Models are based on the linear
-interpolation of measured time series data while using periodic boundary
-conditions to support modeling values outside the measured time range. In
-doing so we assume a level uniformity in the seasonal variation of weather
-data over time.
+"""The ``time_series_utils.py`` module is used provides limited functionality
+for manipulating time series data. It is intended to supplement existing
+functionality in the ``pandas`` package with support for tasks particular to
+dealing with atmospheric / weather data.
 
 Module API
 ----------
@@ -16,7 +12,6 @@ import warnings
 import numpy as np
 import pandas as pd
 from astropy import units as u
-from astropy.time import Time
 
 
 def datetime_to_sec_in_year(date):
@@ -142,61 +137,3 @@ def resample_data_across_year(series):
     index_values = np.arange(start_time, end_time, delta).astype(pd.Timestamp) + offset
     new_index = pd.to_datetime(index_values).tz_localize(series.index.tz)
     return series.reindex(new_index)
-
-
-def build_pwv_model(pwv_series):
-    """Build interpolator for the PWV at a given point of the year
-
-    Returned interpolator defaults to expecting datetime in MJD format.
-
-    Args:
-        pwv_series (Series): PWV values with a datetime index
-
-    Returns:
-        An interpolation function that accepts ``date`` and ``format`` arguments
-    """
-
-    pwv_model_data = periodic_interpolation(resample_data_across_year(pwv_series))
-    pwv_model_data.index = datetime_to_sec_in_year(pwv_model_data.index)
-
-    def interp_pwv(date, format=None):
-        """Interpolate the PWV as a function of time
-
-        The datetime format will by guessed. If it cannot be identified, set
-        the ``format`` kwarg to the desired input format.
-
-        Args:
-            date (float): The date to interpolate PWV for
-            format (str): Astropy supported time format of the ``date`` argument
-        """
-
-        with warnings.catch_warnings():
-            warnings.filterwarnings("ignore")
-            x_as_datetime = Time(date, format=format).to_datetime()
-            x_in_seconds = datetime_to_sec_in_year(x_as_datetime)
-
-        return np.interp(
-            x=x_in_seconds,
-            xp=pwv_model_data.index,
-            fp=pwv_model_data.values
-        )
-
-    return interp_pwv
-
-
-def build_suominet_model(receiver, year, supp_years):
-    """Similar to the ``build_pwv_model`` function, but automatically builds a
-    model from a data taken by a SuomiNet GPS receiver
-
-    Args:
-        receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
-        year                    (float): Year to use data from when building the model
-        supp_years              (float): Years to supplement data with when missing from ``year``
-
-    Returns:
-        An interpolation function that accepts ``date`` and ``format`` arguments
-    """
-
-    weather_data = receiver.weather_data().PWV
-    supp_data = supplemented_data(weather_data, year, supp_years)
-    return build_pwv_model(supp_data)

@@ -10,7 +10,7 @@ from pathlib import Path
 import sncosmo
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-from snat_sim import modeling, plasticc, filters
+from snat_sim import models, plasticc, filters
 from snat_sim.fitting_pipeline import FittingPipeline
 
 filters.register_lsst_filters()
@@ -25,12 +25,12 @@ if __name__ == '__main__':
     # Characterize the atmospheric variability
     # Set PWV to a constant while developing
     pwv_interpolator = lambda *args: 5
-    variable_pwv_effect = modeling.VariablePWVTrans(pwv_interpolator)
+    variable_pwv_effect = models.VariablePWVTrans(pwv_interpolator)
     variable_pwv_effect.set(res=5)
 
     # Build models with and without atmospheric effects
     model_without_pwv = sncosmo.Model('Salt2-extended')
-    model_with_pwv = modeling.Model(
+    model_with_pwv = models.Model(
         source='salt2-extended',
         effects=[variable_pwv_effect],
         effect_names=[''],

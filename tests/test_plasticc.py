@@ -9,7 +9,7 @@ from numpy.testing import assert_equal
 
 from snat_sim import plasticc
 from snat_sim.filters import register_lsst_filters
-from snat_sim.modeling import calc_x0_for_z
+from snat_sim.lc_simulation import calc_x0_for_z
 
 register_lsst_filters(force=True)
 

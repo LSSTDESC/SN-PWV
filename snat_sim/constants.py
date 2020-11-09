@@ -1,5 +1,6 @@
-"""The ``constants`` module defines values for constants used across the
-parent package.
+"""The ``constants`` module defines values for physical constants used across
+the parent package. Units used for each value are summarized in the table
+below.
 
 Value Summaries
 ---------------
@@ -36,7 +37,6 @@ Value Summaries
 +------------------------------+----------------------------------------------+
 """
 
-from astropy import units as _u
 from astropy.cosmology import FlatLambdaCDM as _FlatLambdaCDM
 
 # Vera Rubin Observatory coordinates from Google Maps
