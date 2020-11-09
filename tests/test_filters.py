@@ -35,7 +35,7 @@ class RegisterSncosmoFilter(TestCase):
             'Incorrect transmission for bandpass')
 
     def test_error_without_force(self):
-        """Test error raised if bandpasses are re-registered with force=False"""
+        """Test error raised if band passes are re-registered with force=False"""
 
         args = self.wave, self.transmission, self.name
         self.assertRaises(TypeError, filters._register_sncosmo_filter, args)
@@ -50,14 +50,14 @@ class RegisterDECAMFilters(TestCase):
 
         filters.register_decam_filters(force=True)
 
-    # noinspection PyMethodMayBeStatic
-    def assert_bands_are_registered(self, *bands):
+    @staticmethod
+    def assert_bands_are_registered(*bands):
         """Fail if given bands are not registered with sncosmo"""
 
         for band in bands:
             sncosmo.get_bandpass(band)
 
-    def test_bandpasses_registered(self):
+    def test_band_passes_registered(self):
         """Test bands are registered under ids DECam_<ugrizy>"""
 
         bands = [f'DECam_{b}' for b in 'ugrizY']
@@ -159,8 +159,8 @@ class RegisterLSSTFilters(TestCase):
         l_total = sncosmo.get_bandpass('lsst_lenses')
         self.assertListEqual(l_product.tolist(), l_total.trans.tolist())
 
-    # noinspection PyMethodMayBeStatic
-    def test_hardware_equal_product_of_components(self):
+    @staticmethod
+    def test_hardware_equal_product_of_components():
         """Test ``lsst_hardware`` filter is product of all non-Atm. filters"""
 
         wave = np.arange(3000, 11000)
