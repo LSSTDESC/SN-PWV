@@ -166,18 +166,34 @@ class DivideRefFromLc(TestCase):
         reference_stars.divide_ref_from_lc(self.test_table, pwv=15)
         self.assertTrue(all(original_table == self.test_table))
 
-    # Todo: Expand test to included vectorized PWV
-    def test_returned_flux_is_scaled(self):
+    def assert_returned_flux_is_scaled(self, pwv):
         """Test returned table has scaled flux"""
 
         # Scale the flux values manually
-        test_pwv = 15
         test_band = self.test_table['band'][0]
-        scale_factor = reference_stars.average_norm_flux(test_band, test_pwv)
-        expected_flux = list(self.test_table['flux'] / scale_factor)
+        scale_factor = reference_stars.average_norm_flux(test_band, pwv)
+        expected_flux = np.divide(self.test_table['flux'], scale_factor)
 
         # Scale the flux values with ``divide_ref_from_lc`` and check they
         # match manual results
-        scaled_table = reference_stars.divide_ref_from_lc(self.test_table, pwv=test_pwv)
+        scaled_table = reference_stars.divide_ref_from_lc(self.test_table, pwv=pwv)
         returned_flux = list(scaled_table['flux'])
-        self.assertListEqual(expected_flux, returned_flux)
+        np.testing.assert_array_equal(expected_flux, returned_flux)
+
+    def test_flux_is_scaled_for_pwv_float(self):
+        """Test flux values are scaled according to a scalar PWV value"""
+
+        self.assert_returned_flux_is_scaled(pwv=15)
+
+    def test_flux_is_scaled_for_pwv_vector(self):
+        """Test flux values are scaled according to a vector of PWV values"""
+
+        pwv_array = np.full(len(self.test_table), 15)
+        self.assert_returned_flux_is_scaled(pwv=pwv_array)
+        self.assert_returned_flux_is_scaled(pwv=pwv_array.tolist())
+
+    def test_error_on_mismatched_arg_length(self):
+        """Test a value error is raised when argument lengths are not the same"""
+
+        with self.assertRaises(ValueError):
+            reference_stars.divide_ref_from_lc(self.test_table, pwv=[1])

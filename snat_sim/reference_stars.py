@@ -162,7 +162,7 @@ def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):
 
     Args:
         lc_table                  (Table): Astropy table with columns ``flux`` and ``band``
-        pwv                       (float): PWV value to subtract reference star for
+        pwv  (Number, Collection[Number]): PWV value to subtract reference star for
         reference_types (Collection[str]): Type of reference stars to use in calibration
 
     Returns:
