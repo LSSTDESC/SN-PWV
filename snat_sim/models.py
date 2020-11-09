@@ -129,8 +129,8 @@ class PWVModel:
             time_format (str): Astropy supported time format of the ``date`` argument
         """
 
-        return self.pwv_zenith(date, time_format) * \
-               self.calc_airmass(date, ra, dec, lat, lon, alt, time_format)
+        return (self.pwv_zenith(date, time_format) *
+                self.calc_airmass(date, ra, dec, lat, lon, alt, time_format))
 
 
 class VariablePropagationEffect(sncosmo.PropagationEffect):

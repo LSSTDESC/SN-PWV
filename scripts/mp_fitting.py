@@ -12,6 +12,7 @@ import sncosmo
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from snat_sim import models, plasticc, filters
 from snat_sim.fitting_pipeline import FittingPipeline
+from tests.mock import create_constant_pwv_model
 
 filters.register_lsst_filters()
 
@@ -23,9 +24,8 @@ if __name__ == '__main__':
         raise ValueError(f'Cadence {cadence_name} not available from local cadences: {available_cadences}')
 
     # Characterize the atmospheric variability
-    # Set PWV to a constant while developing
-    pwv_interpolator = lambda *args: 5
-    variable_pwv_effect = models.VariablePWVTrans(pwv_interpolator)
+    # Set PWV to a constant for profiling
+    variable_pwv_effect = models.VariablePWVTrans(create_constant_pwv_model(5))
     variable_pwv_effect.set(res=5)
 
     # Build models with and without atmospheric effects
