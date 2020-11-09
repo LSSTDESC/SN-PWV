@@ -17,19 +17,34 @@ from tqdm import tqdm
 
 from . import constants as const, lc_simulation
 
-try:
-    plasticc_simulations_directory = Path(os.environ['CADENCE_SIMS'])
+DEFAULT_DATA_DIR = Path(__file__).resolve().parent.parent / 'data' / 'plasticc'
 
-except KeyError:
-    default_data_dir = Path(__file__).resolve().parent.parent / 'data' / 'plasticc'
-    warn(f'``CADENCE_SIMS`` is not set in environment. Defaulting to {default_data_dir}')
-    plasticc_simulations_directory = default_data_dir
+
+def get_data_dir():
+    """Return the directory where the package expects PLaSTICC simulation to be located
+
+    This value is the same as the environmental ``CADENCE_SIMS`` directory.
+    If the environmental variable is not set, defaults to the project's
+    ``data`` directory.
+
+    Args:
+        A ``Path`` object pointing to the data directory
+    """
+
+    try:
+        plasticc_simulations_directory = Path(os.environ['CADENCE_SIMS'])
+
+    except KeyError:
+        warn(f'``CADENCE_SIMS`` is not set in environment. Defaulting to {DEFAULT_DATA_DIR}')
+        plasticc_simulations_directory = DEFAULT_DATA_DIR
+
+    return plasticc_simulations_directory
 
 
 def get_available_cadences():
     """Return a list of all available cadences in the PLaSTICC simulation directory"""
 
-    return [p.name for p in plasticc_simulations_directory.glob('*') if p.is_dir()]
+    return [p.name for p in get_data_dir().glob('*') if p.is_dir()]
 
 
 def get_model_headers(cadence, model):
@@ -45,7 +60,7 @@ def get_model_headers(cadence, model):
         A list of Path objects
     """
 
-    sim_dir = plasticc_simulations_directory / cadence / f'LSST_WFD_{cadence}_MODEL{model}'
+    sim_dir = get_data_dir() / cadence / f'LSST_WFD_{cadence}_MODEL{model}'
     return list(sim_dir.glob('*HEAD.FITS'))
 
 
@@ -96,6 +111,7 @@ def iter_lc_for_header(header_path, verbose=True):
 
     # If using pandas instead of astropy on the above line
     # Avoid ValueError: Big-endian buffer not supported on little-endian compiler
+    # by adding in the below code:
     # for key, val in phot_data.iteritems():
     #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 

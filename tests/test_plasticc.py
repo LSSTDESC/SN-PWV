@@ -1,5 +1,7 @@
 """Tests for the ``plasticc`` module"""
 
+import os
+from pathlib import Path
 from unittest import TestCase
 
 import numpy as np
@@ -12,17 +14,106 @@ from snat_sim.lc_simulation import calc_x0_for_z
 from tests.mock import create_mock_plasticc_light_curve
 
 register_lsst_filters(force=True)
+test_data_dir = Path(__file__).parent / 'test_plasticc_data'
+
+# Used to store environmental variables on module setup / teardown
+_OLD_ENV_VALUE = None
+_ENVIRON_VAR_NAME = 'CADENCE_SIMS'
+
+
+def setUpModule():
+    """Set the ``CADENCE_SIMS`` variable in the environment"""
+
+    global _OLD_ENV_VALUE
+    _OLD_ENV_VALUE = os.environ.get(_ENVIRON_VAR_NAME, None)
+    os.environ[_ENVIRON_VAR_NAME] = str(test_data_dir)
+
+
+def tearDownModule():
+    """Restore the ``CADENCE_SIMS`` variable to it's value before testing"""
+
+    if _OLD_ENV_VALUE:
+        os.environ[_ENVIRON_VAR_NAME] = _OLD_ENV_VALUE
+
+
+class GetDataDir(TestCase):
+    """Tests for the ``get_data_dir`` function"""
+
+    def test_is_using_environmental_variable(self):
+        """Test the data directory matches the environmental variable"""
+
+        self.assertEqual(plasticc.get_data_dir(), Path(os.environ['CADENCE_SIMS']))
+
+    def test_default_dir_matches_project_root(self):
+        """Test the data directory matches the project data directory
+        when not set in the environment
+        """
+
+        old_environ = os.environ.copy()
+        try:
+            del os.environ[_ENVIRON_VAR_NAME]
+            self.assertEqual(plasticc.get_data_dir(), plasticc.DEFAULT_DATA_DIR)
+
+        finally:
+            os.environ.update(old_environ)
+
+
+class GetAvailableCadences(TestCase):
+    """Tests for the ``get_available_cadences`` function"""
+
+    def test_cadences_match_test_data(self):
+        """Test returned cadences match those available in the test data"""
+
+        test_data_cadences = [d.name for d in test_data_dir.glob('*') if d.is_dir()]
+        self.assertEqual(plasticc.get_available_cadences(), test_data_cadences)
 
 
 class GetModelHeaders(TestCase):
     """Tests for the ``get_model_headers`` function"""
 
-    def test_empty_list_for_no_local_data(self):
+    def test_correct_headers_for_test_data(self):
         """Test the returned list is empty for a cadence with no available data"""
 
-        self.assertListEqual(
-            [], plasticc.get_model_headers('fake_cadence', model=11),
-            'Returned list is not empty')
+        header_paths = plasticc.get_model_headers('alt_sched', model=11)
+        file_names = sorted(path.name for path in header_paths)
+        known_headers = ['LSST_WFD_NONIa-0004_HEAD.FITS', 'LSST_WFD_NONIa-0005_HEAD.FITS']
+        self.assertListEqual(file_names, known_headers)
+
+
+class CountLightCurves(TestCase):
+    """Tests for the ``count_light_curves`` function"""
+
+    test_cadence = 'alt_sched'
+    test_model = 11
+    lc_num_for_cadence = 8
+
+    def test_lc_count_matches_test_data(self):
+        """Test the number of counted light curves matches those in the test data"""
+
+        counted_light_curves = plasticc.count_light_curves(self.test_cadence, self.test_model)
+        self.assertEqual(counted_light_curves, self.lc_num_for_cadence)
+
+
+class IterLCForHeader(TestCase):
+    """Tests for the ``iter_lc_for_header`` function"""
+
+    def test_lc_has_meta_data(self):
+        """Test returned light curves have meta data"""
+
+        test_header = plasticc.get_model_headers('alt_sched', 11)[0]
+        lc = next(plasticc.iter_lc_for_header(test_header, verbose=False))
+        self.assertTrue(lc.meta)
+
+
+class IterLcForCadenceModel(TestCase):
+    """Tests for the ``iter_lc_for_cadence_model`` function"""
+
+    def test_lc_count_matches_count_light_curves_func(self):
+        """Test returned light curve count matches the values returned by ``count_light_curves``"""
+
+        total_lc_count = sum(1 for _ in plasticc.iter_lc_for_cadence_model('alt_sched', 11))
+        expected_count = plasticc.count_light_curves('alt_sched', 11)
+        self.assertEqual(total_lc_count, expected_count)
 
 
 class FormatPlasticcSncosmo(TestCase):
