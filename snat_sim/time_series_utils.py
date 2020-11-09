@@ -1,11 +1,7 @@
-"""The ``weather`` module is used to characterize atmospheric variability
-by modeling the time variable precipitate water vapor (PWV) as a function of
-time. It also provides limited functionality for manipulating temporal data as
-required when building a time based model. Models are based on the linear
-interpolation of measured time series data while using periodic boundary
-conditions to support modeling values outside the measured time range. In
-doing so we assume a level uniformity in the seasonal variation of weather
-data over time.
+"""The ``time_series_utils.py`` module is used provides limited functionality
+for manipulating time series data. It is intended to supplement existing
+functionality in the ``pandas`` package with support for tasks particular to
+dealing with atmospheric / weather data.
 
 Module API
 ----------

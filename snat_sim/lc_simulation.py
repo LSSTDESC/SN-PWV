@@ -1,6 +1,6 @@
 """The ``simulation`` module realizes SN Ia light-curves for a given supernova
 model. The module supports supernova ``model`` objects from the ``models``
-module and the ``sncosmo`` package.
+module as well as from the ``sncosmo`` package.
 
 Module API
 ----------

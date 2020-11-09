@@ -1,5 +1,5 @@
 """The ``plasticc`` module provides data access for locally available
-PLaSTICC simulations. Datta is accessible by specifying the cadence and
+PLaSTICC simulations. Data is accessible by specifying the cadence and
 model used in a given simulation.
 
 Module API

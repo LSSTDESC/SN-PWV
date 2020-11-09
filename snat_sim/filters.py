@@ -11,6 +11,9 @@ Usage Example
    import sncosmo
    from snat_sim.filters import register_lsst_filters
 
+   # Check the names of new filters that will be registered
+   print(help(register_lsst_filters))
+
    register_lsst_filters()
    lsst_u_band = sncosmo.get_bandpass('lsst_total_u')
 

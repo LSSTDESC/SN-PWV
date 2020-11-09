@@ -1,5 +1,6 @@
-"""Utilities for calculating magnitudes relative to a reference star or
-fiducial atmosphere (i.e., fiducial PWV).
+"""The ``reference_stars`` module includes utilities for calibrating
+observed (or simulated) magnitudes relative to a reference star. Reference
+star fluxes are determined relative to a fiducial atmosphere with 4mm of PWV.
 
 Module API
 ----------

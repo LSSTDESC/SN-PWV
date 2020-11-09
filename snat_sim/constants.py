@@ -1,5 +1,6 @@
-"""The ``constants`` module defines values for constants used across the
-parent package.
+"""The ``constants`` module defines values for physical constants used across
+the parent package. Units used for each value are summarized in the table
+below.
 
 Value Summaries
 ---------------
