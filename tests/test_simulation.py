@@ -7,7 +7,7 @@ import numpy as np
 import sncosmo
 from astropy.table import Table
 
-from snat_sim import models, lc_simulation
+from snat_sim import lc_simulation, models
 from snat_sim.filters import register_decam_filters
 
 register_decam_filters(force=True)
