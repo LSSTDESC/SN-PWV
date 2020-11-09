@@ -12,7 +12,7 @@ from sncosmo.tests import test_models as sncosmo_test_models
 from snat_sim import constants as const
 from snat_sim import models
 from snat_sim.filters import register_decam_filters
-from tests.mock import constant_pwv_model
+from tests.mock import create_constant_pwv_model
 
 register_decam_filters(force=True)
 
@@ -31,7 +31,9 @@ class TestVariablePWVTrans(TestCase):
     """Tests for the ``modeling.VariablePWVTrans`` class"""
 
     def setUp(self):
-        self.propagation_effect = models.VariablePWVTrans(constant_pwv_model)
+        self.constant_pwv = 4
+        self.mock_pwv_model = create_constant_pwv_model(self.constant_pwv)
+        self.propagation_effect = models.VariablePWVTrans(self.mock_pwv_model)
 
     def test_default_location_params_match_vro(self):
         """Test the default values for the observer location match VRO"""
@@ -45,10 +47,10 @@ class TestVariablePWVTrans(TestCase):
 
         from pwv_kpno.transmission import CrossSectionTransmission
 
-        default_effect = models.VariablePWVTrans(constant_pwv_model)
+        default_effect = models.VariablePWVTrans(self.mock_pwv_model)
         self.assertIsInstance(default_effect._transmission_model, CrossSectionTransmission)
 
-        v1_effect = models.VariablePWVTrans(constant_pwv_model, transmission_version='v1')
+        v1_effect = models.VariablePWVTrans(self.mock_pwv_model, transmission_version='v1')
         self.assertIsInstance(v1_effect._transmission_model, CrossSectionTransmission)
 
         # Todo: When the v2 model is available, add a test condition
@@ -56,7 +58,7 @@ class TestVariablePWVTrans(TestCase):
         # self.assertIsInstance(v2_effect._transmission_model, TransmissionModel)
 
         with self.assertRaises(ValueError):
-            models.VariablePWVTrans(constant_pwv_model, transmission_version='NotAVersion')
+            models.VariablePWVTrans(self.mock_pwv_model, transmission_version='NotAVersion')
 
     def test_propagation_includes_pwv_transmission(self):
         """Test propagated flux includes absorption from PWV"""
@@ -122,7 +124,7 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
     def test_variable_propagation_support(self):
         """Test a time variable effect can be added and called without error"""
 
-        effect = models.VariablePWVTrans(constant_pwv_model)
+        effect = models.VariablePWVTrans(create_constant_pwv_model())
         model = models.Model(sncosmo_test_models.flatsource())
         model.add_effect(effect=effect, frame='obs', name='Variable PWV')
         model.flux(time=0, wave=[4000])

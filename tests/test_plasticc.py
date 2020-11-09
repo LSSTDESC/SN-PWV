@@ -4,42 +4,14 @@ from unittest import TestCase
 
 import numpy as np
 import sncosmo
-from astropy.table import Table
 from numpy.testing import assert_equal
 
 from snat_sim import plasticc
 from snat_sim.filters import register_lsst_filters
 from snat_sim.lc_simulation import calc_x0_for_z
+from tests.mock import create_mock_plasticc_light_curve
 
 register_lsst_filters(force=True)
-
-
-def create_mock_plasticc_light_curve():
-    """Create a mock light-curve in the PLaSTICC data format
-
-    Returns:
-        An astropy table
-    """
-
-    time_values = np.arange(-20, 52)
-    return Table(
-        data={
-            'MJD': time_values,
-            'FLT': list('ugrizY') * (len(time_values) // 6),
-            'FLUXCAL': np.ones_like(time_values),
-            'FLUXCALERR': np.full_like(time_values, .2),
-            'ZEROPT': np.full_like(time_values, 30),
-            'PHOTFLAG': [0] * 10 + [6144] + [4096] * 61,
-            'SKY_SIG': np.full_like(time_values, 80)
-        },
-        meta={
-            'SIM_PEAKMJD': 0,
-            'SIM_SALT2x1': .1,
-            'SIM_SALT2c': .2,
-            'SIM_REDSHIFT_CMB': .5,
-            'SIM_SALT2x0': 1
-        }
-    )
 
 
 class GetModelHeaders(TestCase):
@@ -57,8 +29,6 @@ class FormatPlasticcSncosmo(TestCase):
     """Tests for the ``format_plasticc_sncosmo`` function"""
 
     def setUp(self):
-        """Create a mock PLaSTICC light-curve"""
-
         self.plasticc_lc = create_mock_plasticc_light_curve()
         self.formatted_lc = plasticc.format_plasticc_sncosmo(self.plasticc_lc)
 
@@ -78,8 +48,6 @@ class ExtractCadenceData(TestCase):
     """Tests for the ``extract_cadence_data`` function"""
 
     def setUp(self):
-        """Create a mock PLaSTICC light-curve"""
-
         self.plasticc_lc = create_mock_plasticc_light_curve()
         self.extracted_cadence = plasticc.extract_cadence_data(self.plasticc_lc)
 
