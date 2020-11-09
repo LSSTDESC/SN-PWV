@@ -12,6 +12,7 @@ from sncosmo.tests import test_models as sncosmo_test_models
 from snat_sim import constants as const
 from snat_sim import models
 from snat_sim.filters import register_decam_filters
+from tests.mock import constant_pwv_model
 
 register_decam_filters(force=True)
 
@@ -30,9 +31,7 @@ class TestVariablePWVTrans(TestCase):
     """Tests for the ``modeling.VariablePWVTrans`` class"""
 
     def setUp(self):
-        self.default_pwv = 5
-        self.constant_pwv_func = lambda date, format: self.default_pwv
-        self.propagation_effect = models.VariablePWVTrans(self.constant_pwv_func)
+        self.propagation_effect = models.VariablePWVTrans(constant_pwv_model)
 
     def test_default_location_params_match_vro(self):
         """Test the default values for the observer location match VRO"""
@@ -41,20 +40,15 @@ class TestVariablePWVTrans(TestCase):
         self.assertEqual(self.propagation_effect['lon'], const.vro_longitude)
         self.assertEqual(self.propagation_effect['alt'], const.vro_altitude)
 
-    def test_airmass_scaling_on_by_default(self):
-        """Test airmass scaling is turned on by default"""
-
-        self.assertTrue(self.propagation_effect.scale_airmass)
-
     def test_transmission_version_support(self):
         """Test the propagation object uses the atmospheric model corresponding specified at init"""
 
         from pwv_kpno.transmission import CrossSectionTransmission
 
-        default_effect = models.VariablePWVTrans(self.constant_pwv_func)
+        default_effect = models.VariablePWVTrans(constant_pwv_model)
         self.assertIsInstance(default_effect._transmission_model, CrossSectionTransmission)
 
-        v1_effect = models.VariablePWVTrans(self.constant_pwv_func, transmission_version='v1')
+        v1_effect = models.VariablePWVTrans(constant_pwv_model, transmission_version='v1')
         self.assertIsInstance(v1_effect._transmission_model, CrossSectionTransmission)
 
         # Todo: When the v2 model is available, add a test condition
@@ -62,29 +56,15 @@ class TestVariablePWVTrans(TestCase):
         # self.assertIsInstance(v2_effect._transmission_model, TransmissionModel)
 
         with self.assertRaises(ValueError):
-            models.VariablePWVTrans(self.constant_pwv_func, transmission_version='NotAVersion')
+            models.VariablePWVTrans(constant_pwv_model, transmission_version='NotAVersion')
 
     def test_propagation_includes_pwv_transmission(self):
         """Test propagated flux includes absorption from PWV"""
 
         wave = np.arange(3000, 12000)
         flux = np.ones_like(wave)
-
-        self.propagation_effect.scale_airmass = False
-        transmission = self.propagation_effect._transmission_model(
-            self.default_pwv, wave, self.propagation_effect['res'])
-
         propagated_flux = self.propagation_effect.propagate(wave, flux, time=0)
-        np.testing.assert_equal(propagated_flux, transmission.values)
-
-    def test_pwv_los_is_scaled_by_airmass(self):
-        """Test PWV is scaled by airmass when the ``scale_airmass`` attribute is ``True``"""
-
-        self.propagation_effect.scale_airmass = True
-        self.propagation_effect.set(ra=2, dec=2)
-        airmass = self.propagation_effect.airmass(time=0)
-        pwv_los = self.propagation_effect.calc_pwv_los(time=0)
-        self.assertEqual(pwv_los, self.default_pwv * airmass)
+        np.testing.assert_array_less(propagated_flux, flux)
 
 
 class TestModel(sncosmo_test_models.TestModel, TestCase):
@@ -142,7 +122,7 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
     def test_variable_propagation_support(self):
         """Test a time variable effect can be added and called without error"""
 
-        effect = models.VariablePWVTrans(lambda date, format: 5)
+        effect = models.VariablePWVTrans(constant_pwv_model)
         model = models.Model(sncosmo_test_models.flatsource())
         model.add_effect(effect=effect, frame='obs', name='Variable PWV')
         model.flux(time=0, wave=[4000])
