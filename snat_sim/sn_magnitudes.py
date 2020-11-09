@@ -17,7 +17,7 @@ import sncosmo
 import yaml
 from tqdm import tqdm
 
-from . import constants as const, models, lc_simulation
+from . import constants as const, lc_simulation
 
 # Reference pwv values
 _CONFIG_PATH = Path(__file__).resolve().parent / 'defaults' / 'ref_pwv.yaml'

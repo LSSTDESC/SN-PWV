@@ -9,6 +9,7 @@ from astropy.time import Time
 from pytz import UTC
 
 from snat_sim import models, time_series_utils
+from tests.mock import create_mock_pwv_data
 
 
 class DatetimeToSecInYear(TestCase):
@@ -142,8 +143,7 @@ class ResampleDataAcrossYear(TestCase):
         cls.delta = timedelta(days=1)
         cls.offset = timedelta(hours=4)
 
-        index = np.arange(cls.start_time, cls.end_time, cls.delta).astype(datetime) + cls.offset
-        cls.test_series = pd.Series(np.ones_like(index), index=index)
+        cls.test_series = create_mock_pwv_data(cls.start_time, cls.end_time, cls.delta, cls.offset)
         cls.resampled_series = time_series_utils.resample_data_across_year(cls.test_series)
 
     def test_timezone_supported(self):
@@ -199,11 +199,7 @@ class BuildPWVModel(TestCase):
     def setUpClass(cls):
         """Build a linear PWV interpolation model"""
 
-        index = np.arange(datetime(2020, 1, 1), datetime(2020, 12, 31), timedelta(days=1)).astype(datetime)
-        data = np.ones_like(index, dtype=float)
-        data[::2] = 0.5
-
-        cls.test_data = pd.Series(data, index=index)
+        cls.test_data = create_mock_pwv_data()
         cls.pwv_model = models.PWVModel(cls.test_data)
 
     def test_return_matches_input_on_grid_points(self):

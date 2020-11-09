@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from snat_sim import models, lc_simulation, sn_magnitudes
+from snat_sim import lc_simulation, models, sn_magnitudes
 from snat_sim.filters import register_decam_filters
 
 register_decam_filters(force=True)
