@@ -87,7 +87,7 @@ def iter_lc_for_header(header_path, verbose=True):
     # Load meta data from the header file
     with fits.open(header_path) as header_hdulist:
         meta_data = pd.DataFrame(header_hdulist[1].data)
-        meta_data = meta_data  # [['PEAKMJD', 'RA', 'DECL', 'SIM_REDSHIFT_CMB', 'PTROBS_MIN', 'PTROBS_MAX']]
+        meta_data = meta_data
 
     # Load light-curves from the photometry file, This is slow
     phot_file_path = str(header_path).replace('HEAD', 'PHOT')
