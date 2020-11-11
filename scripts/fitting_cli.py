@@ -17,10 +17,8 @@ from snat_sim import filters, models
 from snat_sim.fitting_pipeline import FittingPipeline
 from tests.mock import create_constant_pwv_model
 
-os.environ['CADENCE_SIMS'] = '/mnt/md0/sn-sims'
+os.environ.setdefault('CADENCE_SIMS', '/mnt/md0/sn-sims')
 
-import warnings
-warnings.filterwarnings('error')
 
 def passes_quality_cuts(light_curve):
     """Return whether light-curve has 2+ two bands each with 1+ data point with SNR > 5
