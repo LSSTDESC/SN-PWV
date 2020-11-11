@@ -12,40 +12,23 @@ from pathlib import Path
 from typing import Union
 
 import sncosmo
-from astropy.table import Table
-
+import warnings
 from . import models, plasticc, reference_stars
 
 model_type = Union[sncosmo.Model, models.Model]
 
 
-def passes_quality_cuts(light_curve):
-    """Return whether light-curve has 2+ two bands each with 1+ data point with SNR > 5
+class KillSignal:
+    """Signal current process that it should try to exit gracefully"""
 
-    Args:
-        light_curve (Table): Astropy table with sncosmo formatted light-curve data
-
-    Returns:
-        A boolean
-    """
-
-    if light_curve.meta['z'] > .88:
-        return False
-
-    light_curve = light_curve.group_by('band')
-
-    passed_cuts = []
-    for band_lc in light_curve.groups:
-        passed_cuts.append((band_lc['flux'] / band_lc['fluxerr'] > 5).any())
-
-    return sum(passed_cuts) >= 2
+    pass
 
 
 class FittingPipeline:
     """Series of workers and pools for simulating and fitting light-curves"""
 
-    def __init__(self, cadence, sim_model, fit_model, vparams, gain=20,
-                 skynr=100, quality_callback=None, max_queue=25,
+    def __init__(self, cadence, sim_model, fit_model, vparams, gain=1,
+                 skynoise=None, zp=30, quality_callback=None, max_queue=25,
                  pool_size=None, iter_lim=float('inf'), ref_stars=None,
                  pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
@@ -62,7 +45,7 @@ class FittingPipeline:
             fit_model           (Model): Model to use when fitting light-curves
             vparams         (list[str]): List of parameter names to vary in the fit
             gain                (float): Gain to use during simulation
-            skynr               (float): Simulate sky noise by scaling plasticc ``SKY_SIG`` by 1 / skynr
+            skynoise            (float): Simulate sky noise by scaling plasticc ``SKY_SIG`` by 1 / skynr
             quality_callback (callable): Skip light-curves if this function returns False
             max_queue             (int): Maximum number of light-curves to store in memory at once
             pool_size             (int): Total number of workers to spawn. Defaults to CPU count
@@ -83,7 +66,8 @@ class FittingPipeline:
         self.fit_model = fit_model
         self.vparams = vparams
         self.gain = gain
-        self.skynr = skynr
+        self.skynoise = skynoise
+        self.zp = zp
         self.quality_callback = quality_callback
         self.iter_lim = iter_lim
         self.reference_stars = ref_stars
@@ -121,7 +105,7 @@ class FittingPipeline:
         # Signal the rest of the pipeline that there are no more light-curves
         # Load more than enough kill commands to make it through the pipeline
         for _ in range(self.pool_size):
-            self.queue_plasticc_lc.put('KILL')
+            self.queue_plasticc_lc.put(KillSignal())
 
     def _duplicate_light_curves(self):
         """Simulate light-curves for a given PLaSTICC cadence with atmospheric effects"""
@@ -131,7 +115,7 @@ class FittingPipeline:
         source_low = self.sim_model.source.minwave()
         z_limit = (u_band_low / source_low) - 1
 
-        while (light_curve := self.queue_plasticc_lc.get()) != 'KILL':
+        while not isinstance(light_curve := self.queue_plasticc_lc.get(), KillSignal):
             z = light_curve.meta['SIM_REDSHIFT_CMB']
             ra = light_curve.meta['RA']
             dec = light_curve.meta['DECL']
@@ -143,7 +127,7 @@ class FittingPipeline:
             # Simulate a duplicate light-curve with atmospheric effects
             self.sim_model.set(ra=ra, dec=dec)
             duplicated_lc = plasticc.duplicate_plasticc_sncosmo(
-                light_curve, self.sim_model, gain=self.gain, skynr=self.skynr)
+                light_curve, self.sim_model, gain=self.gain, zp=self.zp, skynoise=self.skynoise)
 
             if self.reference_stars is not None:
                 pwv_los = self.pwv_model.pwv_los(duplicated_lc['time'], ra, dec, time_format='mjd')
@@ -162,14 +146,16 @@ class FittingPipeline:
         """Fit light-curves using the given model"""
 
         fit_model = copy(self.fit_model)
-        while (light_curve := self.queue_duplicated_lc.get()) != 'KILL':
+        while not isinstance(light_curve := self.queue_duplicated_lc.get(), KillSignal):
             out_vals = list(light_curve.meta.values())
 
             # Use the true light-curve parameters as the initial guess
             fit_model.update({k: v for k, v in light_curve.meta.items() if k in fit_model.param_names})
 
             # Fit the model without PWV
-            _, fitted_model = sncosmo.fit_lc(light_curve, fit_model, self.vparams)
+            with warnings.catch_warnings():
+                warnings.simplefilter('ignore', category=DeprecationWarning)
+                _, fitted_model = sncosmo.fit_lc(light_curve, fit_model, self.vparams)
 
             out_vals.extend(fitted_model.parameters)
             self.queue_fit_results.put(out_vals)
@@ -183,7 +169,7 @@ class FittingPipeline:
         kill_count = 0
         with self.out_path.open('w') as outfile:
             while True:
-                if (results := self.queue_fit_results.get()) == 'KILL':
+                if isinstance(results := self.queue_fit_results.get(), KillSignal):
                     kill_count += 1
                     if kill_count >= self.fitting_pool_size:
                         return  # No more fits are being run
