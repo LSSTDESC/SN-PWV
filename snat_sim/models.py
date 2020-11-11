@@ -45,7 +45,7 @@ class PWVModel:
         Args:
             receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
             year                    (float): Year to use data from when building the model
-            supp_years              (float): Years to supplement data with when missing from ``year``
+            supp_years      (List[Numeric]): Years to supplement data with when missing from ``year``
 
         Returns:
             An interpolation function that accepts ``date`` and ``format`` arguments
