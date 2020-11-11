@@ -141,8 +141,6 @@ class FittingPipeline:
 
         fit_model = copy(self.fit_model)
         while not isinstance(light_curve := self.queue_duplicated_lc.get(), KillSignal):
-            out_vals = list(light_curve.meta.values())
-
             # Use the true light-curve parameters as the initial guess
             fit_model.update({k: v for k, v in light_curve.meta.items() if k in fit_model.param_names})
 
@@ -151,7 +149,8 @@ class FittingPipeline:
                 warnings.simplefilter('ignore', category=DeprecationWarning)
                 _, fitted_model = sncosmo.fit_lc(light_curve, fit_model, self.vparams)
 
-            out_vals.extend(fitted_model.parameters)
+            out_vals = list(fitted_model.parameters)
+            out_vals.insert(0, light_curve.meta['SNID'])
             self.queue_fit_results.put(out_vals)
 
         # Propagate kill signal
@@ -160,6 +159,7 @@ class FittingPipeline:
     def _unload_output_queue(self):
         """Retrieve fit results from the output queue and write results to file"""
 
+        # Count number of upstream processes that have closed so this process knows when to exit
         kill_count = 0
         with self.out_path.open('w') as outfile:
             while True:
