@@ -5,6 +5,7 @@ and then fitting them with a given SN model.
 """
 
 import argparse
+import os
 import sys
 from pathlib import Path
 
@@ -16,6 +17,10 @@ from snat_sim import filters, models
 from snat_sim.fitting_pipeline import FittingPipeline
 from tests.mock import create_constant_pwv_model
 
+os.environ['CADENCE_SIMS'] = '/mnt/md0/sn-sims'
+
+import warnings
+warnings.filterwarnings('error')
 
 def passes_quality_cuts(light_curve):
     """Return whether light-curve has 2+ two bands each with 1+ data point with SNR > 5
@@ -43,7 +48,7 @@ def create_pwv_model(pwv_variability):
     """Create a ``PWVModel`` object
 
     Args:
-        pwv_variability (str, numeric): How to vary PWV as a function of time
+        pwv_variability (str, Numeric): How to vary PWV as a function of time
 
     Returns:
         An instantiated ``PWVModel`` object
@@ -174,7 +179,7 @@ def create_cli_parser():
 
     parser.add_argument(
         '-o', '--out_path',
-        type=str,
+        type=Path,
         required=True,
         help='Output file path (in CSV format)'
     )
@@ -186,4 +191,12 @@ def create_cli_parser():
 if __name__ == '__main__':
     filters.register_lsst_filters()
     cli_args = create_cli_parser().parse_args()
+
+    # Types cast PWV variability into float
+    if cli_args.fit_variability.isnumeric():
+        cli_args.fit_variability = float(cli_args.fit_variability)
+
+    if cli_args.sim_variability.isnumeric():
+        cli_args.sim_variability = float(cli_args.sim_variability)
+
     cli_args.func(cli_args)
