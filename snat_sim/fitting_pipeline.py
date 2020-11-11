@@ -7,12 +7,13 @@ Module API
 """
 
 import multiprocessing as mp
+import warnings
 from copy import copy
 from pathlib import Path
 from typing import Union
 
 import sncosmo
-import warnings
+
 from . import models, plasticc, reference_stars
 
 model_type = Union[sncosmo.Model, models.Model]
@@ -27,10 +28,9 @@ class KillSignal:
 class FittingPipeline:
     """Series of workers and pools for simulating and fitting light-curves"""
 
-    def __init__(self, cadence, sim_model, fit_model, vparams, gain=1,
-                 skynoise=None, zp=30, quality_callback=None, max_queue=25,
-                 pool_size=None, iter_lim=float('inf'), ref_stars=None,
-                 pwv_model=None):
+    def __init__(self, cadence, sim_model, fit_model, vparams,
+                 quality_callback=None, max_queue=25, pool_size=None,
+                 iter_lim=float('inf'), ref_stars=None, pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
 
         The ``max_queue`` argument can be used to limit **duplicate**
@@ -44,8 +44,6 @@ class FittingPipeline:
             sim_model           (Model): Model to use when simulating light-curves
             fit_model           (Model): Model to use when fitting light-curves
             vparams         (list[str]): List of parameter names to vary in the fit
-            gain                (float): Gain to use during simulation
-            skynoise            (float): Simulate sky noise by scaling plasticc ``SKY_SIG`` by 1 / skynr
             quality_callback (callable): Skip light-curves if this function returns False
             max_queue             (int): Maximum number of light-curves to store in memory at once
             pool_size             (int): Total number of workers to spawn. Defaults to CPU count
@@ -65,9 +63,6 @@ class FittingPipeline:
         self.sim_model = sim_model
         self.fit_model = fit_model
         self.vparams = vparams
-        self.gain = gain
-        self.skynoise = skynoise
-        self.zp = zp
         self.quality_callback = quality_callback
         self.iter_lim = iter_lim
         self.reference_stars = ref_stars
@@ -126,8 +121,7 @@ class FittingPipeline:
 
             # Simulate a duplicate light-curve with atmospheric effects
             self.sim_model.set(ra=ra, dec=dec)
-            duplicated_lc = plasticc.duplicate_plasticc_sncosmo(
-                light_curve, self.sim_model, gain=self.gain, zp=self.zp, skynoise=self.skynoise)
+            duplicated_lc = plasticc.duplicate_plasticc_sncosmo(light_curve, self.sim_model, zp=30)
 
             if self.reference_stars is not None:
                 pwv_los = self.pwv_model.pwv_los(duplicated_lc['time'], ra, dec, time_format='mjd')
