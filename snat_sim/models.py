@@ -230,14 +230,9 @@ class VariablePWVTrans(VariablePropagationEffect):
         self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt', 'res']
         self.param_names_latex = [
             'Target RA', 'Target Dec', 'Observer Latitude (deg)', 'Observer Longitude (deg)',
-            'Observer Altitude (m)', 'Coordinate', 'Resolution']
+            'Observer Altitude (m)', 'Resolution']
 
-        self._parameters = np.array(
-            [0., 0.,
-             const.vro_latitude,
-             const.vro_longitude,
-             const.vro_altitude,
-             1024, 5.])
+        self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude, 5.])
 
     def propagate(self, wave, flux, time):
         """Propagate the flux through the atmosphere
