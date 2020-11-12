@@ -92,12 +92,15 @@ def run_pipeline(cli_args):
         cli_args (Namespace): Parse command line arguments
     """
 
+    print('Creating simulation model...')
     pwv_model_sim = create_pwv_model(cli_args.sim_variability)
     sn_model_sim = create_sn_model(cli_args.source, pwv_model_sim)
 
+    print('Creating fitting model...')
     pwv_model_fit = create_pwv_model(cli_args.fit_variability)
     sn_model_fit = create_sn_model(cli_args.source, pwv_model_fit)
 
+    print('Instantiating pipeline...')
     pipeline = FittingPipeline(
         cli_args.cadence,
         sn_model_sim,
@@ -109,6 +112,10 @@ def run_pipeline(cli_args):
         ref_stars=cli_args.ref_stars,
         pwv_model=pwv_model_sim
     )
+
+    print('I/O Processes: 2')
+    print(f'Simulation Processes:', pipeline.simulation_pool_size)
+    print('Fitting Processes:', pipeline.fitting_pool_size)
 
     pipeline.run(out_path=cli_args.out_path)
 
