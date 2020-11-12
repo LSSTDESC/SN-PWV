@@ -118,11 +118,7 @@ class FittingPipeline:
             if z >= z_limit:
                 continue
 
-            # Todo: Consider auto setting ra and dec
             # Simulate a duplicate light-curve with atmospheric effects
-            # Intrinsic parameters (z, t0, x0, x1, c) are set automatically
-            # when duplicating, so we only have to set extrinsic parameters
-            self.sim_model.set(ra=ra, dec=dec, lat=const.vro_latitude, long=const.vro_longitude, alt=const.vro_longitude)
             duplicated_lc = plasticc.duplicate_plasticc_sncosmo(light_curve, self.sim_model, zp=30)
 
             if self.reference_stars is not None:
@@ -143,7 +139,6 @@ class FittingPipeline:
 
         while not isinstance(light_curve := self.queue_duplicated_lc.get(), KillSignal):
             # Use the true light-curve parameters as the initial guess
-            # Todo: this doesn't include parameters like ra, dec
             self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
 
             # Fit the model without PWV
