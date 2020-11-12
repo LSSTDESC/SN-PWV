@@ -135,7 +135,8 @@ def simulate_lc(observations, model, params, scatter=True):
     """
 
     model = copy(model)
-    model.update(params)
+    for p in model.param_names:
+        model[p] = params.get(p, model[p])
 
     flux = model.bandflux(
         observations['band'],
