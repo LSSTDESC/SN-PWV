@@ -8,13 +8,12 @@ Module API
 
 import multiprocessing as mp
 import warnings
-from copy import copy
 from pathlib import Path
 from typing import Union
 
 import sncosmo
 
-from . import models, plasticc, reference_stars
+from . import constants as const, models, plasticc, reference_stars
 
 model_type = Union[sncosmo.Model, models.Model]
 
@@ -87,7 +86,7 @@ class FittingPipeline:
         return self.pool_size - self.fitting_pool_size
 
     def _load_queue_plasticc_lc(self):
-        """Load light-curves from a given PLaSTICC cadence into the pipeline"""
+        """Load PLaSTICC light-curves from disk into the pipeline"""
 
         # The queue will block the for loop when it is full, limiting our memory usage
         light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=11)
@@ -103,7 +102,7 @@ class FittingPipeline:
             self.queue_plasticc_lc.put(KillSignal())
 
     def _duplicate_light_curves(self):
-        """Simulate light-curves for a given PLaSTICC cadence with atmospheric effects"""
+        """Simulate light-curves with atmospheric effects"""
 
         # Determine redshift limit of the simulation model
         u_band_low = sncosmo.get_bandpass('lsst_hardware_u').minwave()
@@ -119,8 +118,11 @@ class FittingPipeline:
             if z >= z_limit:
                 continue
 
+            # Todo: Consider auto setting ra and dec
             # Simulate a duplicate light-curve with atmospheric effects
-            self.sim_model.set(ra=ra, dec=dec)
+            # Intrinsic parameters (z, t0, x0, x1, c) are set automatically
+            # when duplicating, so we only have to set extrinsic parameters
+            self.sim_model.set(ra=ra, dec=dec, lat=const.vro_latitude, long=const.vro_longitude, alt=const.vro_longitude)
             duplicated_lc = plasticc.duplicate_plasticc_sncosmo(light_curve, self.sim_model, zp=30)
 
             if self.reference_stars is not None:
@@ -137,17 +139,17 @@ class FittingPipeline:
         self.queue_duplicated_lc.put(light_curve)
 
     def _fit_light_curves(self):
-        """Fit light-curves using the given model"""
+        """Fit light-curves"""
 
-        fit_model = copy(self.fit_model)
         while not isinstance(light_curve := self.queue_duplicated_lc.get(), KillSignal):
             # Use the true light-curve parameters as the initial guess
-            fit_model.update({k: v for k, v in light_curve.meta.items() if k in fit_model.param_names})
+            # Todo: this doesn't include parameters like ra, dec
+            self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
 
             # Fit the model without PWV
             with warnings.catch_warnings():
                 warnings.simplefilter('ignore', category=DeprecationWarning)
-                _, fitted_model = sncosmo.fit_lc(light_curve, fit_model, self.vparams)
+                _, fitted_model = sncosmo.fit_lc(light_curve, self.fit_model, self.vparams)
 
             out_vals = list(fitted_model.parameters)
             out_vals.insert(0, light_curve.meta['SNID'])
