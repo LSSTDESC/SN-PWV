@@ -14,7 +14,7 @@ from typing import Union
 import sncosmo
 
 from . import models, plasticc, reference_stars
-from multiprocessing import current_process
+
 model_type = Union[sncosmo.Model, models.Model]
 
 
