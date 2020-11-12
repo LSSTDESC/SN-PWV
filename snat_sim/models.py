@@ -256,7 +256,7 @@ class VariablePWVTrans(VariablePropagationEffect):
         self._maxwave = self._transmission_model.samp_wave.max()
 
         # Define and store default modeling parameters
-        self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt', 'res']
+        self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt']
         self.param_names_latex = [
             'Target RA', 'Target Dec',
             'Observer Latitude (deg)', 'Observer Longitude (deg)', 'Observer Altitude (m)']
