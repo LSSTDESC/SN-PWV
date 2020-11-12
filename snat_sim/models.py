@@ -13,12 +13,14 @@ from copy import copy
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import sncosmo
 from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
-from pwv_kpno.transmission import TransmissionModel
+from pwv_kpno.transmission import calc_pwv_eff
+from scipy.interpolate import RegularGridInterpolator
 
 from . import constants as const
 from . import time_series_utils as tsu
@@ -26,7 +28,7 @@ from . import time_series_utils as tsu
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
 
-class FixedResTransmission(TransmissionModel):
+class FixedResTransmission:
     """Models atmospheric transmission due to PWV at a fixed resolution"""
 
     def __init__(self, res=None):
@@ -39,28 +41,75 @@ class FixedResTransmission(TransmissionModel):
             res (float):  Resolution to bin the atmospheric model to
         """
 
-        samp_pwv = np.arange(0, 15, .1)
-        samp_wave = v1_transmission.samp_wave
-        samp_transmission = v1_transmission(
-            pwv=samp_pwv,
-            wave=samp_wave,
-            res=res).values
+        self.norm_pwv = 2
+        self.eff_exp = 0.6
+        self.samp_pwv = np.arange(0, 15, .1)
+        self.samp_wave = v1_transmission.samp_wave
+        self.samp_transmission = v1_transmission(
+            pwv=self.samp_pwv,
+            wave=self.samp_wave,
+            res=res).values.T
 
-        super().__init__(samp_pwv, samp_wave, samp_transmission)
+    @staticmethod
+    def _build_interpolator(samp_pwv, samp_wave, samp_transmission):
+        """Construct a scipy interpolator for a given set of wavelengths, PWV,  and transmissions
 
-    def __call__(self, pwv, wave=None, **kwargs):
-        """Evaluate transmission model at given wavelengths
+        Interpolation if performed as a function of PWV effective.
 
         Args:
-            pwv (float, Collection[float]): Line of sight PWV to interpolate for
-            wave        (array, DataFrame): Wavelengths to evaluate transmission for in angstroms
-            **kwargs: Any other kwargs are ignored but allowed for backwards compatibility
+            samp_pwv: 1D array of PWV values for the sampled transmission
+            samp_wave: 1D Array with wavelengths in angstroms for the sampled transmission
+            samp_transmission: 2D array with transmission values for each PWV and wavelength
+        """
+
+
+        try:
+            return RegularGridInterpolator(points=(samp_pwv, samp_wave), values=samp_transmission)
+
+        except ValueError:  # Wrap an otherwise cryptic error message
+            raise ValueError('Dimensions of init arguments do not match.')
+
+    def _calc_transmission(self, pwv, wave=None):
+        """Evaluate the transmission model at the given wavelengths
+
+        Args:
+            pwv: Line of sight PWV to interpolate for
+            wave: Wavelengths to evaluate transmission for in angstroms
 
         Returns:
             The interpolated transmission at the given wavelengths / resolution
         """
 
-        super().__call__(pwv, wave)
+        # Build interpolation function
+        sampled_pwv = calc_pwv_eff(self.samp_pwv, self.norm_pwv, self.eff_exp)
+        sampled_transmission = self.samp_transmission
+        sampled_wavelengths = self.samp_wave
+
+        interp_func = self._build_interpolator(sampled_pwv, sampled_wavelengths, sampled_transmission)
+
+        # Build interpolation grid
+        pwv_eff = calc_pwv_eff(pwv, norm_pwv=self.norm_pwv, eff_exp=self.eff_exp)
+        xi = [[pwv_eff, w] for w in wave]
+
+        return pd.Series(interp_func(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
+
+    def __call__(self, pwv, wave=None):
+        """Evaluate transmission model at given wavelengths
+
+        Args:
+            pwv (float, Collection[float]): Line of sight PWV to interpolate for
+            wave        (array, DataFrame): Wavelengths to evaluate transmission for in angstroms
+
+        Returns:
+            The interpolated transmission at the given wavelengths / resolution
+        """
+
+        wave = self.samp_wave if wave is None else wave
+        if np.isscalar(pwv):
+            return self._calc_transmission(pwv, wave)
+
+        else:
+            return pd.concat([self.__call__(p, wave) for p in pwv], axis=1)
 
 
 class PWVModel:

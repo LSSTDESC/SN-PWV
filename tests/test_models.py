@@ -39,11 +39,11 @@ class TestVariablePWVTrans(TestCase):
         """Test parameter array and parameter names have same length"""
 
         num_param_names = len(self.propagation_effect._param_names)
-        self.assertNotEqual(
+        self.assertEqual(
             len(self.propagation_effect._parameters), num_param_names,
             'Number of parameters does not match number of parameter names.')
 
-        self.assertNotEqual(
+        self.assertEqual(
             len(self.propagation_effect.param_names_latex), num_param_names,
             'Number of parameters does not match number of parameter LATEX names.')
 
