@@ -18,11 +18,48 @@ from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
+from pwv_kpno.transmission import TransmissionModel
 
 from . import constants as const
 from . import time_series_utils as tsu
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
+
+
+class FixedResTransmission(TransmissionModel):
+    """Models atmospheric transmission due to PWV at a fixed resolution"""
+
+    def __init__(self, res=None):
+        """Instantiate a PWV transmission model at the given resolution
+
+        Transmission values are determined using the ``v1_transmission`` model
+        from the ``pwv_kpno`` package.
+
+        Args:
+            res (float):  Resolution to bin the atmospheric model to
+        """
+
+        samp_pwv = np.arange(0, 15, .1)
+        samp_wave = v1_transmission.samp_wave
+        samp_transmission = v1_transmission(
+            pwv=samp_pwv,
+            wave=samp_wave,
+            res=res).values
+
+        super().__init__(samp_pwv, samp_wave, samp_transmission)
+
+    def __call__(self, pwv, wave=None):
+        """Evaluate transmission model at given wavelengths
+
+        Args:
+            pwv (float, Collection[float]): Line of sight PWV to interpolate for
+            wave        (array, DataFrame): Wavelengths to evaluate transmission for in angstroms
+
+        Returns:
+            The interpolated transmission at the given wavelengths / resolution
+        """
+
+        super().__call__(pwv, wave)
 
 
 class PWVModel:
@@ -188,7 +225,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 class VariablePWVTrans(VariablePropagationEffect):
     """Atmospheric propagation effect for temporally variable PWV"""
 
-    def __init__(self, pwv_model, time_format='mjd', transmission_version='v1'):
+    def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
         """Time variable atmospheric transmission due to PWV
 
         Set ``scale_airmass`` to ``False`` if ``pwv_interpolator`` returns PWV values along the
@@ -204,23 +241,14 @@ class VariablePWVTrans(VariablePropagationEffect):
         Args:
             pwv_model       (PWVModel): Returns PWV at zenith for a given time value and time format
             time_format          (str): Astropy recognized time format used by the ``pwv_interpolator``
-            transmission_version (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
+            transmission_res   (float): Reduce the underlying transmission model by binning to the given resolution
         """
 
         # Store init arguments
         self._time_format = time_format
         self._pwv_model = pwv_model
 
-        if transmission_version == 'v1':
-            from pwv_kpno.defaults import v1_transmission
-            self._transmission_model = v1_transmission
-
-        elif transmission_version == 'v2':
-            from pwv_kpno.defaults import v2_transmission
-            self._transmission_model = v2_transmission
-
-        else:
-            raise ValueError(f'Unidentified transmission model version: {transmission_version}')
+        self._transmission_model = FixedResTransmission(transmission_res)
 
         # Define wavelength range of propagation effect
         self._minwave = self._transmission_model.samp_wave.min()
@@ -230,9 +258,9 @@ class VariablePWVTrans(VariablePropagationEffect):
         self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt', 'res']
         self.param_names_latex = [
             'Target RA', 'Target Dec', 'Observer Latitude (deg)', 'Observer Longitude (deg)',
-            'Observer Altitude (m)', 'Resolution']
+            'Observer Altitude (m)']
 
-        self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude, 5.])
+        self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
     def propagate(self, wave, flux, time):
         """Propagate the flux through the atmosphere
@@ -255,7 +283,7 @@ class VariablePWVTrans(VariablePropagationEffect):
             alt=self['alt'],
             time_format=self._time_format)
 
-        transmission = self._transmission_model(pwv, np.atleast_1d(wave), self['res'])
+        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
             if np.ndim(flux) == 1:
