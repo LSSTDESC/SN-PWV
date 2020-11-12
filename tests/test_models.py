@@ -2,7 +2,7 @@
 
 import inspect
 from copy import copy
-from unittest import TestCase
+from unittest import TestCase, skip
 
 import numpy as np
 import sncosmo
@@ -35,6 +35,18 @@ class TestVariablePWVTrans(TestCase):
         self.mock_pwv_model = create_constant_pwv_model(self.constant_pwv)
         self.propagation_effect = models.VariablePWVTrans(self.mock_pwv_model)
 
+    def test_parameter_arrays_match_length(self):
+        """Test parameter array and parameter names have same length"""
+
+        num_param_names = len(self.propagation_effect._param_names)
+        self.assertNotEqual(
+            len(self.propagation_effect._parameters), num_param_names,
+            'Number of parameters does not match number of parameter names.')
+
+        self.assertNotEqual(
+            len(self.propagation_effect.param_names_latex), num_param_names,
+            'Number of parameters does not match number of parameter LATEX names.')
+
     def test_default_location_params_match_vro(self):
         """Test the default values for the observer location match VRO"""
 
@@ -42,10 +54,11 @@ class TestVariablePWVTrans(TestCase):
         self.assertEqual(self.propagation_effect['lon'], const.vro_longitude)
         self.assertEqual(self.propagation_effect['alt'], const.vro_altitude)
 
+    @skip('Deprecated')
     def test_transmission_version_support(self):
         """Test the propagation object uses the atmospheric model corresponding specified at init"""
 
-        from pwv_kpno.transmission import CrossSectionTransmission
+        from pwv_kpno.transmission import CrossSectionTransmission, TransmissionModel
 
         default_effect = models.VariablePWVTrans(self.mock_pwv_model)
         self.assertIsInstance(default_effect._transmission_model, CrossSectionTransmission)
@@ -53,9 +66,8 @@ class TestVariablePWVTrans(TestCase):
         v1_effect = models.VariablePWVTrans(self.mock_pwv_model, transmission_version='v1')
         self.assertIsInstance(v1_effect._transmission_model, CrossSectionTransmission)
 
-        # Todo: When the v2 model is available, add a test condition
-        # v2_effect = modeling.VariablePWVTrans(self.constant_pwv_func, transmission_version='v2')
-        # self.assertIsInstance(v2_effect._transmission_model, TransmissionModel)
+        v2_effect = models.VariablePWVTrans(self.constant_pwv_func, transmission_version='v2')
+        self.assertIsInstance(v2_effect._transmission_model, TransmissionModel)
 
         with self.assertRaises(ValueError):
             models.VariablePWVTrans(self.mock_pwv_model, transmission_version='NotAVersion')
