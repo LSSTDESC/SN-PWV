@@ -48,12 +48,13 @@ class FixedResTransmission(TransmissionModel):
 
         super().__init__(samp_pwv, samp_wave, samp_transmission)
 
-    def __call__(self, pwv, wave=None):
+    def __call__(self, pwv, wave=None, **kwargs):
         """Evaluate transmission model at given wavelengths
 
         Args:
             pwv (float, Collection[float]): Line of sight PWV to interpolate for
             wave        (array, DataFrame): Wavelengths to evaluate transmission for in angstroms
+            **kwargs: Any other kwargs are ignored but allowed for backwards compatibility
 
         Returns:
             The interpolated transmission at the given wavelengths / resolution
@@ -257,8 +258,8 @@ class VariablePWVTrans(VariablePropagationEffect):
         # Define and store default modeling parameters
         self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt', 'res']
         self.param_names_latex = [
-            'Target RA', 'Target Dec', 'Observer Latitude (deg)', 'Observer Longitude (deg)',
-            'Observer Altitude (m)']
+            'Target RA', 'Target Dec',
+            'Observer Latitude (deg)', 'Observer Longitude (deg)', 'Observer Altitude (m)']
 
         self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
