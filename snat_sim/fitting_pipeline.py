@@ -13,8 +13,8 @@ from typing import Union
 
 import sncosmo
 
-from . import constants as const, models, plasticc, reference_stars
-
+from . import models, plasticc, reference_stars
+from multiprocessing import current_process
 model_type = Union[sncosmo.Model, models.Model]
 
 
@@ -83,7 +83,8 @@ class FittingPipeline:
     def simulation_pool_size(self) -> int:
         """Number of processes used for simulating light-curves"""
 
-        return self.pool_size - self.fitting_pool_size
+        io_processes = 2
+        return self.pool_size - io_processes - self.fitting_pool_size
 
     def _load_queue_plasticc_lc(self):
         """Load PLaSTICC light-curves from disk into the pipeline"""
@@ -94,6 +95,7 @@ class FittingPipeline:
             if i >= self.iter_lim:
                 break
 
+            print(current_process(), 'Putting light-curve')
             self.queue_plasticc_lc.put(light_curve)
 
         # Signal the rest of the pipeline that there are no more light-curves
@@ -110,6 +112,8 @@ class FittingPipeline:
         z_limit = (u_band_low / source_low) - 1
 
         while not isinstance(light_curve := self.queue_plasticc_lc.get(), KillSignal):
+            print(current_process(), 'Duplicating light-curve')
+
             z = light_curve.meta['SIM_REDSHIFT_CMB']
             ra = light_curve.meta['RA']
             dec = light_curve.meta['DECL']
@@ -129,6 +133,7 @@ class FittingPipeline:
             if self.quality_callback and not self.quality_callback(duplicated_lc):
                 continue
 
+            print(current_process(), 'Putting duplication')
             self.queue_duplicated_lc.put(duplicated_lc)
 
         # Propagate kill signal
@@ -138,6 +143,8 @@ class FittingPipeline:
         """Fit light-curves"""
 
         while not isinstance(light_curve := self.queue_duplicated_lc.get(), KillSignal):
+            print(current_process(), 'Fitting light-curve')
+
             # Use the true light-curve parameters as the initial guess
             self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
 
@@ -148,6 +155,8 @@ class FittingPipeline:
 
             out_vals = list(fitted_model.parameters)
             out_vals.insert(0, light_curve.meta['SNID'])
+
+            print(current_process(), 'Putting fit results')
             self.queue_fit_results.put(out_vals)
 
         # Propagate kill signal
