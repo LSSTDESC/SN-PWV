@@ -206,8 +206,8 @@ def duplicate_plasticc_sncosmo(
         light_curve  (Table): Astropy table with PLaSTICC light-curve data
         model        (Model): Model to use when simulating light-curve flux
         zp    (float, array): Optionally overwrite the PLaSTICC zero-point with this value
-        gain           (int): Gain to use during simulation
-        skynoise       (int):  Optionally overwrite the PLaSTICC skynoise with this value
+        gain         (float): Gain to use during simulation
+        skynoise     (float):  Optionally overwrite the PLaSTICC skynoise with this value
         scatter       (bool): Add random noise to the flux values
         cosmo    (Cosmology): Rescale the ``x0`` parameter according to the given cosmology
 
@@ -222,7 +222,11 @@ def duplicate_plasticc_sncosmo(
     else:
         x0 = lc_simulation.calc_x0_for_z(light_curve.meta[use_redshift], 'salt2', cosmo=cosmo)
 
+    # Params double as simulation parameters and meta-data meta data
     params = {
+        'SNID': light_curve.meta['SNID'],
+        'ra': light_curve.meta['RA'],
+        'dec': light_curve.meta['DECL'],
         't0': light_curve.meta['SIM_PEAKMJD'],
         'x1': light_curve.meta['SIM_SALT2x1'],
         'c': light_curve.meta['SIM_SALT2c'],
@@ -230,8 +234,8 @@ def duplicate_plasticc_sncosmo(
         'x0': x0
     }
 
+    # Simulate the light-curve
     zp = zp if zp is not None else light_curve['ZEROPT']
     skynoise = skynoise if skynoise is not None else light_curve['SKY_SIG']
-
     observations = extract_cadence_data(light_curve, zp=zp, gain=gain, skynoise=skynoise)
     return lc_simulation.simulate_lc(observations, model, params, scatter=scatter)

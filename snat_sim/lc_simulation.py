@@ -17,11 +17,6 @@ from tqdm import tqdm
 from . import constants as const
 
 
-###############################################################################
-# For simulating light-curves
-###############################################################################
-
-
 def calc_x0_for_z(
         z, source, cosmo=const.betoule_cosmo, abs_mag=const.betoule_abs_mb,
         band='standard::b', magsys='AB', **params):
@@ -135,7 +130,8 @@ def simulate_lc(observations, model, params, scatter=True):
     """
 
     model = copy(model)
-    model.update(params)
+    for p in model.param_names:
+        model[p] = params.get(p, model[p])
 
     flux = model.bandflux(
         observations['band'],

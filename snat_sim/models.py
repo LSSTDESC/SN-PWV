@@ -13,16 +13,103 @@ from copy import copy
 from pathlib import Path
 
 import numpy as np
+import pandas as pd
 import sncosmo
 from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
+from pwv_kpno.transmission import calc_pwv_eff
+from scipy.interpolate import RegularGridInterpolator
 
 from . import constants as const
 from . import time_series_utils as tsu
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
+
+
+class FixedResTransmission:
+    """Models atmospheric transmission due to PWV at a fixed resolution"""
+
+    def __init__(self, res=None):
+        """Instantiate a PWV transmission model at the given resolution
+
+        Transmission values are determined using the ``v1_transmission`` model
+        from the ``pwv_kpno`` package.
+
+        Args:
+            res (float):  Resolution to bin the atmospheric model to
+        """
+
+        self.norm_pwv = 2
+        self.eff_exp = 0.6
+        self.samp_pwv = np.arange(0, 15, .1)
+        self.samp_wave = v1_transmission.samp_wave
+        self.samp_transmission = v1_transmission(
+            pwv=self.samp_pwv,
+            wave=self.samp_wave,
+            res=res).values.T
+
+    @staticmethod
+    def _build_interpolator(samp_pwv, samp_wave, samp_transmission):
+        """Construct a scipy interpolator for a given set of wavelengths, PWV,  and transmissions
+
+        Interpolation if performed as a function of PWV effective.
+
+        Args:
+            samp_pwv: 1D array of PWV values for the sampled transmission
+            samp_wave: 1D Array with wavelengths in angstroms for the sampled transmission
+            samp_transmission: 2D array with transmission values for each PWV and wavelength
+        """
+
+
+        try:
+            return RegularGridInterpolator(points=(samp_pwv, samp_wave), values=samp_transmission)
+
+        except ValueError:  # Wrap an otherwise cryptic error message
+            raise ValueError('Dimensions of init arguments do not match.')
+
+    def _calc_transmission(self, pwv, wave=None):
+        """Evaluate the transmission model at the given wavelengths
+
+        Args:
+            pwv: Line of sight PWV to interpolate for
+            wave: Wavelengths to evaluate transmission for in angstroms
+
+        Returns:
+            The interpolated transmission at the given wavelengths / resolution
+        """
+
+        # Build interpolation function
+        sampled_pwv = calc_pwv_eff(self.samp_pwv, self.norm_pwv, self.eff_exp)
+        sampled_transmission = self.samp_transmission
+        sampled_wavelengths = self.samp_wave
+
+        interp_func = self._build_interpolator(sampled_pwv, sampled_wavelengths, sampled_transmission)
+
+        # Build interpolation grid
+        pwv_eff = calc_pwv_eff(pwv, norm_pwv=self.norm_pwv, eff_exp=self.eff_exp)
+        xi = [[pwv_eff, w] for w in wave]
+
+        return pd.Series(interp_func(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
+
+    def __call__(self, pwv, wave=None):
+        """Evaluate transmission model at given wavelengths
+
+        Args:
+            pwv (float, Collection[float]): Line of sight PWV to interpolate for
+            wave        (array, DataFrame): Wavelengths to evaluate transmission for in angstroms
+
+        Returns:
+            The interpolated transmission at the given wavelengths / resolution
+        """
+
+        wave = self.samp_wave if wave is None else wave
+        if np.isscalar(pwv):
+            return self._calc_transmission(pwv, wave)
+
+        else:
+            return pd.concat([self.__call__(p, wave) for p in pwv], axis=1)
 
 
 class PWVModel:
@@ -45,7 +132,7 @@ class PWVModel:
         Args:
             receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
             year                    (float): Year to use data from when building the model
-            supp_years              (float): Years to supplement data with when missing from ``year``
+            supp_years      (List[Numeric]): Years to supplement data with when missing from ``year``
 
         Returns:
             An interpolation function that accepts ``date`` and ``format`` arguments
@@ -188,7 +275,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 class VariablePWVTrans(VariablePropagationEffect):
     """Atmospheric propagation effect for temporally variable PWV"""
 
-    def __init__(self, pwv_model, time_format='mjd', transmission_version='v1'):
+    def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
         """Time variable atmospheric transmission due to PWV
 
         Set ``scale_airmass`` to ``False`` if ``pwv_interpolator`` returns PWV values along the
@@ -204,40 +291,26 @@ class VariablePWVTrans(VariablePropagationEffect):
         Args:
             pwv_model       (PWVModel): Returns PWV at zenith for a given time value and time format
             time_format          (str): Astropy recognized time format used by the ``pwv_interpolator``
-            transmission_version (str): Use ``v1`` of ``v2`` of the pwv_kpno transmission function
+            transmission_res   (float): Reduce the underlying transmission model by binning to the given resolution
         """
 
         # Store init arguments
         self._time_format = time_format
         self._pwv_model = pwv_model
 
-        if transmission_version == 'v1':
-            from pwv_kpno.defaults import v1_transmission
-            self._transmission_model = v1_transmission
-
-        elif transmission_version == 'v2':
-            from pwv_kpno.defaults import v2_transmission
-            self._transmission_model = v2_transmission
-
-        else:
-            raise ValueError(f'Unidentified transmission model version: {transmission_version}')
+        self._transmission_model = FixedResTransmission(transmission_res)
 
         # Define wavelength range of propagation effect
         self._minwave = self._transmission_model.samp_wave.min()
         self._maxwave = self._transmission_model.samp_wave.max()
 
         # Define and store default modeling parameters
-        self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt', 'res']
+        self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt']
         self.param_names_latex = [
-            'Target RA', 'Target Dec', 'Observer Latitude (deg)', 'Observer Longitude (deg)',
-            'Observer Altitude (m)', 'Coordinate', 'Resolution']
+            'Target RA', 'Target Dec',
+            'Observer Latitude (deg)', 'Observer Longitude (deg)', 'Observer Altitude (m)']
 
-        self._parameters = np.array(
-            [0., 0.,
-             const.vro_latitude,
-             const.vro_longitude,
-             const.vro_altitude,
-             1024, 5.])
+        self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
     def propagate(self, wave, flux, time):
         """Propagate the flux through the atmosphere
@@ -260,7 +333,7 @@ class VariablePWVTrans(VariablePropagationEffect):
             alt=self['alt'],
             time_format=self._time_format)
 
-        transmission = self._transmission_model(pwv, np.atleast_1d(wave), self['res'])
+        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
             if np.ndim(flux) == 1:
