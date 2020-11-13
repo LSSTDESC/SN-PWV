@@ -13,19 +13,19 @@ class TestProcessAllocation(TestCase):
     def test_allocations_sum_to_pool_size(self):
         """Test the number of allocated processes sum to the total pool size"""
 
+        pool_size = 7
         pipeline = FittingPipeline(
             cadence='alt_sched',
             sim_model=sncosmo.Model('salt2'),
             fit_model=sncosmo.Model('salt2'),
             vparams=[],
-            pool_size=7
+            pool_size=pool_size,
+            out_path='.'
         )
 
-        # include two I/O processes
-        allocated_processes = pipeline.simulation_pool_size + pipeline.fitting_pool_size + 2
         self.assertEqual(
-            allocated_processes, pipeline.pool_size,
-            'Allocated processes do not equal total pool size')
+            len(pipeline._processes), pool_size,
+            'Allocated processes do not equal pool size specified at init')
 
     def test_error_pool_size_less_than_four(self):
         """Test an error is raised if asked to init with less than 4 processes"""
@@ -36,5 +36,6 @@ class TestProcessAllocation(TestCase):
                 sim_model=sncosmo.Model('salt2'),
                 fit_model=sncosmo.Model('salt2'),
                 vparams=[],
-                pool_size=3
+                pool_size=3,
+                out_path='.'
             )

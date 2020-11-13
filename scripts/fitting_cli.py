@@ -102,10 +102,11 @@ def run_pipeline(cli_args):
 
     print('Instantiating pipeline...')
     pipeline = FittingPipeline(
-        cli_args.cadence,
-        sn_model_sim,
-        sn_model_fit,
-        cli_args.vparams,
+        cadence=cli_args.cadence,
+        sim_model=sn_model_sim,
+        fit_model=sn_model_fit,
+        vparams=cli_args.vparams,
+        out_path=cli_args.out_path,
         quality_callback=passes_quality_cuts,
         pool_size=cli_args.pool_size,
         iter_lim=cli_args.iter_lim,
@@ -116,8 +117,7 @@ def run_pipeline(cli_args):
     print('I/O Processes: 2')
     print(f'Simulation Processes:', pipeline.simulation_pool_size)
     print('Fitting Processes:', pipeline.fitting_pool_size)
-
-    pipeline.run(out_path=cli_args.out_path)
+    pipeline.run()
 
 
 def create_cli_parser():

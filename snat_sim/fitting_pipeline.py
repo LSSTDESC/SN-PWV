@@ -24,10 +24,41 @@ class KillSignal:
     pass
 
 
-class FittingPipeline:
+class ProcessManager:
+    """Handles the starting and termination of processes forked by the child class"""
+
+    def __init__(self):
+        self._processes = []
+
+    def kill(self):
+        """Kill all running pipeline processes without trying to exit gracefully"""
+
+        for p in self._processes:
+            p.terminate()
+
+    def wait_for_exit(self):
+        """Wait for the pipeline to finish running before continuing execution"""
+
+        for p in self._processes:
+            p.join()
+
+    def run(self):
+        """Similar to ``run_async`` but blocks further execution until finished"""
+
+        self.run_async()
+        self.wait_for_exit()
+
+    def run_async(self):
+        """Start all processes asynchronously"""
+
+        for p in self._processes:
+            p.start()
+
+
+class FittingPipeline(ProcessManager):
     """Series of workers and pools for simulating and fitting light-curves"""
 
-    def __init__(self, cadence, sim_model, fit_model, vparams,
+    def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
                  quality_callback=None, max_queue=25, pool_size=None,
                  iter_lim=float('inf'), ref_stars=None, pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
@@ -43,12 +74,13 @@ class FittingPipeline:
             sim_model           (Model): Model to use when simulating light-curves
             fit_model           (Model): Model to use when fitting light-curves
             vparams         (list[str]): List of parameter names to vary in the fit
+            out_path        (str, Path): Path to write results to (.csv extension is enforced)
             quality_callback (callable): Skip light-curves if this function returns False
             max_queue             (int): Maximum number of light-curves to store in memory at once
             pool_size             (int): Total number of workers to spawn. Defaults to CPU count
             iter_lim              (int): Limit number of processed light-curves (Useful for profiling)
             ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with
-            pwv_model        (PWVModel): Model for the PWV concentration the reference star is observed at
+            pwv_model        (PWVModel): Model for the PWV concentration the reference stars are observed at
         """
 
         self.pool_size = mp.cpu_count() if pool_size is None else pool_size
@@ -56,7 +88,7 @@ class FittingPipeline:
             raise RuntimeError('Cannot spawn pipeline with less than 4 processes.')
 
         if (ref_stars is None) and not (pwv_model is None):
-            raise ValueError('Cannot perform reference star subtraction with ``pwv_model`` argument')
+            raise ValueError('Cannot perform reference star subtraction without ``pwv_model`` argument')
 
         self.cadence = cadence
         self.sim_model = sim_model
@@ -66,12 +98,36 @@ class FittingPipeline:
         self.iter_lim = iter_lim
         self.reference_stars = ref_stars
         self.pwv_model = pwv_model
-        self.out_path = None  # To be set when ``run`` is called
 
+        self.out_path = Path(out_path).with_suffix('.csv')
+        self.out_path.parent.mkdir(exist_ok=True, parents=True)
+
+        # Set up queues to connect processes together
         manager = mp.Manager()
         self.queue_plasticc_lc = manager.Queue(max_queue // 2)
         self.queue_duplicated_lc = manager.Queue(max_queue // 2)
         self.queue_fit_results = manager.Queue()
+
+        # Instantiate process objects - populates list self._processes
+        super(FittingPipeline, self).__init__()
+        self._init_processes()
+
+    def _init_processes(self):
+        """Instantiate forked processes but do not run them"""
+
+        load_plasticc_process = mp.Process(target=self._load_queue_plasticc_lc)
+        self._processes.append(load_plasticc_process)
+
+        for _ in range(self.simulation_pool_size):
+            duplicate_lc_process = mp.Process(target=self._duplicate_light_curves)
+            self._processes.append(duplicate_lc_process)
+
+        for _ in range(self.fitting_pool_size):
+            fitting_process = mp.Process(target=self._fit_light_curves)
+            self._processes.append(fitting_process)
+
+        unload_results_process = mp.Process(target=self._unload_output_queue)
+        self._processes.append(unload_results_process)
 
     @property
     def fitting_pool_size(self) -> int:
@@ -158,49 +214,16 @@ class FittingPipeline:
     def _unload_output_queue(self):
         """Retrieve fit results from the output queue and write results to file"""
 
-        # Count number of upstream processes that have closed so this process knows when to exit
-        kill_count = 0
+        kill_count = 0  # Count closed upstream processes so this process knows when to exit
+
         with self.out_path.open('w') as outfile:
             while True:
                 if isinstance(results := self.queue_fit_results.get(), KillSignal):
                     kill_count += 1
                     if kill_count >= self.fitting_pool_size:
-                        return  # No more fits are being run
+                        # No more simulations or fits are being run
+                        self._processes = []
+                        return
 
                 new_line = ','.join(map(str, results)) + '\n'
                 outfile.write(new_line)
-
-    def run(self, out_path):
-        """Run fits of each light-curve and write results to file
-
-        A ``.csv`` extension is enforced on the output file.
-
-        Args:
-            out_path (Path): Path to write results to
-        """
-
-        out_path.parent.mkdir(exist_ok=True, parents=True)
-        self.out_path = out_path.with_suffix('.csv')
-
-        processes = []  # Accumulator for processes so they can be joined at the end
-
-        load_plasticc_process = mp.Process(target=self._load_queue_plasticc_lc)
-        load_plasticc_process.start()
-        processes.append(load_plasticc_process)
-
-        for _ in range(self.simulation_pool_size):
-            duplicate_lc_process = mp.Process(target=self._duplicate_light_curves)
-            duplicate_lc_process.start()
-            processes.append(duplicate_lc_process)
-
-        for _ in range(self.fitting_pool_size):
-            fitting_process = mp.Process(target=self._fit_light_curves)
-            fitting_process.start()
-            processes.append(fitting_process)
-
-        unload_results_process = mp.Process(target=self._unload_output_queue)
-        unload_results_process.start()
-        processes.append(unload_results_process)
-
-        for p in processes:
-            p.join()
