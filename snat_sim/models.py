@@ -51,7 +51,7 @@ class FixedResTransmission:
             res=res).values.T
 
         self._interpolator = RegularGridInterpolator(
-            points=(self.samp_pwv, self.samp_wave), values=self.samp_transmission)
+            points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
     def _calc_transmission(self, pwv, wave=None):
         """Evaluate the transmission model at the given wavelengths
