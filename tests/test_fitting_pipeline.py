@@ -20,7 +20,7 @@ class TestProcessAllocation(TestCase):
             fit_model=sncosmo.Model('salt2'),
             vparams=[],
             pool_size=pool_size,
-            out_path='.'
+            out_path='./test.csv'
         )
 
         self.assertEqual(
@@ -37,5 +37,5 @@ class TestProcessAllocation(TestCase):
                 fit_model=sncosmo.Model('salt2'),
                 vparams=[],
                 pool_size=3,
-                out_path='.'
+                out_path='./test.csv'
             )
