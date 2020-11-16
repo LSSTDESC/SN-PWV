@@ -50,24 +50,8 @@ class FixedResTransmission:
             wave=self.samp_wave,
             res=res).values.T
 
-    @staticmethod
-    def _build_interpolator(samp_pwv, samp_wave, samp_transmission):
-        """Construct a scipy interpolator for a given set of wavelengths, PWV,  and transmissions
-
-        Interpolation if performed as a function of PWV effective.
-
-        Args:
-            samp_pwv: 1D array of PWV values for the sampled transmission
-            samp_wave: 1D Array with wavelengths in angstroms for the sampled transmission
-            samp_transmission: 2D array with transmission values for each PWV and wavelength
-        """
-
-
-        try:
-            return RegularGridInterpolator(points=(samp_pwv, samp_wave), values=samp_transmission)
-
-        except ValueError:  # Wrap an otherwise cryptic error message
-            raise ValueError('Dimensions of init arguments do not match.')
+        self._interpolator = RegularGridInterpolator(
+            points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
     def _calc_transmission(self, pwv, wave=None):
         """Evaluate the transmission model at the given wavelengths
@@ -80,18 +64,11 @@ class FixedResTransmission:
             The interpolated transmission at the given wavelengths / resolution
         """
 
-        # Build interpolation function
-        sampled_pwv = calc_pwv_eff(self.samp_pwv, self.norm_pwv, self.eff_exp)
-        sampled_transmission = self.samp_transmission
-        sampled_wavelengths = self.samp_wave
-
-        interp_func = self._build_interpolator(sampled_pwv, sampled_wavelengths, sampled_transmission)
-
         # Build interpolation grid
         pwv_eff = calc_pwv_eff(pwv, norm_pwv=self.norm_pwv, eff_exp=self.eff_exp)
         xi = [[pwv_eff, w] for w in wave]
 
-        return pd.Series(interp_func(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
+        return pd.Series(self._interpolator(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
 
     def __call__(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
@@ -126,7 +103,7 @@ class PWVModel:
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
     @staticmethod
-    def from_suominet_receiver(receiver, year, supp_years):
+    def from_suominet_receiver(receiver, year, supp_years=None):
         """Construct a ``PWVModel`` instance using data from a SuomiNet receiver
 
         Args:
