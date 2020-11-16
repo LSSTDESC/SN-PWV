@@ -198,10 +198,10 @@ class FittingPipeline(ProcessManager):
             # Use the true light-curve parameters as the initial guess
             self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
 
-            # Fit the model without PWV
-            with warnings.catch_warnings():
-                warnings.simplefilter('ignore', category=DeprecationWarning)
-                _, fitted_model = sncosmo.fit_lc(light_curve, self.fit_model, self.vparams)
+            warnings.simplefilter('ignore', category=DeprecationWarning)
+            _, fitted_model = sncosmo.fit_lc(
+                light_curve, self.fit_model, self.vparams,
+                guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
             out_vals = list(fitted_model.parameters)
             out_vals.insert(0, light_curve.meta['SNID'])
