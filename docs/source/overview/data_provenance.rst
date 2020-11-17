@@ -16,7 +16,7 @@ Atmospheric Measurements
     Meteorological measurements taken at various global positions are used to
     characterize atmospheric variability over time. This data is taken by
     the SuomiNet project and it's affiliated teams / projects. Published values
-    include the pressure, temperature, relative humidity, and precipitatable water
+    include the pressure, temperature, relative humidity, and precipitable water
     vapor concentration (at zenith) sample at 30 minute intervals.
 
 CTIO Filters
