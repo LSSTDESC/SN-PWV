@@ -18,6 +18,7 @@ def array_to_tuple(np_array):
         return np_array
 
 
+# Credit: https://gist.github.com/Susensio/61f4fee01150caaac1e10fc5f005eb75
 def np_cache(*args, **kwargs):
     """LRU cache implementation for functions whose FIRST parameter is a numpy array"""
 
