@@ -1,19 +1,21 @@
 Installation and Setup
 ======================
 
-This page will walk your through the process of downloading and configuring the
-project source code.
+The ``snat_sim`` package is not available via a package manager, but can
+be installed directly from the project's source code. Please follow the
+steps outlined below to install and configure the package.
 
 Downloading the Source
 ----------------------
 
 Source code for this project is available on
 `GitHub <https://github.com/LSSTDESC/SN-PWV>`_ and can be downloaded directly
-from the GitHub repository page or using the ``git`` command line utility:
+from the GitHub repository page or by using the ``git`` command line utility:
 
 .. code-block:: bash
 
-   git clone https://github.com/LSSTDESC/SN-PWV.git
+   git clone  --depth=1 --branch=master https://github.com/LSSTDESC/SN-PWV.git SN-PWV
+   rm -rf ./SN-PWV/.git
 
 Project dependencies are listed in the ``requirements.txt`` file included with
 the source code. Dependencies can be installed using ``pip``:
@@ -31,7 +33,7 @@ Downloading Light-Curve Sims
    To avoid future headaches, please ensure you actually need this data and
    don't already have it available in your working environment.
 
-Simulated light-curve data is hosted on Zenodo and can be downloaded using
+Simulated light-curve data is hosted on `Zenodo <https://zenodo.org/>` and can be downloaded using
 the ``wget`` command. URL's for various subsets of the data is listed are
 listed in  ``file_list.txt`` and can be downloaded as shown below.
 For convenience, the  ``timeout`` and ``tries`` arguments can be used to
@@ -43,7 +45,7 @@ included to avoid restarting a failed download from scratch.
    wget --continue --timeout 0 --tries 0 -i data/plasticc/file_list.txt -P /desired/output/directory/
 
 If you have difficulty downloading all the data at once, or if you don't
-need the entire data set, please try individually downloading the files listed
+need the entire data set, try individually downloading the files listed
 in ``file_list.txt`` . The downloaded files will be nested, compressed
 files using a mix of the ``.gz`` and ``.tar.gz`` compression formats.
 You can decompress them using the following commands:
