@@ -9,7 +9,7 @@ from functools import lru_cache, wraps
 
 
 def array_to_tuple(np_array):
-    """Iterates recursively."""
+    """Typecast a numpy array as a nested tuple"""
 
     try:
         return tuple(array_to_tuple(_) for _ in np_array)
