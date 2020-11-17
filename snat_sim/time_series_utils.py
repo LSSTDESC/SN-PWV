@@ -3,8 +3,8 @@ for manipulating time series data. It is intended to supplement existing
 functionality in the ``pandas`` package with support for tasks particular to
 dealing with atmospheric / weather data.
 
-Module API
-----------
+Module Docs
+-----------
 """
 
 import warnings

@@ -2,8 +2,8 @@
 observed (or simulated) magnitudes relative to a reference star. Reference
 star fluxes are determined relative to a fiducial atmosphere with 4mm of PWV.
 
-Module API
-----------
+Module Docs
+-----------
 """
 
 from functools import lru_cache

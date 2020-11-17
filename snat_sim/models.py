@@ -3,8 +3,8 @@ physical phenomena. This includes SNe Ia light-curves, the propagation of
 light through atmospheric water vapor (with and without variation in time),
 and the seasonal variation of water vapor vs time.
 
-Module API
-----------
+Module Docs
+-----------
 """
 
 import abc
@@ -57,8 +57,8 @@ class FixedResTransmission:
         """Evaluate the transmission model at the given wavelengths
 
         Args:
-            pwv: Line of sight PWV to interpolate for
-            wave: Wavelengths to evaluate transmission for in angstroms
+            pwv    (float): Line of sight PWV to interpolate for
+            wave (ndarray): Wavelengths to evaluate transmission for in angstroms
 
         Returns:
             The interpolated transmission at the given wavelengths / resolution
@@ -73,9 +73,12 @@ class FixedResTransmission:
     def __call__(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
 
+        Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
+        object if ``pwv`` is an array. Wavelengths are expected in angstroms.
+
         Args:
-            pwv (float, Collection[float]): Line of sight PWV to interpolate for
-            wave        (array, DataFrame): Wavelengths to evaluate transmission for in angstroms
+            pwv (float, Iterable[float]): Line of sight PWV to interpolate for
+            wave    (ndarray, DataFrame): Wavelengths to evaluate transmission
 
         Returns:
             The interpolated transmission at the given wavelengths / resolution
@@ -125,16 +128,17 @@ class PWVModel:
                      time_format='mjd'):
         """Calculate the airmass through which a target is observed
 
-        Default latitude, longitude, and altitude are set to the Rubin Observatory.
+        Default latitude, longitude, and altitude are set to the Rubin
+        Observatory.
 
         Args:
-            time      (float): Time at which the target is observed
+            time (float, List[float]): Time at which the target is observed
             ra        (float): Right Ascension of the target (Deg)
             dec       (float): Declination of the target (Deg)
             lat       (float): Latitude of the observer (Deg)
             lon       (float): Longitude of the observer (Deg)
             alt       (float): Altitude of the observer (m)
-            time_format (str): Format of the time value (Default 'mjd')
+            time_format (str): Astropy supported format of the time value (Default: 'mjd')
 
         Returns:
             Airmass in units of Sec(z)
@@ -153,15 +157,15 @@ class PWVModel:
             altaz = AltAz(obstime=obs_time, location=observer_location)
             return target_coord.transform_to(altaz).secz.value
 
-    def pwv_zenith(self, date, time_format=None):
+    def pwv_zenith(self, date, time_format='mjd'):
         """Interpolate the PWV at zenith as a function of time
 
-        The datetime format will by guessed. If it cannot be identified, set
-        the ``time_format`` kwarg to the desired input format.
-
         Args:
-            date (float): The date to interpolate PWV for
-            time_format (str): Astropy supported time format of the ``date`` argument
+            date (float, List[float]): The date to interpolate PWV for
+            time_format         (str): Astropy supported format of the time value (Default: 'mjd')
+
+        Returns:
+            The PWV at zenith for the given date(s)
         """
 
         with warnings.catch_warnings():
@@ -180,17 +184,14 @@ class PWVModel:
                 time_format='mjd'):
         """Interpolate the PWV along the line of sight as a function of time
 
-        The datetime format will by guessed. If it cannot be identified, set
-        the ``time_format`` kwarg to the desired input format.
-
         Args:
-            date      (float): The date to interpolate PWV for
-            ra        (float): Right Ascension of the target (Deg)
-            dec       (float): Declination of the target (Deg)
-            lat       (float): Latitude of the observer (Deg)
-            lon       (float): Longitude of the observer (Deg)
-            alt       (float): Altitude of the observer (m)
-            time_format (str): Astropy supported time format of the ``date`` argument
+            time (float, List[float]): Time at which the target is observed
+            ra                (float): Right Ascension of the target (Deg)
+            dec               (float): Declination of the target (Deg)
+            lat               (float): Latitude of the observer (Deg)
+            lon               (float): Longitude of the observer (Deg)
+            alt               (float): Altitude of the observer (m)
+            time_format         (str): Astropy supported format of the time value (Default: 'mjd')
         """
 
         return (self.pwv_zenith(date, time_format) *
@@ -220,7 +221,7 @@ class VariablePropagationEffect(sncosmo.PropagationEffect):
 
 
 class StaticPWVTrans(sncosmo.PropagationEffect):
-    """Atmospheric propagation effect for temporally static PWV"""
+    """Atmospheric propagation effect for time static PWV"""
 
     _minwave = 3000.0
     _maxwave = 12000.0
@@ -238,7 +239,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
             flux (ndarray): An array of flux values
 
         Returns:
-            An array of flux values after suffering propagation effects
+            An array of flux values after suffering from PWV absorption
         """
 
         # The class guarantees PWV is a scalar, so the transmission is 1D
@@ -254,9 +255,6 @@ class VariablePWVTrans(VariablePropagationEffect):
 
     def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
         """Time variable atmospheric transmission due to PWV
-
-        Set ``scale_airmass`` to ``False`` if ``pwv_interpolator`` returns PWV values along the
-        line of sight.
 
         Effect Parameters:
             ra: Target Right Ascension in degrees
@@ -298,7 +296,7 @@ class VariablePWVTrans(VariablePropagationEffect):
             time (ndarray): Array of time values to determine PWV for
 
         Returns:
-            An array of flux values after suffering propagation effects
+            An array of flux values after suffering from PWV absorption
         """
 
         pwv = self._pwv_model.pwv_los(
@@ -322,7 +320,7 @@ class VariablePWVTrans(VariablePropagationEffect):
         if np.ndim(time) == 1 and np.ndim(flux) == 2:  # PWV will be a vector and transmission will be a DataFrame
             return flux * transmission.values.T
 
-        raise NotImplementedError('Could not identify how to match dimensions of Atm. model to source flux.')
+        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
 
 
 class Model(sncosmo.Model):

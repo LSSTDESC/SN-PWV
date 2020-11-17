@@ -2,8 +2,46 @@
 PLaSTICC simulations. Data is accessible by specifying the cadence and
 model used in a given simulation.
 
-Module API
-----------
+Usage Example
+-------------
+
+The ``plasticc`` module makes it easy to check what data is available in
+the current working environment:
+
+.. code-block:: python
+
+   from snat_sim import plasticc
+
+   # Check where the `snat_sim` package is expecting to find data
+   print(plasticc.get_data_dir())
+
+   # Get a list of cadences available in the directory printed above
+   print(plasticc.get_available_cadences())
+
+   # Count the number of light-curves for a given cadence and SN model
+   num_lc = plasticc.count_light_curves('alt_sched, model=11)
+
+
+It also provides **basic** data access via the construction of an iterator
+over all available light-curves for a given cadence / model. You should expect
+the first evaluation of the iterator to be slow since it has to load
+light-curve data into memory as chunks.
+
+.. code-block:: python
+
+   lc_iterator = plasticc.iter_lc_for_cadence_model('alt_sched', model=11)
+   plasticc_lc = next(lc_iterator)
+
+PLaSTICC simulations were run using the ``SNANA`` package in FORTRAN and thus
+are returned using the ``SNANA`` data model. Alternatively, you can convert the
+returned tables to the data model used by the ``sncosmo`` Python package.
+
+.. code-block:: python
+
+   formatted_lc = format_plasticc_sncosmo(plasticc_lc)
+
+Module Docs
+-----------
 """
 
 import os

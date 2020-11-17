@@ -7,8 +7,9 @@ registered once within a given environment to be accessible by ``sncosmo``.
 Usage Example
 -------------
 
-The following example registers filter profiles for the Legacy Survey of
-Space and Time (LSST).
+In the below example, filter profiles for the Legacy Survey of
+Space and Time (LSST) are registered with  and then retrieved by the
+``sncosmo`` package.
 
 .. code-block:: python
 
@@ -21,8 +22,8 @@ Space and Time (LSST).
    register_lsst_filters()
    lsst_u_band = sncosmo.get_bandpass('lsst_total_u')
 
-Module API
-----------
+Module Docs
+-----------
 """
 
 from pathlib import Path

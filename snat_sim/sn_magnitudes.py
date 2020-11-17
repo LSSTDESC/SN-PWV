@@ -2,8 +2,8 @@
 magnitudes as a function of PWV and redshift. Functionality is provided to
 determine magnitudes directly from a SN model and via a light-curve fit.
 
-Module API
-----------
+Module Docs
+-----------
 """
 
 import itertools

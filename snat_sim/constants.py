@@ -2,23 +2,6 @@
 the parent package. Units used for each value are summarized in the table
 below.
 
-Usage Example
--------------
-
-The following example defines an ``astropy`` location object for the Vera C.
-Rubin Observatory.
-
-.. code-block:: python
-
-   from astropy import units as u
-   from astropy.coordinates import EarthLocation
-   from snat_sim import constants as const
-
-   vro_location = EarthLocation(
-       lat=const.vro_latitude * u.deg,
-       lon=const.vro_longitude * u.deg,
-       height=const.vro_altitude * u.m)
-
 Value Summaries
 ---------------
 

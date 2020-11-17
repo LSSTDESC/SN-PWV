@@ -2,8 +2,35 @@
 is built to support a parallelized approach to simulating and fitting
 light-curves with atmospheric effects.
 
-Module API
-----------
+Usage Example
+-------------
+
+Instances of the ``FittingPipeline`` class can be run synchronously
+(by calling ``FittingPipeline.run``) or asynchronously (with
+``FittingPipeline.run_async``). Here we demonstrate running a pipeline
+synchronously.
+
+.. code-block:: python
+
+   from snat_sim.fitting_pipeline import FittingPipeline
+
+   print('Instantiating pipeline...')
+   pipeline = FittingPipeline(
+       cadence='alt_sched',
+       sim_model=sn_model_sim,
+       fit_model=sn_model_fit,
+       vparams=['x0', 'x1', 'c'],
+       out_path='./demo_out_path.csv',
+       pool_size=6
+   )
+
+   print('I/O Processes: 2')
+   print('Simulation Processes:', pipeline.simulation_pool_size)
+   print('Fitting Processes:', pipeline.fitting_pool_size)
+   pipeline.run()
+
+Module Docs
+-----------
 """
 
 import multiprocessing as mp
@@ -56,17 +83,17 @@ class ProcessManager:
 
 
 class FittingPipeline(ProcessManager):
-    """Series of workers and pools for simulating and fitting light-curves"""
+    """Pipeline of parallel processes for simulating and fitting light-curves"""
 
     def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
                  quality_callback=None, max_queue=25, pool_size=None,
                  iter_lim=float('inf'), ref_stars=None, pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
 
-        The ``max_queue`` argument can be used to limit **duplicate**
+        The ``max_queue`` argument can be used to limit
         memory usage by restricting the number of light-curves that are read
         into the  pipeline at once. However, it does not effect memory usage
-        by the underlying file parser. In general increasing the pool size
+        by the underlying file parser. In general increasing the queue size
         has minimal performance impact.
 
         Args:
