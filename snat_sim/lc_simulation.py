@@ -1,6 +1,27 @@
 """The ``simulation`` module realizes SN Ia light-curves for a given supernova
-model. The module supports supernova ``model`` objects from the ``models``
-module as well as from the ``sncosmo`` package.
+model. The module supports both ``snat_sim.Model``  and ``sncosmo.Model``
+objects interchangeably.
+
+Usage Example
+-------------
+
+.. code-block:: python
+
+    from snat_sim import lc_simulation, models
+
+    sn_model = models.Model('salt2-extended')
+
+    # Create a table of dates, bandpasses, gain, and skynoise values to evaluate
+    # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``
+    band_passes = ['sdssu', 'sdssg', 'sdssr', 'sdssi', 'sdssz']
+    cadence = lc_simulation.create_observations_table(bands=band_passes)
+
+    # Evaluate the model at a fixed SNR
+    light_curve = lc_simulation.realize_lc(cadence, model, snr=5)
+
+    # Or, evaluate using statistical uncertainties determined from the gain / skynoise
+    light_curve = lc_simulation.simulate_lc(cadence, model)
+
 
 Module API
 ----------
@@ -112,7 +133,7 @@ def realize_lc(obs, model, snr=.05, **params):
     return light_curve
 
 
-def simulate_lc(observations, model, params, scatter=True):
+def simulate_lc(observations, model, params=None, scatter=True):
     """Simulate a SN light-curve given a set of observations.
 
     If ``scatter`` is ``True``, then simulated flux values include an added
@@ -128,6 +149,9 @@ def simulate_lc(observations, model, params, scatter=True):
     Returns:
         An astropy table formatted for use with sncosmo
     """
+
+    if params is None:
+        params = dict()
 
     model = copy(model)
     for p in model.param_names:
