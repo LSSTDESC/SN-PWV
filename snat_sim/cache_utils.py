@@ -1,3 +1,10 @@
+"""The ``cache_utils`` module defines numpy compatible function wrappers
+for implementing memoization.
+
+Module API
+----------
+"""
+
 from functools import lru_cache, wraps
 
 
@@ -21,7 +28,7 @@ def np_cache(*args, **kwargs):
 
         @lru_cache(*args, **kwargs)
         def cached_wrapper(*args, **kwargs):
-            return function(*array_to_tuple(args), **kwargs)
+            return function(*args, **kwargs)
 
         # copy lru_cache attributes over too
         wrapper.cache_info = cached_wrapper.cache_info

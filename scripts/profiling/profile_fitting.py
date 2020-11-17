@@ -1,11 +1,12 @@
 import os
+from pathlib import Path
 
 from scripts.fitting_cli import create_pwv_model, create_sn_model
 from snat_sim.filters import register_lsst_filters
 from snat_sim.fitting_pipeline import FittingPipeline
 
 register_lsst_filters(force=True)
-os.environ['CADENCE_SIMS'] = '/mnt/md0/sn-sims'
+os.environ['CADENCE_SIMS'] = str(Path(__file__).resolve().parent / 'data')
 
 if __name__ == '__main__':
     sn_model_sim = create_sn_model('salt2-extended', create_pwv_model(4))

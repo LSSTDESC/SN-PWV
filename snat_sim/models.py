@@ -73,7 +73,7 @@ class FixedResTransmission:
             return pd.Series(self._interpolator(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
 
         else:
-            xi = [[[pwvv, w] for w in wave] for pwvv in pwv_eff]
+            xi = [[[pwv_val, w] for w in wave] for pwv_val in pwv_eff]
             return pd.DataFrame(self._interpolator(xi).T)
 
 
