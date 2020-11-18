@@ -3,6 +3,32 @@ physical phenomena. This includes SNe Ia light-curves, the propagation of
 light through atmospheric water vapor (with and without variation in time),
 and the seasonal variation of water vapor vs time.
 
+Usage Example
+-------------
+
+To ensure backwards compatibility and ease of use, supernovae modeling with the
+``snat_sim`` package follows the
+`same design <https://sncosmo.readthedocs.io/en/stable/models.html>`_
+as the ``sncosmo`` package. Models are instantiated for a given spectral
+template and various propogation effects can be added to the model. In the
+following example, atmospheric propagation effects due to precipitable water
+vapor are added to a Salt2 supernova model.
+
+.. code-block:: python
+
+   from snat_sim import models
+
+   # Create a supernova model
+   supernova_model = models.Model('salt2')
+
+   # Create a model for the atmosphere
+   atmospheric_transmission = StaticPWVTrans()
+   atmospheric_transmission.set(pwv=4)
+   supernova_model.add_effect(
+       effect=atmospheric_transmission,
+       name='Atmosphere',
+       frame='obs')
+
 Module Docs
 -----------
 """

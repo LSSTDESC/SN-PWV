@@ -1,4 +1,4 @@
-"""The ``simulation`` module realizes light-curves for a given supernova
+"""The ``lc_simulation`` module realizes light-curves for a given supernova
 model. The module supports both ``snat_sim.Model``  and ``sncosmo.Model``
 objects interchangeably.
 

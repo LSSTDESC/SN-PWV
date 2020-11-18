@@ -21,7 +21,6 @@ the current working environment:
    # Count the number of light-curves for a given cadence and SN model
    num_lc = plasticc.count_light_curves('alt_sched, model=11)
 
-
 It also provides **basic** data access via the construction of an iterator
 over all available light-curves for a given cadence / model. You should expect
 the first evaluation of the iterator to be slow since it has to load
@@ -134,7 +133,7 @@ def iter_lc_for_header(header_path, verbose=True):
         verbose (bool): Display a progress bar
 
     Yields:
-        - An Astropy table with the MJD and filter for each observation
+        An Astropy table with the MJD and filter for each observation
     """
 
     # Load meta data from the header file

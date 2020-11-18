@@ -62,7 +62,7 @@ def register_decam_filters(force=False):
         - DECam_ccd: DECam CCD Response curve
 
     Args:
-        force (bool): Re-register a band if it is already registered
+        force (bool): Re-register bands even if they are already registered
     """
 
     # Register each filter
@@ -104,7 +104,7 @@ def register_lsst_filters(force=False):
         - lsst_<ugrizy>_no_atm: Throughput in each band without a fiducial atmosphere
 
     Args:
-        force (bool): Re-register a band if it is already registered
+        force (bool): Re-register bands even if they are already registered
     """
 
     lsst_filter_dir = FILTER_DIR / 'lsst_baseline'

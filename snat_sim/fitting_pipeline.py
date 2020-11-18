@@ -1,5 +1,5 @@
 """The ``fitting_pipeline`` module defines the ``FittingPipeline`` class, which
-is built to support a parallelized approach to simulating and fitting
+is built to provide a parallelized approach to simulating and fitting
 light-curves with atmospheric effects.
 
 Usage Example
@@ -90,12 +90,6 @@ class FittingPipeline(ProcessManager):
                  iter_lim=float('inf'), ref_stars=None, pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
 
-        The ``max_queue`` argument can be used to limit
-        memory usage by restricting the number of light-curves that are read
-        into the  pipeline at once. However, it does not effect memory usage
-        by the underlying file parser. In general increasing the queue size
-        has minimal performance impact.
-
         Args:
             cadence               (str): Cadence to use when simulating light-curves
             sim_model           (Model): Model to use when simulating light-curves
@@ -103,7 +97,7 @@ class FittingPipeline(ProcessManager):
             vparams         (list[str]): List of parameter names to vary in the fit
             out_path        (str, Path): Path to write results to (.csv extension is enforced)
             quality_callback (callable): Skip light-curves if this function returns False
-            max_queue             (int): Maximum number of light-curves to store in memory at once
+            max_queue             (int): Maximum number of light-curves to store in pipeline at once
             pool_size             (int): Total number of workers to spawn. Defaults to CPU count
             iter_lim              (int): Limit number of processed light-curves (Useful for profiling)
             ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with
