@@ -243,7 +243,7 @@ def fit_fiducial_mag(sim_model, fit_model, obs, vparams, z_arr, bands, fid_pwv_d
 
     # Get mag at reference pwv values
     pwv_vals = [pwv_slope_start, pwv_fiducial, pwv_slope_end]
-    light_curves = lc_simulation.iter_lcs(obs, sim_model, pwv_vals, z_arr)
+    light_curves = lc_simulation.iter_lcs_fixed_snr(obs, sim_model, pwv_vals, z_arr)
     fitted_mag, fitted_params = fit_mag(
         model=fit_model,
         light_curves=light_curves,
