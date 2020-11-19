@@ -34,12 +34,12 @@ jobs:
         
     - uses: ammaraskar/sphinx-action@master
       with:
-        docs-folder: "SN-PWV/docs/"
+        docs-folder: "./docs/"
         
   test-examples:
     runs-on: ubuntu-latest
     needs: [build-docs]
     steps:
       - name: Run doctest
-        working-directory: ./SN-PWV/docs
+        working-directory: "./docs"
         run: make doctest
