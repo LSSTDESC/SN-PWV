@@ -15,14 +15,14 @@ jobs:
       uses: actions/cache@v2
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-py${{ matrix.python-version }}-pip-${{ hashFiles('setup.py') }}
+        key: ${{ runner.os }}-py3.8-pip-${{ hashFiles('setup.py') }}
         restore-keys: |
-          ${{ runner.os }}-py${{ matrix.python-version }}-pip-
+          ${{ runner.os }}-py3.8-pip-
           
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.8
       uses: actions/setup-python@v1
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: 3.8
    
     - name: Install package and dependencies
       run: pip install .
