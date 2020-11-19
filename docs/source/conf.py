@@ -50,7 +50,7 @@ html_static_path = ['./static/']
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
 html_css_files = [
-    'custom_style.css',
+    'css/custom_style.css',
 ]
 
 # -- Options for HTML output -------------------------------------------------
@@ -72,3 +72,4 @@ def skip(app, what, name, obj, would_skip, options):
 
 def setup(app):
     app.connect("autodoc-skip-member", skip)
+    app.add_stylesheet("css/theme.css")
