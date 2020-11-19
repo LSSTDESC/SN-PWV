@@ -13,7 +13,7 @@ jobs:
         
     - uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: "pip install . && apt-get update -y && apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc"
+        pre-build-command: "apt-get update -y && apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc"
         docs-folder: "./docs/"
         
   test-examples:
@@ -27,7 +27,9 @@ jobs:
           python-version: 3.8
        
       - name: Install package and dependencies
-        run: pip install .
+        run: |
+          pip install .  # Package dependencies
+          pip install -r docs/requirements.txt  # Extra documentation dependencies
        
       - name: Run doctest
         working-directory: "./docs"
