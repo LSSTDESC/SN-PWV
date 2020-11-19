@@ -75,7 +75,7 @@ def create_sn_model(source='salt2-extended', pwv_model=None):
         An instantiated ``snat_sim`` supernova model
     """
 
-    model = models.Model(source=source)
+    model = models.SNModel(source=source)
     if pwv_model is not None:
         model.add_effect(
             effect=models.VariablePWVTrans(pwv_model),

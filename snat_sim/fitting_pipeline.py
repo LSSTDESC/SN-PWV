@@ -36,13 +36,10 @@ Module Docs
 import multiprocessing as mp
 import warnings
 from pathlib import Path
-from typing import Union
 
 import sncosmo
 
-from . import models, plasticc, reference_stars
-
-model_type = Union[sncosmo.Model, models.Model]
+from . import plasticc, reference_stars
 
 
 class KillSignal:
@@ -92,8 +89,8 @@ class FittingPipeline(ProcessManager):
 
         Args:
             cadence               (str): Cadence to use when simulating light-curves
-            sim_model           (Model): Model to use when simulating light-curves
-            fit_model           (Model): Model to use when fitting light-curves
+            sim_model         (SNModel): Model to use when simulating light-curves
+            fit_model         (SNModel): Model to use when fitting light-curves
             vparams         (list[str]): List of parameter names to vary in the fit
             out_path        (str, Path): Path to write results to (.csv extension is enforced)
             quality_callback (callable): Skip light-curves if this function returns False

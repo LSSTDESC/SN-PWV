@@ -241,7 +241,7 @@ def duplicate_plasticc_sncosmo(
 
     Args:
         light_curve  (Table): Astropy table with PLaSTICC light-curve data
-        model        (Model): Model to use when simulating light-curve flux
+        model      (SNModel): SNModel to use when simulating light-curve flux
         zp    (float, array): Optionally overwrite the PLaSTICC zero-point with this value
         gain         (float): Gain to use during simulation
         skynoise     (float):  Optionally overwrite the PLaSTICC skynoise with this value

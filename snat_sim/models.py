@@ -19,7 +19,7 @@ vapor are added to a Salt2 supernova model.
    from snat_sim import models
 
    # Create a supernova model
-   supernova_model = models.Model('salt2')
+   supernova_model = models.SNModel('salt2')
 
    # Create a model for the atmosphere
    atmospheric_transmission = StaticPWVTrans()
@@ -258,35 +258,57 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
     _minwave = 3000.0
     _maxwave = 12000.0
 
-    def __init__(self):
-        self._param_names = ['pwv', 'res']
-        self.param_names_latex = ['PWV', 'Resolution']
-        self._parameters = np.array([0., 5])
+    def __init__(self, transmission_res=5):
+        """Time independent atmospheric transmission due to PWV
+
+        Setting the ``transmission_res`` argument to ``None`` results in the
+        highest available transmission model available.
+
+        Effect Parameters:
+            pwv: Atmospheric concentration of PWV along line of sight in mm
+
+        Args:
+            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
+        """
+
+        self._transmission_res = transmission_res
+        self._param_names = ['pwv']
+        self.param_names_latex = ['PWV']
+        self._parameters = np.array([0.])
+        self._transmission_model = FixedResTransmission(transmission_res)
+
+    @property
+    def transmission_res(self):
+        """Resolution used when binning the underlying atmospheric transmission model"""
+
+        return self._transmission_res
 
     def propagate(self, wave, flux, *args):
         """Propagate the flux through the atmosphere
 
         Args:
-            wave (ndarray): An array of wavelength values
+            wave (ndarray): A 1D array of wavelength values
             flux (ndarray): An array of flux values
 
         Returns:
             An array of flux values after suffering from PWV absorption
         """
 
-        # The class guarantees PWV is a scalar, so the transmission is 1D
-        pwv, res = self.parameters
-        transmission = v1_transmission(pwv, wave, res)
+        # The class guarantees PWV is a scalar, so ``transmission`` is 1D
+        transmission = self._transmission_model(self.parameters[0], wave)
 
-        # The flux is 2D, so we do a quick cast
+        # ``flux`` is 2D, so we do a quick cast
         return flux * transmission.values[None, :]
 
 
-class VariablePWVTrans(VariablePropagationEffect):
+class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
     """Atmospheric propagation effect for temporally variable PWV"""
 
     def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
         """Time variable atmospheric transmission due to PWV
+
+        Setting the ``transmission_res`` argument to ``None`` results in the
+        highest available transmission model available.
 
         Effect Parameters:
             ra: Target Right Ascension in degrees
@@ -301,11 +323,11 @@ class VariablePWVTrans(VariablePropagationEffect):
             transmission_res   (float): Reduce the underlying transmission model by binning to the given resolution
         """
 
-        # Store init arguments
+        # Create atmospheric transmission model
+        super().__init__(transmission_res=transmission_res)
+
         self._time_format = time_format
         self._pwv_model = pwv_model
-
-        self._transmission_model = FixedResTransmission(transmission_res)
 
         # Define wavelength range of propagation effect
         self._minwave = self._transmission_model.samp_wave.min()
@@ -355,8 +377,8 @@ class VariablePWVTrans(VariablePropagationEffect):
         raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
 
 
-class Model(sncosmo.Model):
-    """Similar to ``sncosmo.Model`` class, but removes type checks from
+class SNModel(sncosmo.Model):
+    """Similar to ``sncosmo.SNModel`` class, but removes type checks from
     methods to allow duck-typing.
     """
 
