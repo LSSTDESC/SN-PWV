@@ -2,7 +2,7 @@
 
 import inspect
 from copy import copy
-from unittest import TestCase, skip
+from unittest import TestCase
 
 import numpy as np
 import pandas as pd
@@ -73,6 +73,37 @@ class TestVariablePropagationEffect(TestCase):
         self.assertEqual(params[-1], 'time')
 
 
+class TestStaticPWVTrans(TestCase):
+    """Tests for the ``StaticPWVTrans`` class"""
+
+    def setUp(self):
+        self.transmission_effect = models.StaticPWVTrans()
+
+    def test_default_pwv_is_zero(self):
+        """Test the default ``pwv`` parameter is 0"""
+
+        self.assertEqual(0, self.transmission_effect['pwv'])
+
+    def test_propagation_applies_pwv_transmission(self):
+        """Test the ``propagate`` applies PWV absorption"""
+
+        # Get the expected transmission
+        pwv = 5
+
+        wave = np.arange(4000, 5000)
+        transmission_model = models.FixedResTransmission(res=self.transmission_effect.transmission_res)
+        transmission = transmission_model(pwv=pwv, wave=wave)
+
+        # Get the expected flux
+        flux = np.ones_like(wave)
+        expected_flux = flux * transmission
+
+        # Get the returned flux
+        self.transmission_effect._parameters = [pwv]
+        propagated_flux = self.transmission_effect.propagate(wave, flux)
+        np.testing.assert_equal(expected_flux, propagated_flux[0])
+
+
 class TestVariablePWVTrans(TestCase):
     """Tests for the ``modeling.VariablePWVTrans`` class"""
 
@@ -100,24 +131,6 @@ class TestVariablePWVTrans(TestCase):
         self.assertEqual(self.propagation_effect['lon'], const.vro_longitude)
         self.assertEqual(self.propagation_effect['alt'], const.vro_altitude)
 
-    @skip('Deprecated')
-    def test_transmission_version_support(self):
-        """Test the propagation object uses the atmospheric model corresponding specified at init"""
-
-        from pwv_kpno.transmission import CrossSectionTransmission, TransmissionModel
-
-        default_effect = models.VariablePWVTrans(self.mock_pwv_model)
-        self.assertIsInstance(default_effect._transmission_model, CrossSectionTransmission)
-
-        v1_effect = models.VariablePWVTrans(self.mock_pwv_model, transmission_version='v1')
-        self.assertIsInstance(v1_effect._transmission_model, CrossSectionTransmission)
-
-        v2_effect = models.VariablePWVTrans(self.constant_pwv_func, transmission_version='v2')
-        self.assertIsInstance(v2_effect._transmission_model, TransmissionModel)
-
-        with self.assertRaises(ValueError):
-            models.VariablePWVTrans(self.mock_pwv_model, transmission_version='NotAVersion')
-
     def test_propagation_includes_pwv_transmission(self):
         """Test propagated flux includes absorption from PWV"""
 
@@ -127,7 +140,7 @@ class TestVariablePWVTrans(TestCase):
         np.testing.assert_array_less(propagated_flux, flux)
 
 
-class TestModel(sncosmo_test_models.TestModel, TestCase):
+class TestSNModel(sncosmo_test_models.TestModel, TestCase):
     """Tests for the ``modeling.SNModel`` class
 
     Includes all tests written for the ``sncosmo.Model`` class.
@@ -196,33 +209,3 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
         custom_model = models.SNModel(sncosmo_model.source)
         custom_flux = custom_model.flux(0, wave)
         np.testing.assert_equal(custom_flux, sncosmo_flux)
-
-
-class TestPWVTrans(TestCase):
-    """Tests for the addition of PWV to sncosmo models"""
-
-    def setUp(self):
-        self.transmission_effect = models.StaticPWVTrans()
-
-    def test_default_pwv_is_zero(self):
-        """Test the default ``pwv`` parameter is 0"""
-
-        self.assertEqual(0, self.transmission_effect['pwv'])
-
-    def test_propagation_applies_pwv_transmission(self):
-        """Test the ``propagate`` applies PWV absorption"""
-
-        # Get the expected transmission
-        pwv = 5
-
-        wave = np.arange(4000, 5000)
-        transmission = models.FixedResTransmission(res=self.transmission_effect.transmission_res)(pwv=pwv, wave=wave)
-
-        # Get the expected flux
-        flux = np.ones_like(wave)
-        expected_flux = flux * transmission
-
-        # Get the returned flux
-        self.transmission_effect._parameters = [pwv]
-        propagated_flux = self.transmission_effect.propagate(wave, flux)
-        np.testing.assert_equal(expected_flux, propagated_flux[0])
