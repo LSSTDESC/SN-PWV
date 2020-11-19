@@ -59,7 +59,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Notebooks / Usage Examples
+   :caption: Notebooks / Science Examples
 
    notebooks/notebook_summaries.rst
    notebooks/lsst_filters.nblink
