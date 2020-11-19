@@ -1,5 +1,5 @@
-Notebook Overview
-=================
+Notebook Summaries
+==================
 
 Several Jupyter notebooks are included with the project source code. These notebooks were initially written by the
 developers as a means to answer specific scientific questions, and provide a detailed record of the findings of their

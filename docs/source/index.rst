@@ -61,7 +61,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    :maxdepth: 1
    :caption: Notebooks / Usage Examples
 
-   notebooks/overview.rst
+   notebooks/notebook_summaries.rst
    notebooks/lsst_filters.nblink
    notebooks/pwv_eff_on_black_body.nblink
    notebooks/sne_delta_mag.nblink
