@@ -33,7 +33,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx_copybutton',
     'nbsphinx',
-    'nbsphinx_link'
+    'nbsphinx_link',
+    'sphinx.ext.doctest'
 ]
 
 # Syntax highlighting style

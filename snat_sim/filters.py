@@ -11,16 +11,16 @@ In the below example, filter profiles for the Legacy Survey of
 Space and Time (LSST) are registered with  and then retrieved by the
 ``sncosmo`` package.
 
-.. code-block:: python
+.. doctest:: python
 
-   import sncosmo
-   from snat_sim.filters import register_lsst_filters
+   >>> import sncosmo
+   >>> from snat_sim.filters import register_lsst_filters
 
-   # Check the names of new filters that will be registered
-   print(help(register_lsst_filters))
+   >>> # Check the names of new filters that will be registered
+   >>> print(help(register_lsst_filters))  #doctest:+SKIP
 
-   register_lsst_filters()
-   lsst_u_band = sncosmo.get_bandpass('lsst_total_u')
+   >>> register_lsst_filters(force=True)
+   >>> lsst_u_band = sncosmo.get_bandpass('lsst_total_u')
 
 Module Docs
 -----------
