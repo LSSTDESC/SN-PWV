@@ -13,13 +13,16 @@ jobs:
         
     - uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: "apt-get update -y && apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc"
+        pre-build-command: "pip install . && apt-get update -y && apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc"
         docs-folder: "./docs/"
         
   test-examples:
     runs-on: ubuntu-latest
-    needs: [build-docs]
     steps:
+       
+      - name: Install package and dependencies
+        run: pip install .
+       
       - name: Run doctest
         working-directory: "./docs"
         run: make doctest
