@@ -271,17 +271,24 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
             transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
         """
 
+        self._transmission_res = transmission_res
         self._param_names = ['pwv']
         self.param_names_latex = ['PWV']
         self._parameters = np.array([0.])
         self._transmission_model = FixedResTransmission(transmission_res)
+
+    @property
+    def transmission_res(self):
+        """Resolution used when binning the underlying atmospheric transmission model"""
+
+        return self._transmission_res
 
     def propagate(self, wave, flux, *args):
         """Propagate the flux through the atmosphere
 
         Args:
             wave (ndarray): A 1D array of wavelength values
-            flux (ndarray): A 1D or 2D array of flux values
+            flux (ndarray): An array of flux values
 
         Returns:
             An array of flux values after suffering from PWV absorption
@@ -290,11 +297,11 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
         # The class guarantees PWV is a scalar, so ``transmission`` is 1D
         transmission = self._transmission_model(self.parameters[0], wave)
 
-        # ``flux`` is usually 2D but not always, so we do a quick cast
-        return flux * np.atleast_2d(transmission.values)[None, :]
+        # ``flux`` is 2D, so we do a quick cast
+        return flux * transmission.values[None, :]
 
 
-class VariablePWVTrans(VariablePropagationEffect):
+class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
     """Atmospheric propagation effect for temporally variable PWV"""
 
     def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
@@ -316,11 +323,11 @@ class VariablePWVTrans(VariablePropagationEffect):
             transmission_res   (float): Reduce the underlying transmission model by binning to the given resolution
         """
 
-        # Store init arguments
+        # Create atmospheric transmission model
+        super().__init__(transmission_res=transmission_res)
+
         self._time_format = time_format
         self._pwv_model = pwv_model
-
-        self._transmission_model = FixedResTransmission(transmission_res)
 
         # Define wavelength range of propagation effect
         self._minwave = self._transmission_model.samp_wave.min()

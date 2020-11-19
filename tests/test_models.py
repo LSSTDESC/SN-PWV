@@ -7,7 +7,6 @@ from unittest import TestCase, skip
 import numpy as np
 import pandas as pd
 import sncosmo
-from pwv_kpno.defaults import v1_transmission
 from sncosmo.tests import test_models as sncosmo_test_models
 
 from snat_sim import constants as const
@@ -210,24 +209,20 @@ class TestPWVTrans(TestCase):
 
         self.assertEqual(0, self.transmission_effect['pwv'])
 
-    def test_default_resolution_is_five(self):
-        """Test the default ``res`` parameter is 5"""
-
-        self.assertEqual(5, self.transmission_effect['res'])
-
     def test_propagation_applies_pwv_transmission(self):
         """Test the ``propagate`` applies PWV absorption"""
 
         # Get the expected transmission
-        pwv = res = 5
+        pwv = 5
+
         wave = np.arange(4000, 5000)
-        transmission = v1_transmission(pwv=pwv, wave=wave, res=res)
+        transmission = models.FixedResTransmission(res=self.transmission_effect.transmission_res)(pwv=pwv, wave=wave)
 
         # Get the expected flux
         flux = np.ones_like(wave)
         expected_flux = flux * transmission
 
         # Get the returned flux
-        self.transmission_effect._parameters = [pwv, res]
+        self.transmission_effect._parameters = [pwv]
         propagated_flux = self.transmission_effect.propagate(wave, flux)
         np.testing.assert_equal(expected_flux, propagated_flux[0])
