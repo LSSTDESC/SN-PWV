@@ -212,7 +212,7 @@ def extract_cadence_data(light_curve, zp=25, gain=1, skynoise=0, drop_nondetecti
     Args:
         light_curve      (Table): Astropy table with PLaSTICC light-curve data
         zp        (float, array): Overwrite the PLaSTICC zero-point with this value
-        gain               (int): Gain to use during simulation
+        gain             (float): Gain to use during simulation
         skynoise    (int, array): Simulated skynoise in counts
         drop_nondetection (bool): Drop data with PHOTFLAG == 0
 

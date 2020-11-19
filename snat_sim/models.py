@@ -10,7 +10,7 @@ To ensure backwards compatibility and ease of use, supernovae modeling with the
 ``snat_sim`` package follows the
 `same design <https://sncosmo.readthedocs.io/en/stable/models.html>`_
 as the ``sncosmo`` package. Models are instantiated for a given spectral
-template and various propogation effects can be added to the model. In the
+template and various propagation effects can be added to the model. In the
 following example, atmospheric propagation effects due to precipitable water
 vapor are added to a Salt2 supernova model.
 
@@ -217,7 +217,7 @@ class PWVModel:
         objects instead of numerical values for ``date``.
 
         Args:
-            time (float, List[float]): Time at which the target is observed
+            date (float, List[float]): Time at which the target is observed
             ra                (float): Right Ascension of the target (Deg)
             dec               (float): Declination of the target (Deg)
             lat               (float): Latitude of the observer (Deg)

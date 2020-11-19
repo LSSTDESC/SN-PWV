@@ -102,7 +102,7 @@ def get_ref_star_dataframe(reference_type='G2'):
     column_names = ['PWV'] + band_names
     reference_star_flux = pd.read_csv(
         rpath,
-        sep='\s',
+        sep='\\s',
         header=None,
         names=column_names,
         comment='#',
