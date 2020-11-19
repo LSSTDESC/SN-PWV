@@ -58,7 +58,7 @@ def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
     to a model and leaving all other parameters unchanged.
 
     Args:
-        model     (Model): The sncosmo model to use in the simulations
+        model   (SNModel): The sncosmo model to use in the simulations
         pwv_arr (ndarray): Array of PWV values
         z_arr   (ndarray): Array of redshift values
         bands (list[str]): Name of the bands to tabulate magnitudes for
@@ -104,7 +104,7 @@ def tabulate_fiducial_mag(model, z_arr, bands, fid_pwv_dict=None):
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
 
     Args:
-        model       (Model): The sncosmo model to use in the simulations
+        model     (SNModel): The sncosmo model to use in the simulations
         z_arr     (ndarray): Array of redshift values
         bands   (list[str]): Name of the bands to tabulate magnitudes for
         fid_pwv_dict (dict): Config dictionary for fiducial atmosphere
@@ -143,7 +143,7 @@ def correct_mag(model, mag, params, alpha=const.betoule_alpha, beta=const.betoul
     calibrated mag = mag + α * x1 - β * c
 
     Args:
-        model    (Model): Model used to fit the given magnitudes
+        model  (SNModel): Model used to fit the given magnitudes
         mag    (ndarray): (n)d array of magnitudes for pwv and redshift
         params (ndarray): (n+1)d array with dimensions for pwv, redshift, parameter
         alpha    (float): Alpha parameter value
@@ -170,7 +170,7 @@ def fit_mag(model, light_curves, vparams, bands, pwv_arr=None, z_arr=None, **kwa
     Returned arrays are shape  (len(pwv_arr), len(z_arr)).
     
     Args:
-        model          (Model): The sncosmo model to use when fitting
+        model        (SNModel): The sncosmo model to use when fitting
         light_curves (ndarray): Array of light-curves to fit
         vparams         (list): Parameters to vary with the fit 
         pwv_arr      (ndarray): Array of PWV values
@@ -220,8 +220,8 @@ def fit_fiducial_mag(sim_model, fit_model, obs, vparams, z_arr, bands, fid_pwv_d
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
 
     Args:
-        sim_model        (Model): The sncosmo model to use when simulating light-curves
-        fit_model        (Model): The sncosmo model to use when fitting
+        sim_model      (SNModel): The sncosmo model to use when simulating light-curves
+        fit_model      (SNModel): The sncosmo model to use when fitting
         obs              (Table): Array of light-curves to fit
         vparams           (list): Parameters to vary with the fit
         z_arr          (ndarray): Array of redshift values
@@ -299,7 +299,7 @@ def calc_mu_for_model(model, cosmo=const.betoule_cosmo):
     """Calculate the distance modulus of a model
 
     Args:
-        model     (Model): An sncosmo model
+        model   (SNModel): An sncosmo model
         cosmo (Cosmology): Cosmology to use in the calculation
 
     Returns:
@@ -321,7 +321,7 @@ def calc_mu_for_params(model, params):
     """Calculate the distance modulus for an array of fitted params
 
     Args:
-        model    (Model): The sncosmo model to use in the simulations
+        model  (SNModel): The sncosmo model to use in the simulations
         params (ndarray): n-dimensional array of parameters
 
     Returns:
@@ -349,7 +349,7 @@ def calc_calibration_factor_for_params(model, params):
     returns constants.alpha * x_1 - constants.beta * c
 
     Args:
-        model          (Model): The sncosmo model to use in the simulations
+        model  (SNModel): The sncosmo model to use in the simulations
         params (ndarray): n-dimensional array of parameters
 
     Returns:

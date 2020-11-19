@@ -1,5 +1,5 @@
 """The ``lc_simulation`` module realizes light-curves for a given supernova
-model. The module supports both ``snat_sim.Model``  and ``sncosmo.Model``
+model. The module supports both ``snat_sim.SNModel``  and ``sncosmo.Model``
 objects interchangeably.
 
 Usage Example
@@ -12,7 +12,7 @@ approaches are demonstrated below.
 
     from snat_sim import lc_simulation, models
 
-    sn_model = models.Model('salt2-extended')
+    sn_model = models.SNModel('salt2-extended')
 
     # Create a table of dates, bandpasses, gain, and skynoise values to evaluate
     # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``
@@ -118,7 +118,7 @@ def realize_lc(obs, model, snr=.05, **params):
 
     Args:
         obs       (Table): Observation cadence
-        model     (Model): The sncosmo model to use in the simulations
+        model   (SNModel): The sncosmo model to use in the simulations
         snr       (float): Signal to noise ratio
         **params         : Values for any model parameters
 

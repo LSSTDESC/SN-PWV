@@ -19,7 +19,7 @@ vapor are added to a Salt2 supernova model.
    from snat_sim import models
 
    # Create a supernova model
-   supernova_model = models.Model('salt2')
+   supernova_model = models.SNModel('salt2')
 
    # Create a model for the atmosphere
    atmospheric_transmission = StaticPWVTrans()
@@ -355,8 +355,8 @@ class VariablePWVTrans(VariablePropagationEffect):
         raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
 
 
-class Model(sncosmo.Model):
-    """Similar to ``sncosmo.Model`` class, but removes type checks from
+class SNModel(sncosmo.Model):
+    """Similar to ``sncosmo.SNModel`` class, but removes type checks from
     methods to allow duck-typing.
     """
 
