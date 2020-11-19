@@ -3,7 +3,7 @@ name: Unit Tests
 on: [push, pull_request]
 
 jobs:
-  build:
+  run-tests:
 
     runs-on: ubuntu-latest
     strategy:
@@ -33,15 +33,26 @@ jobs:
         pip install coveralls
         
     - name: Install package and dependencies
-      run: |
-        pip install .
+      run: pip install .
         
     - name: Run tests with coverage
       run: |
         coverage run -m unittest
         coverage report 
         
-    - name: Report to Coveralls
-      run: |
-        coveralls
+    - name: Coveralls Parallel
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        flag-name: run-${{ matrix.python-version }}
+        parallel: true
         
+  report-coverage:
+    needs: run-tests
+    runs-on: ubuntu-latest
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.github_token }}
+        parallel-finished: true
