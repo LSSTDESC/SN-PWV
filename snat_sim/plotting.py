@@ -47,8 +47,8 @@ Plotting Function Summaries
 |                              | year as a function of time.                  |
 +------------------------------+----------------------------------------------+
 
-Module API
-----------
+Module Docs
+-----------
 """
 
 from datetime import datetime

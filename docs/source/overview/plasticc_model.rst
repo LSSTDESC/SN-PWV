@@ -2,11 +2,8 @@ PLaSTICC Data Model
 ===================
 
 This page outlines the data model for PLaSTICC simulations used by the parent
-project.
-
-.. important:: This page is **not a complete, formal, or official record** for
-   the described data model. As with all pages in this section of the docs, it
-   is intended as a quick reference for use by developers.
+project. It is **not a complete, formal, or official record** for
+the described data model. It is intended only as a quick reference for use by developers.
 
 Organizational Model
 --------------------

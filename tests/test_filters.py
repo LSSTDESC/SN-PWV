@@ -16,7 +16,7 @@ class RegisterSncosmoFilter(TestCase):
         self.transmission = np.full_like(self.wave, 0.75, dtype=float)
         self.name = 'test_band'
 
-        filters._register_sncosmo_filter(
+        filters.register_sncosmo_filter(
             self.wave, self.transmission, self.name, force=True)
 
     def test_filter_is_registered(self):
@@ -38,7 +38,7 @@ class RegisterSncosmoFilter(TestCase):
         """Test error raised if band passes are re-registered with force=False"""
 
         args = self.wave, self.transmission, self.name
-        self.assertRaises(TypeError, filters._register_sncosmo_filter, args)
+        self.assertRaises(TypeError, filters.register_sncosmo_filter, args)
 
 
 class RegisterDECAMFilters(TestCase):

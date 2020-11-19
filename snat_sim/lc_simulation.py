@@ -1,9 +1,33 @@
-"""The ``simulation`` module realizes SN Ia light-curves for a given supernova
-model. The module supports supernova ``model`` objects from the ``models``
-module as well as from the ``sncosmo`` package.
+"""The ``lc_simulation`` module realizes light-curves for a given supernova
+model. The module supports both ``snat_sim.Model``  and ``sncosmo.Model``
+objects interchangeably.
 
-Module API
-----------
+Usage Example
+-------------
+
+Light-curves can be simulated with and without statistical noise. Both
+approaches are demonstrated below.
+
+.. code-block:: python
+
+    from snat_sim import lc_simulation, models
+
+    sn_model = models.Model('salt2-extended')
+
+    # Create a table of dates, bandpasses, gain, and skynoise values to evaluate
+    # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``
+    band_passes = ['sdssu', 'sdssg', 'sdssr', 'sdssi', 'sdssz']
+    cadence = lc_simulation.create_observations_table(bands=band_passes)
+
+    # Evaluate the model at a fixed SNR
+    light_curve = lc_simulation.realize_lc(cadence, model, snr=5)
+
+    # Or, evaluate using statistical uncertainties determined from the gain / skynoise
+    light_curve = lc_simulation.simulate_lc(cadence, model)
+
+
+Module Docs
+-----------
 """
 
 import itertools
@@ -20,16 +44,19 @@ from . import constants as const
 def calc_x0_for_z(
         z, source, cosmo=const.betoule_cosmo, abs_mag=const.betoule_abs_mb,
         band='standard::b', magsys='AB', **params):
-    """Determine x0 for a given redshift and model
+    """Determine x0 for a given redshift and spectral template
 
     Args:
-         z            (float): Model redshift to set
-         source (Source, str): Model to use
+         z            (float): Redshift to determine x0 for
+         source (Source, str): Spectral template to use when determining x0
          cosmo    (Cosmology): Cosmology to use when determining x0
          abs_mag      (float): Absolute peak magnitude of the SNe Ia
          band           (str): Band to set absolute magnitude in
          magsys         (str): Magnitude system to set absolute magnitude in
          Any other params to set for the provided `source`
+
+    Returns:
+        The x0 parameter for the given source and redshift
     """
 
     model = sncosmo.Model(source)
@@ -46,7 +73,8 @@ def create_observations_table(
         gain=100):
     """Create an astropy table defining a uniform observation cadence for a single target
 
-    Time values are specified in units of phase
+    Time values are specified in units of phase by default, but can be chosen
+    to reflect any time convention.
 
     Args:
         phases (ndarray): Array of phase values to include
@@ -94,8 +122,8 @@ def realize_lc(obs, model, snr=.05, **params):
         snr       (float): Signal to noise ratio
         **params         : Values for any model parameters
 
-    Yields:
-        Astropy table for each PWV and redshift
+    Returns:
+        An astropy table formatted for use with sncosmo
     """
 
     model = copy(model)
@@ -112,7 +140,7 @@ def realize_lc(obs, model, snr=.05, **params):
     return light_curve
 
 
-def simulate_lc(observations, model, params, scatter=True):
+def simulate_lc(observations, model, params=None, scatter=True):
     """Simulate a SN light-curve given a set of observations.
 
     If ``scatter`` is ``True``, then simulated flux values include an added
@@ -128,6 +156,9 @@ def simulate_lc(observations, model, params, scatter=True):
     Returns:
         An astropy table formatted for use with sncosmo
     """
+
+    if params is None:
+        params = dict()
 
     model = copy(model)
     for p in model.param_names:
@@ -158,9 +189,6 @@ def simulate_lc(observations, model, params, scatter=True):
 def iter_lcs(obs, model, pwv_arr, z_arr, snr=10, verbose=True):
     """Iterator over SN light-curves for combination of PWV and z values
 
-    Light-curves are simulated for the given parameters without any of
-    the added effects from ``sncosmo.realize_lc``.
-
     Args:
         obs       (Table): Observation cadence
         model     (Model): The sncosmo model to use in the simulations
@@ -170,7 +198,7 @@ def iter_lcs(obs, model, pwv_arr, z_arr, snr=10, verbose=True):
         verbose    (bool): Show a progress bar
 
     Yields:
-        Astropy table for each PWV and redshift
+        An Astropy table for each PWV and redshift
     """
 
     model = copy(model)

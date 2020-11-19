@@ -207,7 +207,7 @@ class BuildPWVModel(TestCase):
         sampled values on the grid points"""
 
         np.testing.assert_array_equal(
-            self.pwv_model.pwv_zenith(self.test_data.index),
+            self.pwv_model.pwv_zenith(self.test_data.index, time_format=None),
             self.test_data.values
         )
 
@@ -217,13 +217,13 @@ class BuildPWVModel(TestCase):
         # Pick a point halfway between the first and second grid point
         test_date = self.test_data.index[0] + (self.test_data.index[1] - self.test_data.index[0]) / 2
         expected_value = (self.test_data.iloc[0] + self.test_data.iloc[1]) / 2
-        self.assertEqual(self.pwv_model.pwv_zenith(test_date), expected_value)
+        self.assertEqual(self.pwv_model.pwv_zenith(test_date, time_format=None), expected_value)
 
     def test_return_is_invariant_with_time_format(self):
         """Test changing the time format does not change the returned value"""
 
         # Pick a non-grid point
         test_date = self.test_data.index[0] + (self.test_data.index[1] - self.test_data.index[0]) / 2
-        return_for_datetime = self.pwv_model.pwv_zenith(test_date)
+        return_for_datetime = self.pwv_model.pwv_zenith(test_date, time_format=None)
         return_for_mjd = self.pwv_model.pwv_zenith(Time(test_date).to_value('mjd'), time_format='mjd')
         self.assertEqual(return_for_mjd, return_for_datetime)
