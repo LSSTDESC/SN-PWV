@@ -10,26 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Cache Python packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.cache/pip
-        key: ${{ runner.os }}-py3.8-pip-${{ hashFiles('setup.py') }}
-        restore-keys: |
-          ${{ runner.os }}-py3.8-pip-
-          
-    - name: Set up Python 3.8
-      uses: actions/setup-python@v1
-      with:
-        python-version: 3.8
-   
-    - name: Install package and dependencies
-      run: pip install .
         
     - uses: ammaraskar/sphinx-action@master
       with:
-        pre-build-command: "apt-get update -y && apt-get install -y sudo apt-get install -y pandoc"
+        pre-build-command: "apt-get update -y && apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc"
         docs-folder: "./docs/"
         
   test-examples:
