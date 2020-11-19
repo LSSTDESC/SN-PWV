@@ -186,6 +186,9 @@ class PWVModel:
     def pwv_zenith(self, date, time_format='mjd'):
         """Interpolate the PWV at zenith as a function of time
 
+        The ``time_format`` argument can be set to ``None`` when passing datetime
+        objects instead of numerical values for ``date``.
+
         Args:
             date (float, List[float]): The date to interpolate PWV for
             time_format         (str): Astropy supported format of the time value (Default: 'mjd')
@@ -209,6 +212,9 @@ class PWVModel:
                 lon=const.vro_longitude, alt=const.vro_altitude,
                 time_format='mjd'):
         """Interpolate the PWV along the line of sight as a function of time
+
+        The ``time_format`` argument can be set to ``None`` when passing datetime
+        objects instead of numerical values for ``date``.
 
         Args:
             time (float, List[float]): Time at which the target is observed
