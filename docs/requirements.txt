@@ -1,3 +1,18 @@
+# Package requirements
+astropy>=4.0
+bokeh
+matplotlib
+iminuit
+numpy>=1.16.0
+pandas
+pwv_kpno>=2.0.0.dev6
+pytz
+pyyaml
+scipy
+sncosmo
+tqdm
+
+# Extra doc requirements
 guzzle_sphinx_theme
 nbsphinx
 nbsphinx_link

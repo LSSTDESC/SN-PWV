@@ -29,8 +29,7 @@ jobs:
        
       - name: Install package and dependencies
         run: |
-          pip install .  # Package and it's dependencies
-          pip install -r docs/requirements.txt  # Extra documentation dependencies
+          pip install -r docs/requirements.txt
           sudo apt-get update -y 
           sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc
           
