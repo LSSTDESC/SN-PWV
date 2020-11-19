@@ -26,6 +26,11 @@ jobs:
    
     - name: Install package and dependencies
       run: pip install .
+      
+    - name: debug
+      run: |
+        pwd
+        ls
         
     - uses: ammaraskar/sphinx-action@master
       with:
