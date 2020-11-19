@@ -30,6 +30,8 @@ jobs:
         run: |
           pip install .  # Package dependencies
           pip install -r docs/requirements.txt  # Extra documentation dependencies
+          apt-get update -y && apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc
+          
        
       - name: Run doctest
         working-directory: "./docs"
