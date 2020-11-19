@@ -11,6 +11,7 @@ pyyaml
 scipy
 sncosmo
 tqdm
+extinction
 
 # Extra doc requirements
 guzzle_sphinx_theme
