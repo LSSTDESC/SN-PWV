@@ -40,7 +40,7 @@ def get_config_pwv_vals(config_path=_CONFIG_PATH):
     """
 
     with open(config_path) as infile:
-        config_dict = yaml.load(infile, yaml.BaseLoader)
+        config_dict = yaml.load(infile, yaml.SafeLoader)
 
     return {k: float(v) for k, v in config_dict.items()}
 
