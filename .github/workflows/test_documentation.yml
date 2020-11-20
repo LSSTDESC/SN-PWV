@@ -6,7 +6,7 @@ on:
       - master
 
 jobs:
-  test_doc_building:
+  Build Documentation:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -36,7 +36,7 @@ jobs:
         run: make html SPHINXOPTS="-W --keep-going"
 
         
-  test-examples:
+  Test Examples:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
