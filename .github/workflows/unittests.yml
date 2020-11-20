@@ -7,7 +7,7 @@ on:
       - '**:**'  # Only run for pull requests submitted from forks
 
 jobs:
-  run-tests:
+  Run-Tests:
 
     runs-on: ubuntu-latest
     strategy:

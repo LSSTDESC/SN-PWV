@@ -1,4 +1,4 @@
-name: Deploy Docs to gh-pages
+name: Documentation
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  Build:
     runs-on: ubuntu-latest
 
     steps:
@@ -41,6 +41,7 @@ jobs:
           git clone https://github.com/LSSTDESC/SN-PWV.git --branch gh-pages --single-branch gh-pages
           cp -r docs/build/html/* gh-pages/
           cd gh-pages
+          rm -rv !(".git"|".nojekyll")  # clear old files away
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
