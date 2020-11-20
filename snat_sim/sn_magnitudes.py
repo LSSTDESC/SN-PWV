@@ -53,7 +53,7 @@ def get_config_pwv_vals(config_path=_CONFIG_PATH):
 
 def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
     """Calculate apparent magnitude due to presence of PWV
-    
+
     Magnitude is calculated for the model by adding PWV effects
     to a model and leaving all other parameters unchanged.
 
@@ -63,7 +63,7 @@ def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
         z_arr   (ndarray): Array of redshift values
         bands (list[str]): Name of the bands to tabulate magnitudes for
         verbose    (bool): Show a progress bar
-        
+
     Returns:
         A dictionary with 2d arrays for the magnitude at each PWV and redshift
     """
@@ -166,18 +166,18 @@ def correct_mag(model, mag, params, alpha=const.betoule_alpha, beta=const.betoul
 
 def fit_mag(model, light_curves, vparams, bands, pwv_arr=None, z_arr=None, **kwargs):
     """Determine apparent mag by fitting simulated light-curves
-    
+
     Returned arrays are shape  (len(pwv_arr), len(z_arr)).
-    
+
     Args:
         model        (SNModel): The sncosmo model to use when fitting
         light_curves (ndarray): Array of light-curves to fit
-        vparams         (list): Parameters to vary with the fit 
+        vparams         (list): Parameters to vary with the fit
         pwv_arr      (ndarray): Array of PWV values
         z_arr        (ndarray): Array of redshift values
         bands      (list[str]): Name of the bands to tabulate magnitudes for
         Any arguments for ``sncosmo.fit_lc``.
-    
+
     Returns:
         Dictionary with arrays for fitted magnitude at each PWV and redshift
         Dictionary with arrays for fitted parameters at each PWV and redshift
