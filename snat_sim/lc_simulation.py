@@ -12,7 +12,7 @@ approaches are demonstrated below.
 
     >>> from snat_sim import lc_simulation, models
 
-    >>> sn_model = models.SNModel('salt2-extended')
+    >>> sn_model = models.SNModel('salt2')
     >>> sn_model.set(z=.1, x1=.5, c=-.1)
 
     >>> # Create a table of dates, bandpasses, gain, and skynoise values to evaluate
