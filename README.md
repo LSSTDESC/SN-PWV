@@ -7,5 +7,5 @@
 
 Investigating the impact of chromatic effects on LSST SNe.
 
-See the docs at: https://lsstdesc.org/SN-PWV/
+See the docs at: http://lsstdesc.org/SN-PWV/
 
