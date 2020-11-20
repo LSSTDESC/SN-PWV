@@ -1,0 +1,200 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Impact of Chromatic Effects on LSST SNe Ia &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/clipboard.min.js"></script>
+    <script src="_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation and Setup" href="overview/install.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="overview/install.html" title="Installation and Setup"
+             accesskey="N">next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Impact of Chromatic Effects on LSST SNe Ia</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    #" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="overview/data_provenance.html">Data Provenance</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="impact-of-chromatic-effects-on-lsst-sne-ia">
+<h1>Impact of Chromatic Effects on LSST SNe Ia<a class="headerlink" href="#impact-of-chromatic-effects-on-lsst-sne-ia" title="Permalink to this headline">¶</a></h1>
+<p>The <strong>Supernova Atmospheric Simulation</strong> package (<code class="docutils literal notranslate"><span class="pre">snat_sim</span></code>) was developed
+within the Dark Energy Science Collaboration (DESC) to support research into
+the impact of atmospheric calibration techniques on astronomical observations
+of Type Ia Supernovae (<a class="reference external" href="https://en.wikipedia.org/wiki/Type_Ia_supernova">SNe Ia</a>).
+This documentation is provided as a technical reference for the package as
+well as minimal outline of the research it was designed to support. For
+questions concerning the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package, please see the API section of
+these docs or raise an issue on <a class="reference external" href="https://github.com/lsstdesc/sn-pwv">GitHub</a>.</p>
+<div class="section" id="pipeline-overview">
+<h2>Pipeline Overview<a class="headerlink" href="#pipeline-overview" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is designed first and foremost to support scientific
+research efforts. The documentation may at times assume the reader has
+a basic understanding of astronomy and how astronomical surveys work. However,
+these assumptions are kept to a minimum wherever possible.</p>
+<p><code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> is designed such that each module represents a distinct stage in
+the research process. These steps range in complexity from visualizing simulation
+results to simulating the brightness of astronomical objects as a function of time.
+Ultimately each of these tasks are combined to support a parallelized analysis
+pipeline that handles the bulk of simulation process (outlined below).
+Outputs from this pipeline are then reviewed by researches to draw scientific
+conclusions.</p>
+<p>An example of an running simulation pipeline is shown below. Each process (colored
+in blue) is executed in parallel, and the number of processes launched in each
+pool (grey boxes) can be increased as necessary to meet performance requirements.
+Data sources stored / written on to disk are shown in red, while objects cached
+in memory are shaded orange.</p>
+<a class="reference internal image-reference" href="_images/pipeline.png"><img alt="_images/pipeline.png" class="align-center" src="_images/pipeline.png" style="width: 800px;" /></a>
+</div>
+<div class="section" id="contribution-and-usage">
+<h2>Contribution and Usage<a class="headerlink" href="#contribution-and-usage" title="Permalink to this headline">¶</a></h2>
+<p>This project is open source and contributors are welcome.
+All involvement with this project, including source code contributions,
+is subject to the policies of the Dark Energy Science
+Collaboration, with particular emphasis on the <strong>Code of Conduct</strong> and
+<strong>Software Development Policy</strong>. More information is available
+<a class="reference external" href="https://lsstdesc.org/pages/policies.html">here</a>.</p>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="overview/install.html" title="Installation and Setup"
+             >next</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Impact of Chromatic Effects on LSST SNe Ia</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

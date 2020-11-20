@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>PLaSTICC Data Model &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PLaSTICC Data Model</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_provenance.html">Data Provenance</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="plasticc-data-model">
+<h1>PLaSTICC Data Model<a class="headerlink" href="#plasticc-data-model" title="Permalink to this headline">¶</a></h1>
+<p>This page outlines the data model for PLaSTICC simulations used by the parent
+project. It is <strong>not a complete, formal, or official record</strong> for
+the described data model. It is intended only as a quick reference for use by developers.</p>
+<div class="section" id="organizational-model">
+<h2>Organizational Model<a class="headerlink" href="#organizational-model" title="Permalink to this headline">¶</a></h2>
+<p>Simulated light-curves are divided into directories based on the model used
+in the simulation. For certain types of astronomical objects, multiple models
+were used. Light-curves from different directories/models should not be taken
+to represent distinct types or subtypes of objects. A summary of the models
+is as follows:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 61%" />
+<col style="width: 39%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Model Number</p></th>
+<th class="head"><p>Model Name</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>11</p></td>
+<td><p>SNIa-normal</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>SNCC-II</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>SNCC-Ibc</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>SNCC-II</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>SNCC-Ibc</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>SNCC-II</p></td>
+</tr>
+<tr class="row-even"><td><p>41</p></td>
+<td><p>SNIa-91bg</p></td>
+</tr>
+<tr class="row-odd"><td><p>43</p></td>
+<td><p>SNIa-x</p></td>
+</tr>
+<tr class="row-even"><td><p>51</p></td>
+<td><p>KN</p></td>
+</tr>
+<tr class="row-odd"><td><p>60</p></td>
+<td><p>SLSN-I</p></td>
+</tr>
+<tr class="row-even"><td><p>99</p></td>
+<td><p>PISN</p></td>
+</tr>
+<tr class="row-odd"><td><p>99</p></td>
+<td><p>ILOT</p></td>
+</tr>
+<tr class="row-even"><td><p>99</p></td>
+<td><p>CART</p></td>
+</tr>
+<tr class="row-odd"><td><p>64</p></td>
+<td><p>TDE</p></td>
+</tr>
+<tr class="row-even"><td><p>70</p></td>
+<td><p>AGN</p></td>
+</tr>
+<tr class="row-odd"><td><p>80</p></td>
+<td><p>RRlyrae</p></td>
+</tr>
+<tr class="row-even"><td><p>81</p></td>
+<td><p>Mdwarf</p></td>
+</tr>
+<tr class="row-odd"><td><p>83</p></td>
+<td><p>EBE</p></td>
+</tr>
+<tr class="row-even"><td><p>84</p></td>
+<td><p>MIRA</p></td>
+</tr>
+<tr class="row-odd"><td><p>99</p></td>
+<td><p>uLens-Binary</p></td>
+</tr>
+<tr class="row-even"><td><p>91</p></td>
+<td><p>uLens-Point</p></td>
+</tr>
+<tr class="row-odd"><td><p>99</p></td>
+<td><p>uLens-STRING</p></td>
+</tr>
+<tr class="row-even"><td><p>91</p></td>
+<td><p>uLens-Point</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="file-format">
+<h2>File Format<a class="headerlink" href="#file-format" title="Permalink to this headline">¶</a></h2>
+<p>Light-curves are saved using the <cite>SNANA</cite> file format where files come in
+pairs: a header file postfixed with <cite>HEAD.fits</cite> and a photometry file
+postfixed with <cite>PHOT.fits</cite>. The header file provides meta-data about the
+observed targets (e.g., <cite>RA</cite> and <cite>Dec</cite>). The photometry file contains the
+simulated light-curve. Each file containing information for multiple
+supernovae. Definitions are provided below for a handful of columns in each
+file type:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 73%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Header File Column</p></th>
+<th class="head"><p>Value Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>SNID</cite></p></td>
+<td><p>Unique object identifier</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>RA</cite>, <cite>DECL</cite></p></td>
+<td><p>On sky coordinates of the simulated objects</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>MWEBV</cite></p></td>
+<td><p>Simulated Milky Way extinction</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>PTROBS_MIN</cite></p></td>
+<td><p>The row number (index - 1) in the corresponding
+photometry table where data for the given object
+starts</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>PTROBS_MAX</cite></p></td>
+<td><p>The row number (index - 1) in the corresponding
+photometry table where data for the given object
+starts</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>SIM_MODEL_NAME</cite></p></td>
+<td><p>Name of the model used to simulate the light-curve</p></td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 68%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Photometry File Column</p></th>
+<th class="head"><p>Value Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>MJD</cite></p></td>
+<td><p>Date of the observation</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>FLT</cite></p></td>
+<td><p>The observed filter</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>FIELD</cite></p></td>
+<td><p>The field of the observation</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>PHOTFLAG</cite></p></td>
+<td><p>Either <cite>0</cite> (non-detection), <cite>4096</cite> (detection),
+or <cite>6144</cite> (first trigger)</p></td>
+</tr>
+<tr class="row-even"><td><p><cite>PHOTPROB</cite></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><cite>FLUXCAL</cite></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><cite>FLUXCALERR</cite></p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p><cite>PSF_SIG1</cite></p></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><p><cite>ZEROPT</cite></p></td>
+<td><p>The photometric zero point (<cite>27.5</cite>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><cite>SIM_MAGOBS</cite></p></td>
+<td><p>The simulated magnitude of the observations</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PLaSTICC Data Model</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

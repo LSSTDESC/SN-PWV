@@ -1,6 +1,0 @@
-[report]
-omit =
-    */snat_sim/plotting.py
-
-include =
-    */snat_sim/*

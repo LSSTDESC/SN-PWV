@@ -1,0 +1,786 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>PWV Modeling &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Simulating Light-Curves for a Given Cadence" href="simulating_lc_for_cadence.html" />
+    <link rel="prev" title="PWV effects on SN Magnitude" href="sne_delta_mag.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulating_lc_for_cadence.html" title="Simulating Light-Curves for a Given Cadence"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="sne_delta_mag.html" title="PWV effects on SN Magnitude"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PWV Modeling</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">PWV Modeling</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#The-Approach">The Approach</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Automated-Model-Building">Automated Model Building</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  
+<style>
+/* CSS for nbsphinx extension */
+
+/* remove conflicting styling from Sphinx themes */
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt *,
+div.nbinput.container div.input_area pre,
+div.nboutput.container div.output_area pre,
+div.nbinput.container div.input_area .highlight,
+div.nboutput.container div.output_area .highlight {
+    border: none;
+    padding: 0;
+    margin: 0;
+    box-shadow: none;
+}
+
+div.nbinput.container > div[class*=highlight],
+div.nboutput.container > div[class*=highlight] {
+    margin: 0;
+}
+
+div.nbinput.container div.prompt *,
+div.nboutput.container div.prompt * {
+    background: none;
+}
+
+div.nboutput.container div.output_area .highlight,
+div.nboutput.container div.output_area pre {
+    background: unset;
+}
+
+div.nboutput.container div.output_area div.highlight {
+    color: unset;  /* override Pygments text color */
+}
+
+/* avoid gaps between output lines */
+div.nboutput.container div[class*=highlight] pre {
+    line-height: normal;
+}
+
+/* input/output containers */
+div.nbinput.container,
+div.nboutput.container {
+    display: -webkit-flex;
+    display: flex;
+    align-items: flex-start;
+    margin: 0;
+    width: 100%;
+}
+@media (max-width: 540px) {
+    div.nbinput.container,
+    div.nboutput.container {
+        flex-direction: column;
+    }
+}
+
+/* input container */
+div.nbinput.container {
+    padding-top: 5px;
+}
+
+/* last container */
+div.nblast.container {
+    padding-bottom: 5px;
+}
+
+/* input prompt */
+div.nbinput.container div.prompt pre {
+    color: #307FC1;
+}
+
+/* output prompt */
+div.nboutput.container div.prompt pre {
+    color: #BF5B3D;
+}
+
+/* all prompts */
+div.nbinput.container div.prompt,
+div.nboutput.container div.prompt {
+    width: 4.5ex;
+    padding-top: 5px;
+    position: relative;
+    user-select: none;
+}
+
+div.nbinput.container div.prompt > div,
+div.nboutput.container div.prompt > div {
+    position: absolute;
+    right: 0;
+    margin-right: 0.3ex;
+}
+
+@media (max-width: 540px) {
+    div.nbinput.container div.prompt,
+    div.nboutput.container div.prompt {
+        width: unset;
+        text-align: left;
+        padding: 0.4em;
+    }
+    div.nboutput.container div.prompt.empty {
+        padding: 0;
+    }
+
+    div.nbinput.container div.prompt > div,
+    div.nboutput.container div.prompt > div {
+        position: unset;
+    }
+}
+
+/* disable scrollbars on prompts */
+div.nbinput.container div.prompt pre,
+div.nboutput.container div.prompt pre {
+    overflow: hidden;
+}
+
+/* input/output area */
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    -webkit-flex: 1;
+    flex: 1;
+    overflow: auto;
+}
+@media (max-width: 540px) {
+    div.nbinput.container div.input_area,
+    div.nboutput.container div.output_area {
+        width: 100%;
+    }
+}
+
+/* input area */
+div.nbinput.container div.input_area {
+    border: 1px solid #e0e0e0;
+    border-radius: 2px;
+    /*background: #f5f5f5;*/
+}
+
+/* override MathJax center alignment in output cells */
+div.nboutput.container div[class*=MathJax] {
+    text-align: left !important;
+}
+
+/* override sphinx.ext.imgmath center alignment in output cells */
+div.nboutput.container div.math p {
+    text-align: left;
+}
+
+/* standard error */
+div.nboutput.container div.output_area.stderr {
+    background: #fdd;
+}
+
+/* ANSI colors */
+.ansi-black-fg { color: #3E424D; }
+.ansi-black-bg { background-color: #3E424D; }
+.ansi-black-intense-fg { color: #282C36; }
+.ansi-black-intense-bg { background-color: #282C36; }
+.ansi-red-fg { color: #E75C58; }
+.ansi-red-bg { background-color: #E75C58; }
+.ansi-red-intense-fg { color: #B22B31; }
+.ansi-red-intense-bg { background-color: #B22B31; }
+.ansi-green-fg { color: #00A250; }
+.ansi-green-bg { background-color: #00A250; }
+.ansi-green-intense-fg { color: #007427; }
+.ansi-green-intense-bg { background-color: #007427; }
+.ansi-yellow-fg { color: #DDB62B; }
+.ansi-yellow-bg { background-color: #DDB62B; }
+.ansi-yellow-intense-fg { color: #B27D12; }
+.ansi-yellow-intense-bg { background-color: #B27D12; }
+.ansi-blue-fg { color: #208FFB; }
+.ansi-blue-bg { background-color: #208FFB; }
+.ansi-blue-intense-fg { color: #0065CA; }
+.ansi-blue-intense-bg { background-color: #0065CA; }
+.ansi-magenta-fg { color: #D160C4; }
+.ansi-magenta-bg { background-color: #D160C4; }
+.ansi-magenta-intense-fg { color: #A03196; }
+.ansi-magenta-intense-bg { background-color: #A03196; }
+.ansi-cyan-fg { color: #60C6C8; }
+.ansi-cyan-bg { background-color: #60C6C8; }
+.ansi-cyan-intense-fg { color: #258F8F; }
+.ansi-cyan-intense-bg { background-color: #258F8F; }
+.ansi-white-fg { color: #C5C1B4; }
+.ansi-white-bg { background-color: #C5C1B4; }
+.ansi-white-intense-fg { color: #A1A6B2; }
+.ansi-white-intense-bg { background-color: #A1A6B2; }
+
+.ansi-default-inverse-fg { color: #FFFFFF; }
+.ansi-default-inverse-bg { background-color: #000000; }
+
+.ansi-bold { font-weight: bold; }
+.ansi-underline { text-decoration: underline; }
+
+
+div.nbinput.container div.input_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight] > pre,
+div.nboutput.container div.output_area div[class*=highlight].math,
+div.nboutput.container div.output_area.rendered_html,
+div.nboutput.container div.output_area > div.output_javascript,
+div.nboutput.container div.output_area:not(.rendered_html) > img{
+    padding: 5px;
+    margin: 0;
+}
+
+/* fix copybtn overflow problem in chromium (needed for 'sphinx_copybutton') */
+div.nbinput.container div.input_area > div[class^='highlight'],
+div.nboutput.container div.output_area > div[class^='highlight']{
+    overflow-y: hidden;
+}
+
+/* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
+.prompt a.copybtn {
+    display: none;
+}
+
+/* Some additional styling taken form the Jupyter notebook CSS */
+div.rendered_html table {
+  border: none;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: black;
+  font-size: 12px;
+  table-layout: fixed;
+}
+div.rendered_html thead {
+  border-bottom: 1px solid black;
+  vertical-align: bottom;
+}
+div.rendered_html tr,
+div.rendered_html th,
+div.rendered_html td {
+  text-align: right;
+  vertical-align: middle;
+  padding: 0.5em 0.5em;
+  line-height: normal;
+  white-space: normal;
+  max-width: none;
+  border: none;
+}
+div.rendered_html th {
+  font-weight: bold;
+}
+div.rendered_html tbody tr:nth-child(odd) {
+  background: #f5f5f5;
+}
+div.rendered_html tbody tr:hover {
+  background: rgba(66, 165, 245, 0.2);
+}
+</style>
+<div class="section" id="PWV-Modeling">
+<h1>PWV Modeling<a class="headerlink" href="#PWV-Modeling" title="Permalink to this headline">¶</a></h1>
+<p>This notebook outlines an approach for modeling time variable precipitable water vapor (PWV) using real world weather data taken by the SuomiNet project.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">pwv_kpno.gps_pwv</span> <span class="kn">import</span> <span class="n">GPSReceiver</span>
+
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">plotting</span><span class="p">,</span> <span class="n">models</span><span class="p">,</span> <span class="n">time_series_utils</span> <span class="k">as</span> <span class="n">tsu</span>
+
+</pre></div>
+</div>
+</div>
+<div class="section" id="The-Approach">
+<h2>The Approach<a class="headerlink" href="#The-Approach" title="Permalink to this headline">¶</a></h2>
+<p>To create a physically reasonable representation of the atmospheric variability at LSST, we use PWV measurements taken at the nearby Cerro Telolo International Observatory (CTIO).</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ctio</span> <span class="o">=</span> <span class="n">GPSReceiver</span><span class="p">(</span><span class="s1">&#39;CTIO&#39;</span><span class="p">,</span> <span class="n">data_cuts</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PWV&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">)]})</span>
+<span class="n">ctio</span><span class="o">.</span><span class="n">download_available_data</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">2012</span><span class="p">,</span> <span class="mi">2018</span><span class="p">))</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">ctio_weather</span> <span class="o">=</span> <span class="n">ctio</span><span class="o">.</span><span class="n">weather_data</span><span class="p">()</span>
+
+<span class="n">ctio_weather</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;PWV&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;CTIO PWV (mm)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;All available PWV measurements for CTIO&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(0.0, 25.0)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_4_1.png" src="../_images/notebooks_pwv_modeling_4_1.png" />
+</div>
+</div>
+<p>Unfortunately, we don’t have enough data to fully represent an entire astronomical survey (at least not for Rubin LSST). The time span is too short and the periods of missing data are sometimes significant. As an alternative we focus on desribing the seasonal variability by considering data from a single year with good measurement coverage. The idea is to select a single representative year, and then use that year as a model for how PWV varies across each season.</p>
+<p>Shown below, the two years with the best coverage are 2016 and 2017.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">for</span> <span class="n">year</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2012</span><span class="p">,</span> <span class="mi">2018</span><span class="p">):</span>
+    <span class="n">weather_for_year</span> <span class="o">=</span> <span class="n">ctio_weather</span><span class="p">[</span><span class="n">ctio_weather</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">year</span> <span class="o">==</span> <span class="n">year</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Averages for </span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">:&#39;</span><span class="p">)</span>
+    <span class="n">plotting</span><span class="o">.</span><span class="n">plot_year_pwv_vs_time</span><span class="p">(</span><span class="n">weather_for_year</span><span class="o">.</span><span class="n">PWV</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;CTIO PWV over </span><span class="si">{</span><span class="n">year</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">);</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Averages for 2012:
+Winter Average:  nan +\-  nan mm
+Spring Average:  nan +\-  nan mm
+Summer Average:  nan +\-  nan mm
+Fall Average:   4.23 +\-  2.30 mm
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_6_1.png" src="../_images/notebooks_pwv_modeling_6_1.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Averages for 2013:
+Winter Average:  6.45 +\-  2.28 mm
+Spring Average:  4.85 +\-  2.27 mm
+Summer Average:  3.95 +\-  2.34 mm
+Fall Average:   4.32 +\-  2.16 mm
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_6_3.png" src="../_images/notebooks_pwv_modeling_6_3.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Averages for 2014:
+Winter Average:  6.59 +\-  3.29 mm
+Spring Average:  4.49 +\-  1.71 mm
+Summer Average:  4.04 +\-  1.85 mm
+Fall Average:   4.54 +\-  1.69 mm
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_6_5.png" src="../_images/notebooks_pwv_modeling_6_5.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Averages for 2015:
+Winter Average:  6.46 +\-  2.59 mm
+Spring Average:  5.62 +\-  3.14 mm
+Summer Average:  5.44 +\-  2.41 mm
+Fall Average:   5.17 +\-  1.95 mm
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_6_7.png" src="../_images/notebooks_pwv_modeling_6_7.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Averages for 2016:
+Winter Average:  7.13 +\-  2.90 mm
+Spring Average:  7.44 +\-  3.18 mm
+Summer Average:  3.93 +\-  2.12 mm
+Fall Average:   4.95 +\-  2.18 mm
+</pre></div></div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_6_9.png" src="../_images/notebooks_pwv_modeling_6_9.png" />
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Averages for 2017:
+Winter Average:  8.75 +\-  3.93 mm
+Spring Average:  5.07 +\-  2.56 mm
+Summer Average:  3.12 +\-  1.79 mm
+Fall Average:   4.46 +\-  2.10 mm
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_6_11.png" src="../_images/notebooks_pwv_modeling_6_11.png" />
+</div>
+</div>
+<p>No matter which year we pick, we will need to suppliment the data set to fill in for missing measurements. Instead of thinking through some fancy statistics, we keep our approach simple and supplement missing data from 2016 with measurements taken in 2017.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">supplimented_pwv</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">supplemented_data</span><span class="p">(</span><span class="n">ctio_weather</span><span class="o">.</span><span class="n">PWV</span><span class="p">,</span> <span class="mi">2016</span><span class="p">,</span> <span class="p">[</span><span class="mi">2017</span><span class="p">])</span>
+<span class="n">plotting</span><span class="o">.</span><span class="n">plot_year_pwv_vs_time</span><span class="p">(</span><span class="n">supplimented_pwv</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PWV from 2016 Supplemented with 2017&#39;</span><span class="p">);</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Winter Average:  7.18 +\-  2.95 mm
+Spring Average:  7.33 +\-  3.17 mm
+Summer Average:  3.79 +\-  2.09 mm
+Fall Average:   4.88 +\-  2.20 mm
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_8_1.png" src="../_images/notebooks_pwv_modeling_8_1.png" />
+</div>
+</div>
+<p>Supplimenting the data does an admirable job of eliminating missing data, but there are still a few periods missing in the above figure. Fortunately these time-spans are short so they can be interpolated over. We handle this as follows:</p>
+<ol class="arabic simple">
+<li><p>Resample the PWV uniformly from the begining through the end of the year.</p></li>
+<li><p>Enforce periodic boundary conditions between the begining and end of the year. This avoids extrapolation and enforces a smooth transistion between seasons.</p></li>
+<li><p>Interpolate linearly for any missing data (while mantaining the boundary conditions)</p></li>
+</ol>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">resampled_pwv</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">resample_data_across_year</span><span class="p">(</span><span class="n">supplimented_pwv</span><span class="p">)</span>
+<span class="n">interpolated_pwv</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">periodic_interpolation</span><span class="p">(</span><span class="n">resampled_pwv</span><span class="p">)</span>
+<span class="n">plotting</span><span class="o">.</span><span class="n">plot_year_pwv_vs_time</span><span class="p">(</span><span class="n">interpolated_pwv</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Resampled PWv&#39;</span><span class="p">);</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+Winter Average:  7.18 +\-  2.91 mm
+Spring Average:  7.33 +\-  3.17 mm
+Summer Average:  3.78 +\-  2.09 mm
+Fall Average:   4.97 +\-  2.25 mm
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_10_1.png" src="../_images/notebooks_pwv_modeling_10_1.png" />
+</div>
+</div>
+<p>The final step is to build a model that interpolates the PWV rom our supplimented data for a given time of year.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">pwv_model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PWVModel</span><span class="p">(</span><span class="n">supplimented_pwv</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<p>We make a quick validation plot to check the interpolation function.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="k">def</span> <span class="nf">plot_interpolation_validation</span><span class="p">(</span><span class="n">pwv_data</span><span class="p">,</span> <span class="n">pwv_model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Overplot the modeled and measured PWV</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        pwv_data    (Series): Series with PWV values and a Datetime index</span>
+<span class="sd">        pwv_model (PWVModel): PWV model to overplot</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">pwv_data</span> <span class="o">=</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+    <span class="n">interpolated_pwv</span> <span class="o">=</span> <span class="n">pwv_model</span><span class="o">.</span><span class="n">pwv_zenith</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">interpolated_pwv</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Interpolated&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">75</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;PWV (mm)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date (UTC)&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plot_interpolation_validation</span><span class="p">(</span><span class="n">ctio_weather</span><span class="o">.</span><span class="n">PWV</span><span class="p">,</span> <span class="n">pwv_model</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(16801.0, 17532.0)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_15_1.png" src="../_images/notebooks_pwv_modeling_15_1.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Automated-Model-Building">
+<h2>Automated Model Building<a class="headerlink" href="#Automated-Model-Building" title="Permalink to this headline">¶</a></h2>
+<p>The prcocess outlined above is can be automated by building a <code class="docutils literal notranslate"><span class="pre">PWVModel</span></code> instance directly from a <code class="docutils literal notranslate"><span class="pre">GPSReceiver</span></code> object.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">auto_built_model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PWVModel</span><span class="o">.</span><span class="n">from_suominet_receiver</span><span class="p">(</span><span class="n">ctio</span><span class="p">,</span> <span class="mi">2016</span><span class="p">,</span> <span class="p">[</span><span class="mi">2017</span><span class="p">])</span>
+
+<span class="n">plot_interpolation_validation</span><span class="p">(</span><span class="n">ctio_weather</span><span class="o">.</span><span class="n">PWV</span><span class="p">,</span> <span class="n">auto_built_model</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2018</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(16801.0, 17532.0)
+</pre></div></div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_17_1.png" src="../_images/notebooks_pwv_modeling_17_1.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span>
+</pre></div>
+</div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="simulating_lc_for_cadence.html" title="Simulating Light-Curves for a Given Cadence"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="sne_delta_mag.html" title="PWV effects on SN Magnitude"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">PWV Modeling</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

@@ -1,8 +1,0 @@
-# wget --continue --timeout 0 --tries 0 -i file_list.txt -P /desired/output/directory/
-https://zenodo.org/record/3604380/files/alt_sched.tar.gz
-https://zenodo.org/record/3606957/files/alt_sched_rolling.tar.gz
-https://zenodo.org/record/3608294/files/kraken_2026.tar.gz
-https://zenodo.org/record/3608326/files/kraken_2044.tar.gz
-https://zenodo.org/record/3609116/files/nexus_2097.tar.gz
-https://zenodo.org/record/3609185/files/rolling_10yrs_opsim.tar.gz
-https://zenodo.org/record/3609224/files/rolling_mix_10yrs_opsim.tar.gz

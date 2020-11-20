@@ -1,0 +1,240 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Installation and Setup &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Data Provenance" href="data_provenance.html" />
+    <link rel="prev" title="Impact of Chromatic Effects on LSST SNe Ia" href="../index.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data_provenance.html" title="Data Provenance"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Impact of Chromatic Effects on LSST SNe Ia"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Installation and Setup</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_provenance.html">Data Provenance</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="installation-and-setup">
+<h1>Installation and Setup<a class="headerlink" href="#installation-and-setup" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is not available via a package manager, but can
+be installed directly from the project’s source code. Please follow the
+steps outlined below to install and configure the package.</p>
+<div class="section" id="downloading-the-source">
+<h2>Downloading the Source<a class="headerlink" href="#downloading-the-source" title="Permalink to this headline">¶</a></h2>
+<p>Source code for this project is available on
+<a class="reference external" href="https://github.com/LSSTDESC/SN-PWV">GitHub</a> and can be downloaded directly
+from the GitHub repository page or by using the <code class="docutils literal notranslate"><span class="pre">git</span></code> command line utility:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone  --depth<span class="o">=</span><span class="m">1</span> --branch<span class="o">=</span>master https://github.com/LSSTDESC/SN-PWV.git SN-PWV
+rm -rf ./SN-PWV/.git
+</pre></div>
+</div>
+<p>Project dependencies are listed in the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file included with
+the source code. Dependencies can be installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -r SN-PWV/requirements.txt
+</pre></div>
+</div>
+</div>
+<div class="section" id="downloading-light-curve-sims">
+<h2>Downloading Light-Curve Sims<a class="headerlink" href="#downloading-light-curve-sims" title="Permalink to this headline">¶</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Not all parts of this project require existing light-curve
+simulations. The complete data set takes up several hundred GB of storage.
+To avoid future headaches, please ensure you actually need this data and
+don’t already have it available in your working environment.</p>
+</div>
+<p>Simulated light-curve data is hosted on <cite>Zenodo &lt;https://zenodo.org/&gt;</cite> and can be downloaded using
+the <code class="docutils literal notranslate"><span class="pre">wget</span></code> command. URL’s for various subsets of the data is listed are
+listed in  <code class="docutils literal notranslate"><span class="pre">file_list.txt</span></code> and can be downloaded as shown below.
+For convenience, the  <code class="docutils literal notranslate"><span class="pre">timeout</span></code> and <code class="docutils literal notranslate"><span class="pre">tries</span></code> arguments can be used to
+indefinitely retry a failed download and the  <code class="docutils literal notranslate"><span class="pre">continue</span></code> flag can be
+included to avoid restarting a failed download from scratch.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget --continue --timeout <span class="m">0</span> --tries <span class="m">0</span> -i data/plasticc/file_list.txt -P /desired/output/directory/
+</pre></div>
+</div>
+<p>If you have difficulty downloading all the data at once, or if you don’t
+need the entire data set, try individually downloading the files listed
+in <code class="docutils literal notranslate"><span class="pre">file_list.txt</span></code> . The downloaded files will be nested, compressed
+files using a mix of the <code class="docutils literal notranslate"><span class="pre">.gz</span></code> and <code class="docutils literal notranslate"><span class="pre">.tar.gz</span></code> compression formats.
+You can decompress them using the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>tar -xvzf <span class="o">[</span>FILE TO DECOMPRESS<span class="o">]</span>.tar.gz --verbose
+gunzip <span class="o">[</span>FILE TO DECOMPRESS<span class="o">]</span>/*/*.gz --verbose
+</pre></div>
+</div>
+</div>
+<div class="section" id="configuring-your-environment">
+<h2>Configuring Your Environment<a class="headerlink" href="#configuring-your-environment" title="Permalink to this headline">¶</a></h2>
+<p>The path of the downloaded data needs to be specified in the project
+environment so that the software knows where to find the simulated
+light-curves.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">CADENCE_SIMS</span><span class="o">=</span><span class="s2">&quot;[DESIRED DATA DIRECTORY]&quot;</span>
+</pre></div>
+</div>
+<p>If you are using a <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment, this can be accomplished by
+specifying the desired data directory as follows:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate the new environment</span>
+conda activate <span class="o">[</span>ENV-NAME<span class="o">]</span>
+
+<span class="c1"># Go to the environment&#39;s home directory</span>
+<span class="nb">cd</span> <span class="nv">$CONDA_PREFIX</span>
+
+<span class="c1"># Create files to run on startup and exit</span>
+mkdir -p ./etc/conda/activate.d
+mkdir -p ./etc/conda/deactivate.d
+touch ./etc/conda/activate.d/env_vars.sh
+touch ./etc/conda/deactivate.d/env_vars.sh
+
+<span class="c1"># Add environmental variables</span>
+<span class="nb">echo</span> <span class="s1">&#39;export CADENCE_SIMS=&quot;[DESIRED DATA DIRECTORY]&quot;&#39;</span> &gt;&gt; ./etc/conda/activate.d/env_vars.sh
+<span class="nb">echo</span> <span class="s1">&#39;unset CADENCE_SIMS&#39;</span> &gt;&gt; ./etc/conda/deactivate.d/env_vars.sh
+
+<span class="c1"># Finally, don&#39;t forget to exit your environment</span>
+conda deactivate
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="data_provenance.html" title="Data Provenance"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../index.html" title="Impact of Chromatic Effects on LSST SNe Ia"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Installation and Setup</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
