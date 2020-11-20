@@ -1,36 +1,7 @@
-#right-column {
-    max-width: 1200px;
-    padding-top: 1px;
-}
+/* -- Left Sidebar ---------------------------------------------------------- */
 
 a.text-logo {
     color: white;
-}
-
-table {
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 30px;
-}
-
-div.section {
-    padding-bottom: 10px
-}
-
-.mi {
-    color: unset;
-}
-
-.mo {
-    color: unset;
-}
-
-.mfrac {
-    color: unset;
-}
-
-dl {
-    margin-bottom: 40px;
 }
 
 div.sidebar-block h2 {
@@ -46,29 +17,11 @@ div.sidebar-block p {
     color: #606060;
 }
 
-table.field-list {
-    border: none;
-}
-
-div.highlight {
-    overflow: hidden;
-}
-
-a.copybtn {
-    margin-right: 5px
-}
-
-div.stderr a.copybtn {
-    display: none;
-}
+/* -- Rendered Notebooks ---------------------------------------------------- */
 
 #right-column {
     max-width: 1200px;
     padding-top: 1px;
-}
-
-a.text-logo {
-    color: white;
 }
 
 table {
@@ -77,19 +30,15 @@ table {
     margin-top: 30px;
 }
 
+table.field-list {
+    border: none;
+}
+
 div.section {
     padding-bottom: 10px
 }
 
-.mi {
-    color: unset;
-}
-
-.mo {
-    color: unset;
-}
-
-.mfrac {
+.mi, .mo, .mfrac {
     color: unset;
 }
 
@@ -97,22 +46,7 @@ dl {
     margin-bottom: 40px;
 }
 
-div.sidebar-block h2 {
-    padding: 0;
-}
-
-div.sidebar-block p {
-    border-bottom: none;
-    font-size: 14px;
-    font-family: "Open Sans", Helvetica, Arial, sans-serif;
-    padding: 0 0 0 10px;
-    font-weight: bold;
-    color: #606060;
-}
-
-table.field-list {
-    border: none;
-}
+/* -- Rendered Notebooks ---------------------------------------------------- */
 
 div.highlight {
     overflow: hidden;
@@ -122,10 +56,6 @@ a.copybtn {
     margin-right: 5px
 }
 
-div.stderr a.copybtn {
-    display: none;
-}
-
-div.nboutput a.copybtn {
+div.stderr a.copybtn, div.nboutput a.copybtn {
     display: none;
 }
