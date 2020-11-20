@@ -5,3 +5,13 @@ checks:
       threshold: 7
   file-lines:
     enabled: false
+
+plugins:
+  pep8:
+    enabled: true
+
+  sonar-python:
+    enabled: true
+
+ radon:
+  enabled: true
