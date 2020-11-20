@@ -9,6 +9,7 @@ checks:
 plugins:
   pep8:
     enabled: true
+    max-line-length: 120
 
   sonar-python:
     enabled: true
