@@ -46,6 +46,18 @@ dl {
     margin-bottom: 40px;
 }
 
+/* -- Code and API ---------------------------------------------------------- */
+
+
+.py.class, .py.function {
+    background: #fafafa;
+    padding: 10px;
+}
+
+.py.class code, .py.function code, .sig-name.descname, .sig-prename.descclassname {
+    background: #fafafa;
+}
+
 /* -- Rendered Notebooks ---------------------------------------------------- */
 
 div.highlight {
