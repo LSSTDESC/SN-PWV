@@ -39,9 +39,11 @@ jobs:
       - name: Commit documentation changes
         run: |
           git clone https://github.com/LSSTDESC/SN-PWV.git --branch gh-pages --single-branch gh-pages --depth 1
+          
+          rm -r gh-pages/*  # clear old files away
+          cp -r docs/build/html/* .  # Add new doc files
+          
           cd gh-pages
-          rm -rv !(".git"|".nojekyll")  # clear old files away
-          cp -r ../docs/build/html/* .  # Add new doc files
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add .
