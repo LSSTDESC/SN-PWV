@@ -40,7 +40,7 @@ jobs:
         run: |
           git clone https://github.com/LSSTDESC/SN-PWV.git --branch gh-pages --single-branch gh-pages --depth 1
           
-          rm -r gh-pages/*  # clear old files away
+          rm -rf gh-pages/*  # clear old files away
           cp -r docs/build/html/* gh-pages/  # Add new doc files
           
           cd gh-pages
