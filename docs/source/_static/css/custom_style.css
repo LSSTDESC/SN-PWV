@@ -46,4 +46,19 @@ div.sidebar-block p {
     color: #606060;
 }
 
-table.field-list {border: none;}
+table.field-list {
+    border: none;
+}
+
+div.highlight {
+    overflow: hidden;
+}
+
+a.copybtn {
+    margin-right: 5px
+}
+
+div.stderr a.copybtn {
+    display: none;
+}
+
