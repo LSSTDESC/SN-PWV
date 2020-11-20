@@ -24,11 +24,9 @@ jobs:
         with:
           python-version: 3.8
                  
-      - name: Install package dependencies
-        run: pip install . 
-          
-      - name: Install documentation dependencies
+      - name: Install dependencies
         run: |
+          pip install . 
           pip install -r docs/requirements.txt
           sudo apt-get update -y
           sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc
@@ -56,11 +54,9 @@ jobs:
         with:
           python-version: 3.8
                  
-      - name: Install package dependencies
-        run: pip install . 
-          
-      - name: Install documentation dependencies
+      - name: Install dependencies
         run: |
+          pip install . 
           pip install -r docs/requirements.txt
 
       - name: Run doctest
