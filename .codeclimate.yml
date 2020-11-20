@@ -9,7 +9,9 @@ checks:
 plugins:
   pep8:
     enabled: true
-    max-line-length: 120
+    checks:
+      E402:
+        enabled: false
 
   sonar-python:
     enabled: true
