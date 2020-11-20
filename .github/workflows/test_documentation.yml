@@ -29,7 +29,7 @@ jobs:
        
       - name: Install package and dependencies
         run: |
-          pip install -r docs/requirements.txt --user
+          pip install -r docs/requirements.txt
           sudo apt-get -qq update -y
           sudo apt-get -qq install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc
           
