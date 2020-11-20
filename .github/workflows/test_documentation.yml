@@ -11,6 +11,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       
+      - name: Cache Python packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-py3.8-pip-${{ hashFiles('setup.py') }}
+          restore-keys: |
+            ${{ runner.os }}-py3.8-pip-
+      
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
