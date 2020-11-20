@@ -72,6 +72,7 @@ sncosmo.get_bandpass('sdssu')
 sncosmo.get_bandpass('sdssg')
 sncosmo.get_bandpass('sdssr')
 sncosmo.get_bandpass('sdssi')
+sncosmo.get_bandpass('standard::b')
 
 
 def skip(app, what, name, obj, would_skip, options):
