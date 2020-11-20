@@ -16,3 +16,6 @@ plugins:
 
   radon:
     enabled: true
+
+  bandit:
+    enabled: true
