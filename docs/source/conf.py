@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 import guzzle_sphinx_theme
+import sncosmo
 
 package_source_path = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(package_source_path))
@@ -64,6 +65,15 @@ html_sidebars = {
     '**': ['logo-text.html', 'searchbox.html', 'globaltoc.html']
 }
 
+# Download sncosmo data ahead of time so download messages don't interfere
+# with doctests later on
+sncosmo.get_source('salt2')
+sncosmo.get_bandpass('sdssu')
+sncosmo.get_bandpass('sdssg')
+sncosmo.get_bandpass('sdssr')
+sncosmo.get_bandpass('sdssi')
+sncosmo.get_bandpass('standard::b')
+
 
 def skip(app, what, name, obj, would_skip, options):
     if name == "__init__":
@@ -73,4 +83,3 @@ def skip(app, what, name, obj, would_skip, options):
 
 def setup(app):
     app.connect("autodoc-skip-member", skip)
-    app.add_stylesheet("css/theme.css")

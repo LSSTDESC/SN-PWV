@@ -14,20 +14,17 @@ template and various propagation effects can be added to the model. In the
 following example, atmospheric propagation effects due to precipitable water
 vapor are added to a Salt2 supernova model.
 
-.. code-block:: python
+.. doctest:: python
 
-   from snat_sim import models
+   >>> from snat_sim import models
 
-   # Create a supernova model
-   supernova_model = models.SNModel('salt2')
+   >>> # Create a supernova model
+   >>> supernova_model = models.SNModel('salt2')
 
-   # Create a model for the atmosphere
-   atmospheric_transmission = StaticPWVTrans()
-   atmospheric_transmission.set(pwv=4)
-   supernova_model.add_effect(
-       effect=atmospheric_transmission,
-       name='Atmosphere',
-       frame='obs')
+   >>> # Create a model for the atmosphere
+   >>> atm_transmission = models.StaticPWVTrans()
+   >>> atm_transmission.set(pwv=4)
+   >>> supernova_model.add_effect(effect=atm_transmission, name='Atmosphere', frame='obs')
 
 Module Docs
 -----------

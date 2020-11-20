@@ -8,22 +8,23 @@ Usage Example
 Light-curves can be simulated with and without statistical noise. Both
 approaches are demonstrated below.
 
-.. code-block:: python
+.. doctest:: python
 
-    from snat_sim import lc_simulation, models
+    >>> from snat_sim import lc_simulation, models
 
-    sn_model = models.SNModel('salt2-extended')
+    >>> sn_model = models.SNModel('salt2')
+    >>> sn_model.set(z=.01, x1=.5, c=-.1)
 
-    # Create a table of dates, bandpasses, gain, and skynoise values to evaluate
-    # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``
-    band_passes = ['sdssu', 'sdssg', 'sdssr', 'sdssi', 'sdssz']
-    cadence = lc_simulation.create_observations_table(bands=band_passes)
+    >>> # Create a table of dates, bandpasses, gain, and skynoise values to evaluate
+    >>> # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``
+    >>> band_passes = ['sdssu', 'sdssg', 'sdssr', 'sdssi']
+    >>> cadence = lc_simulation.create_observations_table(bands=band_passes)
 
-    # Evaluate the model at a fixed SNR
-    light_curve = lc_simulation.simulate_lc_fixed_snr(cadence, model, snr=5)
+    >>> # Evaluate the model at a fixed SNR
+    >>> light_curve = lc_simulation.simulate_lc_fixed_snr(cadence, sn_model, snr=5)
 
-    # Or, evaluate using statistical uncertainties determined from the gain / skynoise
-    light_curve = lc_simulation.simulate_lc(cadence, model)
+    >>> # Or, evaluate using statistical uncertainties determined from the gain / skynoise
+    >>> light_curve = lc_simulation.simulate_lc(cadence, sn_model)
 
 
 Module Docs

@@ -12,22 +12,22 @@ synchronously.
 
 .. code-block:: python
 
-   from snat_sim.fitting_pipeline import FittingPipeline
+   >>> from snat_sim.fitting_pipeline import FittingPipeline
 
-   print('Instantiating pipeline...')
-   pipeline = FittingPipeline(
-       cadence='alt_sched',
-       sim_model=sn_model_sim,
-       fit_model=sn_model_fit,
-       vparams=['x0', 'x1', 'c'],
-       out_path='./demo_out_path.csv',
-       pool_size=6
-   )
+   >>> print('Instantiating pipeline...')
+   >>> pipeline = FittingPipeline(
+   >>>     cadence='alt_sched',
+   >>>     sim_model=sn_model_sim,
+   >>>     fit_model=sn_model_fit,
+   >>>     vparams=['x0', 'x1', 'c'],
+   >>>     out_path='./demo_out_path.csv',
+   >>>     pool_size=6
+   >>> )
 
-   print('I/O Processes: 2')
-   print('Simulation Processes:', pipeline.simulation_pool_size)
-   print('Fitting Processes:', pipeline.fitting_pool_size)
-   pipeline.run()
+   >>> print('I/O Processes: 2')
+   >>> print('Simulation Processes:', pipeline.simulation_pool_size)
+   >>> print('Fitting Processes:', pipeline.fitting_pool_size)
+   >>> pipeline.run()
 
 Module Docs
 -----------
