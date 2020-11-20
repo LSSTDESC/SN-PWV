@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.filters &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="snat_sim.fitting_pipeline" href="fitting_pipeline.html" />
+    <link rel="prev" title="snat_sim.constants" href="constants.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="constants.html" title="snat_sim.constants"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.filters</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_series_utils.html">snat_sim.time_series_utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="module-snat_sim.filters">
+<span id="snat-sim-filters"></span><h1>snat_sim.filters<a class="headerlink" href="#module-snat_sim.filters" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">filters</span></code> module is responsible for registering custom filter profiles
+with the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> dependency package. When registering filters for a given
+survey, please check the documentation of the corresponding function to
+determine the names of the newly registered filter. Filters only need to be
+registered once within a given environment to be accessible by <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>In the below example, filter profiles for the Legacy Survey of
+Space and Time (LSST) are registered with  and then retrieved by the
+<code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sncosmo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.filters</span> <span class="kn">import</span> <span class="n">register_lsst_filters</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Check the names of new filters that will be registered</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">help</span><span class="p">(</span><span class="n">register_lsst_filters</span><span class="p">))</span>  
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">register_lsst_filters</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lsst_u_band</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="s1">&#39;lsst_total_u&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-docs">
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="snat_sim.filters.register_decam_filters">
+<code class="sig-prename descclassname">snat_sim.filters.</code><code class="sig-name descname">register_decam_filters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/filters.html#register_decam_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.filters.register_decam_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register DECam filter scripts, CCD response, and fiducial ATM with sncosmo</p>
+<dl class="simple">
+<dt>Registered Filters:</dt><dd><ul class="simple">
+<li><p>DECam_&lt;ugrizY&gt;_filter: DECam optical response curves</p></li>
+<li><p>DECam_atm: Fiducial atmosphere assumed for the optical response curves</p></li>
+<li><p>DECam_ccd: DECam CCD Response curve</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>force</strong> (<em>bool</em>) – Re-register bands even if they are already registered</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.filters.register_lsst_filters">
+<code class="sig-prename descclassname">snat_sim.filters.</code><code class="sig-name descname">register_lsst_filters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/filters.html#register_lsst_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.filters.register_lsst_filters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register LSST filter scripts, hardware responses, and fiducial ATM with sncosmo</p>
+<dl class="simple">
+<dt>Registered Filters:</dt><dd><ul class="simple">
+<li><p>lsst_detector: Detector sensitivity defined in the LSST SRD</p></li>
+<li><p>lsst_atmos_10: Fiducial atmosphere over a 10 year baseline</p></li>
+<li><p>lsst_atmos_std: Fiducial atmosphere likely for LSST at 1.2 airmasses</p></li>
+<li><p>lsst_filter_&lt;ugrizy&gt;: Throughput of the glass filters only</p></li>
+<li><p>lsst_hardware_&lt;ugrizy&gt;: Hardware contribution response curve in each band</p></li>
+<li><p>lsst_total_&lt;ugrizy&gt;: Total response curve in each band</p></li>
+<li><p>lsst_m&lt;123&gt;: Response curve contribution from each mirror</p></li>
+<li><p>lsst_lens&lt;123&gt;: Response curve contribution from each lens</p></li>
+<li><p>lsst_mirrors: Combined result from all mirrors</p></li>
+<li><p>lsst_lenses: Combined response from all lenses</p></li>
+<li><p>lsst_&lt;ugrizy&gt;_no_atm: Throughput in each band without a fiducial atmosphere</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>force</strong> (<em>bool</em>) – Re-register bands even if they are already registered</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.filters.register_sncosmo_filter">
+<code class="sig-prename descclassname">snat_sim.filters.</code><code class="sig-name descname">register_sncosmo_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">trans</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span> &#x2192; None<a class="reference internal" href="../_modules/snat_sim/filters.html#register_sncosmo_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.filters.register_sncosmo_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a filter profile with sncosmo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wave</strong> (<em>array</em>) – Array of wavelength values in Angstroms</p></li>
+<li><p><strong>trans</strong> (<em>array</em>) – Array of transmission values between 0 and 1</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – Name of the filter to register</p></li>
+<li><p><strong>force</strong> (<em>bool</em>) – Whether to overwrite an existing filter with the given name</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="constants.html" title="snat_sim.constants"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.filters</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

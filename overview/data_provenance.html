@@ -1,0 +1,225 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Data Provenance &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Notebook Summaries" href="../notebooks/notebook_summaries.html" />
+    <link rel="prev" title="Installation and Setup" href="install.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../notebooks/notebook_summaries.html" title="Notebook Summaries"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation and Setup"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Data Provenance</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Setup</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data Provenance</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="data-provenance">
+<h1>Data Provenance<a class="headerlink" href="#data-provenance" title="Permalink to this headline">¶</a></h1>
+<p>This project takes advantage of published data from multiple external research
+efforts. Listed below is a summary of
+data sets used by this project and their origins.</p>
+<div class="section" id="atmospheric-measurements">
+<h2>Atmospheric Measurements<a class="headerlink" href="#atmospheric-measurements" title="Permalink to this headline">¶</a></h2>
+<p><strong>Repository Path:</strong> Data access provided by the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code> <a class="reference external" href="https://mwvgroup.github.io/pwv_kpno/">API</a>.</p>
+<p><strong>Data Source:</strong> <a class="reference external" href="https://www.suominet.ucar.edu/">The SuomiNet Project</a></p>
+<dl class="simple">
+<dt><strong>Description:</strong></dt><dd><p>Meteorological measurements taken at various global positions are used to
+characterize atmospheric variability over time. This data is taken by
+the SuomiNet project and it’s affiliated teams / projects. Published values
+include the pressure, temperature, relative humidity, and precipitable water
+vapor concentration (at zenith) sample at 30 minute intervals.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="ctio-filters">
+<h2>CTIO Filters<a class="headerlink" href="#ctio-filters" title="Permalink to this headline">¶</a></h2>
+<p><strong>Repository Path:</strong> <em>data/filters/ctio/*</em></p>
+<p><strong>Data Source:</strong> <a class="reference external" href="http://svo2.cab.inta-csic.es/theory/fps/">SVO Filter Profile Service</a></p>
+<dl class="simple">
+<dt><strong>Description:</strong></dt><dd><p>Filter response curves corresponding to the Dark Energy Camera (DECam) used
+by the Cerro Telolo International Observatory (CTIO). These filter profiles
+were used primarily as a validation step during early development, and were
+later replaced in the analysis by the LSST filter set.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="lsst-filters">
+<h2>LSST Filters<a class="headerlink" href="#lsst-filters" title="Permalink to this headline">¶</a></h2>
+<p><strong>Repository Path:</strong> <em>data/filters/lsst/*</em></p>
+<p><strong>Data Source:</strong> Cloned from <a class="reference external" href="https://github.com/lsst/throughputs">https://github.com/lsst/throughputs</a></p>
+<dl class="simple">
+<dt><strong>Description:</strong></dt><dd><p>Filter response curves curves considered as the ‘baseline’ performance of LSST.
+Throughput curves for other surveys are also available from the parent website,
+but only the LSST related data is used for this project. The filter profiles
+are generally identical to the profiles considered in the LSST Science
+Requirements Document (SRD).</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="light-curve-simulations">
+<h2>Light-Curve Simulations<a class="headerlink" href="#light-curve-simulations" title="Permalink to this headline">¶</a></h2>
+<p><strong>Repository Path:</strong> <em>Not included with project source code</em></p>
+<p><strong>Data Source:</strong> Data is published by DESC and hosted on <cite>Zenodo &lt;https://zenodo.org/&gt;</cite>.</p>
+<dl class="simple">
+<dt><strong>Description:</strong></dt><dd><p>SN light-curves were simulated using a variety of cadences and supernova models.
+Developers can reference the assumed data model <a class="reference external" href="plasticc_model.html">here</a>.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="stellar-spectra">
+<h2>Stellar Spectra<a class="headerlink" href="#stellar-spectra" title="Permalink to this headline">¶</a></h2>
+<p><strong>Repository Path:</strong> <em>data/stellar_spectra/*</em></p>
+<p><strong>Data Source:</strong> Sourced from the <a class="reference external" href="http://phoenix.astro.physik.uni-goettingen.de/?page_id=15">Goettingen Spectral Library</a>.</p>
+<dl class="simple">
+<dt><strong>Description:</strong></dt><dd><p>The Goettingen Spectral Library provides high resolution stellar spectra representing
+a variety of stellar types. Spectra were downloaded for a handful of spectral types, with
+additional spectra being downloaded on an “as needed” basis.</p>
+</dd>
+</dl>
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../notebooks/notebook_summaries.html" title="Notebook Summaries"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="install.html" title="Installation and Setup"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Data Provenance</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

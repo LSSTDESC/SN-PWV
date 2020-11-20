@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.fitting_pipeline &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="snat_sim.lc_simulation" href="lc_simulation.html" />
+    <link rel="prev" title="snat_sim.filters" href="filters.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lc_simulation.html" title="snat_sim.lc_simulation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="filters.html" title="snat_sim.filters"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.fitting_pipeline</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="time_series_utils.html">snat_sim.time_series_utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="module-snat_sim.fitting_pipeline">
+<span id="snat-sim-fitting-pipeline"></span><h1>snat_sim.fitting_pipeline<a class="headerlink" href="#module-snat_sim.fitting_pipeline" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">fitting_pipeline</span></code> module defines the <code class="docutils literal notranslate"><span class="pre">FittingPipeline</span></code> class, which
+is built to provide a parallelized approach to simulating and fitting
+light-curves with atmospheric effects.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>Instances of the <code class="docutils literal notranslate"><span class="pre">FittingPipeline</span></code> class can be run synchronously
+(by calling <code class="docutils literal notranslate"><span class="pre">FittingPipeline.run</span></code>) or asynchronously (with
+<code class="docutils literal notranslate"><span class="pre">FittingPipeline.run_async</span></code>). Here we demonstrate running a pipeline
+synchronously.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.fitting_pipeline</span> <span class="kn">import</span> <span class="n">FittingPipeline</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Instantiating pipeline...&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FittingPipeline</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">cadence</span><span class="o">=</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">sim_model</span><span class="o">=</span><span class="n">sn_model_sim</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">fit_model</span><span class="o">=</span><span class="n">sn_model_fit</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">vparams</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">out_path</span><span class="o">=</span><span class="s1">&#39;./demo_out_path.csv&#39;</span><span class="p">,</span>
+<span class="gp">&gt;&gt;&gt; </span>    <span class="n">pool_size</span><span class="o">=</span><span class="mi">6</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;I/O Processes: 2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Simulation Processes:&#39;</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">simulation_pool_size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Fitting Processes:&#39;</span><span class="p">,</span> <span class="n">pipeline</span><span class="o">.</span><span class="n">fitting_pool_size</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-docs">
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="snat_sim.fitting_pipeline.FittingPipeline">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">FittingPipeline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">quality_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">pool_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">ref_stars</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pwv_model</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#FittingPipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pipeline of parallel processes for simulating and fitting light-curves</p>
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.FittingPipeline.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">quality_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">pool_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">ref_stars</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pwv_model</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#FittingPipeline.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit light-curves using multiple processes and combine results into an output file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<em>str</em>) – Cadence to use when simulating light-curves</p></li>
+<li><p><strong>sim_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><em>SNModel</em></a>) – Model to use when simulating light-curves</p></li>
+<li><p><strong>fit_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><em>SNModel</em></a>) – Model to use when fitting light-curves</p></li>
+<li><p><strong>vparams</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of parameter names to vary in the fit</p></li>
+<li><p><strong>out_path</strong> (<em>str</em><em>, </em><em>Path</em>) – Path to write results to (.csv extension is enforced)</p></li>
+<li><p><strong>quality_callback</strong> (<em>callable</em>) – Skip light-curves if this function returns False</p></li>
+<li><p><strong>max_queue</strong> (<em>int</em>) – Maximum number of light-curves to store in pipeline at once</p></li>
+<li><p><strong>pool_size</strong> (<em>int</em>) – Total number of workers to spawn. Defaults to CPU count</p></li>
+<li><p><strong>iter_lim</strong> (<em>int</em>) – Limit number of processed light-curves (Useful for profiling)</p></li>
+<li><p><strong>ref_stars</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of reference star types to calibrate simulated supernova with</p></li>
+<li><p><strong>pwv_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.PWVModel" title="snat_sim.models.PWVModel"><em>PWVModel</em></a>) – Model for the PWV concentration the reference stars are observed at</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.FittingPipeline.fitting_pool_size">
+<em class="property">property </em><code class="sig-name descname">fitting_pool_size</code><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.fitting_pool_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of processes used for fitting light-curves</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.FittingPipeline.kill">
+<code class="sig-name descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kill all running pipeline processes without trying to exit gracefully</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.FittingPipeline.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <code class="docutils literal notranslate"><span class="pre">run_async</span></code> but blocks further execution until finished</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.FittingPipeline.run_async">
+<code class="sig-name descname">run_async</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.run_async" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start all processes asynchronously</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.FittingPipeline.simulation_pool_size">
+<em class="property">property </em><code class="sig-name descname">simulation_pool_size</code><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.simulation_pool_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Number of processes used for simulating light-curves</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.FittingPipeline.wait_for_exit">
+<code class="sig-name descname">wait_for_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.wait_for_exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for the pipeline to finish running before continuing execution</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="lc_simulation.html" title="snat_sim.lc_simulation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="filters.html" title="snat_sim.filters"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.fitting_pipeline</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

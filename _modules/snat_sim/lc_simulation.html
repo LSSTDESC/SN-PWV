@@ -1,0 +1,363 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.lc_simulation &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.lc_simulation</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/data_provenance.html">Data Provenance</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <h1>Source code for snat_sim.lc_simulation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The ``lc_simulation`` module realizes light-curves for a given supernova</span>
+<span class="sd">model. The module supports both ``snat_sim.SNModel``  and ``sncosmo.Model``</span>
+<span class="sd">objects interchangeably.</span>
+
+<span class="sd">Usage Example</span>
+<span class="sd">-------------</span>
+
+<span class="sd">Light-curves can be simulated with and without statistical noise. Both</span>
+<span class="sd">approaches are demonstrated below.</span>
+
+<span class="sd">.. doctest:: python</span>
+
+<span class="sd">    &gt;&gt;&gt; from snat_sim import lc_simulation, models</span>
+
+<span class="sd">    &gt;&gt;&gt; sn_model = models.SNModel(&#39;salt2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; sn_model.set(z=.01, x1=.5, c=-.1)</span>
+
+<span class="sd">    &gt;&gt;&gt; # Create a table of dates, bandpasses, gain, and skynoise values to evaluate</span>
+<span class="sd">    &gt;&gt;&gt; # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``</span>
+<span class="sd">    &gt;&gt;&gt; band_passes = [&#39;sdssu&#39;, &#39;sdssg&#39;, &#39;sdssr&#39;, &#39;sdssi&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; cadence = lc_simulation.create_observations_table(bands=band_passes)</span>
+
+<span class="sd">    &gt;&gt;&gt; # Evaluate the model at a fixed SNR</span>
+<span class="sd">    &gt;&gt;&gt; light_curve = lc_simulation.simulate_lc_fixed_snr(cadence, sn_model, snr=5)</span>
+
+<span class="sd">    &gt;&gt;&gt; # Or, evaluate using statistical uncertainties determined from the gain / skynoise</span>
+<span class="sd">    &gt;&gt;&gt; light_curve = lc_simulation.simulate_lc(cadence, sn_model)</span>
+
+
+<span class="sd">Module Docs</span>
+<span class="sd">-----------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">itertools</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">sncosmo</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+
+
+<div class="viewcode-block" id="calc_x0_for_z"><a class="viewcode-back" href="../../api/lc_simulation.html#snat_sim.lc_simulation.calc_x0_for_z">[docs]</a><span class="k">def</span> <span class="nf">calc_x0_for_z</span><span class="p">(</span>
+        <span class="n">z</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">,</span> <span class="n">abs_mag</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span>
+        <span class="n">band</span><span class="o">=</span><span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="n">magsys</span><span class="o">=</span><span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determine x0 for a given redshift and spectral template</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">         z            (float): Redshift to determine x0 for</span>
+<span class="sd">         source (Source, str): Spectral template to use when determining x0</span>
+<span class="sd">         cosmo    (Cosmology): Cosmology to use when determining x0</span>
+<span class="sd">         abs_mag      (float): Absolute peak magnitude of the SNe Ia</span>
+<span class="sd">         band           (str): Band to set absolute magnitude in</span>
+<span class="sd">         magsys         (str): Magnitude system to set absolute magnitude in</span>
+<span class="sd">         Any other params to set for the provided `source`</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        The x0 parameter for the given source and redshift</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">source</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="n">abs_mag</span><span class="p">,</span> <span class="n">band</span><span class="p">,</span> <span class="n">magsys</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">cosmo</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="create_observations_table"><a class="viewcode-back" href="../../api/lc_simulation.html#snat_sim.lc_simulation.create_observations_table">[docs]</a><span class="k">def</span> <span class="nf">create_observations_table</span><span class="p">(</span>
+        <span class="n">phases</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="mi">20</span><span class="p">,</span> <span class="mi">51</span><span class="p">),</span>
+        <span class="n">bands</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;decam_g&#39;</span><span class="p">,</span> <span class="s1">&#39;decam_r&#39;</span><span class="p">,</span> <span class="s1">&#39;decam_i&#39;</span><span class="p">,</span> <span class="s1">&#39;decam_z&#39;</span><span class="p">,</span> <span class="s1">&#39;decam_y&#39;</span><span class="p">),</span>
+        <span class="n">zp</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span>
+        <span class="n">zpsys</span><span class="o">=</span><span class="s1">&#39;ab&#39;</span><span class="p">,</span>
+        <span class="n">gain</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Create an astropy table defining a uniform observation cadence for a single target</span>
+
+<span class="sd">    Time values are specified in units of phase by default, but can be chosen</span>
+<span class="sd">    to reflect any time convention.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        phases (ndarray): Array of phase values to include</span>
+<span class="sd">        bands  (ndarray): Array of bands to include</span>
+<span class="sd">        zp       (float): The zero point</span>
+<span class="sd">        zpsys      (str): The zero point system</span>
+<span class="sd">        gain     (float): The simulated gain</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An astropy table</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">phase_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">phases</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">])</span>
+    <span class="n">band_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">phases</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;U1000&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">])</span>
+    <span class="n">gain_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">phase_arr</span><span class="p">,</span> <span class="n">gain</span><span class="p">)</span>
+    <span class="n">skynoise_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">phase_arr</span><span class="p">)</span>
+    <span class="n">zp_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">phase_arr</span><span class="p">,</span> <span class="n">zp</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">zp_sys_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">phase_arr</span><span class="p">,</span> <span class="n">zpsys</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;U10&#39;</span><span class="p">)</span>
+
+    <span class="n">observations</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">phase_arr</span><span class="p">,</span>
+            <span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="n">band_arr</span><span class="p">,</span>
+            <span class="s1">&#39;gain&#39;</span><span class="p">:</span> <span class="n">gain_arr</span><span class="p">,</span>
+            <span class="s1">&#39;skynoise&#39;</span><span class="p">:</span> <span class="n">skynoise_arr</span><span class="p">,</span>
+            <span class="s1">&#39;zp&#39;</span><span class="p">:</span> <span class="n">zp_arr</span><span class="p">,</span>
+            <span class="s1">&#39;zpsys&#39;</span><span class="p">:</span> <span class="n">zp_sys_arr</span>
+        <span class="p">},</span>
+        <span class="n">dtype</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="s1">&#39;U1000&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s1">&#39;U100&#39;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="n">observations</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">observations</span></div>
+
+
+<div class="viewcode-block" id="simulate_lc_fixed_snr"><a class="viewcode-back" href="../../api/lc_simulation.html#snat_sim.lc_simulation.simulate_lc_fixed_snr">[docs]</a><span class="k">def</span> <span class="nf">simulate_lc_fixed_snr</span><span class="p">(</span><span class="n">observations</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">snr</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simulate a SN light-curve with a fixed SNR given a set of observations</span>
+
+<span class="sd">    The ``obs`` table is expected to have columns for &#39;time&#39;, &#39;band&#39;, &#39;zp&#39;,</span>
+<span class="sd">    and &#39;zpsys&#39;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        observations (Table): Table outlining the observation cadence</span>
+<span class="sd">        model    (SNModel): Supernova model to evaluate</span>
+<span class="sd">        snr        (float): Signal to noise ratio</span>
+<span class="sd">        **params          : Values for any model parameters</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An astropy table formatted for use with sncosmo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="c1"># Set default x0 value according to assumed cosmology and the model redshift</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="n">calc_x0_for_z</span><span class="p">(</span><span class="n">model</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">],</span> <span class="n">model</span><span class="o">.</span><span class="n">source</span><span class="p">))</span>
+    <span class="n">model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">x0</span><span class="o">=</span><span class="n">x0</span><span class="p">)</span>
+
+    <span class="n">light_curve</span> <span class="o">=</span> <span class="n">observations</span><span class="p">[[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;zp&#39;</span><span class="p">,</span> <span class="s1">&#39;zpsys&#39;</span><span class="p">]]</span>
+    <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bandflux</span><span class="p">(</span><span class="n">observations</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">],</span> <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;zp&#39;</span><span class="p">],</span>
+                                         <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;zpsys&#39;</span><span class="p">])</span>
+    <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;fluxerr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">snr</span>
+    <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">light_curve</span></div>
+
+
+<div class="viewcode-block" id="iter_lcs_fixed_snr"><a class="viewcode-back" href="../../api/lc_simulation.html#snat_sim.lc_simulation.iter_lcs_fixed_snr">[docs]</a><span class="k">def</span> <span class="nf">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Iterator over SN light-curves for combination of PWV and z values</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obs       (Table): Observation cadence</span>
+<span class="sd">        model     (Model): The sncosmo model to use in the simulations</span>
+<span class="sd">        pwv_arr (ndarray): Array of PWV values</span>
+<span class="sd">        z_arr   (ndarray): Array of redshift values</span>
+<span class="sd">        snr       (float): Signal to noise ratio</span>
+<span class="sd">        verbose    (bool): Show a progress bar</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        An Astropy table for each PWV and redshift</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">iter_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pwv_arr</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">z_arr</span><span class="p">)</span>
+    <span class="n">arg_iter</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">arg_iter</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">iter_total</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Light-Curves&#39;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;t0&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;pwv&#39;</span><span class="p">:</span> <span class="n">pwv</span><span class="p">,</span> <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">z</span><span class="p">,</span> <span class="s1">&#39;x0&#39;</span><span class="p">:</span> <span class="n">calc_x0_for_z</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">source</span><span class="p">)}</span>
+        <span class="k">yield</span> <span class="n">simulate_lc_fixed_snr</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">snr</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="simulate_lc"><a class="viewcode-back" href="../../api/lc_simulation.html#snat_sim.lc_simulation.simulate_lc">[docs]</a><span class="k">def</span> <span class="nf">simulate_lc</span><span class="p">(</span><span class="n">observations</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Simulate a SN light-curve given a set of observations</span>
+
+<span class="sd">    If ``scatter`` is ``True``, then simulated flux values include an added</span>
+<span class="sd">    random number drawn from a Normal Distribution with a standard deviation</span>
+<span class="sd">    equal to the error of the observation.</span>
+
+<span class="sd">    The ``observations`` table is expected to have columns for &#39;time&#39;, &#39;band&#39;,</span>
+<span class="sd">    &#39;zp&#39;, &#39;zpsys&#39;, &#39;skynoise&#39;, and &#39;gain&#39;.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        observations (Table): Table of observations.</span>
+<span class="sd">        model        (Model): The sncosmo model to use in the simulations</span>
+<span class="sd">        params        (dict): parameters to feed to the model for realizing the light-curve</span>
+<span class="sd">        scatter       (bool): Add random noise to the flux values</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        An astropy table formatted for use with sncosmo</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">:</span>
+        <span class="n">model</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">model</span><span class="p">[</span><span class="n">p</span><span class="p">])</span>
+
+    <span class="n">flux</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bandflux</span><span class="p">(</span>
+        <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">],</span>
+        <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span>
+        <span class="n">zp</span><span class="o">=</span><span class="n">observations</span><span class="p">[</span><span class="s1">&#39;zp&#39;</span><span class="p">],</span>
+        <span class="n">zpsys</span><span class="o">=</span><span class="n">observations</span><span class="p">[</span><span class="s1">&#39;zpsys&#39;</span><span class="p">])</span>
+
+    <span class="n">fluxerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">observations</span><span class="p">[</span><span class="s1">&#39;skynoise&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">/</span> <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;gain&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">scatter</span><span class="p">:</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">fluxerr</span><span class="p">))</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span>
+        <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">],</span>
+        <span class="n">flux</span><span class="p">,</span>
+        <span class="n">fluxerr</span><span class="p">,</span>
+        <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;zp&#39;</span><span class="p">],</span>
+        <span class="n">observations</span><span class="p">[</span><span class="s1">&#39;zpsys&#39;</span><span class="p">]</span>
+    <span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">Table</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;flux&#39;</span><span class="p">,</span> <span class="s1">&#39;fluxerr&#39;</span><span class="p">,</span> <span class="s1">&#39;zp&#39;</span><span class="p">,</span> <span class="s1">&#39;zpsys&#39;</span><span class="p">),</span> <span class="n">meta</span><span class="o">=</span><span class="n">params</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.lc_simulation</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
