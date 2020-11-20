@@ -1,15 +1,28 @@
 from pathlib import Path
 
-file_dir = Path(__file__).resolve().parent
-nb_dir = file_dir.parent.parent.parent / 'notebooks'
+nblink_dir = Path(__file__).resolve().parent
+notebook_dir = nblink_dir.parent.parent.parent / 'notebooks'
+
+# Names of notebook files to create links to
+notebook_file_names = [
+    'lsst_filters.ipynb',
+    'pwv_eff_on_black_body.ipynb',
+    'pwv_modeling.ipynb',
+    'simulating_lc_for_cadence.ipynb',
+    'sne_delta_mag.ipynb'
+]
 
 if __name__ == '__main__':
     # Remove old files
-    for file in file_dir.glob('*.nblink'):
+    for file in nblink_dir.glob('*.nblink'):
         file.unlink()
 
     # Create new files
-    for file in nb_dir.glob('*.ipynb'):
-        with (file_dir / file.with_suffix('.nblink').name).open('w') as new_file:
-            print(file_dir / file.with_suffix('.nblink').name)
-            new_file.write(f'{{"path": "../../../notebooks/{file.name}"}}')
+    for file_name in notebook_file_names:
+        notebook_path = notebook_dir / file_name
+        if not notebook_path.exists():
+            raise FileNotFoundError(notebook_path)
+
+        nblink_path = (nblink_dir / file_name).with_suffix('.nblink')
+        with nblink_path.open('w') as new_file:
+            new_file.write(f'{{"path": "../../../notebooks/{file_name}"}}')
