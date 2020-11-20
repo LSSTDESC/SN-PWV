@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -56,7 +55,8 @@
         <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
       </div>
   <div id="left-column">
-    <div class="sphinxsidebar"><a href="../../index.html" class="text-logo">SNAT-SIM</a>
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -132,20 +132,17 @@
 <span class="sd">following example, atmospheric propagation effects due to precipitable water</span>
 <span class="sd">vapor are added to a Salt2 supernova model.</span>
 
-<span class="sd">.. code-block:: python</span>
+<span class="sd">.. doctest:: python</span>
 
-<span class="sd">   from snat_sim import models</span>
+<span class="sd">   &gt;&gt;&gt; from snat_sim import models</span>
 
-<span class="sd">   # Create a supernova model</span>
-<span class="sd">   supernova_model = models.SNModel(&#39;salt2&#39;)</span>
+<span class="sd">   &gt;&gt;&gt; # Create a supernova model</span>
+<span class="sd">   &gt;&gt;&gt; supernova_model = models.SNModel(&#39;salt2&#39;)</span>
 
-<span class="sd">   # Create a model for the atmosphere</span>
-<span class="sd">   atmospheric_transmission = StaticPWVTrans()</span>
-<span class="sd">   atmospheric_transmission.set(pwv=4)</span>
-<span class="sd">   supernova_model.add_effect(</span>
-<span class="sd">       effect=atmospheric_transmission,</span>
-<span class="sd">       name=&#39;Atmosphere&#39;,</span>
-<span class="sd">       frame=&#39;obs&#39;)</span>
+<span class="sd">   &gt;&gt;&gt; # Create a model for the atmosphere</span>
+<span class="sd">   &gt;&gt;&gt; atm_transmission = models.StaticPWVTrans()</span>
+<span class="sd">   &gt;&gt;&gt; atm_transmission.set(pwv=4)</span>
+<span class="sd">   &gt;&gt;&gt; supernova_model.add_effect(effect=atm_transmission, name=&#39;Atmosphere&#39;, frame=&#39;obs&#39;)</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>

@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -63,7 +62,8 @@
         <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
       </div>
   <div id="left-column">
-    <div class="sphinxsidebar"><a href="../index.html" class="text-logo">SNAT-SIM</a>
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">SNAT-SIM</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -122,8 +122,194 @@
 
           <div class="document clearer body">
             
-  <div class="section" id="snat-sim-plasticc">
-<h1>snat_sim.plasticc<a class="headerlink" href="#snat-sim-plasticc" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-snat_sim.plasticc">
+<span id="snat-sim-plasticc"></span><h1>snat_sim.plasticc<a class="headerlink" href="#module-snat_sim.plasticc" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">plasticc</span></code> module provides data access for locally available
+PLaSTICC simulations. Data is accessible by specifying the cadence and
+model used in a given simulation.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">plasticc</span></code> module makes it easy to check what data is available in
+the current working environment:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">plasticc</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Check where the `snat_sim` package is expecting to find data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">plasticc</span><span class="o">.</span><span class="n">get_data_dir</span><span class="p">())</span>  
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get a list of cadences available in the directory printed above</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">plasticc</span><span class="o">.</span><span class="n">get_available_cadences</span><span class="p">())</span>  
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Count the number of light-curves for a given cadence and SN model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">num_lc</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">count_light_curves</span><span class="p">(</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It also provides <strong>basic</strong> data access via the construction of an iterator
+over all available light-curves for a given cadence / model. You should expect
+the first evaluation of the iterator to be slow since it has to load
+light-curve data into memory as chunks.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lc_iterator</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">iter_lc_for_cadence_model</span><span class="p">(</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plasticc_lc</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">lc_iterator</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>PLaSTICC simulations were run using the <code class="docutils literal notranslate"><span class="pre">SNANA</span></code> package in FORTRAN and thus
+are returned using the <code class="docutils literal notranslate"><span class="pre">SNANA</span></code> data model. Alternatively, you can convert the
+returned tables to the data model used by the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> Python package.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">formatted_lc</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">format_plasticc_sncosmo</span><span class="p">(</span><span class="n">plasticc_lc</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-docs">
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="snat_sim.plasticc.count_light_curves">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">count_light_curves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#count_light_curves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.count_light_curves" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the number of available light-curve simulations for a given cadence and model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<em>str</em>) – Name of the cadence to list header files for</p></li>
+<li><p><strong>model</strong> (<em>int</em>) – Model number to retrieve header paths for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Number of simulated light-curves available in the working environment</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plasticc.duplicate_plasticc_sncosmo">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">duplicate_plasticc_sncosmo</code><span class="sig-paren">(</span><em class="sig-param">light_curve</em>, <em class="sig-param">model</em>, <em class="sig-param">zp=None</em>, <em class="sig-param">gain=1</em>, <em class="sig-param">skynoise=None</em>, <em class="sig-param">scatter=True</em>, <em class="sig-param">cosmo=FlatLambdaCDM(H0=70 km / (Mpc s)</em>, <em class="sig-param">Om0=0.295</em>, <em class="sig-param">Tcmb0=0 K</em>, <em class="sig-param">Neff=3.04</em>, <em class="sig-param">m_nu=None</em>, <em class="sig-param">Ob0=None)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#duplicate_plasticc_sncosmo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.duplicate_plasticc_sncosmo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>light_curve</strong> (<em>Table</em>) – Astropy table with PLaSTICC light-curve data</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><em>SNModel</em></a>) – SNModel to use when simulating light-curve flux</p></li>
+<li><p><strong>zp</strong> (<em>float</em><em>, </em><em>array</em>) – Optionally overwrite the PLaSTICC zero-point with this value</p></li>
+<li><p><strong>gain</strong> (<em>float</em>) – Gain to use during simulation</p></li>
+<li><p><strong>skynoise</strong> (<em>float</em>) – Optionally overwrite the PLaSTICC skynoise with this value</p></li>
+<li><p><strong>scatter</strong> (<em>bool</em>) – Add random noise to the flux values</p></li>
+<li><p><strong>cosmo</strong> (<em>Cosmology</em>) – Rescale the <code class="docutils literal notranslate"><span class="pre">x0</span></code> parameter according to the given cosmology</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Astropy table with data for the simulated light-curve</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plasticc.extract_cadence_data">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">extract_cadence_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">light_curve</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">skynoise</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">drop_nondetection</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#extract_cadence_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.extract_cadence_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the observational cadence from a PLaSTICC light-curve</p>
+<p>Returned table is formatted for use with <code class="docutils literal notranslate"><span class="pre">sncosmo.realize_lcs</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>light_curve</strong> (<em>Table</em>) – Astropy table with PLaSTICC light-curve data</p></li>
+<li><p><strong>zp</strong> (<em>float</em><em>, </em><em>array</em>) – Overwrite the PLaSTICC zero-point with this value</p></li>
+<li><p><strong>gain</strong> (<em>float</em>) – Gain to use during simulation</p></li>
+<li><p><strong>skynoise</strong> (<em>int</em><em>, </em><em>array</em>) – Simulated skynoise in counts</p></li>
+<li><p><strong>drop_nondetection</strong> (<em>bool</em>) – Drop data with PHOTFLAG == 0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An astropy table with cadence data for the input light-curve</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plasticc.format_plasticc_sncosmo">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">format_plasticc_sncosmo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">light_curve</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#format_plasticc_sncosmo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.format_plasticc_sncosmo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Format a PLaSTICC light-curve to be compatible with sncosmo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>light_curve</strong> (<em>Table</em>) – Table of PLaSTICC light-curve data</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An astropy table formatted for use with sncosmo</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plasticc.get_available_cadences">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">get_available_cadences</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#get_available_cadences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.get_available_cadences" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all available cadences in the PLaSTICC simulation directory</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plasticc.get_data_dir">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">get_data_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#get_data_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.get_data_dir" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the directory where the package expects PLaSTICC simulation to be located</p>
+<p>This value is the same as the environmental <code class="docutils literal notranslate"><span class="pre">CADENCE_SIMS</span></code> directory.
+If the environmental variable is not set, defaults to the project’s
+<code class="docutils literal notranslate"><span class="pre">data</span></code> directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>Path object pointing to the data directory</strong> (<em>A</em>) – </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plasticc.get_model_headers">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">get_model_headers</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#get_model_headers"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.get_model_headers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of all header files for a given cadence and model</p>
+<p>Default is model 11 (Normal SNe)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<em>str</em>) – Name of the cadence to list header files for</p></li>
+<li><p><strong>model</strong> (<em>int</em>) – Model number to retrieve header paths for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of Path objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plasticc.iter_lc_for_cadence_model">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">iter_lc_for_cadence_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#iter_lc_for_cadence_model"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.iter_lc_for_cadence_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over simulated light-curves  for a given cadence</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<em>str</em>) – Name of the cadence to summarize</p></li>
+<li><p><strong>model</strong> (<em>int</em>) – Model number to retrieve light-curves for</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Display a progress bar</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>An Astropy table with the MJD and filter for each observation</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plasticc.iter_lc_for_header">
+<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">iter_lc_for_header</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header_path</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#iter_lc_for_header"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.iter_lc_for_header" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over light-curves from a given header file</p>
+<p>Files are expected in pairs of a header file (<cite>*HEAD.fits</cite>) that stores target
+meta data and a photometry file (<cite>*PHOT.fits</cite>) with simulated light-curves.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>header_path</strong> (<em>Path</em><em>, </em><em>str</em>) – Path of the header file</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Display a progress bar</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>An Astropy table with the MJD and filter for each observation</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 
 

@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -56,7 +55,8 @@
         <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
       </div>
   <div id="left-column">
-    <div class="sphinxsidebar"><a href="../../index.html" class="text-logo">SNAT-SIM</a>
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -126,22 +126,23 @@
 <span class="sd">Light-curves can be simulated with and without statistical noise. Both</span>
 <span class="sd">approaches are demonstrated below.</span>
 
-<span class="sd">.. code-block:: python</span>
+<span class="sd">.. doctest:: python</span>
 
-<span class="sd">    from snat_sim import lc_simulation, models</span>
+<span class="sd">    &gt;&gt;&gt; from snat_sim import lc_simulation, models</span>
 
-<span class="sd">    sn_model = models.SNModel(&#39;salt2-extended&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; sn_model = models.SNModel(&#39;salt2&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; sn_model.set(z=.01, x1=.5, c=-.1)</span>
 
-<span class="sd">    # Create a table of dates, bandpasses, gain, and skynoise values to evaluate</span>
-<span class="sd">    # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``</span>
-<span class="sd">    band_passes = [&#39;sdssu&#39;, &#39;sdssg&#39;, &#39;sdssr&#39;, &#39;sdssi&#39;, &#39;sdssz&#39;]</span>
-<span class="sd">    cadence = lc_simulation.create_observations_table(bands=band_passes)</span>
+<span class="sd">    &gt;&gt;&gt; # Create a table of dates, bandpasses, gain, and skynoise values to evaluate</span>
+<span class="sd">    &gt;&gt;&gt; # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``</span>
+<span class="sd">    &gt;&gt;&gt; band_passes = [&#39;sdssu&#39;, &#39;sdssg&#39;, &#39;sdssr&#39;, &#39;sdssi&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; cadence = lc_simulation.create_observations_table(bands=band_passes)</span>
 
-<span class="sd">    # Evaluate the model at a fixed SNR</span>
-<span class="sd">    light_curve = lc_simulation.simulate_lc_fixed_snr(cadence, model, snr=5)</span>
+<span class="sd">    &gt;&gt;&gt; # Evaluate the model at a fixed SNR</span>
+<span class="sd">    &gt;&gt;&gt; light_curve = lc_simulation.simulate_lc_fixed_snr(cadence, sn_model, snr=5)</span>
 
-<span class="sd">    # Or, evaluate using statistical uncertainties determined from the gain / skynoise</span>
-<span class="sd">    light_curve = lc_simulation.simulate_lc(cadence, model)</span>
+<span class="sd">    &gt;&gt;&gt; # Or, evaluate using statistical uncertainties determined from the gain / skynoise</span>
+<span class="sd">    &gt;&gt;&gt; light_curve = lc_simulation.simulate_lc(cadence, sn_model)</span>
 
 
 <span class="sd">Module Docs</span>

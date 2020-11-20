@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
     <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
@@ -63,7 +62,8 @@
         <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
       </div>
   <div id="left-column">
-    <div class="sphinxsidebar"><a href="../index.html" class="text-logo">SNAT-SIM</a>
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">SNAT-SIM</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -122,8 +122,146 @@
 
           <div class="document clearer body">
             
-  <div class="section" id="snat-sim-lc-simulation">
-<h1>snat_sim.lc_simulation<a class="headerlink" href="#snat-sim-lc-simulation" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="module-snat_sim.lc_simulation">
+<span id="snat-sim-lc-simulation"></span><h1>snat_sim.lc_simulation<a class="headerlink" href="#module-snat_sim.lc_simulation" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">lc_simulation</span></code> module realizes light-curves for a given supernova
+model. The module supports both <code class="docutils literal notranslate"><span class="pre">snat_sim.SNModel</span></code>  and <code class="docutils literal notranslate"><span class="pre">sncosmo.Model</span></code>
+objects interchangeably.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>Light-curves can be simulated with and without statistical noise. Both
+approaches are demonstrated below.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">lc_simulation</span><span class="p">,</span> <span class="n">models</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sn_model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sn_model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">z</span><span class="o">=.</span><span class="mi">01</span><span class="p">,</span> <span class="n">x1</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">c</span><span class="o">=-.</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a table of dates, bandpasses, gain, and skynoise values to evaluate</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">band_passes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;sdssu&#39;</span><span class="p">,</span> <span class="s1">&#39;sdssg&#39;</span><span class="p">,</span> <span class="s1">&#39;sdssr&#39;</span><span class="p">,</span> <span class="s1">&#39;sdssi&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cadence</span> <span class="o">=</span> <span class="n">lc_simulation</span><span class="o">.</span><span class="n">create_observations_table</span><span class="p">(</span><span class="n">bands</span><span class="o">=</span><span class="n">band_passes</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Evaluate the model at a fixed SNR</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">lc_simulation</span><span class="o">.</span><span class="n">simulate_lc_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">sn_model</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Or, evaluate using statistical uncertainties determined from the gain / skynoise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">lc_simulation</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">sn_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-docs">
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="snat_sim.lc_simulation.calc_x0_for_z">
+<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">calc_x0_for_z</code><span class="sig-paren">(</span><em class="sig-param">z</em>, <em class="sig-param">source</em>, <em class="sig-param">cosmo=FlatLambdaCDM(H0=70 km / (Mpc s)</em>, <em class="sig-param">Om0=0.295</em>, <em class="sig-param">Tcmb0=0 K</em>, <em class="sig-param">Neff=3.04</em>, <em class="sig-param">m_nu=None</em>, <em class="sig-param">Ob0=None)</em>, <em class="sig-param">abs_mag=-19.05</em>, <em class="sig-param">band='standard::b'</em>, <em class="sig-param">magsys='AB'</em>, <em class="sig-param">**params</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#calc_x0_for_z"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.calc_x0_for_z" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine x0 for a given redshift and spectral template</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>z</strong> (<em>float</em>) – Redshift to determine x0 for</p></li>
+<li><p><strong>source</strong> (<em>Source</em><em>, </em><em>str</em>) – Spectral template to use when determining x0</p></li>
+<li><p><strong>cosmo</strong> (<em>Cosmology</em>) – Cosmology to use when determining x0</p></li>
+<li><p><strong>abs_mag</strong> (<em>float</em>) – Absolute peak magnitude of the SNe Ia</p></li>
+<li><p><strong>band</strong> (<em>str</em>) – Band to set absolute magnitude in</p></li>
+<li><p><strong>magsys</strong> (<em>str</em>) – Magnitude system to set absolute magnitude in</p></li>
+<li><p><strong>other params to set for the provided source</strong> (<em>Any</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The x0 parameter for the given source and redshift</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.lc_simulation.create_observations_table">
+<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">create_observations_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">range(- 20, 51)</span></em>, <em class="sig-param"><span class="n">bands</span><span class="o">=</span><span class="default_value">('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y')</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">zpsys</span><span class="o">=</span><span class="default_value">'ab'</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#create_observations_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.create_observations_table" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an astropy table defining a uniform observation cadence for a single target</p>
+<p>Time values are specified in units of phase by default, but can be chosen
+to reflect any time convention.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>phases</strong> (<em>ndarray</em>) – Array of phase values to include</p></li>
+<li><p><strong>bands</strong> (<em>ndarray</em>) – Array of bands to include</p></li>
+<li><p><strong>zp</strong> (<em>float</em>) – The zero point</p></li>
+<li><p><strong>zpsys</strong> (<em>str</em>) – The zero point system</p></li>
+<li><p><strong>gain</strong> (<em>float</em>) – The simulated gain</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An astropy table</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.lc_simulation.iter_lcs_fixed_snr">
+<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">iter_lcs_fixed_snr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">snr</span><span class="o">=</span><span class="default_value">10</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#iter_lcs_fixed_snr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.iter_lcs_fixed_snr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterator over SN light-curves for combination of PWV and z values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs</strong> (<em>Table</em>) – Observation cadence</p></li>
+<li><p><strong>model</strong> (<em>Model</em>) – The sncosmo model to use in the simulations</p></li>
+<li><p><strong>pwv_arr</strong> (<em>ndarray</em>) – Array of PWV values</p></li>
+<li><p><strong>z_arr</strong> (<em>ndarray</em>) – Array of redshift values</p></li>
+<li><p><strong>snr</strong> (<em>float</em>) – Signal to noise ratio</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – Show a progress bar</p></li>
+</ul>
+</dd>
+<dt class="field-even">Yields</dt>
+<dd class="field-even"><p>An Astropy table for each PWV and redshift</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.lc_simulation.simulate_lc">
+<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">simulate_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">observations</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">scatter</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#simulate_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.simulate_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a SN light-curve given a set of observations</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">scatter</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then simulated flux values include an added
+random number drawn from a Normal Distribution with a standard deviation
+equal to the error of the observation.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">observations</span></code> table is expected to have columns for ‘time’, ‘band’,
+‘zp’, ‘zpsys’, ‘skynoise’, and ‘gain’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observations</strong> (<em>Table</em>) – Table of observations.</p></li>
+<li><p><strong>model</strong> (<em>Model</em>) – The sncosmo model to use in the simulations</p></li>
+<li><p><strong>params</strong> (<em>dict</em>) – parameters to feed to the model for realizing the light-curve</p></li>
+<li><p><strong>scatter</strong> (<em>bool</em>) – Add random noise to the flux values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An astropy table formatted for use with sncosmo</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.lc_simulation.simulate_lc_fixed_snr">
+<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">simulate_lc_fixed_snr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">observations</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">snr</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#simulate_lc_fixed_snr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.simulate_lc_fixed_snr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a SN light-curve with a fixed SNR given a set of observations</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">obs</span></code> table is expected to have columns for ‘time’, ‘band’, ‘zp’,
+and ‘zpsys’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>observations</strong> (<em>Table</em>) – Table outlining the observation cadence</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><em>SNModel</em></a>) – Supernova model to evaluate</p></li>
+<li><p><strong>snr</strong> (<em>float</em>) – Signal to noise ratio</p></li>
+<li><p><strong>**params</strong> – Values for any model parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An astropy table formatted for use with sncosmo</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
 </div>
 
 

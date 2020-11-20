@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -56,7 +55,8 @@
         <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
       </div>
   <div id="left-column">
-    <div class="sphinxsidebar"><a href="../../index.html" class="text-logo">SNAT-SIM</a>
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -126,18 +126,18 @@
 <span class="sd">The ``plasticc`` module makes it easy to check what data is available in</span>
 <span class="sd">the current working environment:</span>
 
-<span class="sd">.. code-block:: python</span>
+<span class="sd">.. doctest:: python</span>
 
-<span class="sd">   from snat_sim import plasticc</span>
+<span class="sd">   &gt;&gt;&gt; from snat_sim import plasticc</span>
 
-<span class="sd">   # Check where the `snat_sim` package is expecting to find data</span>
-<span class="sd">   print(plasticc.get_data_dir())</span>
+<span class="sd">   &gt;&gt;&gt; # Check where the `snat_sim` package is expecting to find data</span>
+<span class="sd">   &gt;&gt;&gt; print(plasticc.get_data_dir())  #doctest:+SKIP</span>
 
-<span class="sd">   # Get a list of cadences available in the directory printed above</span>
-<span class="sd">   print(plasticc.get_available_cadences())</span>
+<span class="sd">   &gt;&gt;&gt; # Get a list of cadences available in the directory printed above</span>
+<span class="sd">   &gt;&gt;&gt; print(plasticc.get_available_cadences())  #doctest:+SKIP</span>
 
-<span class="sd">   # Count the number of light-curves for a given cadence and SN model</span>
-<span class="sd">   num_lc = plasticc.count_light_curves(&#39;alt_sched, model=11)</span>
+<span class="sd">   &gt;&gt;&gt; # Count the number of light-curves for a given cadence and SN model</span>
+<span class="sd">   &gt;&gt;&gt; num_lc = plasticc.count_light_curves(&#39;alt_sched&#39;, model=11)</span>
 
 <span class="sd">It also provides **basic** data access via the construction of an iterator</span>
 <span class="sd">over all available light-curves for a given cadence / model. You should expect</span>
@@ -146,8 +146,8 @@
 
 <span class="sd">.. code-block:: python</span>
 
-<span class="sd">   lc_iterator = plasticc.iter_lc_for_cadence_model(&#39;alt_sched&#39;, model=11)</span>
-<span class="sd">   plasticc_lc = next(lc_iterator)</span>
+<span class="sd">   &gt;&gt;&gt; lc_iterator = plasticc.iter_lc_for_cadence_model(&#39;alt_sched&#39;, model=11)</span>
+<span class="sd">   &gt;&gt;&gt; plasticc_lc = next(lc_iterator)</span>
 
 <span class="sd">PLaSTICC simulations were run using the ``SNANA`` package in FORTRAN and thus</span>
 <span class="sd">are returned using the ``SNANA`` data model. Alternatively, you can convert the</span>
@@ -155,7 +155,7 @@
 
 <span class="sd">.. code-block:: python</span>
 
-<span class="sd">   formatted_lc = format_plasticc_sncosmo(plasticc_lc)</span>
+<span class="sd">   &gt;&gt;&gt; formatted_lc = plasticc.format_plasticc_sncosmo(plasticc_lc)</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
@@ -257,7 +257,6 @@
     <span class="c1"># Load meta data from the header file</span>
     <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">header_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">header_hdulist</span><span class="p">:</span>
         <span class="n">meta_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">header_hdulist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">meta_data</span> <span class="o">=</span> <span class="n">meta_data</span>
 
     <span class="c1"># Load light-curves from the photometry file, This is slow</span>
     <span class="n">phot_file_path</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">header_path</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;HEAD&#39;</span><span class="p">,</span> <span class="s1">&#39;PHOT&#39;</span><span class="p">)</span>
@@ -270,7 +269,6 @@
     <span class="c1"># for key, val in phot_data.iteritems():</span>
     <span class="c1">#     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()</span>
 
-    <span class="c1"># phot_data = phot_data[[&#39;MJD&#39;, &#39;FLT&#39;, &#39;PHOTFLAG&#39;]]</span>
     <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">meta_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">meta_data</span><span class="p">),</span> <span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
         <span class="n">lc_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MIN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
         <span class="n">lc_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MAX&#39;</span><span class="p">])</span>

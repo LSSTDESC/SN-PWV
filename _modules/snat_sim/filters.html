@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -56,7 +55,8 @@
         <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
       </div>
   <div id="left-column">
-    <div class="sphinxsidebar"><a href="../../index.html" class="text-logo">SNAT-SIM</a>
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -129,16 +129,16 @@
 <span class="sd">Space and Time (LSST) are registered with  and then retrieved by the</span>
 <span class="sd">``sncosmo`` package.</span>
 
-<span class="sd">.. code-block:: python</span>
+<span class="sd">.. doctest:: python</span>
 
-<span class="sd">   import sncosmo</span>
-<span class="sd">   from snat_sim.filters import register_lsst_filters</span>
+<span class="sd">   &gt;&gt;&gt; import sncosmo</span>
+<span class="sd">   &gt;&gt;&gt; from snat_sim.filters import register_lsst_filters</span>
 
-<span class="sd">   # Check the names of new filters that will be registered</span>
-<span class="sd">   print(help(register_lsst_filters))</span>
+<span class="sd">   &gt;&gt;&gt; # Check the names of new filters that will be registered</span>
+<span class="sd">   &gt;&gt;&gt; print(help(register_lsst_filters))  #doctest:+SKIP</span>
 
-<span class="sd">   register_lsst_filters()</span>
-<span class="sd">   lsst_u_band = sncosmo.get_bandpass(&#39;lsst_total_u&#39;)</span>
+<span class="sd">   &gt;&gt;&gt; register_lsst_filters(force=True)</span>
+<span class="sd">   &gt;&gt;&gt; lsst_u_band = sncosmo.get_bandpass(&#39;lsst_total_u&#39;)</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>

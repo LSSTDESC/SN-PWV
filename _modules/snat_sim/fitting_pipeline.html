@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -56,7 +55,8 @@
         <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
       </div>
   <div id="left-column">
-    <div class="sphinxsidebar"><a href="../../index.html" class="text-logo">SNAT-SIM</a>
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -130,22 +130,22 @@
 
 <span class="sd">.. code-block:: python</span>
 
-<span class="sd">   from snat_sim.fitting_pipeline import FittingPipeline</span>
+<span class="sd">   &gt;&gt;&gt; from snat_sim.fitting_pipeline import FittingPipeline</span>
 
-<span class="sd">   print(&#39;Instantiating pipeline...&#39;)</span>
-<span class="sd">   pipeline = FittingPipeline(</span>
-<span class="sd">       cadence=&#39;alt_sched&#39;,</span>
-<span class="sd">       sim_model=sn_model_sim,</span>
-<span class="sd">       fit_model=sn_model_fit,</span>
-<span class="sd">       vparams=[&#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;],</span>
-<span class="sd">       out_path=&#39;./demo_out_path.csv&#39;,</span>
-<span class="sd">       pool_size=6</span>
-<span class="sd">   )</span>
+<span class="sd">   &gt;&gt;&gt; print(&#39;Instantiating pipeline...&#39;)</span>
+<span class="sd">   &gt;&gt;&gt; pipeline = FittingPipeline(</span>
+<span class="sd">   &gt;&gt;&gt;     cadence=&#39;alt_sched&#39;,</span>
+<span class="sd">   &gt;&gt;&gt;     sim_model=sn_model_sim,</span>
+<span class="sd">   &gt;&gt;&gt;     fit_model=sn_model_fit,</span>
+<span class="sd">   &gt;&gt;&gt;     vparams=[&#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;],</span>
+<span class="sd">   &gt;&gt;&gt;     out_path=&#39;./demo_out_path.csv&#39;,</span>
+<span class="sd">   &gt;&gt;&gt;     pool_size=6</span>
+<span class="sd">   &gt;&gt;&gt; )</span>
 
-<span class="sd">   print(&#39;I/O Processes: 2&#39;)</span>
-<span class="sd">   print(&#39;Simulation Processes:&#39;, pipeline.simulation_pool_size)</span>
-<span class="sd">   print(&#39;Fitting Processes:&#39;, pipeline.fitting_pool_size)</span>
-<span class="sd">   pipeline.run()</span>
+<span class="sd">   &gt;&gt;&gt; print(&#39;I/O Processes: 2&#39;)</span>
+<span class="sd">   &gt;&gt;&gt; print(&#39;Simulation Processes:&#39;, pipeline.simulation_pool_size)</span>
+<span class="sd">   &gt;&gt;&gt; print(&#39;Fitting Processes:&#39;, pipeline.fitting_pool_size)</span>
+<span class="sd">   &gt;&gt;&gt; pipeline.run()</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>

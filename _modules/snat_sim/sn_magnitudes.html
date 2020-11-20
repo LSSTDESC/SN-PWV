@@ -18,7 +18,6 @@
     <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
     <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
@@ -56,7 +55,8 @@
         <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
       </div>
   <div id="left-column">
-    <div class="sphinxsidebar"><a href="../../index.html" class="text-logo">SNAT-SIM</a>
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
 <div class="sidebar-block">
   <div class="sidebar-wrapper">
     <div id="main-search">
@@ -158,7 +158,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-        <span class="n">config_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">infile</span><span class="p">,</span> <span class="n">yaml</span><span class="o">.</span><span class="n">BaseLoader</span><span class="p">)</span>
+        <span class="n">config_dict</span> <span class="o">=</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">infile</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">config_dict</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span></div>
 
@@ -171,7 +171,7 @@
 
 <div class="viewcode-block" id="tabulate_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.tabulate_mag">[docs]</a><span class="k">def</span> <span class="nf">tabulate_mag</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Calculate apparent magnitude due to presence of PWV</span>
-<span class="sd">    </span>
+
 <span class="sd">    Magnitude is calculated for the model by adding PWV effects</span>
 <span class="sd">    to a model and leaving all other parameters unchanged.</span>
 
@@ -181,7 +181,7 @@
 <span class="sd">        z_arr   (ndarray): Array of redshift values</span>
 <span class="sd">        bands (list[str]): Name of the bands to tabulate magnitudes for</span>
 <span class="sd">        verbose    (bool): Show a progress bar</span>
-<span class="sd">        </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary with 2d arrays for the magnitude at each PWV and redshift</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -284,18 +284,18 @@
 
 <div class="viewcode-block" id="fit_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_mag">[docs]</a><span class="k">def</span> <span class="nf">fit_mag</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">light_curves</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z_arr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Determine apparent mag by fitting simulated light-curves</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returned arrays are shape  (len(pwv_arr), len(z_arr)).</span>
-<span class="sd">    </span>
+
 <span class="sd">    Args:</span>
 <span class="sd">        model        (SNModel): The sncosmo model to use when fitting</span>
 <span class="sd">        light_curves (ndarray): Array of light-curves to fit</span>
-<span class="sd">        vparams         (list): Parameters to vary with the fit </span>
+<span class="sd">        vparams         (list): Parameters to vary with the fit</span>
 <span class="sd">        pwv_arr      (ndarray): Array of PWV values</span>
 <span class="sd">        z_arr        (ndarray): Array of redshift values</span>
 <span class="sd">        bands      (list[str]): Name of the bands to tabulate magnitudes for</span>
 <span class="sd">        Any arguments for ``sncosmo.fit_lc``.</span>
-<span class="sd">    </span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        Dictionary with arrays for fitted magnitude at each PWV and redshift</span>
 <span class="sd">        Dictionary with arrays for fitted parameters at each PWV and redshift</span>
