@@ -17,7 +17,7 @@ approaches are demonstrated below.
 
     >>> # Create a table of dates, bandpasses, gain, and skynoise values to evaluate
     >>> # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``
-    >>> band_passes = ['sdssu', 'sdssg', 'sdssr', 'sdssi', 'sdssz']
+    >>> band_passes = ['sdssu', 'sdssg', 'sdssr', 'sdssi']
     >>> cadence = lc_simulation.create_observations_table(bands=band_passes)
 
     >>> # Evaluate the model at a fixed SNR
