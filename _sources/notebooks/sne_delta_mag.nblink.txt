@@ -1,1 +1,0 @@
-{"path": "../../../notebooks/sne_delta_mag.ipynb"}
