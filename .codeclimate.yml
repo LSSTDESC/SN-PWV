@@ -15,6 +15,9 @@ plugins:
 
   sonar-python:
     enabled: true
+    checks:
+      python:S107:
+        enabled: false
 
   radon:
     enabled: true
