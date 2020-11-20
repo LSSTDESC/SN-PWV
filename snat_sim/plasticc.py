@@ -139,7 +139,6 @@ def iter_lc_for_header(header_path, verbose=True):
     # Load meta data from the header file
     with fits.open(header_path) as header_hdulist:
         meta_data = pd.DataFrame(header_hdulist[1].data)
-        meta_data = meta_data
 
     # Load light-curves from the photometry file, This is slow
     phot_file_path = str(header_path).replace('HEAD', 'PHOT')
@@ -152,7 +151,6 @@ def iter_lc_for_header(header_path, verbose=True):
     # for key, val in phot_data.iteritems():
     #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 
-    # phot_data = phot_data[['MJD', 'FLT', 'PHOTFLAG']]
     for idx, meta in tqdm(meta_data.iterrows(), total=len(meta_data), position=1, disable=not verbose):
         lc_start = int(meta['PTROBS_MIN']) - 1
         lc_end = int(meta['PTROBS_MAX'])

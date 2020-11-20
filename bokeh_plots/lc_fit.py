@@ -251,8 +251,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
             line = self.main_figure.line(
                 x=time_arr,
                 y=model.bandflux(band, time_arr, zp=25, zpsys='ab'),
-                color=color,
-                # legend_label=band
+                color=color
             )
 
             self.plotted_fits.append(line)
