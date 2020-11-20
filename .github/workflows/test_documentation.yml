@@ -62,13 +62,7 @@ jobs:
       - name: Install documentation dependencies
         run: |
           pip install -r docs/requirements.txt
-          sudo apt-get update -y
-          sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc
 
-      - name: Run doctest
-        working-directory: ./docs
-        run: make html SPHINXOPTS="-W --keep-going -n"
-          
       - name: Run doctest
         working-directory: ./docs
         run: make doctest
