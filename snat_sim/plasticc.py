@@ -152,7 +152,7 @@ def iter_lc_for_header(header_path, verbose=True):
     #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 
     # phot_data = phot_data[['MJD', 'FLT', 'PHOTFLAG']]
-    with tqdm(meta_data.iterrows(), total=len(meta_data), disable=not verbose, miniters=1) as pbar:
+    with tqdm(meta_data.iterrows(), total=len(meta_data), disable=not verbose) as pbar:
         for idx, meta in pbar:
             lc_start = int(meta['PTROBS_MIN']) - 1
             lc_end = int(meta['PTROBS_MAX'])
@@ -179,7 +179,7 @@ def iter_lc_for_cadence_model(cadence, model, verbose=True):
     total = count_light_curves(cadence, model)
     light_curve_iter = get_model_headers(cadence, model)
 
-    with tqdm(light_curve_iter, desc=cadence, total=total, disable=not verbose, miniters=1) as pbar:
+    with tqdm(light_curve_iter, desc=cadence, total=total, disable=not verbose) as pbar:
         for header_path in pbar:
             for lc in iter_lc_for_header(header_path, verbose=False):
                 yield lc
