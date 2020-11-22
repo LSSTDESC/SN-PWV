@@ -99,7 +99,7 @@ class FixedResTransmission:
 
         else:
             xi = [[[pwv_val, w] for pwv_val in pwv_eff] for w in wave]
-            names = [f'{float(np.round(pwv_val, 4))} mm' for pwv_val in pwv]
+            names = map('{} mm'.format, np.round(pwv, 4).astype(float))
             return pd.DataFrame(self._interpolator(xi), columns=names)
 
 
