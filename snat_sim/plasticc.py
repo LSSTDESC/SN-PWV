@@ -151,12 +151,17 @@ def iter_lc_for_header(header_path, verbose=True):
     # for key, val in phot_data.iteritems():
     #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 
-    for idx, meta in tqdm(meta_data.iterrows(), total=len(meta_data), position=1, disable=not verbose):
-        lc_start = int(meta['PTROBS_MIN']) - 1
-        lc_end = int(meta['PTROBS_MAX'])
-        lc = phot_data[lc_start: lc_end]
-        lc.meta.update(meta)
-        yield lc
+    # phot_data = phot_data[['MJD', 'FLT', 'PHOTFLAG']]
+    with tqdm(meta_data.iterrows(), total=len(meta_data), disable=not verbose, miniters=1) as pbar:
+        for idx, meta in pbar:
+            lc_start = int(meta['PTROBS_MIN']) - 1
+            lc_end = int(meta['PTROBS_MAX'])
+            lc = phot_data[lc_start: lc_end]
+            lc.meta.update(meta)
+
+            yield lc
+            pbar.update(1)
+            pbar.refresh()
 
 
 def iter_lc_for_cadence_model(cadence, model, verbose=True):
@@ -173,9 +178,13 @@ def iter_lc_for_cadence_model(cadence, model, verbose=True):
 
     total = count_light_curves(cadence, model)
     light_curve_iter = get_model_headers(cadence, model)
-    for header_path in tqdm(light_curve_iter, desc=cadence, total=total, disable=not verbose):
-        for lc in iter_lc_for_header(header_path, verbose=False):
-            yield lc
+
+    with tqdm(light_curve_iter, desc=cadence, total=total, disable=not verbose, miniters=1) as pbar:
+        for header_path in pbar:
+            for lc in iter_lc_for_header(header_path, verbose=False):
+                yield lc
+                pbar.update(1)
+                pbar.refresh()
 
 
 def format_plasticc_sncosmo(light_curve):
