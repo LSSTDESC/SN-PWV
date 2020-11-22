@@ -243,5 +243,6 @@ class FittingPipeline(ProcessManager):
                         self._processes = []
                         return
 
-                new_line = ','.join(map(str, results)) + '\n'
-                outfile.write(new_line)
+                else:
+                    new_line = ','.join(map(str, results)) + '\n'
+                    outfile.write(new_line)
