@@ -269,12 +269,16 @@
     <span class="c1"># for key, val in phot_data.iteritems():</span>
     <span class="c1">#     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()</span>
 
-    <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">meta_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">meta_data</span><span class="p">),</span> <span class="n">position</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
-        <span class="n">lc_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MIN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
-        <span class="n">lc_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MAX&#39;</span><span class="p">])</span>
-        <span class="n">lc</span> <span class="o">=</span> <span class="n">phot_data</span><span class="p">[</span><span class="n">lc_start</span><span class="p">:</span> <span class="n">lc_end</span><span class="p">]</span>
-        <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="n">lc</span></div>
+    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">meta_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">meta_data</span><span class="p">),</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="n">lc_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MIN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">lc_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MAX&#39;</span><span class="p">])</span>
+            <span class="n">lc</span> <span class="o">=</span> <span class="n">phot_data</span><span class="p">[</span><span class="n">lc_start</span><span class="p">:</span> <span class="n">lc_end</span><span class="p">]</span>
+            <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+
+            <span class="k">yield</span> <span class="n">lc</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="iter_lc_for_cadence_model"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.iter_lc_for_cadence_model">[docs]</a><span class="k">def</span> <span class="nf">iter_lc_for_cadence_model</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
@@ -291,9 +295,13 @@
 
     <span class="n">total</span> <span class="o">=</span> <span class="n">count_light_curves</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
     <span class="n">light_curve_iter</span> <span class="o">=</span> <span class="n">get_model_headers</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">header_path</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">light_curve_iter</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
-        <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-            <span class="k">yield</span> <span class="n">lc</span></div>
+
+    <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">light_curve_iter</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">header_path</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                <span class="k">yield</span> <span class="n">lc</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="format_plasticc_sncosmo"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.format_plasticc_sncosmo">[docs]</a><span class="k">def</span> <span class="nf">format_plasticc_sncosmo</span><span class="p">(</span><span class="n">light_curve</span><span class="p">):</span>
