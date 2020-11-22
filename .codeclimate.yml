@@ -21,6 +21,8 @@ plugins:
 
   radon:
     enabled: true
+    config:
+      threshold: "C"
 
   bandit:
     enabled: true

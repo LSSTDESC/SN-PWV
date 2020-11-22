@@ -76,23 +76,6 @@ class FixedResTransmission:
         self._interpolator = RegularGridInterpolator(
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
-    def _calc_transmission(self, pwv, wave=None):
-        """Evaluate the transmission model at the given wavelengths
-
-        Args:
-            pwv    (float): Line of sight PWV to interpolate for
-            wave (ndarray): Wavelengths to evaluate transmission for in angstroms
-
-        Returns:
-            The interpolated transmission at the given wavelengths / resolution
-        """
-
-        # Build interpolation grid
-        pwv_eff = calc_pwv_eff(pwv, norm_pwv=self.norm_pwv, eff_exp=self.eff_exp)
-        xi = [[pwv_eff, w] for w in wave]
-
-        return pd.Series(self._interpolator(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
-
     def __call__(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
 
@@ -108,11 +91,16 @@ class FixedResTransmission:
         """
 
         wave = self.samp_wave if wave is None else wave
-        if np.isscalar(pwv):
-            return self._calc_transmission(pwv, wave)
+        pwv_eff = calc_pwv_eff(pwv, norm_pwv=self.norm_pwv, eff_exp=self.eff_exp)
+
+        if np.isscalar(pwv_eff):
+            xi = [[pwv_eff, w] for w in wave]
+            return pd.Series(self._interpolator(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
 
         else:
-            return pd.concat([self.__call__(p, wave) for p in pwv], axis=1)
+            xi = [[[pwv_val, w] for pwv_val in pwv_eff] for w in wave]
+            names = map('{} mm'.format, np.round(pwv, 4).astype(float))
+            return pd.DataFrame(self._interpolator(xi), columns=names)
 
 
 class PWVModel:
