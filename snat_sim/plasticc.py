@@ -151,7 +151,6 @@ def iter_lc_for_header(header_path, verbose=True):
     # for key, val in phot_data.iteritems():
     #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 
-    # phot_data = phot_data[['MJD', 'FLT', 'PHOTFLAG']]
     with tqdm(meta_data.iterrows(), total=len(meta_data), disable=not verbose) as pbar:
         for idx, meta in pbar:
             lc_start = int(meta['PTROBS_MIN']) - 1
