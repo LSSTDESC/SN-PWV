@@ -364,7 +364,7 @@ class CosmologyAccessor:
             stat_val = statistic(samples)
 
             arg_names = inspect.getfullargspec(self.chisq).args
-            samples = dict(zip(arg_names, stat_val))
+            samples = dict(zip(arg_names[1:], stat_val))
 
         else:
             samples = [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs) for _ in range(samples)]
