@@ -83,7 +83,7 @@ class HubbleMinimizer(PipelineResults):
     """Chi-squared minimizer for fitting a cosmology to pipeline results"""
 
     # noinspection PyPep8Naming
-    def _chisq_for_cosmology(self, H0, Om0, abs_mag, w0):
+    def chisq(self, H0, Om0, abs_mag, w0):
         """Calculate the chi-squared for given cosmological parameters
 
         Args:
@@ -102,6 +102,43 @@ class HubbleMinimizer(PipelineResults):
         modeled_mu = cosmology.distmod(self['z']).value
         return np.sum(((measured_mu - modeled_mu) ** 2) / (self['mb_err'] ** 2))
 
+    def chisq_grid(self, H0, Om0, abs_mag, w0):
+        """Calculate the chi-squared on a grid of cosmological parameters
+
+        Arguments are automatically repeated along the grid so that the
+        dimensions of each array match.
+
+        Args:
+            H0      (float, ndarray): Hubble constant
+            Om0     (float, ndarray): Matter density
+            abs_mag (float, ndarray): SNe Ia intrinsic peak magnitude
+            w0      (float, ndarray): Dark matter equation of state
+
+        Returns:
+            An array of chi-squared values
+        """
+
+        new_args = self._match_argument_dimensions(H0, Om0, abs_mag, w0)
+        return np.vectorize(self.chisq)(*new_args)
+
+    @staticmethod
+    def _match_argument_dimensions(*args):
+        """Reshape arguments so they match the shape of the argument with the
+        most dimensions.
+
+        Args:
+            *args (float, ndarray): Values to cast onto the grid
+
+        Returns:
+            A list with each argument cast to it's new shape
+        """
+
+        # Get the shape of the argument with the most dimensions
+        grid_shape = np.shape(args[np.argmax([np.ndim(arg) for arg in args])])
+
+        # Reshape each argument to match the dimensions from above
+        return [np.full(grid_shape, arg) for arg in args]
+
     def minimize(self, **kwargs):
         """Fit cosmology to the instantiated data
 
@@ -113,7 +150,7 @@ class HubbleMinimizer(PipelineResults):
             Optimized Minuit object
         """
 
-        minimizer = Minuit(self._chisq_for_cosmology, **kwargs)
+        minimizer = Minuit(self.chisq, **kwargs)
         minimizer.migrad()
         return minimizer
 
