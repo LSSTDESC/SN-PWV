@@ -273,7 +273,7 @@ class CosmologyAccessor:
         return self.data['mb'] - abs_mag
 
     # noinspection PyPep8Naming
-    def chisq(self, H0, Om0, abs_mag, w0):
+    def chisq(self, H0, Om0, abs_mag, w0, alpha, beta):
         """Calculate the chi-squared for given cosmological parameters
 
         Args:
@@ -281,12 +281,14 @@ class CosmologyAccessor:
             Om0     (float): Matter density
             abs_mag (float): SNe Ia intrinsic peak magnitude
             w0      (float): Dark matter equation of state
+            alpha   (float): Stretch correction nuisance parameter
+            beta    (float): Color correction nuisance parameter
 
         Returns:
             The chi-squared of the resulting cosmology
         """
 
-        measured_mu = self.calc_distmod(abs_mag)
+        measured_mu = self.calc_distmod(abs_mag) + alpha * self.data['x1'] - beta * self.data['c']
 
         cosmology = FlatwCDM(H0=H0, Om0=Om0, w0=w0)
         modeled_mu = cosmology.distmod(self.data['z']).value
