@@ -33,6 +33,7 @@ Module Docs
 -----------
 """
 
+import inspect
 import multiprocessing as mp
 import warnings
 from pathlib import Path
@@ -269,7 +270,7 @@ class CosmologyAccessor:
             The distance modulus
         """
 
-        return abs_mag - self.data['mb']
+        return self.data['mb'] - abs_mag
 
     # noinspection PyPep8Naming
     def chisq(self, H0, Om0, abs_mag, w0):
@@ -343,18 +344,29 @@ class CosmologyAccessor:
         minimizer.migrad()
         return minimizer
 
-    def minimize_mc(self, samples, n=None, frac=None, **kwargs):
+    def minimize_mc(self, samples, n=None, frac=None, statistic=None, **kwargs):
         """Fit cosmology to the instantiated data using monte carlo resampling
 
         Args:
-            samples (int): Number of samples to draw
-            n       (int): Size of each sample. Cannot be used with ``frac``
-            frac  (float): Fraction of data to include in each sample. Cannot be used with ``size``
+            samples         (int): Number of samples to draw
+            n              (int): Size of each sample. Cannot be used with ``frac``
+            frac         (float): Fraction of data to include in each sample. Cannot be used with ``size``
+            statistic (callable): Optionally apply a statistic to the returned values
             Accepts any iminuit style keyword arguments for parameters
               ``H0``, ``Om0``, ``abs_mag``, and ``w0``.
 
         Returns:
-            Optimized Minuit object
+            List of optimized Minuit object or a dictionary of the applies statistic to those values
         """
 
-        return [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs) for _ in range(samples)]
+        if statistic:
+            samples = [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs).np_values() for _ in range(samples)]
+            stat_val = statistic(samples)
+
+            arg_names = inspect.getfullargspec(self.chisq).args
+            samples = dict(zip(arg_names, stat_val))
+
+        else:
+            samples = [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs) for _ in range(samples)]
+
+        return samples
