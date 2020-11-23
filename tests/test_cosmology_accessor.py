@@ -87,18 +87,27 @@ class ChisqGrid(TestCase):
             w0=-1,
             H0=const.betoule_H0,
             Om0=const.betoule_omega_m,
-            abs_mag=const.betoule_abs_mb
+            abs_mag=const.betoule_abs_mb,
+            alpha=0,
+            beta=0
         )
 
         chisq2 = self.test_data.snat_sim.chisq(
             w0=0,
             H0=const.betoule_H0,
             Om0=const.betoule_omega_m,
-            abs_mag=const.betoule_abs_mb
+            abs_mag=const.betoule_abs_mb,
+            alpha=0,
+            beta=0
         )
 
         chisq_grid = self.test_data.snat_sim.chisq_grid(
-            const.betoule_H0, const.betoule_omega_m, const.betoule_abs_mb, [-1, 0])
+            w0=[-1, 0],
+            H0=const.betoule_H0,
+            Om0=const.betoule_omega_m,
+            abs_mag=const.betoule_abs_mb,
+            alpha=0,
+            beta=0)
 
         np.testing.assert_allclose(chisq_grid, [chisq1, chisq2])
 

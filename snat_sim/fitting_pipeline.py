@@ -294,7 +294,7 @@ class CosmologyAccessor:
         modeled_mu = cosmology.distmod(self.data['z']).value
         return np.sum(((measured_mu - modeled_mu) ** 2) / (self.data['mb_err'] ** 2))
 
-    def chisq_grid(self, H0, Om0, abs_mag, w0):
+    def chisq_grid(self, H0, Om0, abs_mag, w0, alpha, beta):
         """Calculate the chi-squared on a grid of cosmological parameters
 
         Arguments are automatically repeated along the grid so that the
@@ -305,12 +305,14 @@ class CosmologyAccessor:
             Om0     (float, ndarray): Matter density
             abs_mag (float, ndarray): SNe Ia intrinsic peak magnitude
             w0      (float, ndarray): Dark matter equation of state
+            alpha            (float): Stretch correction nuisance parameter
+            beta             (float): Color correction nuisance parameter
 
         Returns:
             An array of chi-squared values
         """
 
-        new_args = self._match_argument_dimensions(H0, Om0, abs_mag, w0)
+        new_args = self._match_argument_dimensions(H0, Om0, abs_mag, w0, alpha, beta)
         return np.vectorize(self.chisq)(*new_args)
 
     @staticmethod
