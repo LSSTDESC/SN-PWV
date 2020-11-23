@@ -257,8 +257,8 @@ class FittingPipeline(ProcessManager):
 class CosmologyAccessor:
     """Chi-squared minimizer for fitting a cosmology to pipeline results"""
 
-    def __init__(self, pandasobject):
-        self.data = pandasobject
+    def __init__(self, pandas_obj):
+        self.data = pandas_obj
 
     def calc_distmod(self, abs_mag):
         """Return the distance modulus for an assumed absolute magnitude
@@ -363,8 +363,9 @@ class CosmologyAccessor:
             samples = [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs).np_values() for _ in range(samples)]
             stat_val = statistic(samples)
 
+            # Create a dictionary mapping the argument name to the applies statistic
             arg_names = inspect.getfullargspec(self.chisq).args
-            samples = dict(zip(arg_names[1:], stat_val))
+            samples = dict(zip(arg_names[1:], stat_val))  # first argument is self, so drop it
 
         else:
             samples = [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs) for _ in range(samples)]
