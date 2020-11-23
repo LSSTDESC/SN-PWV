@@ -17,12 +17,21 @@ from the GitHub repository page or by using the ``git`` command line utility:
    git clone  --depth=1 --branch=master https://github.com/LSSTDESC/SN-PWV.git SN-PWV
    rm -rf ./SN-PWV/.git
 
-Project dependencies are listed in the ``requirements.txt`` file included with
-the source code. Dependencies can be installed using ``pip``:
+The package can then be installed into your working environment manually, or
+using ``pip``:
 
 .. code-block:: bash
 
-   pip install -r SN-PWV/requirements.txt
+   cd SN-PWV
+   pip install .
+
+If you want to run the package's test suite, you will also need to install
+the test suite dependencies:
+
+.. code-block:: bash
+
+   cd SN-PWV
+   pip install .[tests]
 
 
 Downloading Light-Curve Sims
