@@ -35,140 +35,15 @@ Module Docs
 
 import multiprocessing as mp
 import warnings
-from dataclasses import dataclass
-from functools import wraps
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 import sncosmo
 from astropy.cosmology import FlatwCDM
-from astropy.table import Table
 from iminuit import Minuit
 
 from . import plasticc, reference_stars
-
-
-@dataclass
-class PipelineResults:
-    """Parser for data outputted by the snat_sim fitting pipeline"""
-
-    def __init__(self, path):
-        self._data = Table.read(path).to_pandas()
-
-    def calc_distmod(self, abs_mag):
-        """Return the distance modulus for an assumed absolute magnitude
-
-        Args:
-            abs_mag (float): The B-band absolute magnitude
-
-        Returns:
-            The distance modulus
-        """
-
-        return abs_mag - self['mb']
-
-    @wraps(pd.DataFrame.sample)
-    def sample(self, *args, **kwargs):
-        new_obj = self.__new__(type(self))
-        new_obj._data = self._data.sample(*args, **kwargs)
-        return new_obj
-
-    @wraps(pd.DataFrame.__getitem__)
-    def __getitem__(self, item):
-        return self._data[item]
-
-
-class CosmologyFitter(PipelineResults):
-    """Chi-squared minimizer for fitting a cosmology to pipeline results"""
-
-    # noinspection PyPep8Naming
-    def chisq(self, H0, Om0, abs_mag, w0):
-        """Calculate the chi-squared for given cosmological parameters
-
-        Args:
-            H0      (float): Hubble constant
-            Om0     (float): Matter density
-            abs_mag (float): SNe Ia intrinsic peak magnitude
-            w0      (float): Dark matter equation of state
-
-        Returns:
-            The chi-squared of the resulting cosmology
-        """
-
-        measured_mu = self.calc_distmod(abs_mag)
-
-        cosmology = FlatwCDM(H0=H0, Om0=Om0, w0=w0)
-        modeled_mu = cosmology.distmod(self['z']).value
-        return np.sum(((measured_mu - modeled_mu) ** 2) / (self['mb_err'] ** 2))
-
-    def chisq_grid(self, H0, Om0, abs_mag, w0):
-        """Calculate the chi-squared on a grid of cosmological parameters
-
-        Arguments are automatically repeated along the grid so that the
-        dimensions of each array match.
-
-        Args:
-            H0      (float, ndarray): Hubble constant
-            Om0     (float, ndarray): Matter density
-            abs_mag (float, ndarray): SNe Ia intrinsic peak magnitude
-            w0      (float, ndarray): Dark matter equation of state
-
-        Returns:
-            An array of chi-squared values
-        """
-
-        new_args = self._match_argument_dimensions(H0, Om0, abs_mag, w0)
-        return np.vectorize(self.chisq)(*new_args)
-
-    @staticmethod
-    def _match_argument_dimensions(*args):
-        """Reshape arguments so they match the shape of the argument with the
-        most dimensions.
-
-        Args:
-            *args (float, ndarray): Values to cast onto the grid
-
-        Returns:
-            A list with each argument cast to it's new shape
-        """
-
-        # Get the shape of the argument with the most dimensions
-        grid_shape = np.shape(args[np.argmax([np.ndim(arg) for arg in args])])
-
-        # Reshape each argument to match the dimensions from above
-        return [np.full(grid_shape, arg) for arg in args]
-
-    def minimize(self, **kwargs):
-        """Fit cosmology to the instantiated data
-
-        Kwargs:
-            Accepts any iminuit style keyword arguments for parameters
-              ``H0``, ``Om0``, ``abs_mag``, and ``w0``.
-
-        Returns:
-            Optimized Minuit object
-        """
-
-        minimizer = Minuit(self.chisq, **kwargs)
-        minimizer.migrad()
-        return minimizer
-
-    def minimize_mc(self, samples, n=None, frac=None, **kwargs):
-        """Fit cosmology to the instantiated data using monte carlo resampling
-
-        Args:
-            samples (int): Number of samples to draw
-            n       (int): Size of each sample. Cannot be used with ``frac``
-            frac  (float): Fraction of data to include in each sample. Cannot be used with ``size``
-            Accepts any iminuit style keyword arguments for parameters
-              ``H0``, ``Om0``, ``abs_mag``, and ``w0``.
-
-        Returns:
-            Optimized Minuit object
-        """
-
-        return [self.sample(n=n, frac=frac).minimize(**kwargs) for _ in range(samples)]
 
 
 class KillSignal:
@@ -375,3 +250,111 @@ class FittingPipeline(ProcessManager):
                 else:
                     new_line = ','.join(map(str, results)) + '\n'
                     outfile.write(new_line)
+
+
+@pd.api.extensions.register_dataframe_accessor("snat_sim")
+class CosmologyAccessor:
+    """Chi-squared minimizer for fitting a cosmology to pipeline results"""
+
+    def __init__(self, pandasobject):
+        self.data = pandasobject
+
+    def calc_distmod(self, abs_mag):
+        """Return the distance modulus for an assumed absolute magnitude
+
+        Args:
+            abs_mag (float): The B-band absolute magnitude
+
+        Returns:
+            The distance modulus
+        """
+
+        return abs_mag - self.data['mb']
+
+    # noinspection PyPep8Naming
+    def chisq(self, H0, Om0, abs_mag, w0):
+        """Calculate the chi-squared for given cosmological parameters
+
+        Args:
+            H0      (float): Hubble constant
+            Om0     (float): Matter density
+            abs_mag (float): SNe Ia intrinsic peak magnitude
+            w0      (float): Dark matter equation of state
+
+        Returns:
+            The chi-squared of the resulting cosmology
+        """
+
+        measured_mu = self.calc_distmod(abs_mag)
+
+        cosmology = FlatwCDM(H0=H0, Om0=Om0, w0=w0)
+        modeled_mu = cosmology.distmod(self.data['z']).value
+        return np.sum(((measured_mu - modeled_mu) ** 2) / (self.data['mb_err'] ** 2))
+
+    def chisq_grid(self, H0, Om0, abs_mag, w0):
+        """Calculate the chi-squared on a grid of cosmological parameters
+
+        Arguments are automatically repeated along the grid so that the
+        dimensions of each array match.
+
+        Args:
+            H0      (float, ndarray): Hubble constant
+            Om0     (float, ndarray): Matter density
+            abs_mag (float, ndarray): SNe Ia intrinsic peak magnitude
+            w0      (float, ndarray): Dark matter equation of state
+
+        Returns:
+            An array of chi-squared values
+        """
+
+        new_args = self._match_argument_dimensions(H0, Om0, abs_mag, w0)
+        return np.vectorize(self.chisq)(*new_args)
+
+    @staticmethod
+    def _match_argument_dimensions(*args):
+        """Reshape arguments so they match the shape of the argument with the
+        most dimensions.
+
+        Args:
+            *args (float, ndarray): Values to cast onto the grid
+
+        Returns:
+            A list with each argument cast to it's new shape
+        """
+
+        # Get the shape of the argument with the most dimensions
+        grid_shape = np.shape(args[np.argmax([np.ndim(arg) for arg in args])])
+
+        # Reshape each argument to match the dimensions from above
+        return [np.full(grid_shape, arg) for arg in args]
+
+    def minimize(self, **kwargs):
+        """Fit cosmology to the instantiated data
+
+        Kwargs:
+            Accepts any iminuit style keyword arguments for parameters
+              ``H0``, ``Om0``, ``abs_mag``, and ``w0``.
+
+        Returns:
+            Optimized Minuit object
+        """
+
+        minimizer = Minuit(self.chisq, **kwargs)
+        minimizer.migrad()
+        return minimizer
+
+    def minimize_mc(self, samples, n=None, frac=None, **kwargs):
+        """Fit cosmology to the instantiated data using monte carlo resampling
+
+        Args:
+            samples (int): Number of samples to draw
+            n       (int): Size of each sample. Cannot be used with ``frac``
+            frac  (float): Fraction of data to include in each sample. Cannot be used with ``size``
+            Accepts any iminuit style keyword arguments for parameters
+              ``H0``, ``Om0``, ``abs_mag``, and ``w0``.
+
+        Returns:
+            Optimized Minuit object
+        """
+
+        return [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs) for _ in range(samples)]
