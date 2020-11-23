@@ -79,7 +79,7 @@ class PipelineResults:
         return self._data[item]
 
 
-class HubbleMinimizer(PipelineResults):
+class CosmologyFitter(PipelineResults):
     """Chi-squared minimizer for fitting a cosmology to pipeline results"""
 
     # noinspection PyPep8Naming
