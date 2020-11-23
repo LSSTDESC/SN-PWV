@@ -1,5 +1,6 @@
-"""Tests for the ``fitting_pipeline`` module"""
+"""Tests for the ``FittingPipeline`` class"""
 
+from tempfile import NamedTemporaryFile
 from unittest import TestCase
 
 import sncosmo
@@ -9,6 +10,12 @@ from snat_sim.fitting_pipeline import FittingPipeline
 
 class TestProcessAllocation(TestCase):
     """Tests for the allocation of processes to each pipeline task"""
+
+    def setUp(self):
+        self.temp_file = NamedTemporaryFile()
+
+    def tearDown(self):
+        self.temp_file.close()
 
     def test_allocations_sum_to_pool_size(self):
         """Test the number of allocated processes sum to the total pool size"""
@@ -20,7 +27,7 @@ class TestProcessAllocation(TestCase):
             fit_model=sncosmo.Model('salt2'),
             vparams=[],
             pool_size=pool_size,
-            out_path='./test.csv'
+            out_path='test.csv'
         )
 
         self.assertEqual(
@@ -37,5 +44,5 @@ class TestProcessAllocation(TestCase):
                 fit_model=sncosmo.Model('salt2'),
                 vparams=[],
                 pool_size=3,
-                out_path='./test.csv'
+                out_path='test.csv'
             )

@@ -79,11 +79,8 @@ def create_mock_plasticc_light_curve():
     )
 
 
-def create_mock_pipeline_outputs(path=None):
-    """Create a mock table of results from the snat_sim pipeline using DES SN3YR data
-
-    Args:
-        path (str, Path): Optionally write the table to a path instead of returning it
+def create_mock_pipeline_outputs():
+    """Create DataFrame with mock results from the snat_sim pipeline using DES SN3YR data
 
     Returns:
         An astropy table if ``path`` is not given
@@ -119,10 +116,4 @@ def create_mock_pipeline_outputs(path=None):
         keep_columns.append(param)
         keep_columns.append(param + '_err')
     pipeline_fits = pipeline_fits[keep_columns]
-
-    # Write to path or return
-    if path:
-        pipeline_fits.write(path)
-
-    else:
-        return pipeline_fits
+    return pipeline_fits.to_pandas()
