@@ -232,6 +232,7 @@ class FittingPipeline(ProcessManager):
         out_list.extend(result.errors.values())
         out_list.append(result.chisq)
         out_list.append(result.ndof)
+        out_list.append(fitted_model.source_peakabsmag('bessellb', 'ab'))
         return out_list
 
     def _fit_light_curves(self):
