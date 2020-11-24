@@ -44,7 +44,7 @@ import sncosmo
 from astropy.cosmology import FlatwCDM
 from iminuit import Minuit
 
-from . import plasticc, reference_stars
+from . import plasticc, reference_stars, constants as const
 
 
 class KillSignal:
@@ -232,7 +232,7 @@ class FittingPipeline(ProcessManager):
         out_list.extend(result.errors.values())
         out_list.append(result.chisq)
         out_list.append(result.ndof)
-        out_list.append(fitted_model.source_peakabsmag('bessellb', 'ab'))
+        out_list.append(fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
         return out_list
 
     def _fit_light_curves(self):
