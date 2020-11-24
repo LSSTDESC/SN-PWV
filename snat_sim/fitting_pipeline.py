@@ -280,6 +280,8 @@ class FittingPipeline(ProcessManager, OutputDataModel):
         kill_count = 0  # Count closed upstream processes so this process knows when to exit
 
         with self.out_path.open('w') as outfile:
+            outfile.write(','.join(self.result_table_col_names(self.fit_model)))
+
             while True:
                 if isinstance(results := self.queue_fit_results.get(), KillSignal):
                     kill_count += 1
