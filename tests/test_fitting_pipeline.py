@@ -8,7 +8,7 @@ import sncosmo
 from snat_sim.fitting_pipeline import FittingPipeline
 
 
-class TestProcessAllocation(TestCase):
+class ProcessAllocation(TestCase):
     """Tests for the allocation of processes to each pipeline task"""
 
     def setUp(self):

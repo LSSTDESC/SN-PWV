@@ -84,7 +84,50 @@ class ProcessManager:
             p.start()
 
 
-class FittingPipeline(ProcessManager):
+class OutputDataModel:
+    """Enforces the data model of pipeline output files"""
+
+    @staticmethod
+    def build_result_table_entry(meta, fitted_model, result):
+        """Combine light-curve fit results into single row matching the output table file format
+
+        Args:
+            meta          (dict): Meta data for the simulated light-curve
+            fitted_model (Model): Supernova model fitted to the data
+            result      (Result): sncosmo fit Result object
+
+        Returns:
+            A list of strings and floats
+        """
+
+        out_list = [meta['SNID']]
+        out_list.extend(result.parameters)
+        out_list.extend(result.errors.values())
+        out_list.append(result.chisq)
+        out_list.append(result.ndof)
+        out_list.append(fitted_model.bandmag('bessellb', 'ab', time=fitted_model['t0']))
+        out_list.append(fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
+        return out_list
+
+    @staticmethod
+    def result_table_col_names(fit_model):
+        """Return a list of column names for a given supernova model
+
+        Args:
+            fit_model (Model): Model with parameters to use as column names
+        """
+
+        col_names = ['SNID']
+        col_names.extend(fit_model.param_names)
+        col_names.extend(param + '_err' for param in fit_model.param_names)
+        col_names.append('chisq')
+        col_names.append('ndof')
+        col_names.append('mb')
+        col_names.append('abs_mag')
+        return col_names
+
+
+class FittingPipeline(ProcessManager, OutputDataModel):
     """Pipeline of parallel processes for simulating and fitting light-curves"""
 
     def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
@@ -214,27 +257,6 @@ class FittingPipeline(ProcessManager):
         # Propagate kill signal
         self.queue_duplicated_lc.put(light_curve)
 
-    @staticmethod
-    def build_result_table_entry(meta, fitted_model, result):
-        """Combine light-curve fit results into single row matching the output table file format
-
-        Args:
-            meta          (dict): Meta data for the simulated light-curve
-            fitted_model (Model): Supernova model fitted to the data
-            result      (Result): sncosmo fit Result object
-
-        Returns:
-            A list of strings and floats
-        """
-
-        out_list = [meta['SNID']]
-        out_list.extend(result.parameters)
-        out_list.extend(result.errors.values())
-        out_list.append(result.chisq)
-        out_list.append(result.ndof)
-        out_list.append(fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
-        return out_list
-
     def _fit_light_curves(self):
         """Fit light-curves"""
 
@@ -312,6 +334,7 @@ class CosmologyAccessor:
         modeled_mu = cosmology.distmod(self.data['z']).value
         return np.sum(((measured_mu - modeled_mu) ** 2) / (self.data['mb_err'] ** 2))
 
+    # noinspection PyPep8Naming
     def chisq_grid(self, H0, Om0, abs_mag, w0, alpha, beta):
         """Calculate the chi-squared on a grid of cosmological parameters
 

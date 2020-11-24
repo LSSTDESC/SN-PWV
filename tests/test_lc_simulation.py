@@ -126,7 +126,7 @@ class RealizeLC(TestCase):
     def test_runs_with_sncosmo(self):
         """Test the Simulated LC can be fit with ``sncosmo``"""
 
-        sncosmo.fit_lc(self.simulated_lc, self.model, vparam_names=['x0', 'x1', 'c'])
+        sncosmo.fit_lc(self.simulated_lc, self.model, vparam_names=['x0', 'x1', 'c'], warn=False)
 
     def test_correct_meta_data_values(self):
         """Test simulated LC table has model parameters in meta data"""
