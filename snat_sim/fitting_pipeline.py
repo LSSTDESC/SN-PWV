@@ -214,22 +214,39 @@ class FittingPipeline(ProcessManager):
         # Propagate kill signal
         self.queue_duplicated_lc.put(light_curve)
 
+    @staticmethod
+    def build_result_table_entry(meta, fitted_model, result):
+        """Combine light-curve fit results into single row matching the output table file format
+
+        Args:
+            meta          (dict): Meta data for the simulated light-curve
+            fitted_model (Model): Supernova model fitted to the data
+            result      (Result): sncosmo fit Result object
+
+        Returns:
+            A list of strings and floats
+        """
+
+        out_list = [meta['SNID']]
+        out_list.extend(result.parameters)
+        out_list.extend(result.errors.values())
+        out_list.append(result.chisq)
+        out_list.append(result.ndof)
+        return out_list
+
     def _fit_light_curves(self):
         """Fit light-curves"""
 
+        warnings.simplefilter('ignore', category=DeprecationWarning)
         while not isinstance(light_curve := self.queue_duplicated_lc.get(), KillSignal):
             # Use the true light-curve parameters as the initial guess
             self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
 
-            warnings.simplefilter('ignore', category=DeprecationWarning)
-            _, fitted_model = sncosmo.fit_lc(
+            result, fitted_model = sncosmo.fit_lc(
                 light_curve, self.fit_model, self.vparams,
                 guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
-            out_vals = list(fitted_model.parameters)
-            out_vals.insert(0, light_curve.meta['SNID'])
-
-            self.queue_fit_results.put(out_vals)
+            self.queue_fit_results.put(self.build_result_table_entry(light_curve.meta, fitted_model, result))
 
         # Propagate kill signal
         self.queue_fit_results.put(light_curve)
@@ -352,7 +369,7 @@ class CosmologyAccessor:
         """Fit cosmology to the instantiated data using monte carlo resampling
 
         Args:
-            samples         (int): Number of samples to draw
+            samples        (int): Number of samples to draw
             n              (int): Size of each sample. Cannot be used with ``frac``
             frac         (float): Fraction of data to include in each sample. Cannot be used with ``size``
             statistic (callable): Optionally apply a statistic to the returned values
@@ -369,7 +386,7 @@ class CosmologyAccessor:
 
             # Create a dictionary mapping the argument name to the applies statistic
             arg_names = inspect.getfullargspec(self.chisq).args
-            samples = dict(zip(arg_names[1:], stat_val))  # first argument is self, so drop it
+            samples = dict(zip(arg_names[1:], stat_val))  # First argument is self, so drop it
 
         else:
             samples = [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs) for _ in range(samples)]
