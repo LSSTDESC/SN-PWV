@@ -42,11 +42,12 @@ def passes_quality_cuts(light_curve):
     return sum(passed_cuts) >= 2
 
 
-def create_pwv_model(pwv_variability, cache=False):
+def create_pwv_model(pwv_variability, cache_pwv_los=False):
     """Create a ``PWVModel`` object
 
     Args:
         pwv_variability (str, Numeric): How to vary PWV as a function of time
+        cache_pwv_los (int): Optionally cache PWV values along the line of sight up to given number of bytes
 
     Returns:
         An instantiated ``PWVModel`` object
@@ -54,22 +55,23 @@ def create_pwv_model(pwv_variability, cache=False):
 
     # Keep a fixed PWV concentration
     if isinstance(pwv_variability, (float, int)):
-        return create_constant_pwv_model(pwv_variability, cache=cache)
+        return create_constant_pwv_model(pwv_variability, cache_pwv_los=cache_pwv_los)
 
     # Model PWV continuously over the year using CTIO data
     elif pwv_variability == 'epoch':
-        return models.PWVModel.from_suominet_receiver(ctio, 2016, [2017], cache=cache)
+        return models.PWVModel.from_suominet_receiver(ctio, 2016, [2017], cache_pwv_los=cache_pwv_los)
 
     else:
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
 
-def create_sn_model(source='salt2-extended', pwv_model=None, cache=False):
+def create_sn_model(source='salt2-extended', pwv_model=None, cache_trans=False):
     """Create a supernova model with optional PWV effects
 
     Args:
         source (str, Source): Spectral template to use for the SN model
         pwv_model (PWVModel): How to vary PWV as a function of time
+        cache_trans    (int): Optionally cache transmission calculations up to given number of bytes
 
     Returns:
         An instantiated ``snat_sim`` supernova model
@@ -78,7 +80,7 @@ def create_sn_model(source='salt2-extended', pwv_model=None, cache=False):
     model = models.SNModel(source=source)
     if pwv_model is not None:
         model.add_effect(
-            effect=models.VariablePWVTrans(pwv_model, cache=cache),
+            effect=models.VariablePWVTrans(pwv_model, cache_trans=cache_trans),
             name='',
             frame='obs')
 
@@ -97,8 +99,8 @@ def run_pipeline(cli_args):
     sn_model_sim = create_sn_model(cli_args.source, pwv_model_sim)
 
     print('Creating fitting model...')
-    pwv_model_fit = create_pwv_model(cli_args.fit_variability)
-    sn_model_fit = create_sn_model(cli_args.source, pwv_model_fit)
+    pwv_model_fit = create_pwv_model(cli_args.fit_variability, cache_pwv_los=250_000)
+    sn_model_fit = create_sn_model(cli_args.source, pwv_model_fit, cache_trans=250_000)
 
     print('Instantiating pipeline...')
     pipeline = FittingPipeline(
