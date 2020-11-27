@@ -2,8 +2,45 @@
 PLaSTICC simulations. Data is accessible by specifying the cadence and
 model used in a given simulation.
 
-Module API
-----------
+Usage Example
+-------------
+
+The ``plasticc`` module makes it easy to check what data is available in
+the current working environment:
+
+.. doctest:: python
+
+   >>> from snat_sim import plasticc
+
+   >>> # Check where the `snat_sim` package is expecting to find data
+   >>> print(plasticc.get_data_dir())  #doctest:+SKIP
+
+   >>> # Get a list of cadences available in the directory printed above
+   >>> print(plasticc.get_available_cadences())  #doctest:+SKIP
+
+   >>> # Count the number of light-curves for a given cadence and SN model
+   >>> num_lc = plasticc.count_light_curves('alt_sched', model=11)
+
+It also provides **basic** data access via the construction of an iterator
+over all available light-curves for a given cadence / model. You should expect
+the first evaluation of the iterator to be slow since it has to load
+light-curve data into memory as chunks.
+
+.. code-block:: python
+
+   >>> lc_iterator = plasticc.iter_lc_for_cadence_model('alt_sched', model=11)
+   >>> plasticc_lc = next(lc_iterator)
+
+PLaSTICC simulations were run using the ``SNANA`` package in FORTRAN and thus
+are returned using the ``SNANA`` data model. Alternatively, you can convert the
+returned tables to the data model used by the ``sncosmo`` Python package.
+
+.. code-block:: python
+
+   >>> formatted_lc = plasticc.format_plasticc_sncosmo(plasticc_lc)
+
+Module Docs
+-----------
 """
 
 import os
@@ -96,13 +133,12 @@ def iter_lc_for_header(header_path, verbose=True):
         verbose (bool): Display a progress bar
 
     Yields:
-        - An Astropy table with the MJD and filter for each observation
+        An Astropy table with the MJD and filter for each observation
     """
 
     # Load meta data from the header file
     with fits.open(header_path) as header_hdulist:
         meta_data = pd.DataFrame(header_hdulist[1].data)
-        meta_data = meta_data
 
     # Load light-curves from the photometry file, This is slow
     phot_file_path = str(header_path).replace('HEAD', 'PHOT')
@@ -115,13 +151,16 @@ def iter_lc_for_header(header_path, verbose=True):
     # for key, val in phot_data.iteritems():
     #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 
-    # phot_data = phot_data[['MJD', 'FLT', 'PHOTFLAG']]
-    for idx, meta in tqdm(meta_data.iterrows(), total=len(meta_data), position=1, disable=not verbose):
-        lc_start = int(meta['PTROBS_MIN']) - 1
-        lc_end = int(meta['PTROBS_MAX'])
-        lc = phot_data[lc_start: lc_end]
-        lc.meta.update(meta)
-        yield lc
+    with tqdm(meta_data.iterrows(), total=len(meta_data), disable=not verbose) as pbar:
+        for idx, meta in pbar:
+            lc_start = int(meta['PTROBS_MIN']) - 1
+            lc_end = int(meta['PTROBS_MAX'])
+            lc = phot_data[lc_start: lc_end]
+            lc.meta.update(meta)
+
+            yield lc
+            pbar.update(1)
+            pbar.refresh()
 
 
 def iter_lc_for_cadence_model(cadence, model, verbose=True):
@@ -138,9 +177,13 @@ def iter_lc_for_cadence_model(cadence, model, verbose=True):
 
     total = count_light_curves(cadence, model)
     light_curve_iter = get_model_headers(cadence, model)
-    for header_path in tqdm(light_curve_iter, desc=cadence, total=total, disable=not verbose):
-        for lc in iter_lc_for_header(header_path, verbose=False):
-            yield lc
+
+    with tqdm(light_curve_iter, desc=cadence, total=total, disable=not verbose) as pbar:
+        for header_path in pbar:
+            for lc in iter_lc_for_header(header_path, verbose=False):
+                yield lc
+                pbar.update(1)
+                pbar.refresh()
 
 
 def format_plasticc_sncosmo(light_curve):
@@ -175,7 +218,7 @@ def extract_cadence_data(light_curve, zp=25, gain=1, skynoise=0, drop_nondetecti
     Args:
         light_curve      (Table): Astropy table with PLaSTICC light-curve data
         zp        (float, array): Overwrite the PLaSTICC zero-point with this value
-        gain               (int): Gain to use during simulation
+        gain             (float): Gain to use during simulation
         skynoise    (int, array): Simulated skynoise in counts
         drop_nondetection (bool): Drop data with PHOTFLAG == 0
 
@@ -204,7 +247,7 @@ def duplicate_plasticc_sncosmo(
 
     Args:
         light_curve  (Table): Astropy table with PLaSTICC light-curve data
-        model        (Model): Model to use when simulating light-curve flux
+        model      (SNModel): SNModel to use when simulating light-curve flux
         zp    (float, array): Optionally overwrite the PLaSTICC zero-point with this value
         gain         (float): Gain to use during simulation
         skynoise     (float):  Optionally overwrite the PLaSTICC skynoise with this value

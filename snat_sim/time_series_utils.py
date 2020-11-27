@@ -3,8 +3,8 @@ for manipulating time series data. It is intended to supplement existing
 functionality in the ``pandas`` package with support for tasks particular to
 dealing with atmospheric / weather data.
 
-Module API
-----------
+Module Docs
+-----------
 """
 
 import warnings
@@ -17,7 +17,7 @@ from astropy import units as u
 def datetime_to_sec_in_year(date):
     """Calculate number of seconds elapsed modulo 1 year
 
-    Accurate to within a microsecond
+    Accurate to within a microsecond.
 
     Args:
         date (datetime, array, pd.Datetime): Pandas datetime array
@@ -48,7 +48,7 @@ def datetime_to_sec_in_year(date):
 
 
 def supplemented_data(input_data, year, supp_years=tuple()):
-    """Return a subset of a dataframe corresponding to a given year
+    """Return the supplemented subset of a dataframe corresponding to a given year
 
     Data for the given year is supplemented with any available data from
     supplementary years by asserting that the measured values from
@@ -115,7 +115,7 @@ def periodic_interpolation(series):
 
 
 def resample_data_across_year(series):
-    """Return a copy of a pandas Datetime series resampled evenly from the
+    """Return a copy of a pandas series resampled evenly from the
     beginning of the earliest year through the end of the latest year.
 
     Args:

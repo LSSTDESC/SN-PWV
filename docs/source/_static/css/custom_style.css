@@ -1,0 +1,73 @@
+/* -- Left Sidebar ---------------------------------------------------------- */
+
+a.text-logo {
+    color: white;
+}
+
+div.sidebar-block h2 {
+    padding: 0;
+}
+
+div.sidebar-block p {
+    border-bottom: none;
+    font-size: 14px;
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    padding: 0 0 0 10px;
+    font-weight: bold;
+    color: #606060;
+}
+
+/* -- Rendered Notebooks ---------------------------------------------------- */
+
+#right-column {
+    max-width: 1200px;
+    padding-top: 1px;
+}
+
+table {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 30px;
+}
+
+table.field-list {
+    border: none;
+}
+
+div.section {
+    padding-bottom: 10px
+}
+
+.mi, .mo, .mfrac {
+    color: unset;
+}
+
+dl {
+    margin-bottom: 40px;
+}
+
+/* -- Code and API ---------------------------------------------------------- */
+
+
+.py.class, .py.function {
+    background: #fafafa;
+    padding: 10px;
+}
+
+.py.class code, .py.function code, .sig-name.descname, .sig-prename.descclassname {
+    background: #fafafa;
+}
+
+/* -- Rendered Notebooks ---------------------------------------------------- */
+
+div.highlight {
+    overflow: hidden;
+}
+
+a.copybtn {
+    margin-right: 5px
+}
+
+div.stderr a.copybtn, div.nboutput a.copybtn {
+    display: none;
+}

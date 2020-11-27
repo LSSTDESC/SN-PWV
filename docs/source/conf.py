@@ -10,6 +10,7 @@ import sys
 from pathlib import Path
 
 import guzzle_sphinx_theme
+import sncosmo
 
 package_source_path = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(package_source_path))
@@ -33,7 +34,8 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx_copybutton',
     'nbsphinx',
-    'nbsphinx_link'
+    'nbsphinx_link',
+    'sphinx.ext.doctest'
 ]
 
 # Syntax highlighting style
@@ -45,12 +47,12 @@ nbsphinx_execute = 'never'
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['templates']
-html_static_path = ['./static/']
+html_static_path = ['_static']
 
 # These paths are either relative to html_static_path
 # or fully qualified paths (eg. https://...)
 html_css_files = [
-    'custom_style.css',
+    'css/custom_style.css',
 ]
 
 # -- Options for HTML output -------------------------------------------------
@@ -62,3 +64,22 @@ html_short_title = 'SNAT-SIM'
 html_sidebars = {
     '**': ['logo-text.html', 'searchbox.html', 'globaltoc.html']
 }
+
+# Download sncosmo data ahead of time so download messages don't interfere
+# with doctests later on
+sncosmo.get_source('salt2')
+sncosmo.get_bandpass('sdssu')
+sncosmo.get_bandpass('sdssg')
+sncosmo.get_bandpass('sdssr')
+sncosmo.get_bandpass('sdssi')
+sncosmo.get_bandpass('standard::b')
+
+
+def skip(app, what, name, obj, would_skip, options):
+    if name == "__init__":
+        return False
+    return would_skip
+
+
+def setup(app):
+    app.connect("autodoc-skip-member", skip)

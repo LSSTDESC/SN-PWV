@@ -1,0 +1,28 @@
+version: "2"
+checks:
+  argument-count:
+    config:
+      threshold: 8
+  file-lines:
+    enabled: false
+
+plugins:
+  pep8:
+    enabled: true
+    checks:
+      E402:
+        enabled: false
+
+  sonar-python:
+    enabled: true
+    checks:
+      python:S107:
+        enabled: false
+
+  radon:
+    enabled: true
+    config:
+      threshold: "C"
+
+  bandit:
+    enabled: true

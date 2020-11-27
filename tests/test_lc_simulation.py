@@ -94,7 +94,7 @@ class CreateObservationsTable(TestCase):
 
 
 class RealizeLC(TestCase):
-    """Tests for the ``realize_lc`` function"""
+    """Tests for the ``simulate_lc_fixed_snr`` function"""
 
     def setUp(self):
         """Simulate a cadence and associated light-curve"""
@@ -106,7 +106,7 @@ class RealizeLC(TestCase):
         self.snr = 12
         self.params = dict(x1=.8, c=-.5, z=z, t0=1, x0=1)
         self.obs = lc_simulation.create_observations_table()
-        self.simulated_lc = lc_simulation.realize_lc(
+        self.simulated_lc = lc_simulation.simulate_lc_fixed_snr(
             self.obs, self.model, self.snr, **self.params)
 
     def test_simulated_snr(self):
@@ -150,7 +150,7 @@ class RealizeLC(TestCase):
 
         z = 0.5
         expected_x0 = lc_simulation.calc_x0_for_z(z, self.model.source)
-        simulated_lc = lc_simulation.realize_lc(self.obs, self.model, z=z)
+        simulated_lc = lc_simulation.simulate_lc_fixed_snr(self.obs, self.model, z=z)
         self.assertEqual(expected_x0, simulated_lc.meta['x0'])
 
     def test_meta_includes_all_params(self):
@@ -159,18 +159,18 @@ class RealizeLC(TestCase):
         """
 
         expected_params = self.model.param_names
-        simulated_lc = lc_simulation.realize_lc(self.obs, self.model, z=0.5)
+        simulated_lc = lc_simulation.simulate_lc_fixed_snr(self.obs, self.model, z=0.5)
         meta_params = list(simulated_lc.meta.keys())
         self.assertListEqual(expected_params, meta_params)
 
     def test_raises_for_z_equals_0(self):
         """Test a value error is raised for simulating z == 0"""
 
-        self.assertRaises(ValueError, lc_simulation.realize_lc, self.obs, self.model, z=0)
+        self.assertRaises(ValueError, lc_simulation.simulate_lc_fixed_snr, self.obs, self.model, z=0)
 
 
 class IterLCS(TestCase):
-    """Tests for the ``iter_lcs`` light-curve iterator"""
+    """Tests for the ``iter_lcs_fixed_snr`` light-curve iterator"""
 
     def setUp(self):
         """Create a new light-curve iterator for each test"""
@@ -181,7 +181,7 @@ class IterLCS(TestCase):
         self.model.add_effect(models.StaticPWVTrans(), '', 'obs')
 
         self.observations = lc_simulation.create_observations_table()
-        self.lc_iter = lc_simulation.iter_lcs(
+        self.lc_iter = lc_simulation.iter_lcs_fixed_snr(
             self.observations,
             self.model,
             self.pwv_vals,

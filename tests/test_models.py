@@ -2,12 +2,11 @@
 
 import inspect
 from copy import copy
-from unittest import TestCase, skip
+from unittest import TestCase
 
 import numpy as np
 import pandas as pd
 import sncosmo
-from pwv_kpno.defaults import v1_transmission
 from sncosmo.tests import test_models as sncosmo_test_models
 
 from snat_sim import constants as const
@@ -74,6 +73,37 @@ class TestVariablePropagationEffect(TestCase):
         self.assertEqual(params[-1], 'time')
 
 
+class TestStaticPWVTrans(TestCase):
+    """Tests for the ``StaticPWVTrans`` class"""
+
+    def setUp(self):
+        self.transmission_effect = models.StaticPWVTrans()
+
+    def test_default_pwv_is_zero(self):
+        """Test the default ``pwv`` parameter is 0"""
+
+        self.assertEqual(0, self.transmission_effect['pwv'])
+
+    def test_propagation_applies_pwv_transmission(self):
+        """Test the ``propagate`` applies PWV absorption"""
+
+        # Get the expected transmission
+        pwv = 5
+
+        wave = np.arange(4000, 5000)
+        transmission_model = models.FixedResTransmission(res=self.transmission_effect.transmission_res)
+        transmission = transmission_model(pwv=pwv, wave=wave)
+
+        # Get the expected flux
+        flux = np.ones_like(wave)
+        expected_flux = flux * transmission
+
+        # Get the returned flux
+        self.transmission_effect._parameters = [pwv]
+        propagated_flux = self.transmission_effect.propagate(wave, flux)
+        np.testing.assert_equal(expected_flux, propagated_flux[0])
+
+
 class TestVariablePWVTrans(TestCase):
     """Tests for the ``modeling.VariablePWVTrans`` class"""
 
@@ -101,24 +131,6 @@ class TestVariablePWVTrans(TestCase):
         self.assertEqual(self.propagation_effect['lon'], const.vro_longitude)
         self.assertEqual(self.propagation_effect['alt'], const.vro_altitude)
 
-    @skip('Deprecated')
-    def test_transmission_version_support(self):
-        """Test the propagation object uses the atmospheric model corresponding specified at init"""
-
-        from pwv_kpno.transmission import CrossSectionTransmission, TransmissionModel
-
-        default_effect = models.VariablePWVTrans(self.mock_pwv_model)
-        self.assertIsInstance(default_effect._transmission_model, CrossSectionTransmission)
-
-        v1_effect = models.VariablePWVTrans(self.mock_pwv_model, transmission_version='v1')
-        self.assertIsInstance(v1_effect._transmission_model, CrossSectionTransmission)
-
-        v2_effect = models.VariablePWVTrans(self.constant_pwv_func, transmission_version='v2')
-        self.assertIsInstance(v2_effect._transmission_model, TransmissionModel)
-
-        with self.assertRaises(ValueError):
-            models.VariablePWVTrans(self.mock_pwv_model, transmission_version='NotAVersion')
-
     def test_propagation_includes_pwv_transmission(self):
         """Test propagated flux includes absorption from PWV"""
 
@@ -128,14 +140,14 @@ class TestVariablePWVTrans(TestCase):
         np.testing.assert_array_less(propagated_flux, flux)
 
 
-class TestModel(sncosmo_test_models.TestModel, TestCase):
-    """Tests for the ``modeling.Model`` class
+class TestSNModel(sncosmo_test_models.TestModel, TestCase):
+    """Tests for the ``modeling.SNModel`` class
 
     Includes all tests written for the ``sncosmo.Model`` class.
     """
 
     def setUp(self):
-        self.model = models.Model(
+        self.model = models.SNModel(
             source=sncosmo_test_models.flatsource(),
             effects=[sncosmo.CCM89Dust()],
             effect_frames=['obs'],
@@ -144,10 +156,10 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
         self.model.set(z=0.0001)
 
     def test_copy_returns_correct_type(self):
-        """Test copied objects are of ``modeling.Model`` type"""
+        """Test copied objects are of ``modeling.SNModel`` type"""
 
         copied = copy(self.model)
-        self.assertIsInstance(copied, models.Model)
+        self.assertIsInstance(copied, models.SNModel)
 
     def test_copy_copies_parameters(self):
         """Test parameter values are copied to new id values"""
@@ -168,7 +180,7 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
     def test_error_for_bad_frame(self):
         """Test an error is raised for a band reference frame name"""
 
-        model = models.Model(source='salt2')
+        model = models.SNModel(source='salt2')
         with self.assertRaises(ValueError):
             model.add_effect(effect=sncosmo.CCM89Dust(), frame='bad_frame_name', name='mw')
 
@@ -176,7 +188,7 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
         """Test effects in the ``free`` frame of reference include an added redshift parameter"""
 
         effect_name = 'freeMW'
-        model = models.Model(source='salt2')
+        model = models.SNModel(source='salt2')
         model.add_effect(effect=sncosmo.CCM89Dust(), frame='free', name=effect_name)
         self.assertIn(effect_name + 'z', model.param_names)
 
@@ -184,50 +196,16 @@ class TestModel(sncosmo_test_models.TestModel, TestCase):
         """Test a time variable effect can be added and called without error"""
 
         effect = models.VariablePWVTrans(create_constant_pwv_model())
-        model = models.Model(sncosmo_test_models.flatsource())
+        model = models.SNModel(sncosmo_test_models.flatsource())
         model.add_effect(effect=effect, frame='obs', name='Variable PWV')
         model.flux(time=0, wave=[4000])
 
     def test_sed_matches_sncosmo_model(self):
-        """Test the SED returned by the ``modeling.Model`` class matches the ``sncosmo.Model`` class"""
+        """Test the SED returned by the ``modeling.SNModel`` class matches the ``sncosmo.SNModel`` class"""
 
         wave = np.arange(3000, 12000)
         sncosmo_model = sncosmo.Model('salt2-extended')
         sncosmo_flux = sncosmo_model.flux(0, wave)
-        custom_model = models.Model(sncosmo_model.source)
+        custom_model = models.SNModel(sncosmo_model.source)
         custom_flux = custom_model.flux(0, wave)
         np.testing.assert_equal(custom_flux, sncosmo_flux)
-
-
-class TestPWVTrans(TestCase):
-    """Tests for the addition of PWV to sncosmo models"""
-
-    def setUp(self):
-        self.transmission_effect = models.StaticPWVTrans()
-
-    def test_default_pwv_is_zero(self):
-        """Test the default ``pwv`` parameter is 0"""
-
-        self.assertEqual(0, self.transmission_effect['pwv'])
-
-    def test_default_resolution_is_five(self):
-        """Test the default ``res`` parameter is 5"""
-
-        self.assertEqual(5, self.transmission_effect['res'])
-
-    def test_propagation_applies_pwv_transmission(self):
-        """Test the ``propagate`` applies PWV absorption"""
-
-        # Get the expected transmission
-        pwv = res = 5
-        wave = np.arange(4000, 5000)
-        transmission = v1_transmission(pwv=pwv, wave=wave, res=res)
-
-        # Get the expected flux
-        flux = np.ones_like(wave)
-        expected_flux = flux * transmission
-
-        # Get the returned flux
-        self.transmission_effect._parameters = [pwv, res]
-        propagated_flux = self.transmission_effect.propagate(wave, flux)
-        np.testing.assert_equal(expected_flux, propagated_flux[0])
