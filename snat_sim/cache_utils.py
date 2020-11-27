@@ -5,36 +5,34 @@ Module API
 ----------
 """
 
-from functools import lru_cache, wraps
+from functools import wraps
 
 
-def array_to_tuple(np_array):
-    """Typecast a numpy array as a nested tuple"""
+def fast_cache(*args):
+    """Memoization decorator supporting ``numpy`` arrays
 
-    try:
-        return tuple(array_to_tuple(_) for _ in np_array)
+    Args:
+        *args (str): Function arguments to treat as numpy arrays
 
-    except TypeError:
-        return np_array
-
-
-# Credit: https://gist.github.com/Susensio/61f4fee01150caaac1e10fc5f005eb75
-def np_cache(*args, **kwargs):
-    """LRU cache implementation for functions whose FIRST parameter is a numpy array"""
+    Returns:
+        A callable function decorator
+    """
 
     def decorator(function):
-        @wraps(function)
-        def wrapper(*args, **kwargs):
-            return cached_wrapper(*array_to_tuple(args), **kwargs)
+        class Memoization(dict):
+            @wraps(function)
+            def wrapper(self, **kwargs):
+                kwargs_for_key = kwargs.copy()
+                kwargs_for_key.update({a: kwargs_for_key[a].tostring() for a in args})
+                key = tuple(kwargs_for_key.items())
+                try:
+                    out = self[key]
 
-        @lru_cache(*args, **kwargs)
-        def cached_wrapper(*args, **kwargs):
-            return function(*args, **kwargs)
+                except KeyError:
+                    out = self[key] = function(**kwargs)
 
-        # copy lru_cache attributes over too
-        wrapper.cache_info = cached_wrapper.cache_info
-        wrapper.cache_clear = cached_wrapper.cache_clear
+                return out
 
-        return wrapper
+        return Memoization().wrapper
 
     return decorator

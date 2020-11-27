@@ -42,7 +42,7 @@ def passes_quality_cuts(light_curve):
     return sum(passed_cuts) >= 2
 
 
-def create_pwv_model(pwv_variability):
+def create_pwv_model(pwv_variability, cache=False):
     """Create a ``PWVModel`` object
 
     Args:
@@ -54,17 +54,17 @@ def create_pwv_model(pwv_variability):
 
     # Keep a fixed PWV concentration
     if isinstance(pwv_variability, (float, int)):
-        return create_constant_pwv_model(pwv_variability)
+        return create_constant_pwv_model(pwv_variability, cache=cache)
 
     # Model PWV continuously over the year using CTIO data
     elif pwv_variability == 'epoch':
-        return models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
+        return models.PWVModel.from_suominet_receiver(ctio, 2016, [2017], cache=cache)
 
     else:
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
 
-def create_sn_model(source='salt2-extended', pwv_model=None):
+def create_sn_model(source='salt2-extended', pwv_model=None, cache=False):
     """Create a supernova model with optional PWV effects
 
     Args:
@@ -78,7 +78,7 @@ def create_sn_model(source='salt2-extended', pwv_model=None):
     model = models.SNModel(source=source)
     if pwv_model is not None:
         model.add_effect(
-            effect=models.VariablePWVTrans(pwv_model),
+            effect=models.VariablePWVTrans(pwv_model, cache=cache),
             name='',
             frame='obs')
 

@@ -32,7 +32,7 @@ def create_mock_pwv_data(
     return pd.Series(pwv, index=index)
 
 
-def create_constant_pwv_model(constant_pwv_value=4):
+def create_constant_pwv_model(constant_pwv_value=4, cache=False):
     """Create a ``PWVModel`` instance that returns a constant PWV at zenith
 
     Args:
@@ -45,7 +45,7 @@ def create_constant_pwv_model(constant_pwv_value=4):
     date_sampling = np.arange(datetime(2020, 1, 1), datetime(2020, 12, 31), timedelta(days=1))
     pwv = np.full(len(date_sampling), constant_pwv_value)
     model_data = pd.Series(pwv, index=pd.to_datetime(date_sampling))
-    return PWVModel(model_data)
+    return PWVModel(model_data, cache=cache)
 
 
 def create_mock_plasticc_light_curve():
