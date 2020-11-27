@@ -79,9 +79,9 @@ class FixedResTransmission:
 
         self.cache = cache
         if cache:
-            self.__call__ = fast_cache('pwv', 'wave')(self.__call__)
+            self.calc_transmission = fast_cache('pwv', 'wave')(self.calc_transmission)
 
-    def __call__(self, pwv, wave=None):
+    def calc_transmission(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
@@ -94,10 +94,6 @@ class FixedResTransmission:
         Returns:
             The interpolated transmission at the given wavelengths / resolution
         """
-
-        print(self.cache, hash(str(pwv)), hash(str(wave)), flush=True)
-        if self.cache:
-            breakpoint()
 
         wave = self.samp_wave if wave is None else wave
         pwv_eff = calc_pwv_eff(pwv, norm_pwv=self.norm_pwv, eff_exp=self.eff_exp)
@@ -292,7 +288,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
         """
 
         # The class guarantees PWV is a scalar, so ``transmission`` is 1D
-        transmission = self._transmission_model(self.parameters[0], wave)
+        transmission = self._transmission_model.calc_transmission(self.parameters[0], wave)
 
         # ``flux`` is 2D, so we do a quick cast
         return flux * transmission.values[None, :]
@@ -359,7 +355,7 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
             alt=self['alt'],
             time_format=self._time_format)
 
-        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        transmission = self._transmission_model.calc_transmission(pwv=pwv, wave=np.atleast_1d(wave))
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
             if np.ndim(flux) == 1:
