@@ -121,13 +121,19 @@ class PWVModel:
         """Construct a ``PWVModel`` instance using data from a SuomiNet receiver
 
         Args:
-            receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
-            year                    (float): Year to use data from when building the model
-            supp_years      (List[Numeric]): Years to supplement data with when missing from ``year``
+            receiver (GPSReceiver): GPS receiver to access data from
+            year           (float): Year to use data from when building the model
+            supp_years (List[int]): Years to supplement data with when missing from ``year``
 
         Returns:
             An interpolation function that accepts ``date`` and ``format`` arguments
         """
+
+        all_years = [year]
+        if supp_years:
+            all_years.extend(supp_years)
+
+        receiver.download_available_data(all_years)
 
         weather_data = receiver.weather_data().PWV
         supp_data = tsu.supplemented_data(weather_data, year, supp_years)
