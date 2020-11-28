@@ -33,13 +33,18 @@ Module Docs
 -----------
 """
 
+import inspect
 import multiprocessing as mp
 import warnings
 from pathlib import Path
 
+import numpy as np
+import pandas as pd
 import sncosmo
+from astropy.cosmology import FlatwCDM
+from iminuit import Minuit
 
-from . import plasticc, reference_stars
+from . import plasticc, reference_stars, constants as const
 
 
 class KillSignal:
@@ -79,7 +84,50 @@ class ProcessManager:
             p.start()
 
 
-class FittingPipeline(ProcessManager):
+class OutputDataModel:
+    """Enforces the data model of pipeline output files"""
+
+    @staticmethod
+    def build_result_table_entry(meta, fitted_model, result):
+        """Combine light-curve fit results into single row matching the output table file format
+
+        Args:
+            meta          (dict): Meta data for the simulated light-curve
+            fitted_model (Model): Supernova model fitted to the data
+            result      (Result): sncosmo fit Result object
+
+        Returns:
+            A list of strings and floats
+        """
+
+        out_list = [meta['SNID']]
+        out_list.extend(result.parameters)
+        out_list.extend(result.errors.values())
+        out_list.append(result.chisq)
+        out_list.append(result.ndof)
+        out_list.append(fitted_model.bandmag('bessellb', 'ab', time=fitted_model['t0']))
+        out_list.append(fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
+        return out_list
+
+    @staticmethod
+    def result_table_col_names(fit_model):
+        """Return a list of column names for a given supernova model
+
+        Args:
+            fit_model (Model): Model with parameters to use as column names
+        """
+
+        col_names = ['SNID']
+        col_names.extend(fit_model.param_names)
+        col_names.extend(param + '_err' for param in fit_model.param_names)
+        col_names.append('chisq')
+        col_names.append('ndof')
+        col_names.append('mb')
+        col_names.append('abs_mag')
+        return col_names
+
+
+class FittingPipeline(ProcessManager, OutputDataModel):
     """Pipeline of parallel processes for simulating and fitting light-curves"""
 
     def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
@@ -212,19 +260,16 @@ class FittingPipeline(ProcessManager):
     def _fit_light_curves(self):
         """Fit light-curves"""
 
+        warnings.simplefilter('ignore', category=DeprecationWarning)
         while not isinstance(light_curve := self.queue_duplicated_lc.get(), KillSignal):
             # Use the true light-curve parameters as the initial guess
             self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
 
-            warnings.simplefilter('ignore', category=DeprecationWarning)
-            _, fitted_model = sncosmo.fit_lc(
+            result, fitted_model = sncosmo.fit_lc(
                 light_curve, self.fit_model, self.vparams,
                 guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
-            out_vals = list(fitted_model.parameters)
-            out_vals.insert(0, light_curve.meta['SNID'])
-
-            self.queue_fit_results.put(out_vals)
+            self.queue_fit_results.put(self.build_result_table_entry(light_curve.meta, fitted_model, result))
 
         # Propagate kill signal
         self.queue_fit_results.put(light_curve)
@@ -235,6 +280,8 @@ class FittingPipeline(ProcessManager):
         kill_count = 0  # Count closed upstream processes so this process knows when to exit
 
         with self.out_path.open('w') as outfile:
+            outfile.write(','.join(self.result_table_col_names(self.fit_model)))
+
             while True:
                 if isinstance(results := self.queue_fit_results.get(), KillSignal):
                     kill_count += 1
@@ -246,3 +293,128 @@ class FittingPipeline(ProcessManager):
                 else:
                     new_line = ','.join(map(str, results)) + '\n'
                     outfile.write(new_line)
+
+
+@pd.api.extensions.register_dataframe_accessor("snat_sim")
+class CosmologyAccessor:
+    """Chi-squared minimizer for fitting a cosmology to pipeline results"""
+
+    def __init__(self, pandas_obj):
+        self.data = pandas_obj
+
+    def calc_distmod(self, abs_mag):
+        """Return the distance modulus for an assumed absolute magnitude
+
+        Args:
+            abs_mag (float): The B-band absolute magnitude
+
+        Returns:
+            The distance modulus
+        """
+
+        return self.data['mb'] - abs_mag
+
+    # noinspection PyPep8Naming
+    def chisq(self, H0, Om0, abs_mag, w0, alpha, beta):
+        """Calculate the chi-squared for given cosmological parameters
+
+        Args:
+            H0      (float): Hubble constant
+            Om0     (float): Matter density
+            abs_mag (float): SNe Ia intrinsic peak magnitude
+            w0      (float): Dark matter equation of state
+            alpha   (float): Stretch correction nuisance parameter
+            beta    (float): Color correction nuisance parameter
+
+        Returns:
+            The chi-squared of the resulting cosmology
+        """
+
+        measured_mu = self.calc_distmod(abs_mag) + alpha * self.data['x1'] - beta * self.data['c']
+
+        cosmology = FlatwCDM(H0=H0, Om0=Om0, w0=w0)
+        modeled_mu = cosmology.distmod(self.data['z']).value
+        return np.sum(((measured_mu - modeled_mu) ** 2) / (self.data['mb_err'] ** 2))
+
+    # noinspection PyPep8Naming
+    def chisq_grid(self, H0, Om0, abs_mag, w0, alpha, beta):
+        """Calculate the chi-squared on a grid of cosmological parameters
+
+        Arguments are automatically repeated along the grid so that the
+        dimensions of each array match.
+
+        Args:
+            H0      (float, ndarray): Hubble constant
+            Om0     (float, ndarray): Matter density
+            abs_mag (float, ndarray): SNe Ia intrinsic peak magnitude
+            w0      (float, ndarray): Dark matter equation of state
+            alpha            (float): Stretch correction nuisance parameter
+            beta             (float): Color correction nuisance parameter
+
+        Returns:
+            An array of chi-squared values
+        """
+
+        new_args = self._match_argument_dimensions(H0, Om0, abs_mag, w0, alpha, beta)
+        return np.vectorize(self.chisq)(*new_args)
+
+    @staticmethod
+    def _match_argument_dimensions(*args):
+        """Reshape arguments so they match the shape of the argument with the
+        most dimensions.
+
+        Args:
+            *args (float, ndarray): Values to cast onto the grid
+
+        Returns:
+            A list with each argument cast to it's new shape
+        """
+
+        # Get the shape of the argument with the most dimensions
+        grid_shape = np.shape(args[np.argmax([np.ndim(arg) for arg in args])])
+
+        # Reshape each argument to match the dimensions from above
+        return [np.full(grid_shape, arg) for arg in args]
+
+    def minimize(self, **kwargs):
+        """Fit cosmology to the instantiated data
+
+        Kwargs:
+            Accepts any iminuit style keyword arguments for parameters
+              ``H0``, ``Om0``, ``abs_mag``, and ``w0``.
+
+        Returns:
+            Optimized Minuit object
+        """
+
+        minimizer = Minuit(self.chisq, **kwargs)
+        minimizer.migrad()
+        return minimizer
+
+    def minimize_mc(self, samples, n=None, frac=None, statistic=None, **kwargs):
+        """Fit cosmology to the instantiated data using monte carlo resampling
+
+        Args:
+            samples        (int): Number of samples to draw
+            n              (int): Size of each sample. Cannot be used with ``frac``
+            frac         (float): Fraction of data to include in each sample. Cannot be used with ``size``
+            statistic (callable): Optionally apply a statistic to the returned values
+            Accepts any iminuit style keyword arguments for parameters
+              ``H0``, ``Om0``, ``abs_mag``, and ``w0``.
+
+        Returns:
+            List of optimized Minuit object or a dictionary of the applies statistic to those values
+        """
+
+        if statistic:
+            samples = [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs).np_values() for _ in range(samples)]
+            stat_val = statistic(samples)
+
+            # Create a dictionary mapping the argument name to the applies statistic
+            arg_names = inspect.getfullargspec(self.chisq).args
+            samples = dict(zip(arg_names[1:], stat_val))  # First argument is self, so drop it
+
+        else:
+            samples = [self.data.sample(n=n, frac=frac).snat_sim.minimize(**kwargs) for _ in range(samples)]
+
+        return samples

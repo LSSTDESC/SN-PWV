@@ -26,5 +26,8 @@ setup(name='snat_sim',
       license='GPL v3',
       python_requires='>=3.8',
       install_requires=requirements,
-      include_package_data=True
+      include_package_data=True,
+      extras_require={
+          'tests': ['sndata']
+      }
       )
