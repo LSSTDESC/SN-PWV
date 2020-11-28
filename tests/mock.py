@@ -77,3 +77,43 @@ def create_mock_plasticc_light_curve():
             'SIM_SALT2x0': 1
         }
     )
+
+
+def create_mock_pipeline_outputs():
+    """Create DataFrame with mock results from the snat_sim pipeline using DES SN3YR data
+
+    Returns:
+        An astropy table if ``path`` is not given
+    """
+
+    from sndata.des import SN3YR
+
+    # Download DES data if not already available
+    sn3yr = SN3YR()
+    sn3yr.download_module_data()
+
+    # Load DES fit results and format them to match pipeline outputs
+    pipeline_fits = sn3yr.load_table('SALT2mu_DES+LOWZ_C11.FITRES')
+    pipeline_fits.rename_column('CID', 'snid')
+    pipeline_fits.rename_column('zCMB', 'z')
+    pipeline_fits.rename_column('zCMBERR', 'z_err')
+    pipeline_fits.rename_column('PKMJD', 't0')
+    pipeline_fits.rename_column('PKMJDERR', 't0_err')
+    pipeline_fits.rename_column('x0ERR', 'x0_err')
+    pipeline_fits.rename_column('x1ERR', 'x1_err')
+    pipeline_fits.rename_column('cERR', 'c_err')
+    pipeline_fits.rename_column('NDOF', 'dof')
+    pipeline_fits.rename_column('FITCHI2', 'chisq')
+    pipeline_fits.rename_column('RA', 'ra')
+    pipeline_fits.rename_column('DECL', 'dec')
+    pipeline_fits.rename_column('mB', 'mb')
+    pipeline_fits.rename_column('mBERR', 'mb_err')
+    pipeline_fits.meta = dict()
+
+    # Keep only the data outputted by the snat_sim fitting pipeline
+    keep_columns = ['snid', 'dof', 'chisq', 'ra', 'dec', 'mb', 'mb_err']
+    for param in ['z', 't0', 'x0', 'x1', 'c']:
+        keep_columns.append(param)
+        keep_columns.append(param + '_err')
+    pipeline_fits = pipeline_fits[keep_columns]
+    return pipeline_fits.to_pandas()

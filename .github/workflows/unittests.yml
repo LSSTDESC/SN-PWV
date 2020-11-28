@@ -38,7 +38,7 @@ jobs:
         pip install coveralls
         
     - name: Install package and dependencies
-      run: pip install .
+      run: pip install .[tests]
         
     - name: Run tests with coverage
       run: |
