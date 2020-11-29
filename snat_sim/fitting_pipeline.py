@@ -50,10 +50,9 @@ class KillSignal:
 
 
 class ProcessManager:
-    """Handles the starting and termination of processes forked by the child class"""
+    """Handles the starting and termination of forked processes"""
 
-    def __init__(self):
-        self._processes = []
+    _processes = []
 
     def kill(self):
         """Kill all running pipeline processes without trying to exit gracefully"""
@@ -227,7 +226,7 @@ class FittingPipeline(ProcessManager, OutputDataModel):
     def _load_queue_plasticc_lc(self):
         """Load PLaSTICC light-curves from disk into the pipeline"""
 
-        # The queue will block the for loop when it is full, limiting our memory usage
+        # Load light-curves into the first queue in the pipeline
         light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=11)
         for i, light_curve in enumerate(light_curve_iter):
             if i >= self.iter_lim:
@@ -243,7 +242,7 @@ class FittingPipeline(ProcessManager, OutputDataModel):
     def _duplicate_light_curves(self):
         """Simulate light-curves with atmospheric effects"""
 
-        # Determine redshift limit of the simulation model
+        # Determine the redshift limit of the simulation model
         u_band_low = sncosmo.get_bandpass('lsst_hardware_u').minwave()
         source_low = self.sim_model.source.minwave()
         z_limit = (u_band_low / source_low) - 1
@@ -266,6 +265,9 @@ class FittingPipeline(ProcessManager, OutputDataModel):
 
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):
+                self.queue_fit_results.put(
+                    self.build_masked_entry(light_curve.meta, self.fit_model, ValueError('Failed quality check'))
+                )
                 continue
 
             self.queue_duplicated_lc.put(duplicated_lc)
