@@ -29,7 +29,7 @@ jobs:
           pip install . 
           pip install -r docs/requirements.txt
           sudo apt-get update
-          sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc
+          sudo apt-get install -y pandoc
 
       - name: Build Documentation
         working-directory: ./docs
@@ -59,7 +59,7 @@ jobs:
           pip install . 
           pip install -r docs/requirements.txt
           sudo apt-get update
-          sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc
+          sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended
 
       - name: Run doctest
         working-directory: ./docs
