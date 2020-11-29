@@ -115,7 +115,7 @@ class OutputDataModel:
             excep (Exception): Exception raised by the failed fit
 
         Returns:
-            A list of strings and floats
+            A list of strings and floats with masked values set as -99
         """
 
         num_columns = len(self.result_table_col_names(fit_model))
@@ -127,6 +127,9 @@ class OutputDataModel:
 
         Args:
             fit_model (Model): Model with parameters to use as column names
+
+        Returns:
+            List of column names as strings
         """
 
         col_names = ['SNID']
@@ -209,13 +212,13 @@ class FittingPipeline(ProcessManager, OutputDataModel):
         self._processes.append(unload_results_process)
 
     @property
-    def fitting_pool_size(self) -> int:
+    def fitting_pool_size(self):
         """Number of processes used for fitting light-curves"""
 
         return (self.pool_size - 2) // 2
 
     @property
-    def simulation_pool_size(self) -> int:
+    def simulation_pool_size(self):
         """Number of processes used for simulating light-curves"""
 
         io_processes = 2
