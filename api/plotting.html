@@ -128,67 +128,50 @@
 analysis results that are visually consistent and easily reproducible.</p>
 <div class="section" id="plotting-function-summaries">
 <h2>Plotting Function Summaries<a class="headerlink" href="#plotting-function-summaries" title="Permalink to this headline">¶</a></h2>
-<table class="docutils align-default">
+<table class="longtable docutils align-default">
 <colgroup>
-<col style="width: 39%" />
-<col style="width: 61%" />
+<col style="width: 10%" />
+<col style="width: 90%" />
 </colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Function</p></th>
-<th class="head"><p>Description</p></th>
-</tr>
-</thead>
 <tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_delta_mag_vs_z</span></code></p></td>
-<td><p>Single panel, multi-line plot of change in
-magnitude vs z. Color coded by PWV.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_cosmology_fit" title="snat_sim.plotting.plot_cosmology_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_cosmology_fit</span></code></a></p></td>
+<td><p>Plot a cosmological fit to a set of supernova data</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plot_delta_mag_vs_pwv</span></code></p></td>
-<td><p>Single panel, multi-line plot for change in
-magnitude vs PWV. Color coded by redshift.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_delta_colors" title="snat_sim.plotting.plot_delta_colors"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_delta_colors</span></code></a></p></td>
+<td><p>Shows the change in color as a function of redshift.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_derivative_mag_vs_z</span></code></p></td>
-<td><p>Single panel, multi-line plot of slope in
-delta magnitude vs z. Color coded by PWV.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_delta_mag_vs_pwv" title="snat_sim.plotting.plot_delta_mag_vs_pwv"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_delta_mag_vs_pwv</span></code></a></p></td>
+<td><p>Single panel, multi-line plot for change in magnitude vs PWV.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plot_pwv_mag_effects</span></code></p></td>
-<td><p>Multi panel plot with a column for each band
-and a row for each of the first three plots
-in this table.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_delta_mag_vs_z" title="snat_sim.plotting.plot_delta_mag_vs_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_delta_mag_vs_z</span></code></a></p></td>
+<td><p>Single panel, multi-line plot of change in magnitude vs z.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_spectral_template</span></code></p></td>
-<td><p>Plot the salt2-extended spectral template.
-Overlay PWV and bandpass throughput curves.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_delta_mu" title="snat_sim.plotting.plot_delta_mu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_delta_mu</span></code></a></p></td>
+<td><p>Plot the variation in fitted distance modulus as a function of redshift and PWV</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plot_magnitude</span></code></p></td>
-<td><p>Multi-panel plot showing with a column for
-each band. Top row shows simulated magnitudes
-vs Redshift. Bottom row shows mag vs PWV.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_delta_x0" title="snat_sim.plotting.plot_delta_x0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_delta_x0</span></code></a></p></td>
+<td><p>Plot the variation in x0 as a function of redshift and PWV</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_fitted_params</span></code></p></td>
-<td><p>Multi-panel plot showing subplots for each
-salt2 parameter vs redshift. Multiple lines
-included for different PWV values.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_derivative_mag_vs_z" title="snat_sim.plotting.plot_derivative_mag_vs_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_derivative_mag_vs_z</span></code></a></p></td>
+<td><p>Single panel, multi-line plot of slope in delta magnitude vs z.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plot_delta_colors</span></code></p></td>
-<td><p>Shows the change in color as a function of
-redshift color coded by PWV.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_fitted_params" title="snat_sim.plotting.plot_fitted_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_fitted_params</span></code></a></p></td>
+<td><p>Multi-panel plot showing subplots for each salt2 parameter vs redshift.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_delta_x0</span></code></p></td>
-<td><p>Plot the variation in x0 as a function of
-redshift and PWV.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_magnitude" title="snat_sim.plotting.plot_magnitude"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_magnitude</span></code></a></p></td>
+<td><p>Multi-panel plot showing magnitudes in different columns vs PWV and redshift in different rows.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plot_delta_mu</span></code></p></td>
-<td><p>Plot the variation in fitted distance modulus
-as a function of redshift and PWV.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_pwv_mag_effects" title="snat_sim.plotting.plot_pwv_mag_effects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_pwv_mag_effects</span></code></a></p></td>
+<td><p>Multi panel plot with a column for each band and rows for the change in magnitude vs pwv and redshift parameters.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">plot_delta_colors</span></code></p></td>
-<td><p>Plot the change in fitted SN color
-as a function of redshift and PWV.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_residuals_on_sky" title="snat_sim.plotting.plot_residuals_on_sky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_residuals_on_sky</span></code></a></p></td>
+<td><p>Plot hubble residuals as a function of supernova coordinates</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">plot_delta_colors</span></code></p></td>
-<td><p>Plot PWV measurements taken over a single
-year as a function of time.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_spectral_template" title="snat_sim.plotting.plot_spectral_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_spectral_template</span></code></a></p></td>
+<td><p>Plot of the salt2-extended spectral template with overlaid PWV and bandpass throughput curves.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_year_pwv_vs_time" title="snat_sim.plotting.plot_year_pwv_vs_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_year_pwv_vs_time</span></code></a></p></td>
+<td><p>Plot PWV measurements taken over a single year as a function of time</p></td>
 </tr>
 </tbody>
 </table>
@@ -196,19 +179,23 @@ year as a function of time.</p></td>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="snat_sim.plotting.multi_line_plot">
-<code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">multi_line_plot</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">x_arr</span></em>, <em class="sig-param"><span class="n">y_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">axis</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#multi_line_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.multi_line_plot" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot a 2d y array vs a 1d x array</p>
-<p>Lines are color coded according to values of a 2d z array</p>
+<dt id="snat_sim.plotting.plot_cosmology_fit">
+<code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_cosmology_fit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data</span></em>, <em class="sig-param"><span class="n">abs_mag</span></em>, <em class="sig-param"><span class="n">H0</span></em>, <em class="sig-param"><span class="n">Om0</span></em>, <em class="sig-param"><span class="n">w0</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">beta</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_cosmology_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_cosmology_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot a cosmological fit to a set of supernova data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>x_arr</strong> (<em>ndarray</em>) – A 1d array</p></li>
-<li><p><strong>y_arr</strong> (<em>ndarray</em>) – A 2d array</p></li>
-<li><p><strong>z_arr</strong> (<em>ndarray</em>) – A 2d array</p></li>
-<li><p><strong>axis</strong> (<em>Axis</em>) – Axis to plot on</p></li>
-<li><p><strong>label</strong> (<em>str</em>) – Optional label to format with <code class="docutils literal notranslate"><span class="pre">z</span></code> value</p></li>
+<li><p><strong>data</strong> (<em>DataFrame</em>) – Results from the snat_sim fitting pipeline</p></li>
+<li><p><strong>abs_mag</strong> (<em>float</em>) – Intrinsic absolute magnitude of SNe Ia</p></li>
+<li><p><strong>H0</strong> (<em>float</em>) – Fitted Hubble constant at z = 0 in [km/sec/Mpc]</p></li>
+<li><p><strong>Om0</strong> (<em>float</em>) – Omega matter density in units of the critical density at z=0</p></li>
+<li><p><strong>w0</strong> (<em>float</em>) – Dark energy equation of state</p></li>
+<li><p><strong>alpha</strong> (<em>float</em>) – Fitted nuisance parameter for supernova stretch correction</p></li>
+<li><p><strong>beta</strong> (<em>float</em>) – Fitted nuisance parameter for supernova color correction</p></li>
 </ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple with a matplotlib figure, axis, and tabulated residuals</p>
 </dd>
 </dl>
 </dd></dl>
@@ -216,7 +203,7 @@ year as a function of time.</p></td>
 <dl class="py function">
 <dt id="snat_sim.plotting.plot_delta_colors">
 <code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_delta_colors</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">mag_dict</span></em>, <em class="sig-param"><span class="n">colors</span></em>, <em class="sig-param"><span class="n">ref_pwv</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_colors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_colors" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the change in SN color as a function of redshift and PWV</p>
+<dd><p>Shows the change in color as a function of redshift. Color coded by PWV.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -233,7 +220,7 @@ year as a function of time.</p></td>
 <dl class="py function">
 <dt id="snat_sim.plotting.plot_delta_mag_vs_pwv">
 <code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_delta_mag_vs_pwv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">delta_mag_arr</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_mag_vs_pwv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_mag_vs_pwv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the change in mag due to PWV as a function of pwv</p>
+<dd><p>Single panel, multi-line plot for change in magnitude vs PWV. Color coded by redshift.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -250,7 +237,7 @@ year as a function of time.</p></td>
 <dl class="py function">
 <dt id="snat_sim.plotting.plot_delta_mag_vs_z">
 <code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_delta_mag_vs_z</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">delta_mag_arr</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_mag_vs_z"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_mag_vs_z" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the change in apparent mag due to PWV vs redshift</p>
+<dd><p>Single panel, multi-line plot of change in magnitude vs z. Color coded by PWV.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -299,7 +286,7 @@ year as a function of time.</p></td>
 <dl class="py function">
 <dt id="snat_sim.plotting.plot_derivative_mag_vs_z">
 <code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_derivative_mag_vs_z</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">slope_arr</span></em>, <em class="sig-param"><span class="n">axis</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_derivative_mag_vs_z"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_derivative_mag_vs_z" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the delta mag / delta PWV as a function of redshift</p>
+<dd><p>Single panel, multi-line plot of slope in delta magnitude vs z. Color coded by PWV.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -315,14 +302,27 @@ year as a function of time.</p></td>
 <dl class="py function">
 <dt id="snat_sim.plotting.plot_fitted_params">
 <code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_fitted_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fitted_params</span></em>, <em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">bands</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_fitted_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_fitted_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot fitted parameters as a function of Redshift.
-Color code by PWV.</p>
+<dd><p>Multi-panel plot showing subplots for each salt2 parameter vs redshift.</p>
+<p>Multiple lines included for different PWV values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>(</strong><strong>dict</strong><strong>[</strong><strong>str</strong> (<em>fitted_params</em>) – ndarray]): Dictionary with fitted parameters in each band</p></li>
+<li><p><strong>pwv_arr</strong> (<em>ndarray</em>) – PWV value used for each supernova fit</p></li>
+<li><p><strong>z_arr</strong> (<em>ndarray</em>) – Redshift value used for each supernova fit</p></li>
+<li><p><strong>bands</strong> (<em>list</em>) – Bands to include in the plot. Must be keys of <code class="docutils literal notranslate"><span class="pre">fitted_params</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple with a matplotlib figure and an array of axes</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="snat_sim.plotting.plot_magnitude">
 <code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_magnitude</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mags</span></em>, <em class="sig-param"><span class="n">pwv</span></em>, <em class="sig-param"><span class="n">z</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(9, 6)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_magnitude"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_magnitude" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot simulated magnitudes vs Redshift and PWV</p>
+<dd><p>Multi-panel plot showing magnitudes in different columns vs PWV and redshift in different rows.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -341,7 +341,7 @@ Color code by PWV.</p>
 <dl class="py function">
 <dt id="snat_sim.plotting.plot_pwv_mag_effects">
 <code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_pwv_mag_effects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">delta_mag</span></em>, <em class="sig-param"><span class="n">slopes</span></em>, <em class="sig-param"><span class="n">bands</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(10, 8)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_pwv_mag_effects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_pwv_mag_effects" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the effects of PWV on SN magnitudes</p>
+<dd><p>Multi panel plot with a column for each band and rows for the change in magnitude vs pwv and redshift parameters.</p>
 <p><code class="docutils literal notranslate"><span class="pre">delta_mag</span></code> is expected to have band names as keys, and 2d arrays as
 values. Each array should represent the change in magnitude for each
 given PWV and redshift</p>
@@ -363,9 +363,28 @@ given PWV and redshift</p>
 </dd></dl>
 
 <dl class="py function">
+<dt id="snat_sim.plotting.plot_residuals_on_sky">
+<code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_residuals_on_sky</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ra</span></em>, <em class="sig-param"><span class="n">dec</span></em>, <em class="sig-param"><span class="n">residual</span></em>, <em class="sig-param"><span class="n">cmap</span><span class="o">=</span><span class="default_value">'coolwarm'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_residuals_on_sky"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_residuals_on_sky" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot hubble residuals as a function of supernova coordinates</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ra</strong> (<em>list</em>) – Right Ascension for each supernova</p></li>
+<li><p><strong>dec</strong> (<em>list</em>) – Declination of each supernova</p></li>
+<li><p><strong>residual</strong> (<em>list</em>) – Hubble residual for each supernova</p></li>
+<li><p><strong>cmap</strong> (<em>str</em>) – Name of the matplotlib color map to use</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Tuple with a matplotlib figure and axis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="snat_sim.plotting.plot_spectral_template">
 <code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_spectral_template</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">wave_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">pwv</span></em>, <em class="sig-param"><span class="n">phase</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">resolution</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">figsize</span><span class="o">=</span><span class="default_value">(6, 4)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_spectral_template"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_spectral_template" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the a spectral template at several redshifts overlaid with PWV</p>
+<dd><p>Plot of the salt2-extended spectral template with overlaid PWV and bandpass throughput curves.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">

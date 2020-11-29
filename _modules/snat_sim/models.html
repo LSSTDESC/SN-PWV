@@ -239,13 +239,19 @@
         <span class="sd">&quot;&quot;&quot;Construct a ``PWVModel`` instance using data from a SuomiNet receiver</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from</span>
-<span class="sd">            year                    (float): Year to use data from when building the model</span>
-<span class="sd">            supp_years      (List[Numeric]): Years to supplement data with when missing from ``year``</span>
+<span class="sd">            receiver (GPSReceiver): GPS receiver to access data from</span>
+<span class="sd">            year           (float): Year to use data from when building the model</span>
+<span class="sd">            supp_years (List[int]): Years to supplement data with when missing from ``year``</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An interpolation function that accepts ``date`` and ``format`` arguments</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">all_years</span> <span class="o">=</span> <span class="p">[</span><span class="n">year</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">supp_years</span><span class="p">:</span>
+            <span class="n">all_years</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">supp_years</span><span class="p">)</span>
+
+        <span class="n">receiver</span><span class="o">.</span><span class="n">download_available_data</span><span class="p">(</span><span class="n">all_years</span><span class="p">)</span>
 
         <span class="n">weather_data</span> <span class="o">=</span> <span class="n">receiver</span><span class="o">.</span><span class="n">weather_data</span><span class="p">()</span><span class="o">.</span><span class="n">PWV</span>
         <span class="n">supp_data</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">supplemented_data</span><span class="p">(</span><span class="n">weather_data</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">supp_years</span><span class="p">)</span>

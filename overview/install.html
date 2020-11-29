@@ -136,9 +136,16 @@ from the GitHub repository page or by using the <code class="docutils literal no
 rm -rf ./SN-PWV/.git
 </pre></div>
 </div>
-<p>Project dependencies are listed in the <code class="docutils literal notranslate"><span class="pre">requirements.txt</span></code> file included with
-the source code. Dependencies can be installed using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -r SN-PWV/requirements.txt
+<p>The package can then be installed into your working environment manually, or
+using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> SN-PWV
+pip install .
+</pre></div>
+</div>
+<p>If you want to run the package’s test suite, you will also need to install
+the test suite dependencies:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> SN-PWV
+pip install .<span class="o">[</span>tests<span class="o">]</span>
 </pre></div>
 </div>
 </div>
