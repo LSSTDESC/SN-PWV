@@ -111,7 +111,7 @@ class OutputDataModel:
 
         Args:
             meta       (dict): Meta data for the simulated light-curve
-            fit_model (Model): Supernova model fitted to the data
+            fit_model (Model): Supernova model used in the fit
             excep (Exception): Exception raised by the failed fit
 
         Returns:
