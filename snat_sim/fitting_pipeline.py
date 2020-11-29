@@ -88,7 +88,7 @@ class OutputDataModel:
     """Enforces the data model of pipeline output files"""
 
     @staticmethod
-    def build_result_table_entry(meta, fitted_model, result):
+    def build_table_entry(meta, fitted_model, result):
         """Combine light-curve fit results into single row matching the output table file format
 
         Args:
@@ -107,7 +107,23 @@ class OutputDataModel:
         out_list.append(result.ndof)
         out_list.append(fitted_model.bandmag('bessellb', 'ab', time=fitted_model['t0']))
         out_list.append(fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
+        out_list.append(result.message)
         return out_list
+
+    def build_masked_entry(self, meta, fit_model, excep):
+        """Create a masked table entry for a failed light-curve fit
+
+        Args:
+            meta       (dict): Meta data for the simulated light-curve
+            fit_model (Model): Supernova model fitted to the data
+            excep (Exception): Exception raised by the failed fit
+
+        Returns:
+            A list of strings and floats
+        """
+
+        num_columns = len(self.result_table_col_names(fit_model))
+        return [meta['SNID'], *np.full(num_columns - 2, -99), str(excep)]
 
     @staticmethod
     def result_table_col_names(fit_model):
@@ -124,6 +140,7 @@ class OutputDataModel:
         col_names.append('ndof')
         col_names.append('mb')
         col_names.append('abs_mag')
+        col_names.append('message')
         return col_names
 
 
@@ -265,11 +282,15 @@ class FittingPipeline(ProcessManager, OutputDataModel):
             # Use the true light-curve parameters as the initial guess
             self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
 
-            result, fitted_model = sncosmo.fit_lc(
-                light_curve, self.fit_model, self.vparams,
-                guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
+            try:
+                result, fitted_model = sncosmo.fit_lc(
+                    light_curve, self.fit_model, self.vparams,
+                    guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
-            self.queue_fit_results.put(self.build_result_table_entry(light_curve.meta, fitted_model, result))
+                self.queue_fit_results.put(self.build_table_entry(light_curve.meta, fitted_model, result))
+
+            except Exception as excep:
+                self.queue_fit_results.put(self.build_masked_entry(light_curve.meta, self.fit_model, excep))
 
         # Propagate kill signal
         self.queue_fit_results.put(light_curve)

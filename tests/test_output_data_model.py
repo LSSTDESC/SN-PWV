@@ -24,7 +24,7 @@ class OutputValueFormatting(TestCase):
             ['z', 't0', 'x0', 'x1', 'c'],  # parameters of model to vary
             bounds={'z': (0.3, 0.7)})  # bounds on parameters (if any)
 
-        cls.formatted_results = OutputDataModel.build_result_table_entry(cls.meta, cls.fitted_model, cls.result)
+        cls.formatted_results = OutputDataModel.build_table_entry(cls.meta, cls.fitted_model, cls.result)
         cls.col_names = OutputDataModel.result_table_col_names(cls.fitted_model)
 
     def test_object_id_position(self):
