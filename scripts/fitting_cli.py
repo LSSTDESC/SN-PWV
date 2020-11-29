@@ -42,12 +42,11 @@ def passes_quality_cuts(light_curve):
     return sum(passed_cuts) >= 2
 
 
-def create_pwv_model(pwv_variability, cache_pwv_los=False):
+def create_pwv_model(pwv_variability):
     """Create a ``PWVModel`` object
 
     Args:
         pwv_variability (str, Numeric): How to vary PWV as a function of time
-        cache_pwv_los (int): Optionally cache PWV values along the line of sight up to given number of bytes
 
     Returns:
         An instantiated ``PWVModel`` object
@@ -55,23 +54,22 @@ def create_pwv_model(pwv_variability, cache_pwv_los=False):
 
     # Keep a fixed PWV concentration
     if isinstance(pwv_variability, (float, int)):
-        return create_constant_pwv_model(pwv_variability, cache_pwv_los=cache_pwv_los)
+        return create_constant_pwv_model(pwv_variability)
 
     # Model PWV continuously over the year using CTIO data
     elif pwv_variability == 'epoch':
-        return models.PWVModel.from_suominet_receiver(ctio, 2016, [2017], cache_pwv_los=cache_pwv_los)
+        return models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
 
     else:
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
 
-def create_sn_model(source='salt2-extended', pwv_model=None, cache_trans=False):
+def create_sn_model(source='salt2-extended', pwv_model=None):
     """Create a supernova model with optional PWV effects
 
     Args:
         source (str, Source): Spectral template to use for the SN model
         pwv_model (PWVModel): How to vary PWV as a function of time
-        cache_trans    (int): Optionally cache transmission calculations up to given number of bytes
 
     Returns:
         An instantiated ``snat_sim`` supernova model
@@ -80,7 +78,7 @@ def create_sn_model(source='salt2-extended', pwv_model=None, cache_trans=False):
     model = models.SNModel(source=source)
     if pwv_model is not None:
         model.add_effect(
-            effect=models.VariablePWVTrans(pwv_model, cache_trans=cache_trans),
+            effect=models.VariablePWVTrans(pwv_model),
             name='',
             frame='obs')
 
