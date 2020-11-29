@@ -19,6 +19,10 @@ div.sidebar-block p {
 
 /* -- Rendered Notebooks ---------------------------------------------------- */
 
+.body {
+    top: 25px
+}
+
 #right-column {
     max-width: 1200px;
     padding-top: 1px;
