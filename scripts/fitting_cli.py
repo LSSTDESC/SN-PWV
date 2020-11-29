@@ -99,8 +99,8 @@ def run_pipeline(cli_args):
     sn_model_sim = create_sn_model(cli_args.source, pwv_model_sim)
 
     print('Creating fitting model...')
-    pwv_model_fit = create_pwv_model(cli_args.fit_variability, cache_pwv_los=250_000)
-    sn_model_fit = create_sn_model(cli_args.source, pwv_model_fit, cache_trans=250_000)
+    pwv_model_fit = create_pwv_model(cli_args.fit_variability)
+    sn_model_fit = create_sn_model(cli_args.source, pwv_model_fit)
 
     print('Instantiating pipeline...')
     pipeline = FittingPipeline(

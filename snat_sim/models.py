@@ -50,12 +50,13 @@ from . import time_series_utils as tsu
 from .cache_utils import fast_cache
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
+cache_size = 200_000
 
 
 class FixedResTransmission:
     """Models atmospheric transmission due to PWV at a fixed resolution"""
 
-    def __init__(self, res=None, cache_trans=False):
+    def __init__(self, res=None):
         """Instantiate a PWV transmission model at the given resolution
 
         Transmission values are determined using the ``v1_transmission`` model
@@ -63,7 +64,6 @@ class FixedResTransmission:
 
         Args:
             res       (float): Resolution to bin the atmospheric model to
-            cache_trans (int): Optionally cache transmission calculations up to given number of bytes
         """
 
         self.norm_pwv = 2
@@ -78,8 +78,7 @@ class FixedResTransmission:
         self._interpolator = RegularGridInterpolator(
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
-        if cache_trans:
-            self.calc_transmission = fast_cache('pwv', 'wave', cache_size=cache_trans)(self.calc_transmission)
+        self.calc_transmission = fast_cache('pwv', 'wave', cache_size=cache_size)(self.calc_transmission)
 
     def calc_transmission(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
@@ -111,29 +110,26 @@ class FixedResTransmission:
 class PWVModel:
     """Interpolation model for the PWV at a given point of the year"""
 
-    def __init__(self, pwv_series, cache_pwv_los=False):
+    def __init__(self, pwv_series):
         """Build a model for time variable PWV by drawing from a given PWV time series
 
         Args:
             pwv_series (Series): PWV values with a datetime index
-            cache_pwv_los (int): Optionally cache line of sight PWV values up to given number of bytes
         """
 
         self.pwv_model_data = tsu.periodic_interpolation(tsu.resample_data_across_year(pwv_series))
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        if cache_pwv_los:
-            self.pwv_los = fast_cache('date', cache_size=cache_pwv_los)(self.pwv_los)
+        self.pwv_los = fast_cache('date', cache_size=cache_size)(self.pwv_los)
 
     @staticmethod
-    def from_suominet_receiver(receiver, year, supp_years=None, cache_pwv_los=False):
+    def from_suominet_receiver(receiver, year, supp_years=None):
         """Construct a ``PWVModel`` instance using data from a SuomiNet receiver
 
         Args:
             receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
             year                    (float): Year to use data from when building the model
             supp_years      (List[Numeric]): Years to supplement data with when missing from ``year``
-            cache_pwv_los             (int): Set ``cache_pwv_los`` for the returned ``PWVModel`` object
 
         Returns:
             An interpolation function that accepts ``date`` and ``format`` arguments
@@ -147,7 +143,7 @@ class PWVModel:
 
         weather_data = receiver.weather_data().PWV
         supp_data = tsu.supplemented_data(weather_data, year, supp_years)
-        return PWVModel(supp_data, cache_pwv_los=cache_pwv_los)
+        return PWVModel(supp_data)
 
     @staticmethod
     def calc_airmass(time, ra, dec, lat=const.vro_latitude,
@@ -259,7 +255,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
     _minwave = 3000.0
     _maxwave = 12000.0
 
-    def __init__(self, transmission_res=5, cache_trans=False):
+    def __init__(self, transmission_res=5):
         """Time independent atmospheric transmission due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
@@ -267,7 +263,6 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 
         Effect Parameters:
             pwv: Atmospheric concentration of PWV along line of sight in mm
-            cache_trans (int): Optionally cache transmission calculations up to given number of bytes
 
         Args:
             transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
@@ -277,7 +272,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
         self._param_names = ['pwv']
         self.param_names_latex = ['PWV']
         self._parameters = np.array([0.])
-        self._transmission_model = FixedResTransmission(transmission_res, cache_trans=cache_trans)
+        self._transmission_model = FixedResTransmission(transmission_res)
 
     @property
     def transmission_res(self):
@@ -306,7 +301,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
     """Atmospheric propagation effect for temporally variable PWV"""
 
-    def __init__(self, pwv_model, time_format='mjd', transmission_res=5., cache_trans=False):
+    def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
         """Time variable atmospheric transmission due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
@@ -323,11 +318,10 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
             pwv_model       (PWVModel): Returns PWV at zenith for a given time value and time format
             time_format          (str): Astropy recognized time format used by the ``pwv_interpolator``
             transmission_res   (float): Reduce the underlying transmission model by binning to the given resolution
-            cache_trans          (int): Optionally cache transmission calculations up to given number of bytes
         """
 
         # Create atmospheric transmission model
-        super().__init__(transmission_res=transmission_res, cache_trans=cache_trans)
+        super().__init__(transmission_res=transmission_res)
 
         self._time_format = time_format
         self._pwv_model = pwv_model
