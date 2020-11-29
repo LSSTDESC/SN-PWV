@@ -47,10 +47,10 @@ from scipy.interpolate import RegularGridInterpolator
 
 from . import constants as const
 from . import time_series_utils as tsu
-from .cache_utils import fast_cache
+from .cache_utils import numpy_cache
 
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
-cache_size = 200_000
+CACHE_SIZE = 500_000  # Todo: THis is much to big, and should be set to a reasonable number further along in development
 
 
 class FixedResTransmission:
@@ -78,7 +78,7 @@ class FixedResTransmission:
         self._interpolator = RegularGridInterpolator(
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
-        self.calc_transmission = fast_cache('pwv', 'wave', cache_size=cache_size)(self.calc_transmission)
+        self.calc_transmission = numpy_cache('pwv', 'wave', cache_size=CACHE_SIZE)(self.calc_transmission)
 
     def calc_transmission(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
@@ -120,7 +120,7 @@ class PWVModel:
         self.pwv_model_data = tsu.periodic_interpolation(tsu.resample_data_across_year(pwv_series))
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        self.pwv_los = fast_cache('date', cache_size=cache_size)(self.pwv_los)
+        self.pwv_los = numpy_cache('date', cache_size=CACHE_SIZE)(self.pwv_los)
 
     @staticmethod
     def from_suominet_receiver(receiver, year, supp_years=None):

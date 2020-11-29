@@ -41,7 +41,7 @@ class MemoryCache(OrderedDict):
                 self.popitem(last=False)
 
 
-def fast_cache(*numpy_args, cache_size=None):
+def numpy_cache(*numpy_args, cache_size=None):
     """Memoization decorator supporting ``numpy`` arrays
 
     Args:
@@ -62,7 +62,7 @@ def fast_cache(*numpy_args, cache_size=None):
 
                 Arguments and returns are the same as ``function``
                 """
-                
+
                 kwargs_for_key = inspect.getcallargs(function, *args, **kwargs)
                 for arg_to_cast in numpy_args:
                     kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tostring()
