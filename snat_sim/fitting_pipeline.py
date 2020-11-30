@@ -52,7 +52,14 @@ class KillSignal:
 class ProcessManager:
     """Handles the starting and termination of forked processes"""
 
-    _processes = []
+    def __init__(self, processes=tuple()):
+        """Manage a collection of forked processes
+
+        Args:
+            processes (List[Process]): List of processes to manage
+        """
+
+        self._processes = processes
 
     def kill(self):
         """Kill all running pipeline processes without trying to exit gracefully"""
@@ -83,6 +90,12 @@ class OutputDataModel:
     """Enforces the data model of pipeline output files"""
 
     def __init__(self, sn_model):
+        """Formats data from a given supernova model into a coherent tabular format
+
+        Args:
+            sn_model (Model): Supernova model to reflect in the outputted data model
+        """
+
         self._sn_model = sn_model
 
     @staticmethod
@@ -113,7 +126,6 @@ class OutputDataModel:
 
         Args:
             meta       (dict): Meta data for the simulated light-curve
-            fit_model (Model): Supernova model used in the fit
             excep (Exception): Exception raised by the failed fit
 
         Returns:
@@ -125,7 +137,7 @@ class OutputDataModel:
 
     @property
     def column_names(self):
-        """Return a list of column names for a given supernova model
+        """Return a list of column names for the data model
 
         Returns:
             List of column names as strings
