@@ -155,114 +155,6 @@ synchronously.</p>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="snat_sim.fitting_pipeline.CosmologyAccessor">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">CosmologyAccessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pandas_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#CosmologyAccessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.CosmologyAccessor" title="Permalink to this definition">¶</a></dt>
-<dd><p>Chi-squared minimizer for fitting a cosmology to pipeline results</p>
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.CosmologyAccessor.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pandas_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#CosmologyAccessor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.CosmologyAccessor.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.CosmologyAccessor.calc_distmod">
-<code class="sig-name descname">calc_distmod</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">abs_mag</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#CosmologyAccessor.calc_distmod"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.CosmologyAccessor.calc_distmod" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the distance modulus for an assumed absolute magnitude</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>abs_mag</strong> (<em>float</em>) – The B-band absolute magnitude</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The distance modulus</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.CosmologyAccessor.chisq">
-<code class="sig-name descname">chisq</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H0</span></em>, <em class="sig-param"><span class="n">Om0</span></em>, <em class="sig-param"><span class="n">abs_mag</span></em>, <em class="sig-param"><span class="n">w0</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">beta</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#CosmologyAccessor.chisq"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.CosmologyAccessor.chisq" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the chi-squared for given cosmological parameters</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>H0</strong> (<em>float</em>) – Hubble constant</p></li>
-<li><p><strong>Om0</strong> (<em>float</em>) – Matter density</p></li>
-<li><p><strong>abs_mag</strong> (<em>float</em>) – SNe Ia intrinsic peak magnitude</p></li>
-<li><p><strong>w0</strong> (<em>float</em>) – Dark matter equation of state</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – Stretch correction nuisance parameter</p></li>
-<li><p><strong>beta</strong> (<em>float</em>) – Color correction nuisance parameter</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The chi-squared of the resulting cosmology</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.CosmologyAccessor.chisq_grid">
-<code class="sig-name descname">chisq_grid</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">H0</span></em>, <em class="sig-param"><span class="n">Om0</span></em>, <em class="sig-param"><span class="n">abs_mag</span></em>, <em class="sig-param"><span class="n">w0</span></em>, <em class="sig-param"><span class="n">alpha</span></em>, <em class="sig-param"><span class="n">beta</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#CosmologyAccessor.chisq_grid"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.CosmologyAccessor.chisq_grid" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the chi-squared on a grid of cosmological parameters</p>
-<p>Arguments are automatically repeated along the grid so that the
-dimensions of each array match.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>H0</strong> (<em>float</em><em>, </em><em>ndarray</em>) – Hubble constant</p></li>
-<li><p><strong>Om0</strong> (<em>float</em><em>, </em><em>ndarray</em>) – Matter density</p></li>
-<li><p><strong>abs_mag</strong> (<em>float</em><em>, </em><em>ndarray</em>) – SNe Ia intrinsic peak magnitude</p></li>
-<li><p><strong>w0</strong> (<em>float</em><em>, </em><em>ndarray</em>) – Dark matter equation of state</p></li>
-<li><p><strong>alpha</strong> (<em>float</em>) – Stretch correction nuisance parameter</p></li>
-<li><p><strong>beta</strong> (<em>float</em>) – Color correction nuisance parameter</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An array of chi-squared values</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.CosmologyAccessor.minimize">
-<code class="sig-name descname">minimize</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#CosmologyAccessor.minimize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.CosmologyAccessor.minimize" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit cosmology to the instantiated data</p>
-<dl class="simple">
-<dt>Kwargs:</dt><dd><dl class="simple">
-<dt>Accepts any iminuit style keyword arguments for parameters</dt><dd><p><code class="docutils literal notranslate"><span class="pre">H0</span></code>, <code class="docutils literal notranslate"><span class="pre">Om0</span></code>, <code class="docutils literal notranslate"><span class="pre">abs_mag</span></code>, and <code class="docutils literal notranslate"><span class="pre">w0</span></code>.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Optimized Minuit object</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.CosmologyAccessor.minimize_mc">
-<code class="sig-name descname">minimize_mc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">samples</span></em>, <em class="sig-param"><span class="n">n</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">frac</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">statistic</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#CosmologyAccessor.minimize_mc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.CosmologyAccessor.minimize_mc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit cosmology to the instantiated data using monte carlo resampling</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>samples</strong> (<em>int</em>) – Number of samples to draw</p></li>
-<li><p><strong>n</strong> (<em>int</em>) – Size of each sample. Cannot be used with <code class="docutils literal notranslate"><span class="pre">frac</span></code></p></li>
-<li><p><strong>frac</strong> (<em>float</em>) – Fraction of data to include in each sample. Cannot be used with <code class="docutils literal notranslate"><span class="pre">size</span></code></p></li>
-<li><p><strong>statistic</strong> (<em>callable</em>) – Optionally apply a statistic to the returned values</p></li>
-<li><p><strong>any iminuit style keyword arguments for parameters</strong> (<em>Accepts</em>) – <code class="docutils literal notranslate"><span class="pre">H0</span></code>, <code class="docutils literal notranslate"><span class="pre">Om0</span></code>, <code class="docutils literal notranslate"><span class="pre">abs_mag</span></code>, and <code class="docutils literal notranslate"><span class="pre">w0</span></code>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>List of optimized Minuit object or a dictionary of the applies statistic to those values</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt id="snat_sim.fitting_pipeline.FittingPipeline">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">FittingPipeline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">quality_callback</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">pool_size</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">ref_stars</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">pwv_model</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#FittingPipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline of parallel processes for simulating and fitting light-curves</p>
@@ -290,24 +182,6 @@ dimensions of each array match.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.fitting_pipeline.FittingPipeline.build_result_table_entry">
-<em class="property">static </em><code class="sig-name descname">build_result_table_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta</span></em>, <em class="sig-param"><span class="n">fitted_model</span></em>, <em class="sig-param"><span class="n">result</span></em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.build_result_table_entry" title="Permalink to this definition">¶</a></dt>
-<dd><p>Combine light-curve fit results into single row matching the output table file format</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>meta</strong> (<em>dict</em>) – Meta data for the simulated light-curve</p></li>
-<li><p><strong>fitted_model</strong> (<em>Model</em>) – Supernova model fitted to the data</p></li>
-<li><p><strong>result</strong> (<em>Result</em>) – sncosmo fit Result object</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A list of strings and floats</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="snat_sim.fitting_pipeline.FittingPipeline.fitting_pool_size">
 <em class="property">property </em><code class="sig-name descname">fitting_pool_size</code><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.fitting_pool_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of processes used for fitting light-curves</p>
@@ -317,17 +191,6 @@ dimensions of each array match.</p>
 <dt id="snat_sim.fitting_pipeline.FittingPipeline.kill">
 <code class="sig-name descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.kill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kill all running pipeline processes without trying to exit gracefully</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.FittingPipeline.result_table_col_names">
-<em class="property">static </em><code class="sig-name descname">result_table_col_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fit_model</span></em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.result_table_col_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of column names for a given supernova model</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fit_model</strong> (<em>Model</em>) – Model with parameters to use as column names</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -358,17 +221,39 @@ dimensions of each array match.</p>
 
 <dl class="py class">
 <dt id="snat_sim.fitting_pipeline.OutputDataModel">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">OutputDataModel</code><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">OutputDataModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sn_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enforces the data model of pipeline output files</p>
 <dl class="py method">
 <dt id="snat_sim.fitting_pipeline.OutputDataModel.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sn_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats data from a given supernova model into a coherent tabular format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sn_model</strong> (<em>Model</em>) – Supernova model to reflect in the outputted data model</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.fitting_pipeline.OutputDataModel.build_result_table_entry">
-<em class="property">static </em><code class="sig-name descname">build_result_table_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta</span></em>, <em class="sig-param"><span class="n">fitted_model</span></em>, <em class="sig-param"><span class="n">result</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.build_result_table_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.build_result_table_entry" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.fitting_pipeline.OutputDataModel.build_masked_entry">
+<code class="sig-name descname">build_masked_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta</span></em>, <em class="sig-param"><span class="n">excep</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.build_masked_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.build_masked_entry" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a masked table entry for a failed light-curve fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>meta</strong> (<em>dict</em>) – Meta data for the simulated light-curve</p></li>
+<li><p><strong>excep</strong> (<em>Exception</em>) – Exception raised by the failed fit</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list of strings and floats with masked values set as -99</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.OutputDataModel.build_table_entry">
+<em class="property">static </em><code class="sig-name descname">build_table_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta</span></em>, <em class="sig-param"><span class="n">fitted_model</span></em>, <em class="sig-param"><span class="n">result</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.build_table_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.build_table_entry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Combine light-curve fit results into single row matching the output table file format</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -385,12 +270,12 @@ dimensions of each array match.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.fitting_pipeline.OutputDataModel.result_table_col_names">
-<em class="property">static </em><code class="sig-name descname">result_table_col_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">fit_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.result_table_col_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.result_table_col_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of column names for a given supernova model</p>
+<dt id="snat_sim.fitting_pipeline.OutputDataModel.column_names">
+<em class="property">property </em><code class="sig-name descname">column_names</code><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.column_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a list of column names for the data model</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fit_model</strong> (<em>Model</em>) – Model with parameters to use as column names</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>List of column names as strings</p>
 </dd>
 </dl>
 </dd></dl>

@@ -151,16 +151,12 @@
 <span class="sd">-----------</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sncosmo</span>
-<span class="kn">from</span> <span class="nn">astropy.cosmology</span> <span class="kn">import</span> <span class="n">FlatwCDM</span>
-<span class="kn">from</span> <span class="nn">iminuit</span> <span class="kn">import</span> <span class="n">Minuit</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plasticc</span><span class="p">,</span> <span class="n">reference_stars</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 
@@ -172,10 +168,16 @@
 
 
 <span class="k">class</span> <span class="nc">ProcessManager</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Handles the starting and termination of processes forked by the child class&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Handles the starting and termination of forked processes&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Manage a collection of forked processes</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            processes (List[Process]): List of processes to manage</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span> <span class="o">=</span> <span class="n">processes</span> <span class="ow">or</span> <span class="p">[]</span>
 
     <span class="k">def</span> <span class="nf">kill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Kill all running pipeline processes without trying to exit gracefully&quot;&quot;&quot;</span>
@@ -205,8 +207,17 @@
 <div class="viewcode-block" id="OutputDataModel"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel">[docs]</a><span class="k">class</span> <span class="nc">OutputDataModel</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Enforces the data model of pipeline output files&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="OutputDataModel.build_result_table_entry"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.build_result_table_entry">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">build_result_table_entry</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">fitted_model</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputDataModel.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sn_model</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Formats data from a given supernova model into a coherent tabular format</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sn_model (Model): Supernova model to reflect in the outputted data model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sn_model</span> <span class="o">=</span> <span class="n">sn_model</span></div>
+
+<div class="viewcode-block" id="OutputDataModel.build_table_entry"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.build_table_entry">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">build_table_entry</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">fitted_model</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Combine light-curve fit results into single row matching the output table file format</span>
 
 <span class="sd">        Args:</span>
@@ -225,27 +236,43 @@
         <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ndof</span><span class="p">)</span>
         <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="n">fitted_model</span><span class="p">[</span><span class="s1">&#39;t0&#39;</span><span class="p">]))</span>
         <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">source_peakabsmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">))</span>
+        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">out_list</span></div>
 
-<div class="viewcode-block" id="OutputDataModel.result_table_col_names"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.result_table_col_names">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">result_table_col_names</span><span class="p">(</span><span class="n">fit_model</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of column names for a given supernova model</span>
+<div class="viewcode-block" id="OutputDataModel.build_masked_entry"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.build_masked_entry">[docs]</a>    <span class="k">def</span> <span class="nf">build_masked_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">excep</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a masked table entry for a failed light-curve fit</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            fit_model (Model): Model with parameters to use as column names</span>
+<span class="sd">            meta       (dict): Meta data for the simulated light-curve</span>
+<span class="sd">            excep (Exception): Exception raised by the failed fit</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list of strings and floats with masked values set as -99</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">num_columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_columns</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">99</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">excep</span><span class="p">)]</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of column names for the data model</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List of column names as strings</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">fit_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">param</span> <span class="o">+</span> <span class="s1">&#39;_err&#39;</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">fit_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">param</span> <span class="o">+</span> <span class="s1">&#39;_err&#39;</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sn_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;chisq&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ndof&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;mb&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;abs_mag&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">col_names</span></div></div>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">col_names</span></div>
 
 
-<div class="viewcode-block" id="FittingPipeline"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.FittingPipeline">[docs]</a><span class="k">class</span> <span class="nc">FittingPipeline</span><span class="p">(</span><span class="n">ProcessManager</span><span class="p">,</span> <span class="n">OutputDataModel</span><span class="p">):</span>
+<div class="viewcode-block" id="FittingPipeline"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.FittingPipeline">[docs]</a><span class="k">class</span> <span class="nc">FittingPipeline</span><span class="p">(</span><span class="n">ProcessManager</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Pipeline of parallel processes for simulating and fitting light-curves&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FittingPipeline.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.FittingPipeline.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">,</span> <span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span>
@@ -277,14 +304,15 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span> <span class="o">=</span> <span class="n">cadence</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span> <span class="o">=</span> <span class="n">sim_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span> <span class="o">=</span> <span class="n">fit_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span> <span class="o">=</span> <span class="n">vparams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quality_callback</span> <span class="o">=</span> <span class="n">quality_callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span> <span class="o">=</span> <span class="n">iter_lim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reference_stars</span> <span class="o">=</span> <span class="n">ref_stars</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model</span> <span class="o">=</span> <span class="n">pwv_model</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_model</span> <span class="o">=</span> <span class="n">OutputDataModel</span><span class="p">(</span><span class="n">fit_model</span><span class="p">)</span>
 
         <span class="c1"># Set up queues to connect processes together</span>
         <span class="n">manager</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span>
@@ -314,13 +342,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unload_results_process</span><span class="p">)</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">fitting_pool_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">fitting_pool_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Number of processes used for fitting light-curves&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">simulation_pool_size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">simulation_pool_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Number of processes used for simulating light-curves&quot;&quot;&quot;</span>
 
         <span class="n">io_processes</span> <span class="o">=</span> <span class="mi">2</span>
@@ -329,7 +357,7 @@
     <span class="k">def</span> <span class="nf">_load_queue_plasticc_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load PLaSTICC light-curves from disk into the pipeline&quot;&quot;&quot;</span>
 
-        <span class="c1"># The queue will block the for loop when it is full, limiting our memory usage</span>
+        <span class="c1"># Load light-curves into the first queue in the pipeline</span>
         <span class="n">light_curve_iter</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">iter_lc_for_cadence_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">light_curve</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">light_curve_iter</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span><span class="p">:</span>
@@ -345,7 +373,7 @@
     <span class="k">def</span> <span class="nf">_duplicate_light_curves</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Simulate light-curves with atmospheric effects&quot;&quot;&quot;</span>
 
-        <span class="c1"># Determine redshift limit of the simulation model</span>
+        <span class="c1"># Determine the redshift limit of the simulation model</span>
         <span class="n">u_band_low</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="s1">&#39;lsst_hardware_u&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">minwave</span><span class="p">()</span>
         <span class="n">source_low</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">minwave</span><span class="p">()</span>
         <span class="n">z_limit</span> <span class="o">=</span> <span class="p">(</span><span class="n">u_band_low</span> <span class="o">/</span> <span class="n">source_low</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
@@ -368,6 +396,9 @@
 
             <span class="c1"># Skip if duplicated light-curve is not up to quality standards</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quality_callback</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">quality_callback</span><span class="p">(</span><span class="n">duplicated_lc</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data_model</span><span class="o">.</span><span class="n">build_masked_entry</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Failed quality check&#39;</span><span class="p">))</span>
+                <span class="p">)</span>
                 <span class="k">continue</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">queue_duplicated_lc</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">duplicated_lc</span><span class="p">)</span>
@@ -383,11 +414,15 @@
             <span class="c1"># Use the true light-curve parameters as the initial guess</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
 
-            <span class="n">result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span>
-                <span class="n">light_curve</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span><span class="p">,</span>
-                <span class="n">guess_t0</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">guess_amplitude</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">guess_z</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span>
+                    <span class="n">light_curve</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span><span class="p">,</span>
+                    <span class="n">guess_t0</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">guess_amplitude</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">guess_z</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-            <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">build_result_table_entry</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">fitted_model</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_model</span><span class="o">.</span><span class="n">build_table_entry</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">fitted_model</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">excep</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_model</span><span class="o">.</span><span class="n">build_masked_entry</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">excep</span><span class="p">))</span>
 
         <span class="c1"># Propagate kill signal</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">light_curve</span><span class="p">)</span>
@@ -398,7 +433,7 @@
         <span class="n">kill_count</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Count closed upstream processes so this process knows when to exit</span>
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
-            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_table_col_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="p">)))</span>
+            <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_model</span><span class="o">.</span><span class="n">column_names</span><span class="p">))</span>
 
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">KillSignal</span><span class="p">):</span>
@@ -411,131 +446,6 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">new_line</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">results</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
                     <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">new_line</span><span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="CosmologyAccessor"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.CosmologyAccessor">[docs]</a><span class="nd">@pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">register_dataframe_accessor</span><span class="p">(</span><span class="s2">&quot;snat_sim&quot;</span><span class="p">)</span>
-<span class="k">class</span> <span class="nc">CosmologyAccessor</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Chi-squared minimizer for fitting a cosmology to pipeline results&quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="CosmologyAccessor.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.CosmologyAccessor.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pandas_obj</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">pandas_obj</span></div>
-
-<div class="viewcode-block" id="CosmologyAccessor.calc_distmod"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.CosmologyAccessor.calc_distmod">[docs]</a>    <span class="k">def</span> <span class="nf">calc_distmod</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">abs_mag</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Return the distance modulus for an assumed absolute magnitude</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            abs_mag (float): The B-band absolute magnitude</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The distance modulus</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mb&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">abs_mag</span></div>
-
-    <span class="c1"># noinspection PyPep8Naming</span>
-<div class="viewcode-block" id="CosmologyAccessor.chisq"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.CosmologyAccessor.chisq">[docs]</a>    <span class="k">def</span> <span class="nf">chisq</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">H0</span><span class="p">,</span> <span class="n">Om0</span><span class="p">,</span> <span class="n">abs_mag</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate the chi-squared for given cosmological parameters</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            H0      (float): Hubble constant</span>
-<span class="sd">            Om0     (float): Matter density</span>
-<span class="sd">            abs_mag (float): SNe Ia intrinsic peak magnitude</span>
-<span class="sd">            w0      (float): Dark matter equation of state</span>
-<span class="sd">            alpha   (float): Stretch correction nuisance parameter</span>
-<span class="sd">            beta    (float): Color correction nuisance parameter</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The chi-squared of the resulting cosmology</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">measured_mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_distmod</span><span class="p">(</span><span class="n">abs_mag</span><span class="p">)</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;x1&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">beta</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span>
-
-        <span class="n">cosmology</span> <span class="o">=</span> <span class="n">FlatwCDM</span><span class="p">(</span><span class="n">H0</span><span class="o">=</span><span class="n">H0</span><span class="p">,</span> <span class="n">Om0</span><span class="o">=</span><span class="n">Om0</span><span class="p">,</span> <span class="n">w0</span><span class="o">=</span><span class="n">w0</span><span class="p">)</span>
-        <span class="n">modeled_mu</span> <span class="o">=</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">value</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(((</span><span class="n">measured_mu</span> <span class="o">-</span> <span class="n">modeled_mu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;mb_err&#39;</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span></div>
-
-    <span class="c1"># noinspection PyPep8Naming</span>
-<div class="viewcode-block" id="CosmologyAccessor.chisq_grid"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.CosmologyAccessor.chisq_grid">[docs]</a>    <span class="k">def</span> <span class="nf">chisq_grid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">H0</span><span class="p">,</span> <span class="n">Om0</span><span class="p">,</span> <span class="n">abs_mag</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Calculate the chi-squared on a grid of cosmological parameters</span>
-
-<span class="sd">        Arguments are automatically repeated along the grid so that the</span>
-<span class="sd">        dimensions of each array match.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            H0      (float, ndarray): Hubble constant</span>
-<span class="sd">            Om0     (float, ndarray): Matter density</span>
-<span class="sd">            abs_mag (float, ndarray): SNe Ia intrinsic peak magnitude</span>
-<span class="sd">            w0      (float, ndarray): Dark matter equation of state</span>
-<span class="sd">            alpha            (float): Stretch correction nuisance parameter</span>
-<span class="sd">            beta             (float): Color correction nuisance parameter</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            An array of chi-squared values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">new_args</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_match_argument_dimensions</span><span class="p">(</span><span class="n">H0</span><span class="p">,</span> <span class="n">Om0</span><span class="p">,</span> <span class="n">abs_mag</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vectorize</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chisq</span><span class="p">)(</span><span class="o">*</span><span class="n">new_args</span><span class="p">)</span></div>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_match_argument_dimensions</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Reshape arguments so they match the shape of the argument with the</span>
-<span class="sd">        most dimensions.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            *args (float, ndarray): Values to cast onto the grid</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A list with each argument cast to it&#39;s new shape</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Get the shape of the argument with the most dimensions</span>
-        <span class="n">grid_shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">])])</span>
-
-        <span class="c1"># Reshape each argument to match the dimensions from above</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">grid_shape</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span> <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">]</span>
-
-<div class="viewcode-block" id="CosmologyAccessor.minimize"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.CosmologyAccessor.minimize">[docs]</a>    <span class="k">def</span> <span class="nf">minimize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fit cosmology to the instantiated data</span>
-
-<span class="sd">        Kwargs:</span>
-<span class="sd">            Accepts any iminuit style keyword arguments for parameters</span>
-<span class="sd">              ``H0``, ``Om0``, ``abs_mag``, and ``w0``.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            Optimized Minuit object</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">minimizer</span> <span class="o">=</span> <span class="n">Minuit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chisq</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="n">minimizer</span><span class="o">.</span><span class="n">migrad</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">minimizer</span></div>
-
-<div class="viewcode-block" id="CosmologyAccessor.minimize_mc"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.CosmologyAccessor.minimize_mc">[docs]</a>    <span class="k">def</span> <span class="nf">minimize_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">statistic</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Fit cosmology to the instantiated data using monte carlo resampling</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            samples        (int): Number of samples to draw</span>
-<span class="sd">            n              (int): Size of each sample. Cannot be used with ``frac``</span>
-<span class="sd">            frac         (float): Fraction of data to include in each sample. Cannot be used with ``size``</span>
-<span class="sd">            statistic (callable): Optionally apply a statistic to the returned values</span>
-<span class="sd">            Accepts any iminuit style keyword arguments for parameters</span>
-<span class="sd">              ``H0``, ``Om0``, ``abs_mag``, and ``w0``.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            List of optimized Minuit object or a dictionary of the applies statistic to those values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">statistic</span><span class="p">:</span>
-            <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="n">frac</span><span class="p">)</span><span class="o">.</span><span class="n">snat_sim</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">np_values</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">samples</span><span class="p">)]</span>
-            <span class="n">stat_val</span> <span class="o">=</span> <span class="n">statistic</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
-
-            <span class="c1"># Create a dictionary mapping the argument name to the applies statistic</span>
-            <span class="n">arg_names</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getfullargspec</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chisq</span><span class="p">)</span><span class="o">.</span><span class="n">args</span>
-            <span class="n">samples</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">arg_names</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">stat_val</span><span class="p">))</span>  <span class="c1"># First argument is self, so drop it</span>
-
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">samples</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="n">frac</span><span class="p">)</span><span class="o">.</span><span class="n">snat_sim</span><span class="o">.</span><span class="n">minimize</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">samples</span><span class="p">)]</span>
-
-        <span class="k">return</span> <span class="n">samples</span></div></div>
 </pre></div>
 
           </div>
