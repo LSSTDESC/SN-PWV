@@ -9,8 +9,8 @@ register_lsst_filters(force=True)
 os.environ['CADENCE_SIMS'] = str(Path(__file__).resolve().parent / 'data')
 
 if __name__ == '__main__':
-    sn_model_sim = create_sn_model('salt2-extended', create_pwv_model(4, cache_pwv_los=False), cache_trans=False)
-    sn_model_fit = create_sn_model('salt2-extended', create_pwv_model(4, cache_pwv_los=250_000), cache_trans=250_000)
+    sn_model_sim = create_sn_model('salt2-extended', create_pwv_model(0))
+    sn_model_fit = create_sn_model('salt2-extended', create_pwv_model(0))
     pipeline = FittingPipeline(
         cadence='alt_sched',
         sim_model=sn_model_sim,
