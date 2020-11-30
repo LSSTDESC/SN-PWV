@@ -52,7 +52,7 @@ class KillSignal:
 class ProcessManager:
     """Handles the starting and termination of forked processes"""
 
-    def __init__(self, processes=tuple()):
+    def __init__(self, processes):
         """Manage a collection of forked processes
 
         Args:
