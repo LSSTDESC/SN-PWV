@@ -82,6 +82,9 @@ class ProcessManager:
 class OutputDataModel:
     """Enforces the data model of pipeline output files"""
 
+    def __init__(self, sn_model):
+        self._sn_model = sn_model
+
     @staticmethod
     def build_table_entry(meta, fitted_model, result):
         """Combine light-curve fit results into single row matching the output table file format
@@ -105,7 +108,7 @@ class OutputDataModel:
         out_list.append(result.message)
         return out_list
 
-    def build_masked_entry(self, meta, fit_model, excep):
+    def build_masked_entry(self, meta, excep):
         """Create a masked table entry for a failed light-curve fit
 
         Args:
@@ -117,23 +120,20 @@ class OutputDataModel:
             A list of strings and floats with masked values set as -99
         """
 
-        num_columns = len(self.result_table_col_names(fit_model))
+        num_columns = len(self.column_names)
         return [meta['SNID'], *np.full(num_columns - 2, -99), str(excep)]
 
-    @staticmethod
-    def result_table_col_names(fit_model):
+    @property
+    def column_names(self):
         """Return a list of column names for a given supernova model
-
-        Args:
-            fit_model (Model): Model with parameters to use as column names
 
         Returns:
             List of column names as strings
         """
 
         col_names = ['SNID']
-        col_names.extend(fit_model.param_names)
-        col_names.extend(param + '_err' for param in fit_model.param_names)
+        col_names.extend(self._sn_model.param_names)
+        col_names.extend(param + '_err' for param in self._sn_model.param_names)
         col_names.append('chisq')
         col_names.append('ndof')
         col_names.append('mb')
@@ -142,7 +142,7 @@ class OutputDataModel:
         return col_names
 
 
-class FittingPipeline(ProcessManager, OutputDataModel):
+class FittingPipeline(ProcessManager):
     """Pipeline of parallel processes for simulating and fitting light-curves"""
 
     def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
@@ -174,14 +174,15 @@ class FittingPipeline(ProcessManager, OutputDataModel):
         self.cadence = cadence
         self.sim_model = sim_model
         self.fit_model = fit_model
+        self.out_path = Path(out_path).with_suffix('.csv')
         self.vparams = vparams
         self.quality_callback = quality_callback
         self.iter_lim = iter_lim
         self.reference_stars = ref_stars
         self.pwv_model = pwv_model
 
-        self.out_path = Path(out_path).with_suffix('.csv')
         self.out_path.parent.mkdir(exist_ok=True, parents=True)
+        self.data_model = OutputDataModel(fit_model)
 
         # Set up queues to connect processes together
         manager = mp.Manager()
@@ -266,7 +267,7 @@ class FittingPipeline(ProcessManager, OutputDataModel):
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):
                 self.queue_fit_results.put(
-                    self.build_masked_entry(light_curve.meta, self.fit_model, ValueError('Failed quality check'))
+                    self.data_model.build_masked_entry(light_curve.meta, ValueError('Failed quality check'))
                 )
                 continue
 
@@ -288,10 +289,10 @@ class FittingPipeline(ProcessManager, OutputDataModel):
                     light_curve, self.fit_model, self.vparams,
                     guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
-                self.queue_fit_results.put(self.build_table_entry(light_curve.meta, fitted_model, result))
+                self.queue_fit_results.put(self.data_model.build_table_entry(light_curve.meta, fitted_model, result))
 
             except Exception as excep:
-                self.queue_fit_results.put(self.build_masked_entry(light_curve.meta, self.fit_model, excep))
+                self.queue_fit_results.put(self.data_model.build_masked_entry(light_curve.meta, excep))
 
         # Propagate kill signal
         self.queue_fit_results.put(light_curve)
@@ -302,7 +303,7 @@ class FittingPipeline(ProcessManager, OutputDataModel):
         kill_count = 0  # Count closed upstream processes so this process knows when to exit
 
         with self.out_path.open('w') as outfile:
-            outfile.write(','.join(self.result_table_col_names(self.fit_model)))
+            outfile.write(','.join(self.data_model.column_names))
 
             while True:
                 if isinstance(results := self.queue_fit_results.get(), KillSignal):
