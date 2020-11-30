@@ -8,7 +8,7 @@ from snat_sim.fitting_pipeline import ProcessManager
 
 
 def dummy_func():
-    """SLeep for ten seconds"""
+    """Sleep for ten seconds"""
 
     sleep(10)
 
