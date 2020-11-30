@@ -52,14 +52,14 @@ class KillSignal:
 class ProcessManager:
     """Handles the starting and termination of forked processes"""
 
-    def __init__(self, processes):
+    def __init__(self, processes=None):
         """Manage a collection of forked processes
 
         Args:
             processes (List[Process]): List of processes to manage
         """
 
-        self._processes = processes
+        self._processes = processes or []
 
     def kill(self):
         """Kill all running pipeline processes without trying to exit gracefully"""
