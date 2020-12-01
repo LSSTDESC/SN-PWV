@@ -98,7 +98,11 @@ class FixedResTransmission:
             return pd.Series(self._interpolator(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
 
         else:
-            xi = [[[pwv_val, w] for pwv_val in pwv_eff] for w in wave]
+            # Equivalent to [[[pwv_val, w] for pwv_val in pwv_eff] for w in wave]
+            xi = np.empty((len(wave), len(pwv_eff), 2))
+            xi[:, :, 0] = pwv_eff
+            xi[:, :, 1] = np.array(wave)[:, None]
+
             names = map('{} mm'.format, np.round(pwv, 4).astype(float))
             return pd.DataFrame(self._interpolator(xi), columns=names)
 
