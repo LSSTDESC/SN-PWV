@@ -33,7 +33,7 @@ Data sources stored / written on to disk are shown in red, while objects cached
 in memory are shaded orange.
 
 .. image:: ./_static/images/pipeline.png
-   :width: 800
+   :width: 80%
    :align: center
 
 Contribution and Usage
