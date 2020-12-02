@@ -33,8 +33,8 @@ Module Docs
 import abc
 import warnings
 from copy import copy
-from pathlib import Path
-
+import os
+import joblib
 import numpy as np
 import pandas as pd
 import sncosmo
@@ -48,9 +48,14 @@ from scipy.interpolate import RegularGridInterpolator
 from . import constants as const
 from . import time_series_utils as tsu
 from .cache_utils import numpy_cache
+from .plasticc import get_data_dir
 
-data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
-CACHE_SIZE = 500_000  # Todo: THis is much to big, and should be set to a reasonable number further along in development
+# Todo: These were picked ad-hock and are likely too big.
+#  They should be set to a reasonable number further along in development
+PWV_CACHE_SIZE = 500_000
+TRANSMISSION_CACHE_SIZE = 500_00
+AIRMASS_CACHE_SIZE = 250_000
+memory = joblib.Memory(str(get_data_dir()), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
 
 
 class FixedResTransmission:
@@ -63,7 +68,7 @@ class FixedResTransmission:
         from the ``pwv_kpno`` package.
 
         Args:
-            res       (float): Resolution to bin the atmospheric model to
+            res (float):  Resolution to bin the atmospheric model to
         """
 
         self.norm_pwv = 2
@@ -78,7 +83,7 @@ class FixedResTransmission:
         self._interpolator = RegularGridInterpolator(
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
-        self.calc_transmission = numpy_cache('pwv', 'wave', cache_size=CACHE_SIZE)(self.calc_transmission)
+        self.calc_transmission = numpy_cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
 
     def calc_transmission(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
@@ -124,7 +129,8 @@ class PWVModel:
         self.pwv_model_data = tsu.periodic_interpolation(tsu.resample_data_across_year(pwv_series))
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        self.pwv_los = numpy_cache('date', cache_size=CACHE_SIZE)(self.pwv_los)
+        self.pwv_los = numpy_cache('date', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
+        self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod
     def from_suominet_receiver(receiver, year, supp_years=None):
