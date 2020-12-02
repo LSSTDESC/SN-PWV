@@ -55,7 +55,6 @@ from .plasticc import get_data_dir
 PWV_CACHE_SIZE = 500_000
 TRANSMISSION_CACHE_SIZE = 500_00
 AIRMASS_CACHE_SIZE = 250_000
-memory = joblib.Memory(str(get_data_dir()), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
 
 
 class FixedResTransmission:
@@ -130,6 +129,7 @@ class PWVModel:
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
         self.pwv_los = numpy_cache('date', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
+        memory = joblib.Memory(str(get_data_dir()), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
         self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod
