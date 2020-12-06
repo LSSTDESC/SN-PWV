@@ -35,6 +35,7 @@ Module Docs
 
 import multiprocessing as mp
 import warnings
+from copy import copy
 from pathlib import Path
 
 import numpy as np
@@ -96,8 +97,8 @@ class OutputDataModel:
             fit_model (Model): Supernova model to reflect in the outputted data model
         """
 
-        self.sim_model = sim_model
-        self.fit_model = fit_model
+        self.sim_model = copy(sim_model)
+        self.fit_model = copy(fit_model)
 
     def build_table_entry(self, meta, fitted_model, result):
         """Combine light-curve fit results into single row matching the output table file format
