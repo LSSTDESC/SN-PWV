@@ -24,8 +24,8 @@ class OutputValueFormatting(TestCase):
             ['z', 't0', 'x0', 'x1', 'c'],  # parameters of model to vary
             bounds={'z': (0.3, 0.7)})  # bounds on parameters (if any)
 
-        cls.data_model = OutputDataModel(model)
-        cls.formatted_results = OutputDataModel.build_table_entry(cls.meta, cls.fitted_model, cls.result)
+        cls.data_model = OutputDataModel(model, model)
+        cls.formatted_results = cls.data_model.build_table_entry(cls.meta, cls.fitted_model, cls.result)
 
     def test_object_id_position(self):
         """Test position of SNID in output list"""
@@ -99,10 +99,12 @@ class MaskedRowCreation(TestCase):
         cls.meta = {'SNID': '123'}
         cls.fit_failure_exception = ValueError('This fit failed to converge.')
 
-        cls.data_model = OutputDataModel(model)
+        cls.data_model = OutputDataModel(model, model)
         cls.masked_row = cls.data_model.build_masked_entry(cls.meta, cls.fit_failure_exception)
 
     def test_mask_value_is_neg_99(self):
+        """Test -99 is used to represent masked values"""
+
         np.testing.assert_array_equal(self.masked_row[1:-2], -99)
 
     def test_object_id_position(self):
