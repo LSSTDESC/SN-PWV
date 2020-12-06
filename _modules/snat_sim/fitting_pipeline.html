@@ -284,7 +284,7 @@
     <span class="sd">&quot;&quot;&quot;Pipeline of parallel processes for simulating and fitting light-curves&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FittingPipeline.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.FittingPipeline.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">,</span> <span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span>
-                 <span class="n">quality_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_queue</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">pool_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quality_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_queue</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">pool_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">iter_lim</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">ref_stars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pwv_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fit light-curves using multiple processes and combine results into an output file</span>
 
@@ -293,6 +293,7 @@
 <span class="sd">            sim_model         (SNModel): Model to use when simulating light-curves</span>
 <span class="sd">            fit_model         (SNModel): Model to use when fitting light-curves</span>
 <span class="sd">            vparams         (list[str]): List of parameter names to vary in the fit</span>
+<span class="sd">            bounds    (dict[str, list]): Bounds to impose on ``fit_model`` parameters when fitting light-curves</span>
 <span class="sd">            out_path        (str, Path): Path to write results to (.csv extension is enforced)</span>
 <span class="sd">            quality_callback (callable): Skip light-curves if this function returns False</span>
 <span class="sd">            max_queue             (int): Maximum number of light-curves to store in pipeline at once</span>
@@ -312,8 +313,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span> <span class="o">=</span> <span class="n">cadence</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span> <span class="o">=</span> <span class="n">sim_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span> <span class="o">=</span> <span class="n">fit_model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span> <span class="o">=</span> <span class="n">vparams</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quality_callback</span> <span class="o">=</span> <span class="n">quality_callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span> <span class="o">=</span> <span class="n">iter_lim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reference_stars</span> <span class="o">=</span> <span class="n">ref_stars</span>
@@ -424,7 +426,7 @@
 
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span>
-                    <span class="n">light_curve</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span><span class="p">,</span>
+                    <span class="n">light_curve</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
                     <span class="n">guess_t0</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">guess_amplitude</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">guess_z</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
                 <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data_model</span><span class="o">.</span><span class="n">build_table_entry</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">fitted_model</span><span class="p">,</span> <span class="n">result</span><span class="p">))</span>
