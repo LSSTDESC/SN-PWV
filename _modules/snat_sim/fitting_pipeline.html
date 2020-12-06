@@ -153,6 +153,7 @@
 
 <span class="kn">import</span> <span class="nn">multiprocessing</span> <span class="k">as</span> <span class="nn">mp</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -161,63 +162,63 @@
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plasticc</span><span class="p">,</span> <span class="n">reference_stars</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 
 
-<span class="k">class</span> <span class="nc">KillSignal</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Signal current process that it should try to exit gracefully&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="KillSignal"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.KillSignal">[docs]</a><span class="k">class</span> <span class="nc">KillSignal</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Signal used to indicate a forked process should try and exit gracefully&quot;&quot;&quot;</span>
 
-    <span class="k">pass</span>
+    <span class="k">pass</span></div>
 
 
-<span class="k">class</span> <span class="nc">ProcessManager</span><span class="p">:</span>
+<div class="viewcode-block" id="ProcessManager"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.ProcessManager">[docs]</a><span class="k">class</span> <span class="nc">ProcessManager</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Handles the starting and termination of forked processes&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessManager.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.ProcessManager.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Manage a collection of forked processes</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            processes (List[Process]): List of processes to manage</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span> <span class="o">=</span> <span class="n">processes</span> <span class="ow">or</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span> <span class="o">=</span> <span class="n">processes</span> <span class="ow">or</span> <span class="p">[]</span></div>
 
-    <span class="k">def</span> <span class="nf">kill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessManager.kill"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.ProcessManager.kill">[docs]</a>    <span class="k">def</span> <span class="nf">kill</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Kill all running pipeline processes without trying to exit gracefully&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span><span class="p">:</span>
-            <span class="n">p</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">wait_for_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessManager.wait_for_exit"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.ProcessManager.wait_for_exit">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for_exit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Wait for the pipeline to finish running before continuing execution&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span><span class="p">:</span>
-            <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">join</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessManager.run"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.ProcessManager.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Similar to ``run_async`` but blocks further execution until finished&quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">run_async</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_exit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wait_for_exit</span><span class="p">()</span></div>
 
-    <span class="k">def</span> <span class="nf">run_async</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProcessManager.run_async"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.ProcessManager.run_async">[docs]</a>    <span class="k">def</span> <span class="nf">run_async</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Start all processes asynchronously&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span><span class="p">:</span>
-            <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+            <span class="n">p</span><span class="o">.</span><span class="n">start</span><span class="p">()</span></div></div>
 
 
 <div class="viewcode-block" id="OutputDataModel"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel">[docs]</a><span class="k">class</span> <span class="nc">OutputDataModel</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Enforces the data model of pipeline output files&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="OutputDataModel.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sn_model</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputDataModel.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Formats data from a given supernova model into a coherent tabular format</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            sn_model (Model): Supernova model to reflect in the outputted data model</span>
+<span class="sd">            fit_model (Model): Supernova model to reflect in the outputted data model</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_sn_model</span> <span class="o">=</span> <span class="n">sn_model</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">sim_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">fit_model</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="OutputDataModel.build_table_entry"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.build_table_entry">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">build_table_entry</span><span class="p">(</span><span class="n">meta</span><span class="p">,</span> <span class="n">fitted_model</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+<div class="viewcode-block" id="OutputDataModel.build_table_entry"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.build_table_entry">[docs]</a>    <span class="k">def</span> <span class="nf">build_table_entry</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">meta</span><span class="p">,</span> <span class="n">fitted_model</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Combine light-curve fit results into single row matching the output table file format</span>
 
 <span class="sd">        Args:</span>
@@ -230,6 +231,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">out_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]]</span>
+        <span class="n">out_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="o">-</span><span class="mi">99</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
         <span class="n">out_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
         <span class="n">out_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
         <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">chisq</span><span class="p">)</span>
@@ -250,8 +252,13 @@
 <span class="sd">            A list of strings and floats with masked values set as -99</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">num_columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="p">)</span>
-        <span class="k">return</span> <span class="p">[</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">num_columns</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">99</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">excep</span><span class="p">)]</span></div>
+        <span class="n">out_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]]</span>
+        <span class="n">out_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="o">-</span><span class="mi">99</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+
+        <span class="n">remaining_columns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">column_names</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_list</span><span class="p">)</span>
+        <span class="n">out_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="n">remaining_columns</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">99</span><span class="p">))</span>
+        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">excep</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">out_list</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">column_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -262,8 +269,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_sn_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">param</span> <span class="o">+</span> <span class="s1">&#39;_err&#39;</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sn_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;sim_&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">param</span> <span class="o">+</span> <span class="s1">&#39;_err&#39;</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;chisq&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ndof&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;mb&#39;</span><span class="p">)</span>
@@ -312,7 +320,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model</span> <span class="o">=</span> <span class="n">pwv_model</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">data_model</span> <span class="o">=</span> <span class="n">OutputDataModel</span><span class="p">(</span><span class="n">fit_model</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_model</span> <span class="o">=</span> <span class="n">OutputDataModel</span><span class="p">(</span><span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">)</span>
 
         <span class="c1"># Set up queues to connect processes together</span>
         <span class="n">manager</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Manager</span><span class="p">()</span>
@@ -397,7 +405,7 @@
             <span class="c1"># Skip if duplicated light-curve is not up to quality standards</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">quality_callback</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">quality_callback</span><span class="p">(</span><span class="n">duplicated_lc</span><span class="p">):</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">data_model</span><span class="o">.</span><span class="n">build_masked_entry</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Failed quality check&#39;</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data_model</span><span class="o">.</span><span class="n">build_masked_entry</span><span class="p">(</span><span class="n">duplicated_lc</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Failed quality check&#39;</span><span class="p">))</span>
                 <span class="p">)</span>
                 <span class="k">continue</span>
 

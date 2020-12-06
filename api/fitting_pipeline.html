@@ -188,48 +188,30 @@ synchronously.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.fitting_pipeline.FittingPipeline.kill">
-<code class="sig-name descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.kill" title="Permalink to this definition">¶</a></dt>
-<dd><p>Kill all running pipeline processes without trying to exit gracefully</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.FittingPipeline.run">
-<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.run" title="Permalink to this definition">¶</a></dt>
-<dd><p>Similar to <code class="docutils literal notranslate"><span class="pre">run_async</span></code> but blocks further execution until finished</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.FittingPipeline.run_async">
-<code class="sig-name descname">run_async</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.run_async" title="Permalink to this definition">¶</a></dt>
-<dd><p>Start all processes asynchronously</p>
-</dd></dl>
-
-<dl class="py method">
 <dt id="snat_sim.fitting_pipeline.FittingPipeline.simulation_pool_size">
 <em class="property">property </em><code class="sig-name descname">simulation_pool_size</code><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.simulation_pool_size" title="Permalink to this definition">¶</a></dt>
 <dd><p>Number of processes used for simulating light-curves</p>
 </dd></dl>
 
-<dl class="py method">
-<dt id="snat_sim.fitting_pipeline.FittingPipeline.wait_for_exit">
-<code class="sig-name descname">wait_for_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.fitting_pipeline.FittingPipeline.wait_for_exit" title="Permalink to this definition">¶</a></dt>
-<dd><p>Wait for the pipeline to finish running before continuing execution</p>
 </dd></dl>
 
+<dl class="py class">
+<dt id="snat_sim.fitting_pipeline.KillSignal">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">KillSignal</code><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#KillSignal"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.KillSignal" title="Permalink to this definition">¶</a></dt>
+<dd><p>Signal used to indicate a forked process should try and exit gracefully</p>
 </dd></dl>
 
 <dl class="py class">
 <dt id="snat_sim.fitting_pipeline.OutputDataModel">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">OutputDataModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sn_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">OutputDataModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Enforces the data model of pipeline output files</p>
 <dl class="py method">
 <dt id="snat_sim.fitting_pipeline.OutputDataModel.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sn_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Formats data from a given supernova model into a coherent tabular format</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>sn_model</strong> (<em>Model</em>) – Supernova model to reflect in the outputted data model</p>
+<dd class="field-odd"><p><strong>fit_model</strong> (<em>Model</em>) – Supernova model to reflect in the outputted data model</p>
 </dd>
 </dl>
 </dd></dl>
@@ -253,7 +235,7 @@ synchronously.</p>
 
 <dl class="py method">
 <dt id="snat_sim.fitting_pipeline.OutputDataModel.build_table_entry">
-<em class="property">static </em><code class="sig-name descname">build_table_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta</span></em>, <em class="sig-param"><span class="n">fitted_model</span></em>, <em class="sig-param"><span class="n">result</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.build_table_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.build_table_entry" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">build_table_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta</span></em>, <em class="sig-param"><span class="n">fitted_model</span></em>, <em class="sig-param"><span class="n">result</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.build_table_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.build_table_entry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Combine light-curve fit results into single row matching the output table file format</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -278,6 +260,47 @@ synchronously.</p>
 <dd class="field-odd"><p>List of column names as strings</p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.fitting_pipeline.ProcessManager">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.fitting_pipeline.</code><code class="sig-name descname">ProcessManager</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processes</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager" title="Permalink to this definition">¶</a></dt>
+<dd><p>Handles the starting and termination of forked processes</p>
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.ProcessManager.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">processes</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Manage a collection of forked processes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>processes</strong> (<em>List</em><em>[</em><em>Process</em><em>]</em>) – List of processes to manage</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.ProcessManager.kill">
+<code class="sig-name descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.kill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.kill" title="Permalink to this definition">¶</a></dt>
+<dd><p>Kill all running pipeline processes without trying to exit gracefully</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.ProcessManager.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Similar to <code class="docutils literal notranslate"><span class="pre">run_async</span></code> but blocks further execution until finished</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.ProcessManager.run_async">
+<code class="sig-name descname">run_async</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.run_async"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.run_async" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start all processes asynchronously</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.fitting_pipeline.ProcessManager.wait_for_exit">
+<code class="sig-name descname">wait_for_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.wait_for_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.wait_for_exit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait for the pipeline to finish running before continuing execution</p>
 </dd></dl>
 
 </dd></dl>
