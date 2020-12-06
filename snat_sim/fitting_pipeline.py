@@ -166,7 +166,7 @@ class FittingPipeline(ProcessManager):
     """Pipeline of parallel processes for simulating and fitting light-curves"""
 
     def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
-                 quality_callback=None, max_queue=25, pool_size=None,
+                 bounds=None, quality_callback=None, max_queue=25, pool_size=None,
                  iter_lim=float('inf'), ref_stars=None, pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -175,6 +175,7 @@ class FittingPipeline(ProcessManager):
             sim_model         (SNModel): Model to use when simulating light-curves
             fit_model         (SNModel): Model to use when fitting light-curves
             vparams         (list[str]): List of parameter names to vary in the fit
+            bounds    (dict[str, list]): Bounds to impose on ``fit_model`` parameters when fitting light-curves
             out_path        (str, Path): Path to write results to (.csv extension is enforced)
             quality_callback (callable): Skip light-curves if this function returns False
             max_queue             (int): Maximum number of light-curves to store in pipeline at once
@@ -194,8 +195,9 @@ class FittingPipeline(ProcessManager):
         self.cadence = cadence
         self.sim_model = sim_model
         self.fit_model = fit_model
-        self.out_path = Path(out_path).with_suffix('.csv')
         self.vparams = vparams
+        self.out_path = Path(out_path).with_suffix('.csv')
+        self.bounds = bounds
         self.quality_callback = quality_callback
         self.iter_lim = iter_lim
         self.reference_stars = ref_stars
@@ -306,7 +308,7 @@ class FittingPipeline(ProcessManager):
 
             try:
                 result, fitted_model = sncosmo.fit_lc(
-                    light_curve, self.fit_model, self.vparams,
+                    light_curve, self.fit_model, self.vparams, bounds=self.bounds,
                     guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
                 self.queue_fit_results.put(self.data_model.build_table_entry(light_curve.meta, fitted_model, result))
