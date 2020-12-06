@@ -287,7 +287,7 @@ class FittingPipeline(ProcessManager):
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):
                 self.queue_fit_results.put(
-                    self.data_model.build_masked_entry(light_curve.meta, ValueError('Failed quality check'))
+                    self.data_model.build_masked_entry(duplicated_lc.meta, ValueError('Failed quality check'))
                 )
                 continue
 
