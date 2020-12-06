@@ -45,7 +45,7 @@ from . import plasticc, reference_stars, constants as const
 
 
 class KillSignal:
-    """Signal current process that it should try to exit gracefully"""
+    """Signal used to indicate a forked process should try and exit gracefully"""
 
     pass
 
