@@ -31,11 +31,12 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.autosummary',
-    'sphinx.ext.napoleon',
     'sphinx_copybutton',
     'nbsphinx',
     'nbsphinx_link',
-    'sphinx.ext.doctest'
+    'sphinx.ext.doctest',
+    'sphinx.ext.napoleon',  # Napoleon need to be loaded BEFORE sphinx_autodoc_typehints
+    'sphinx_autodoc_typehints'
 ]
 
 # Syntax highlighting style
