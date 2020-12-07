@@ -32,7 +32,7 @@ pool (grey boxes) can be increased as necessary to meet performance requirements
 Data sources stored / written on to disk are shown in red, while objects cached
 in memory are shaded orange.
 
-.. image:: ./_static/images/pipeline.png
+.. image:: ./_static/images/pipeline.svg
    :width: 80%
    :align: center
 
