@@ -35,7 +35,8 @@ extensions = [
     'sphinx_copybutton',
     'nbsphinx',
     'nbsphinx_link',
-    'sphinx.ext.doctest'
+    'sphinx.ext.doctest',
+    'sphinxarg.ext'
 ]
 
 # Syntax highlighting style

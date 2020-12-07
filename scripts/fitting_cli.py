@@ -12,7 +12,7 @@ from pathlib import Path
 from astropy.table import Table
 from pwv_kpno.defaults import ctio
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
 from snat_sim import filters, models
 from snat_sim.fitting_pipeline import FittingPipeline
 
@@ -128,14 +128,15 @@ def create_cli_parser():
         '-c', '--cadence',
         type=str,
         required=True,
-        help='Cadence to use when simulating light-curves'
+        help='Observational cadence to use when simulating light-curves.'
     )
 
     parser.add_argument(
         '-t', '--source',
         type=str,
         default='salt2-extended',
-        help='The name of the spectral template to use when simulating AND fitting'
+        help='The name of the sncosmo spectral template to use when simulating'
+             ' AND fitting supernova light-curves.'
     )
 
     parser.add_argument(
@@ -143,21 +144,25 @@ def create_cli_parser():
         type=str,
         default=('x0', 'x1', 'c'),
         nargs='+',
-        help='Parameters to vary when fitting'
+        help='Parameters to vary when fitting light-curves.'
     )
 
     parser.add_argument(
         '-s', '--sim_variability',
         type=str,
         required=True,
-        help='Rate at which to vary PWV in simulated light-curves'
+        help='Rate at which to vary PWV when simulating light-curves.'
+             ' Specify a numerical value for a fixed PWV concentration.'
+             ' Specify "epoch" to vary the PWV per observation.'
     )
 
     parser.add_argument(
         '-f', '--fit_variability',
         type=str,
         required=True,
-        help='Rate at which to vary assumed PWV when fitting light-curves'
+        help='Rate at which to vary the assumed PWV when fitting light-curves.'
+             ' Specify a numerical value for a fixed PWV concentration.'
+             ' Specify "epoch" to vary the PWV per observation.'
     )
 
     parser.add_argument(
@@ -171,7 +176,7 @@ def create_cli_parser():
         '-i', '--iter_lim',
         type=int,
         default=float('inf'),
-        help='Limit number of processed light-curves (Useful for profiling)'
+        help='Exit pipeline after processing the given number of light-curves (Useful for profiling).'
     )
 
     parser.add_argument(
@@ -179,14 +184,14 @@ def create_cli_parser():
         type=str,
         default=('G2', 'M5', 'K2'),
         nargs='+',
-        help='Reference star(s) to calibrate simulated SNe against'
+        help='Reference star(s) to calibrate simulated SNe against.'
     )
 
     parser.add_argument(
         '-o', '--out_path',
         type=Path,
         required=True,
-        help='Output file path (in CSV format)'
+        help='Output file path (in CSV format).'
     )
 
     for param in SALT2_PARAMS:
@@ -195,7 +200,7 @@ def create_cli_parser():
             type=float,
             default=None,
             nargs=2,
-            help=f'Upper and lower bounds for {param} parameter when fitting light-curves'
+            help=f'Upper and lower bounds for {param} parameter when fitting light-curves.'
         )
 
     parser.set_defaults(func=run_pipeline)
