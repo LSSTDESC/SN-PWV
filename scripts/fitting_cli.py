@@ -15,9 +15,10 @@ from pwv_kpno.defaults import ctio
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from snat_sim import filters, models
 from snat_sim.fitting_pipeline import FittingPipeline
-from tests.mock import create_constant_pwv_model
 
 os.environ.setdefault('CADENCE_SIMS', '/mnt/md0/sn-sims')
+CTIO_PWV_MODEL = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
+SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 
 
 def passes_quality_cuts(light_curve):
@@ -42,47 +43,33 @@ def passes_quality_cuts(light_curve):
     return sum(passed_cuts) >= 2
 
 
-def create_pwv_model(pwv_variability):
-    """Create a ``PWVModel`` object
+def create_pwv_effect(pwv_variability):
+    """Create a PWV transmission effect for use with supernova models
+
+    If ``pwv_variability`` is numeric, return a ``StaticPWVTrans`` object
+    set to the given PWV concentration (in mm). If ``pwv_variability`` equals
+    ``epoch``, return a ``VariablePWVTrans`` constructed from the CTIO receiver
+    (using 2016 data supplemented with 2017).
 
     Args:
         pwv_variability (str, Numeric): How to vary PWV as a function of time
 
     Returns:
-        An instantiated ``PWVModel`` object
+        A propagation effect usable with a supernova model object
     """
 
     # Keep a fixed PWV concentration
     if isinstance(pwv_variability, (float, int)):
-        return create_constant_pwv_model(pwv_variability)
+        transmission_effect = models.StaticPWVTrans()
+        transmission_effect.set(pwv=pwv_variability)
+        return transmission_effect
 
     # Model PWV continuously over the year using CTIO data
     elif pwv_variability == 'epoch':
-        return models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
+        return models.VariablePWVTrans(CTIO_PWV_MODEL)
 
     else:
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
-
-
-def create_sn_model(source='salt2-extended', pwv_model=None):
-    """Create a supernova model with optional PWV effects
-
-    Args:
-        source (str, Source): Spectral template to use for the SN model
-        pwv_model (PWVModel): How to vary PWV as a function of time
-
-    Returns:
-        An instantiated ``snat_sim`` supernova model
-    """
-
-    model = models.SNModel(source=source)
-    if pwv_model is not None:
-        model.add_effect(
-            effect=models.VariablePWVTrans(pwv_model),
-            name='',
-            frame='obs')
-
-    return model
 
 
 def run_pipeline(cli_args):
@@ -93,12 +80,18 @@ def run_pipeline(cli_args):
     """
 
     print('Creating simulation model...')
-    pwv_model_sim = create_pwv_model(cli_args.sim_variability)
-    sn_model_sim = create_sn_model(cli_args.source, pwv_model_sim)
+    sn_model_sim = models.SNModel(cli_args.source)
+    sn_model_sim.add_effect(
+        effect=create_pwv_effect(cli_args.sim_variability),
+        name='',
+        frame='obs')
 
     print('Creating fitting model...')
-    pwv_model_fit = create_pwv_model(cli_args.fit_variability)
-    sn_model_fit = create_sn_model(cli_args.source, pwv_model_fit)
+    sn_model_fit = models.SNModel(cli_args.source)
+    sn_model_fit.add_effect(
+        effect=create_pwv_effect(cli_args.fit_variability),
+        name='',
+        frame='obs')
 
     print('Instantiating pipeline...')
     pipeline = FittingPipeline(
@@ -111,7 +104,7 @@ def run_pipeline(cli_args):
         pool_size=cli_args.pool_size,
         iter_lim=cli_args.iter_lim,
         ref_stars=cli_args.ref_stars,
-        pwv_model=pwv_model_sim
+        pwv_model=CTIO_PWV_MODEL
     )
 
     print('I/O Processes: 2')
@@ -195,13 +188,15 @@ def create_cli_parser():
 
 if __name__ == '__main__':
     filters.register_lsst_filters()
-    cli_args = create_cli_parser().parse_args()
+    parsed_args = create_cli_parser().parse_args()
 
     # Types cast PWV variability into float
-    if cli_args.fit_variability.isnumeric():
-        cli_args.fit_variability = float(cli_args.fit_variability)
+    if parsed_args.fit_variability.isnumeric():
+        parsed_args.fit_variability = float(parsed_args.fit_variability)
 
-    if cli_args.sim_variability.isnumeric():
-        cli_args.sim_variability = float(cli_args.sim_variability)
+    if parsed_args.sim_variability.isnumeric():
+        parsed_args.sim_variability = float(parsed_args.sim_variability)
 
-    cli_args.func(cli_args)
+    print(parsed_args)
+    sys.exit(0)
+    parsed_args.func(parsed_args)
