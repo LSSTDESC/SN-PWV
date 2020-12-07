@@ -79,6 +79,12 @@ def run_pipeline(cli_args):
         cli_args (Namespace): Parse command line arguments
     """
 
+    # Combine any parameter boundaries into a single dictionary
+    fitting_bounds = dict()
+    for param in SALT2_PARAMS:
+        if param_bound := getattr(cli_args, f'bound_{param}', None):
+            fitting_bounds[param] = param_bound
+
     print('Creating simulation model...')
     sn_model_sim = models.SNModel(cli_args.source)
     sn_model_sim.add_effect(
@@ -100,6 +106,7 @@ def run_pipeline(cli_args):
         fit_model=sn_model_fit,
         vparams=cli_args.vparams,
         out_path=cli_args.out_path,
+        bounds=fitting_bounds,
         quality_callback=passes_quality_cuts,
         pool_size=cli_args.pool_size,
         iter_lim=cli_args.iter_lim,
@@ -182,6 +189,15 @@ def create_cli_parser():
         help='Output file path (in CSV format)'
     )
 
+    for param in SALT2_PARAMS:
+        parser.add_argument(
+            f'--bound_{param}',
+            type=float,
+            default=None,
+            nargs=2,
+            help=f'Upper and lower bounds for {param} parameter when fitting light-curves'
+        )
+
     parser.set_defaults(func=run_pipeline)
     return parser
 
@@ -197,6 +213,4 @@ if __name__ == '__main__':
     if parsed_args.sim_variability.isnumeric():
         parsed_args.sim_variability = float(parsed_args.sim_variability)
 
-    print(parsed_args)
-    sys.exit(0)
     parsed_args.func(parsed_args)
