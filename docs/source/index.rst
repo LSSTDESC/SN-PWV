@@ -55,6 +55,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    Introduction<self>
    overview/install.rst
    overview/data_provenance.rst
+   overview/command_line.rst
 
 .. toctree::
    :hidden:

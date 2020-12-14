@@ -50,6 +50,18 @@ dl {
     margin-bottom: 40px;
 }
 
+div.highlight {
+    overflow: hidden;
+}
+
+a.copybtn {
+    margin-right: 5px
+}
+
+div.stderr a.copybtn, div.nboutput a.copybtn {
+    display: none;
+}
+
 /* -- Code and API ---------------------------------------------------------- */
 
 
@@ -62,16 +74,9 @@ dl {
     background: #fafafa;
 }
 
-/* -- Rendered Notebooks ---------------------------------------------------- */
+/* -- Command Line Interface Arguments -------------------------------------- */
 
-div.highlight {
-    overflow: hidden;
-}
-
-a.copybtn {
-    margin-right: 5px
-}
-
-div.stderr a.copybtn, div.nboutput a.copybtn {
-    display: none;
+dl.option-list {
+    padding-left: 100px;
+    padding-right: 150px;
 }
