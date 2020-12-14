@@ -36,7 +36,7 @@ extensions = [
     'nbsphinx_link',
     'sphinx.ext.doctest',
     'sphinx.ext.napoleon',  # Napoleon need to be loaded BEFORE sphinx_autodoc_typehints
-    'sphinx_autodoc_typehints'
+    'sphinx_autodoc_typehints',
     'sphinxarg.ext'
 ]
 
