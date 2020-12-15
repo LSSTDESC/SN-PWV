@@ -4,7 +4,7 @@ light through atmospheric water vapor (with and without variation in time),
 and the seasonal variation of water vapor vs time.
 
 Model Summaries
----------------------------
+---------------
 
 A summary of the available models is provided below:
 

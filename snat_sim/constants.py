@@ -2,9 +2,6 @@
 the parent package. Units used for each value are summarized in the table
 below.
 
-Value Summaries
----------------
-
 +------------------------------+----------------------------------------------+
 | Value                        | Description                                  |
 +==============================+==============================================+
