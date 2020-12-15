@@ -44,7 +44,7 @@ filters.register_lsst_filters(force=True)
 
 
 def _multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
-    """Plot a 2d y array vs a 1d x array
+    """Plot a 2d y array vs a 1d x array.
 
     Lines are color coded according to values of a 2d z array
 
@@ -205,7 +205,7 @@ def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 
 
 # https://stackoverflow.com/questions/18311909/how-do-i-annotate-with-power-of-ten-formatting
 def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
-    """Return a string representation of number in scientific notation"""
+    """Return a string representation of number in scientific notation."""
 
     if exponent is None:
         exponent = int(np.floor(np.log10(abs(num))))
@@ -362,7 +362,7 @@ def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
 
 
 def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
-    """Plot the variation in x0 as a function of redshift and PWV
+    """Plot the variation in x0 as a function of redshift and PWV.
 
     Args:
         source    (Source): Source corresponding to the provided parameters
@@ -427,7 +427,7 @@ def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
 
 # noinspection PyUnusedLocal
 def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=const.betoule_cosmo):
-    """Plot the variation in fitted distance modulus as a function of redshift and PWV
+    """Plot the variation in fitted distance modulus as a function of redshift and PWV.
 
     Args:
         mu      (ndarray): Array of distance moduli
@@ -464,7 +464,7 @@ def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=const.betoule_cosmo):
 
 
 def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
-    """Plot PWV measurements taken over a single year as a function of time
+    """Plot PWV measurements taken over a single year as a function of time.
 
     Set ``missing=None`` to disable plotting of missing data windows.
 
@@ -576,7 +576,7 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
 
 # noinspection PyPep8Naming
 def plot_cosmology_fit(data, abs_mag, H0, Om0, w0, alpha, beta):
-    """Plot a cosmological fit to a set of supernova data
+    """Plot a cosmological fit to a set of supernova data.
 
     Args:
         data (DataFrame): Results from the snat_sim fitting pipeline
@@ -619,7 +619,7 @@ def plot_cosmology_fit(data, abs_mag, H0, Om0, w0, alpha, beta):
 
 
 def plot_residuals_on_sky(ra, dec, residual, cmap='coolwarm'):
-    """Plot hubble residuals as a function of supernova coordinates
+    """Plot hubble residuals as a function of supernova coordinates.
 
     Args:
         ra       (list): Right Ascension for each supernova
