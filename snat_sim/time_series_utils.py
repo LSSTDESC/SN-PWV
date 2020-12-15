@@ -155,11 +155,11 @@ def datetime_to_season(time):
     dummy_year = 2000  # dummy leap year to allow input X-02-29 (leap day)
     seasons = [
         ('winter', (datetime.date(dummy_year, 1, 1), datetime.date(dummy_year, 3, 20))),
-        ('spring', (datetime.date(dummy_year, 3, 21), datetime.date(dummy_year, 6, 20))),
-        ('summer', (datetime.date(dummy_year, 6, 21), datetime.date(dummy_year, 9, 22))),
-        ('fall', (datetime.date(dummy_year, 9, 23), datetime.date(dummy_year, 12, 20))),
-        ('winter', (datetime.date(dummy_year, 12, 21), datetime.date(dummy_year, 12, 31)))
+        ('spring', (datetime.date(dummy_year, 3, 20), datetime.date(dummy_year, 6, 20))),
+        ('summer', (datetime.date(dummy_year, 6, 20), datetime.date(dummy_year, 9, 22))),
+        ('fall', (datetime.date(dummy_year, 9, 22), datetime.date(dummy_year, 12, 20))),
+        ('winter', (datetime.date(dummy_year, 12, 20), datetime.date(dummy_year + 1, 1, 1)))
     ]
 
     time = time.date().replace(year=dummy_year)
-    return next(season for season, (start, end) in seasons if start <= time <= end)
+    return next(season for season, (start, end) in seasons if start <= time < end)
