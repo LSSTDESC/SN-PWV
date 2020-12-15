@@ -96,14 +96,14 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
 </ul>
 
     
@@ -163,7 +163,7 @@
 
 
 <span class="k">def</span> <span class="nf">_multi_line_plot</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">axis</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Plot a 2d y array vs a 1d x array</span>
+    <span class="sd">&quot;&quot;&quot;Plot a 2d y array vs a 1d x array.</span>
 
 <span class="sd">    Lines are color coded according to values of a 2d z array</span>
 
@@ -324,7 +324,7 @@
 
 <span class="c1"># https://stackoverflow.com/questions/18311909/how-do-i-annotate-with-power-of-ten-formatting</span>
 <div class="viewcode-block" id="sci_notation"><a class="viewcode-back" href="../../api/plotting.html#snat_sim.plotting.sci_notation">[docs]</a><span class="k">def</span> <span class="nf">sci_notation</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="n">decimal_digits</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">precision</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exponent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Return a string representation of number in scientific notation&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Return a string representation of number in scientific notation.&quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="n">exponent</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">exponent</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">num</span><span class="p">))))</span>
@@ -481,7 +481,7 @@
 
 
 <div class="viewcode-block" id="plot_delta_x0"><a class="viewcode-back" href="../../api/plotting.html#snat_sim.plotting.plot_delta_x0">[docs]</a><span class="k">def</span> <span class="nf">plot_delta_x0</span><span class="p">(</span><span class="n">source</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">params_dict</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Plot the variation in x0 as a function of redshift and PWV</span>
+    <span class="sd">&quot;&quot;&quot;Plot the variation in x0 as a function of redshift and PWV.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        source    (Source): Source corresponding to the provided parameters</span>
@@ -546,7 +546,7 @@
 
 <span class="c1"># noinspection PyUnusedLocal</span>
 <div class="viewcode-block" id="plot_delta_mu"><a class="viewcode-back" href="../../api/plotting.html#snat_sim.plotting.plot_delta_mu">[docs]</a><span class="k">def</span> <span class="nf">plot_delta_mu</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Plot the variation in fitted distance modulus as a function of redshift and PWV</span>
+    <span class="sd">&quot;&quot;&quot;Plot the variation in fitted distance modulus as a function of redshift and PWV.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        mu      (ndarray): Array of distance moduli</span>
@@ -583,7 +583,7 @@
 
 
 <div class="viewcode-block" id="plot_year_pwv_vs_time"><a class="viewcode-back" href="../../api/plotting.html#snat_sim.plotting.plot_year_pwv_vs_time">[docs]</a><span class="k">def</span> <span class="nf">plot_year_pwv_vs_time</span><span class="p">(</span><span class="n">pwv_series</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">missing</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Plot PWV measurements taken over a single year as a function of time</span>
+    <span class="sd">&quot;&quot;&quot;Plot PWV measurements taken over a single year as a function of time.</span>
 
 <span class="sd">    Set ``missing=None`` to disable plotting of missing data windows.</span>
 
@@ -695,7 +695,7 @@
 
 <span class="c1"># noinspection PyPep8Naming</span>
 <div class="viewcode-block" id="plot_cosmology_fit"><a class="viewcode-back" href="../../api/plotting.html#snat_sim.plotting.plot_cosmology_fit">[docs]</a><span class="k">def</span> <span class="nf">plot_cosmology_fit</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">abs_mag</span><span class="p">,</span> <span class="n">H0</span><span class="p">,</span> <span class="n">Om0</span><span class="p">,</span> <span class="n">w0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Plot a cosmological fit to a set of supernova data</span>
+    <span class="sd">&quot;&quot;&quot;Plot a cosmological fit to a set of supernova data.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        data (DataFrame): Results from the snat_sim fitting pipeline</span>
@@ -738,7 +738,7 @@
 
 
 <div class="viewcode-block" id="plot_residuals_on_sky"><a class="viewcode-back" href="../../api/plotting.html#snat_sim.plotting.plot_residuals_on_sky">[docs]</a><span class="k">def</span> <span class="nf">plot_residuals_on_sky</span><span class="p">(</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">residual</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;coolwarm&#39;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Plot hubble residuals as a function of supernova coordinates</span>
+    <span class="sd">&quot;&quot;&quot;Plot hubble residuals as a function of supernova coordinates.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        ra       (list): Right Ascension for each supernova</span>

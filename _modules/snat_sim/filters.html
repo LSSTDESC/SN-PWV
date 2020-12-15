@@ -96,14 +96,14 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
 </ul>
 
     
@@ -117,17 +117,18 @@
           <div class="document clearer body">
             
   <h1>Source code for snat_sim.filters</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;The ``filters`` module is responsible for registering custom filter profiles</span>
-<span class="sd">with the ``sncosmo`` dependency package. When registering filters for a given</span>
-<span class="sd">survey, please check the documentation of the corresponding function to</span>
-<span class="sd">determine the names of the newly registered filter. Filters only need to be</span>
-<span class="sd">registered once within a given environment to be accessible by ``sncosmo``.</span>
+<span></span><span class="sd">&quot;&quot;&quot;The ``filters`` module is responsible for registering custom filter</span>
+<span class="sd">profiles with the ``sncosmo`` package (A core ``snat_sim`` dependancy).  When</span>
+<span class="sd">registering filters for a given survey, please check the documentation of the</span>
+<span class="sd">corresponding function to determine the names of the newly registered filters.</span>
+<span class="sd">Filters only need to be registered once within a given runtime to be</span>
+<span class="sd">accessible by ``sncosmo``.</span>
 
 <span class="sd">Usage Example</span>
 <span class="sd">-------------</span>
 
 <span class="sd">In the below example, filter profiles for the Legacy Survey of</span>
-<span class="sd">Space and Time (LSST) are registered with  and then retrieved by the</span>
+<span class="sd">Space and Time (LSST) are registered with and then retrieved from the</span>
 <span class="sd">``sncosmo`` package.</span>
 
 <span class="sd">.. doctest:: python</span>

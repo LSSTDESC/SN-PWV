@@ -31,7 +31,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.fitting_pipeline" href="fitting_pipeline.html" />
+    <link rel="next" title="snat_sim.models" href="models.html" />
     <link rel="prev" title="snat_sim.constants" href="constants.html" />
   
    
@@ -47,7 +47,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
+          <a href="models.html" title="snat_sim.models"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="constants.html" title="snat_sim.constants"
@@ -103,14 +103,14 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="time_series_utils.html">snat_sim.time_series_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
 </ul>
 
     
@@ -125,15 +125,16 @@
             
   <div class="section" id="module-snat_sim.filters">
 <span id="snat-sim-filters"></span><h1>snat_sim.filters<a class="headerlink" href="#module-snat_sim.filters" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">filters</span></code> module is responsible for registering custom filter profiles
-with the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> dependency package. When registering filters for a given
-survey, please check the documentation of the corresponding function to
-determine the names of the newly registered filter. Filters only need to be
-registered once within a given environment to be accessible by <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">filters</span></code> module is responsible for registering custom filter
+profiles with the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package (A core <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> dependancy).  When
+registering filters for a given survey, please check the documentation of the
+corresponding function to determine the names of the newly registered filters.
+Filters only need to be registered once within a given runtime to be
+accessible by <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
 <p>In the below example, filter profiles for the Legacy Survey of
-Space and Time (LSST) are registered with  and then retrieved by the
+Space and Time (LSST) are registered with and then retrieved from the
 <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.filters</span> <span class="kn">import</span> <span class="n">register_lsst_filters</span>
@@ -231,7 +232,7 @@ Space and Time (LSST) are registered with  and then retrieved by the
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
+          <a href="models.html" title="snat_sim.models"
              >next</a> |</li>
         <li class="right" >
           <a href="constants.html" title="snat_sim.constants"

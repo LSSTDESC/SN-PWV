@@ -96,14 +96,14 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
 </ul>
 
     
@@ -122,12 +122,37 @@
 <span class="sd">light through atmospheric water vapor (with and without variation in time),</span>
 <span class="sd">and the seasonal variation of water vapor vs time.</span>
 
+<span class="sd">Model Summaries</span>
+<span class="sd">---------------</span>
+
+<span class="sd">A summary of the available models is provided below:</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">   :nosignatures:</span>
+
+<span class="sd">   FixedResTransmission</span>
+<span class="sd">   PWVModel</span>
+<span class="sd">   SNModel</span>
+
+<span class="sd">Supernova models (``SNModel``) are designed to closely resemble the behavior</span>
+<span class="sd">of the ``sncosmo`` package. However, unlike ``sncosmo.Model`` objects, the</span>
+<span class="sd">``snat_sim.SNModel`` class provides support for propogation effects that vary</span>
+<span class="sd">with time. A summary of propagation effects provided by the ``snat_sim``</span>
+<span class="sd">package is listed below:</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">   :nosignatures:</span>
+
+<span class="sd">   StaticPWVTrans</span>
+<span class="sd">   SeasonalPWVTrans</span>
+<span class="sd">   VariablePWVTrans</span>
+
 <span class="sd">Usage Example</span>
 <span class="sd">-------------</span>
 
 <span class="sd">To ensure backwards compatibility and ease of use, supernovae modeling with the</span>
-<span class="sd">``snat_sim`` package follows the</span>
-<span class="sd">`same design &lt;https://sncosmo.readthedocs.io/en/stable/models.html&gt;`_</span>
+<span class="sd">``snat_sim`` package follows the same</span>
+<span class="sd">`design pattern &lt;https://sncosmo.readthedocs.io/en/stable/models.html&gt;`_</span>
 <span class="sd">as the ``sncosmo`` package. Models are instantiated for a given spectral</span>
 <span class="sd">template and various propagation effects can be added to the model. In the</span>
 <span class="sd">following example, atmospheric propagation effects due to precipitable water</span>
@@ -172,6 +197,10 @@
 <span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;data&#39;</span>
 
 
+<span class="c1">###############################################################################</span>
+<span class="c1"># Core models for physical phenomena</span>
+<span class="c1">###############################################################################</span>
+
 <div class="viewcode-block" id="FixedResTransmission"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.FixedResTransmission">[docs]</a><span class="k">class</span> <span class="nc">FixedResTransmission</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Models atmospheric transmission due to PWV at a fixed resolution&quot;&quot;&quot;</span>
 
@@ -198,7 +227,7 @@
             <span class="n">points</span><span class="o">=</span><span class="p">(</span><span class="n">calc_pwv_eff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samp_pwv</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">samp_wave</span><span class="p">),</span> <span class="n">values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">samp_transmission</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">wave</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Evaluate transmission model at given wavelengths</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate transmission model at given wavelengths.</span>
 
 <span class="sd">        Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``</span>
 <span class="sd">        object if ``pwv`` is an array. Wavelengths are expected in angstroms.</span>
@@ -229,7 +258,7 @@
 
 
 <div class="viewcode-block" id="PWVModel"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.PWVModel">[docs]</a><span class="k">class</span> <span class="nc">PWVModel</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Interpolation model for the PWV at a given point of the year&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Model for interpolating the atmospheric water vapor at a given date and time&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PWVModel.__init__"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.PWVModel.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv_series</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Build a model for time variable PWV by drawing from a given PWV time series</span>
@@ -374,8 +403,83 @@
         <span class="p">}</span></div></div>
 
 
+<div class="viewcode-block" id="SNModel"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SNModel">[docs]</a><span class="k">class</span> <span class="nc">SNModel</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An observer-frame supernova model composed of a Source and zero or more effects&quot;&quot;&quot;</span>
+
+    <span class="c1"># Same as parent except allows duck-typing of ``effect`` arg</span>
+    <span class="k">def</span> <span class="nf">_add_effect_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">effect</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Like &#39;add effect&#39;, but don&#39;t sync parameter arrays&quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">frame</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;rest&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="s1">&#39;free&#39;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;frame must be one of: {&#39;rest&#39;, &#39;obs&#39;, &#39;free&#39;}&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">effect</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
+
+        <span class="c1"># for &#39;free&#39; effects, add a redshift parameter</span>
+        <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;free&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;z&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_names_latex</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{</span><span class="se">\\</span><span class="s1">rm &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;}</span><span class="se">\\</span><span class="s1">,z&#39;</span><span class="p">)</span>
+
+        <span class="c1"># add all of this effect&#39;s parameters</span>
+        <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">effect</span><span class="o">.</span><span class="n">param_names</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="n">param_name</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">param_names_latex</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{</span><span class="se">\\</span><span class="s1">rm &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;}</span><span class="se">\\</span><span class="s1">,&#39;</span> <span class="o">+</span> <span class="n">param_name</span><span class="p">)</span>
+
+    <span class="c1"># Same as parent except adds support for ``VariablePropagationEffect`` effects</span>
+    <span class="k">def</span> <span class="nf">_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">wave</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Array flux function.&quot;&quot;&quot;</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">phase</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">a</span>
+        <span class="n">restwave</span> <span class="o">=</span> <span class="n">wave</span> <span class="o">*</span> <span class="n">a</span>
+
+        <span class="c1"># Note that below we multiply by the scale factor to conserve</span>
+        <span class="c1"># bolometric luminosity.</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">_flux</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">restwave</span><span class="p">)</span>
+
+        <span class="c1"># Pass the flux through the PropagationEffects.</span>
+        <span class="k">for</span> <span class="n">effect</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">zindex</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_effects</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effect_frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effect_zindicies</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;obs&#39;</span><span class="p">:</span>
+                <span class="n">effect_wave</span> <span class="o">=</span> <span class="n">wave</span>
+
+            <span class="k">elif</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;rest&#39;</span><span class="p">:</span>
+                <span class="n">effect_wave</span> <span class="o">=</span> <span class="n">restwave</span>
+
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># frame == &#39;free&#39;</span>
+                <span class="n">effect_a</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">zindex</span><span class="p">])</span>
+                <span class="n">effect_wave</span> <span class="o">=</span> <span class="n">wave</span> <span class="o">*</span> <span class="n">effect_a</span>
+
+            <span class="c1"># This code block is new to the child class</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">effect</span><span class="p">,</span> <span class="n">VariablePropagationEffect</span><span class="p">):</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">effect_wave</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">effect_wave</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">f</span>
+
+    <span class="c1"># Parent class copy enforces return is a parent class instance</span>
+    <span class="c1"># Allow child classes to return copies of their own type</span>
+    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Like a normal shallow copy, but makes an actual copy of the</span>
+<span class="sd">        parameter array.&quot;&quot;&quot;</span>
+
+        <span class="n">new_model</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">effect_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effect_frames</span><span class="p">)</span>
+        <span class="n">new_model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="n">new_model</span></div>
+
+
+<span class="c1">###############################################################################</span>
+<span class="c1"># Propagation effects</span>
+<span class="c1">###############################################################################</span>
+
+
 <div class="viewcode-block" id="VariablePropagationEffect"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePropagationEffect">[docs]</a><span class="k">class</span> <span class="nc">VariablePropagationEffect</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">PropagationEffect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``l</span>
+    <span class="sd">&quot;&quot;&quot;Base class for propogation effects that vary with time</span>
+
+<span class="sd">    Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``</span>
 <span class="sd">    method accepts a ``time`` argument.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -397,7 +501,7 @@
 
 
 <div class="viewcode-block" id="StaticPWVTrans"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.StaticPWVTrans">[docs]</a><span class="k">class</span> <span class="nc">StaticPWVTrans</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">PropagationEffect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Atmospheric propagation effect for time static PWV&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Propagation effect for the atmospheric absorption of light due to time static PWV&quot;&quot;&quot;</span>
 
     <span class="n">_minwave</span> <span class="o">=</span> <span class="mf">3000.0</span>
     <span class="n">_maxwave</span> <span class="o">=</span> <span class="mf">12000.0</span>
@@ -446,7 +550,7 @@
 
 
 <div class="viewcode-block" id="VariablePWVTrans"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePWVTrans">[docs]</a><span class="k">class</span> <span class="nc">VariablePWVTrans</span><span class="p">(</span><span class="n">VariablePropagationEffect</span><span class="p">,</span> <span class="n">StaticPWVTrans</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Atmospheric propagation effect for temporally variable PWV&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Propagation effect for the atmospheric absorption of light due to time variable PWV&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VariablePWVTrans.__init__"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePWVTrans.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv_model</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;mjd&#39;</span><span class="p">,</span> <span class="n">transmission_res</span><span class="o">=</span><span class="mf">5.</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Time variable atmospheric transmission due to PWV</span>
@@ -578,76 +682,6 @@
         <span class="n">pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
         <span class="n">transmission</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_model</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_propagation</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">transmission</span><span class="p">)</span></div></div>
-
-
-<div class="viewcode-block" id="SNModel"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SNModel">[docs]</a><span class="k">class</span> <span class="nc">SNModel</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Similar to ``sncosmo.SNModel`` class, but removes type checks from</span>
-<span class="sd">    methods to allow duck-typing.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Same as parent except allows duck-typing of ``effect`` arg</span>
-    <span class="k">def</span> <span class="nf">_add_effect_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">effect</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Like &#39;add effect&#39;, but don&#39;t sync parameter arrays&quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">frame</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;rest&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="s1">&#39;free&#39;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;frame must be one of: {&#39;rest&#39;, &#39;obs&#39;, &#39;free&#39;}&quot;</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">_effects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">copy</span><span class="p">(</span><span class="n">effect</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_effect_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">frame</span><span class="p">)</span>
-
-        <span class="c1"># for &#39;free&#39; effects, add a redshift parameter</span>
-        <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;free&#39;</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;z&#39;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">param_names_latex</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{</span><span class="se">\\</span><span class="s1">rm &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;}</span><span class="se">\\</span><span class="s1">,z&#39;</span><span class="p">)</span>
-
-        <span class="c1"># add all of this effect&#39;s parameters</span>
-        <span class="k">for</span> <span class="n">param_name</span> <span class="ow">in</span> <span class="n">effect</span><span class="o">.</span><span class="n">param_names</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">name</span> <span class="o">+</span> <span class="n">param_name</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">param_names_latex</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;{</span><span class="se">\\</span><span class="s1">rm &#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;}</span><span class="se">\\</span><span class="s1">,&#39;</span> <span class="o">+</span> <span class="n">param_name</span><span class="p">)</span>
-
-    <span class="c1"># Same as parent except adds support for ``VariablePropagationEffect`` effects</span>
-    <span class="k">def</span> <span class="nf">_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">wave</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Array flux function.&quot;&quot;&quot;</span>
-
-        <span class="n">a</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="n">phase</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">a</span>
-        <span class="n">restwave</span> <span class="o">=</span> <span class="n">wave</span> <span class="o">*</span> <span class="n">a</span>
-
-        <span class="c1"># Note that below we multiply by the scale factor to conserve</span>
-        <span class="c1"># bolometric luminosity.</span>
-        <span class="n">f</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">_flux</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">restwave</span><span class="p">)</span>
-
-        <span class="c1"># Pass the flux through the PropagationEffects.</span>
-        <span class="k">for</span> <span class="n">effect</span><span class="p">,</span> <span class="n">frame</span><span class="p">,</span> <span class="n">zindex</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_effects</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effect_frames</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effect_zindicies</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;obs&#39;</span><span class="p">:</span>
-                <span class="n">effect_wave</span> <span class="o">=</span> <span class="n">wave</span>
-
-            <span class="k">elif</span> <span class="n">frame</span> <span class="o">==</span> <span class="s1">&#39;rest&#39;</span><span class="p">:</span>
-                <span class="n">effect_wave</span> <span class="o">=</span> <span class="n">restwave</span>
-
-            <span class="k">else</span><span class="p">:</span>  <span class="c1"># frame == &#39;free&#39;</span>
-                <span class="n">effect_a</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="n">zindex</span><span class="p">])</span>
-                <span class="n">effect_wave</span> <span class="o">=</span> <span class="n">wave</span> <span class="o">*</span> <span class="n">effect_a</span>
-
-            <span class="c1"># This code block is new to the child class</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">effect</span><span class="p">,</span> <span class="n">VariablePropagationEffect</span><span class="p">):</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">effect_wave</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
-
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">propagate</span><span class="p">(</span><span class="n">effect_wave</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">f</span>
-
-    <span class="c1"># Parent class copy enforces return is a parent class instance</span>
-    <span class="c1"># Allow child classes to return copies of their own type</span>
-    <span class="k">def</span> <span class="nf">__copy__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Like a normal shallow copy, but makes an actual copy of the</span>
-<span class="sd">        parameter array.&quot;&quot;&quot;</span>
-
-        <span class="n">new_model</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">source</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">effects</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">effect_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_effect_frames</span><span class="p">)</span>
-        <span class="n">new_model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span>
-        <span class="k">return</span> <span class="n">new_model</span></div>
 </pre></div>
 
           </div>
