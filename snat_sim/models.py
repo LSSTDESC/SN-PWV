@@ -33,6 +33,7 @@ Module Docs
 import abc
 import warnings
 from copy import copy
+from datetime import datetime
 from pathlib import Path
 
 import numpy as np
@@ -43,6 +44,7 @@ from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
 from pwv_kpno.transmission import calc_pwv_eff
+from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
 
 from . import constants as const
@@ -224,9 +226,37 @@ class PWVModel:
         return (self.pwv_zenith(date, time_format) *
                 self.calc_airmass(date, ra, dec, lat, lon, alt, time_format))
 
+    def seasonal_avg(self):
+        """Calculate the average PWV in each season
+
+        Assumes seasons based on equinox and solstice dates in the year 2020.
+
+        Returns:
+            A dictionary with the average PWV in each season (in mm)
+        """
+
+        # Rough estimates for the start of each season
+        spring = tsu.datetime_to_sec_in_year(datetime(2020, 3, 20, tzinfo=utc))
+        summer = tsu.datetime_to_sec_in_year(datetime(2020, 6, 21, tzinfo=utc))
+        fall = tsu.datetime_to_sec_in_year(datetime(2020, 9, 22, tzinfo=utc))
+        winter = tsu.datetime_to_sec_in_year(datetime(2020, 12, 21, tzinfo=utc))
+
+        # Separate PWV data based on season
+        winter_pwv = self.pwv_model_data[(self.pwv_model_data.index < spring) | (self.pwv_model_data.index > winter)]
+        spring_pwv = self.pwv_model_data[(self.pwv_model_data.index > spring) & (self.pwv_model_data.index < summer)]
+        summer_pwv = self.pwv_model_data[(self.pwv_model_data.index > summer) & (self.pwv_model_data.index < fall)]
+        fall_pwv = self.pwv_model_data[(self.pwv_model_data.index > fall) & (self.pwv_model_data.index < winter)]
+
+        return {
+            'winter': winter_pwv.mean(),
+            'spring': spring_pwv.mean(),
+            'summer': summer_pwv.mean(),
+            'fall': fall_pwv.mean()
+        }
+
 
 class VariablePropagationEffect(sncosmo.PropagationEffect):
-    """Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
+    """Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``l
     method accepts a ``time`` argument.
     """
 
@@ -336,28 +366,14 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 
         self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
-    def propagate(self, wave, flux, time):
-        """Propagate the flux through the atmosphere
+    def _apply_propagation(self, time, flux, transmission):
+        """Apply an atmospheric transmission to flux values
 
         Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-            time (ndarray): Array of time values to determine PWV for
-
-        Returns:
-            An array of flux values after suffering from PWV absorption
+            time         (ndarray): Time values for the sampled flux and transmission values
+            flux         (ndarray): Array of flux values
+            transmission (ndarray): Array of sampled transmission values
         """
-
-        pwv = self._pwv_model.pwv_los(
-            time,
-            ra=self['ra'],
-            dec=self['dec'],
-            lat=self['lat'],
-            lon=self['lon'],
-            alt=self['alt'],
-            time_format=self._time_format)
-
-        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
             if np.ndim(flux) == 1:
@@ -370,6 +386,79 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
             return flux * transmission.values.T
 
         raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
+
+    def assumed_pwv(self, time):
+        """The PWV concentration used by the propagation effect at a given time
+
+        Args:
+            time (float, array): Time to get the PWV concentration for
+
+        Returns:
+            An array of PWV values in units of mm
+        """
+
+        return self._pwv_model.pwv_los(
+            time,
+            ra=self['ra'],
+            dec=self['dec'],
+            lat=self['lat'],
+            lon=self['lon'],
+            alt=self['alt'],
+            time_format=self._time_format)
+
+    def propagate(self, wave, flux, time):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+            time (ndarray): Array of time values to determine PWV for
+
+        Returns:
+            An array of flux values after suffering from PWV absorption
+        """
+
+        pwv = self.assumed_pwv(time)
+        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        return self._apply_propagation(time, flux, transmission)
+
+
+class SeasonalPWVTrans(VariablePWVTrans):
+    """Atmospheric propagation effect for a fixed PWV concentration per-season"""
+
+    def assumed_pwv(self, time):
+        """The PWV concentration used by the propagation effect at a given time
+
+        Args:
+            time (float, array): Time to get the PWV concentration for
+
+        Returns:
+            An array of PWV values in units of mm
+        """
+
+        # Convert time values to their corresponding season
+        datetime_objects = Time(time, format=self._time_format).to_datetime()
+        seasons = tsu.datetime_to_season(datetime_objects)
+
+        # Get the average PWV for each season
+        avg_pwv_per_season = self._pwv_model.seasonal_avg()
+        return [avg_pwv_per_season[season] for season in seasons]
+
+    def propagate(self, wave, flux, time):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+            time (ndarray): Array of time values to determine PWV for
+
+        Returns:
+            An array of flux values after suffering from PWV absorption
+        """
+
+        pwv = self.assumed_pwv(time)
+        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        return self._apply_propagation(time, flux, transmission)
 
 
 class SNModel(sncosmo.Model):
