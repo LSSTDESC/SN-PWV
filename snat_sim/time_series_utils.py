@@ -150,8 +150,9 @@ def datetime_to_season(time):
         time (Datetime, List[Datetime]): Datetime value(s)
 
     Returns:
-        An array of strings.
+        An array of strings
     """
+
     dummy_year = 2000  # dummy leap year to allow input X-02-29 (leap day)
     seasons = [
         ('winter', (datetime.date(dummy_year, 1, 1), datetime.date(dummy_year, 3, 20))),
