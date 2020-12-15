@@ -387,19 +387,17 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 
         raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
 
-    def propagate(self, wave, flux, time):
-        """Propagate the flux through the atmosphere
+    def assumed_pwv(self, time):
+        """The PWV concentration used by the propagation effect at a given time
 
         Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-            time (ndarray): Array of time values to determine PWV for
+            time (float, array): Time to get the PWV concentration for
 
         Returns:
-            An array of flux values after suffering from PWV absorption
+            An array of PWV values in units of mm
         """
 
-        pwv = self._pwv_model.pwv_los(
+        return self._pwv_model.pwv_los(
             time,
             ra=self['ra'],
             dec=self['dec'],
@@ -408,12 +406,43 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
             alt=self['alt'],
             time_format=self._time_format)
 
+    def propagate(self, wave, flux, time):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+            time (ndarray): Array of time values to determine PWV for
+
+        Returns:
+            An array of flux values after suffering from PWV absorption
+        """
+
+        pwv = self.assumed_pwv(time)
         transmission = self._transmission_model(pwv, np.atleast_1d(wave))
         return self._apply_propagation(time, flux, transmission)
 
 
 class SeasonalPWVTrans(VariablePWVTrans):
     """Atmospheric propagation effect for a fixed PWV concentration per-season"""
+
+    def assumed_pwv(self, time):
+        """The PWV concentration used by the propagation effect at a given time
+
+        Args:
+            time (float, array): Time to get the PWV concentration for
+
+        Returns:
+            An array of PWV values in units of mm
+        """
+
+        # Convert time values to their corresponding season
+        datetime_objects = Time(time, format=self._time_format).to_datetime()
+        seasons = tsu.datetime_to_season(datetime_objects)
+
+        # Get the average PWV for each season
+        avg_pwv_per_season = self._pwv_model.seasonal_avg()
+        return [avg_pwv_per_season[season] for season in seasons]
 
     def propagate(self, wave, flux, time):
         """Propagate the flux through the atmosphere
@@ -427,14 +456,7 @@ class SeasonalPWVTrans(VariablePWVTrans):
             An array of flux values after suffering from PWV absorption
         """
 
-        # Convert time values to their corresponding season
-        datetime_objects = Time(time, format=self._time_format).to_datetime()
-        seasons = tsu.datetime_to_season(datetime_objects)
-
-        # Get the average PWV for each season
-        avg_pwv_per_season = self._pwv_model.seasonal_avg()
-        pwv = [avg_pwv_per_season[season] for season in seasons]
-
+        pwv = self.assumed_pwv(time)
         transmission = self._transmission_model(pwv, np.atleast_1d(wave))
         return self._apply_propagation(time, flux, transmission)
 

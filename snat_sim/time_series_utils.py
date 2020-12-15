@@ -161,5 +161,5 @@ def datetime_to_season(time):
         ('winter', (datetime.date(dummy_year, 12, 21), datetime.date(dummy_year, 12, 31)))
     ]
 
-    time = time.datetime.date().replace(year=dummy_year)
+    time = time.date().replace(year=dummy_year)
     return next(season for season, (start, end) in seasons if start <= time <= end)
