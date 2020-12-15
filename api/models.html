@@ -268,6 +268,18 @@ objects instead of numerical values for <code class="docutils literal notranslat
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="snat_sim.models.PWVModel.seasonal_avg">
+<code class="sig-name descname">seasonal_avg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#PWVModel.seasonal_avg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.PWVModel.seasonal_avg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the average PWV in each season</p>
+<p>Assumes seasons based on equinox and solstice dates in the year 2020.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary with the average PWV in each season (in mm)</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -275,6 +287,44 @@ objects instead of numerical values for <code class="docutils literal notranslat
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">SNModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">effects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">effect_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">effect_frames</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SNModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SNModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>Similar to <code class="docutils literal notranslate"><span class="pre">sncosmo.SNModel</span></code> class, but removes type checks from
 methods to allow duck-typing.</p>
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.models.SeasonalPWVTrans">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">SeasonalPWVTrans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_model</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em>, <em class="sig-param"><span class="n">transmission_res</span><span class="o">=</span><span class="default_value">5.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Atmospheric propagation effect for a fixed PWV concentration per-season</p>
+<dl class="py method">
+<dt id="snat_sim.models.SeasonalPWVTrans.assumed_pwv">
+<code class="sig-name descname">assumed_pwv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans.assumed_pwv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans.assumed_pwv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The PWV concentration used by the propagation effect at a given time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> (<em>float</em><em>, </em><em>array</em>) – Time to get the PWV concentration for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array of PWV values in units of mm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.SeasonalPWVTrans.propagate">
+<code class="sig-name descname">propagate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans.propagate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Propagate the flux through the atmosphere</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wave</strong> (<em>ndarray</em>) – An array of wavelength values</p></li>
+<li><p><strong>flux</strong> (<em>ndarray</em>) – An array of flux values</p></li>
+<li><p><strong>time</strong> (<em>ndarray</em>) – Array of time values to determine PWV for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array of flux values after suffering from PWV absorption</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -353,6 +403,20 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="snat_sim.models.VariablePWVTrans.assumed_pwv">
+<code class="sig-name descname">assumed_pwv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePWVTrans.assumed_pwv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePWVTrans.assumed_pwv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The PWV concentration used by the propagation effect at a given time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> (<em>float</em><em>, </em><em>array</em>) – Time to get the PWV concentration for</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An array of PWV values in units of mm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="snat_sim.models.VariablePWVTrans.propagate">
 <code class="sig-name descname">propagate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePWVTrans.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePWVTrans.propagate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propagate the flux through the atmosphere</p>
@@ -375,8 +439,8 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 <dl class="py class">
 <dt id="snat_sim.models.VariablePropagationEffect">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">VariablePropagationEffect</code><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePropagationEffect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePropagationEffect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Similar to <code class="docutils literal notranslate"><span class="pre">sncosmo.PropagationEffect</span></code> class, but the <code class="docutils literal notranslate"><span class="pre">propagate</span></code>
-method accepts a <code class="docutils literal notranslate"><span class="pre">time</span></code> argument.</p>
+<dd><p>Similar to <code class="docutils literal notranslate"><span class="pre">sncosmo.PropagationEffect</span></code> class, but the <code class="docutils literal notranslate"><span class="pre">propagate``l</span>
+<span class="pre">method</span> <span class="pre">accepts</span> <span class="pre">a</span> <span class="pre">``time</span></code> argument.</p>
 <dl class="py method">
 <dt id="snat_sim.models.VariablePropagationEffect.propagate">
 <em class="property">abstract </em><code class="sig-name descname">propagate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePropagationEffect.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePropagationEffect.propagate" title="Permalink to this definition">¶</a></dt>

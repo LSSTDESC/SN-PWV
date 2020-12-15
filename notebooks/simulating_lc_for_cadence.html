@@ -523,7 +523,7 @@ Params:
 </div>
 <div class="output_area rendered_html docutils container">
 <i>Table length=205</i>
-<table id="table140275318042576" class="table-striped table-bordered table-condensed">
+<table id="table140443442250032" class="table-striped table-bordered table-condensed">
 <thead><tr><th>MJD</th><th>FLT</th><th>FIELD</th><th>PHOTFLAG</th><th>PHOTPROB</th><th>FLUXCAL</th><th>FLUXCALERR</th><th>PSF_SIG1</th><th>SKY_SIG</th><th>ZEROPT</th><th>SIM_MAGOBS</th></tr></thead>
 <thead><tr><th>float64</th><th>str2</th><th>str12</th><th>int32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th></tr></thead>
 <tr><td>61387.3365</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>4.7668333</td><td>4.6751437</td><td>2.01</td><td>24.21</td><td>31.49</td><td>98.93107</td></tr>
@@ -592,7 +592,7 @@ Params:
 </pre></div>
 </div>
 </div>
-<p>When comparing our own “duplicated” light-curves with the original PLaSTICC simulations, we care about three things: 1. Do the light-curves have the same time sampling? 2. Do the light-curves have the same parameters (except for x0 which depends on the specrtral template and cosmology)? 3. Do the light-curves have a similar SNR?</p>
+<p>When comparing our own “duplicated” light-curves with the original PLaSTICC simulations, we care about three things: 1. Do the light-curves have the same time sampling? 2. Do the light-curves have the same parameters (except for x0 which depends on the spectral template and cosmology)? 3. Do the light-curves have a similar SNR?</p>
 <p>The time sampling is easily verified by looking at the plotted data:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
@@ -649,7 +649,7 @@ Params:
 
 <span class="sd">    Args:</span>
 <span class="sd">        lc_list (List[Table]): List of light-curves in the PLaSTICC data model</span>
-<span class="sd">        bins          (array): Bins to use when gerenating the histogram</span>
+<span class="sd">        bins          (array): Bins to use when generating the histogram</span>
 <span class="sd">        zp     (float, array): Optionally overwrite the PLaSTICC zero-point with this value</span>
 <span class="sd">        gain            (int): Gain to use during simulation</span>
 <span class="sd">        skynoise        (int):  Optionally overwrite the PLaSTICC skynoise with this value</span>
@@ -749,7 +749,7 @@ Params:
 </pre></div>
 </div>
 </div>
-<p>Next we need a SN Model that incorporates the PWV concentration along line of sight (i.e. the PWV scaled for the airmass at the time of observation). The <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package doesn’t have a clearly defined approach to adding time variable propagation effects. We use custom classes from the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package insetead, which mimick <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but include time variable propagation effects.</p>
+<p>Next we need a SN Model that incorporates the PWV concentration along line of sight (i.e. the PWV scaled for the airmass at the time of observation). The <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package doesn’t have a clearly defined approach to adding time variable propagation effects. We use custom classes from the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package instead, which mimick <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but include time variable propagation effects.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
@@ -830,7 +830,7 @@ Params:
 <img alt="../_images/notebooks_simulating_lc_for_cadence_28_0.png" src="../_images/notebooks_simulating_lc_for_cadence_28_0.png" />
 </div>
 </div>
-<p>The PWV along line of sight is equivilent to the PWV at zenith times the airmass of the observation. We quickly validate the airmass calculation of the <code class="docutils literal notranslate"><span class="pre">VariablePWVTrans</span></code> class.</p>
+<p>The PWV along line of sight is equivalent to the PWV at zenith times the airmass of the observation. We quickly validate the airmass calculation of the <code class="docutils literal notranslate"><span class="pre">VariablePWVTrans</span></code> class.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
