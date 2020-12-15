@@ -256,7 +256,7 @@ class PWVModel:
 
 
 class VariablePropagationEffect(sncosmo.PropagationEffect):
-    """Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
+    """Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``l
     method accepts a ``time`` argument.
     """
 
