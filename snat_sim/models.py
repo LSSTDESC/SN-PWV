@@ -3,12 +3,37 @@ physical phenomena. This includes SNe Ia light-curves, the propagation of
 light through atmospheric water vapor (with and without variation in time),
 and the seasonal variation of water vapor vs time.
 
+Model Summaries
+---------------
+
+A summary of the available models is provided below:
+
+.. autosummary::
+   :nosignatures:
+
+   FixedResTransmission
+   PWVModel
+   SNModel
+
+Supernova models (``SNModel``) are designed to closely resemble the behavior
+of the ``sncosmo`` package. However, unlike ``sncosmo.Model`` objects, the
+``snat_sim.SNModel`` class provides support for propogation effects that vary
+with time. A summary of propagation effects provided by the ``snat_sim``
+package is listed below:
+
+.. autosummary::
+   :nosignatures:
+
+   StaticPWVTrans
+   SeasonalPWVTrans
+   VariablePWVTrans
+
 Usage Example
 -------------
 
 To ensure backwards compatibility and ease of use, supernovae modeling with the
-``snat_sim`` package follows the
-`same design <https://sncosmo.readthedocs.io/en/stable/models.html>`_
+``snat_sim`` package follows the same
+`design pattern <https://sncosmo.readthedocs.io/en/stable/models.html>`_
 as the ``sncosmo`` package. Models are instantiated for a given spectral
 template and various propagation effects can be added to the model. In the
 following example, atmospheric propagation effects due to precipitable water
@@ -53,6 +78,10 @@ from . import time_series_utils as tsu
 data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
 
 
+###############################################################################
+# Core models for physical phenomena
+###############################################################################
+
 class FixedResTransmission:
     """Models atmospheric transmission due to PWV at a fixed resolution"""
 
@@ -79,7 +108,7 @@ class FixedResTransmission:
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
     def __call__(self, pwv, wave=None):
-        """Evaluate transmission model at given wavelengths
+        """Evaluate transmission model at given wavelengths.
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
         object if ``pwv`` is an array. Wavelengths are expected in angstroms.
@@ -110,7 +139,7 @@ class FixedResTransmission:
 
 
 class PWVModel:
-    """Interpolation model for the PWV at a given point of the year"""
+    """Model for interpolating the atmospheric water vapor at a given date and time"""
 
     def __init__(self, pwv_series):
         """Build a model for time variable PWV by drawing from a given PWV time series
@@ -255,8 +284,83 @@ class PWVModel:
         }
 
 
+class SNModel(sncosmo.Model):
+    """An observer-frame supernova model composed of a Source and zero or more effects"""
+
+    # Same as parent except allows duck-typing of ``effect`` arg
+    def _add_effect_partial(self, effect, name, frame):
+        """Like 'add effect', but don't sync parameter arrays"""
+
+        if frame not in ['rest', 'obs', 'free']:
+            raise ValueError("frame must be one of: {'rest', 'obs', 'free'}")
+
+        self._effects.append(copy(effect))
+        self._effect_names.append(name)
+        self._effect_frames.append(frame)
+
+        # for 'free' effects, add a redshift parameter
+        if frame == 'free':
+            self._param_names.append(name + 'z')
+            self.param_names_latex.append('{\\rm ' + name + '}\\,z')
+
+        # add all of this effect's parameters
+        for param_name in effect.param_names:
+            self._param_names.append(name + param_name)
+            self.param_names_latex.append('{\\rm ' + name + '}\\,' + param_name)
+
+    # Same as parent except adds support for ``VariablePropagationEffect`` effects
+    def _flux(self, time, wave):
+        """Array flux function."""
+
+        a = 1. / (1. + self._parameters[0])
+        phase = (time - self._parameters[1]) * a
+        restwave = wave * a
+
+        # Note that below we multiply by the scale factor to conserve
+        # bolometric luminosity.
+        f = a * self._source._flux(phase, restwave)
+
+        # Pass the flux through the PropagationEffects.
+        for effect, frame, zindex in zip(self._effects, self._effect_frames, self._effect_zindicies):
+            if frame == 'obs':
+                effect_wave = wave
+
+            elif frame == 'rest':
+                effect_wave = restwave
+
+            else:  # frame == 'free'
+                effect_a = 1. / (1. + self._parameters[zindex])
+                effect_wave = wave * effect_a
+
+            # This code block is new to the child class
+            if isinstance(effect, VariablePropagationEffect):
+                f = effect.propagate(effect_wave, f, time)
+
+            else:
+                f = effect.propagate(effect_wave, f)
+
+        return f
+
+    # Parent class copy enforces return is a parent class instance
+    # Allow child classes to return copies of their own type
+    def __copy__(self):
+        """Like a normal shallow copy, but makes an actual copy of the
+        parameter array."""
+
+        new_model = type(self)(self.source, self.effects, self.effect_names, self._effect_frames)
+        new_model.update(dict(zip(self.param_names, self.parameters)))
+        return new_model
+
+
+###############################################################################
+# Propagation effects
+###############################################################################
+
+
 class VariablePropagationEffect(sncosmo.PropagationEffect):
-    """Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``l
+    """Base class for propogation effects that vary with time
+
+    Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
     method accepts a ``time`` argument.
     """
 
@@ -278,7 +382,7 @@ class VariablePropagationEffect(sncosmo.PropagationEffect):
 
 
 class StaticPWVTrans(sncosmo.PropagationEffect):
-    """Atmospheric propagation effect for time static PWV"""
+    """Propagation effect for the atmospheric absorption of light due to time static PWV"""
 
     _minwave = 3000.0
     _maxwave = 12000.0
@@ -327,7 +431,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 
 
 class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
-    """Atmospheric propagation effect for temporally variable PWV"""
+    """Propagation effect for the atmospheric absorption of light due to time variable PWV"""
 
     def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
         """Time variable atmospheric transmission due to PWV
@@ -459,73 +563,3 @@ class SeasonalPWVTrans(VariablePWVTrans):
         pwv = self.assumed_pwv(time)
         transmission = self._transmission_model(pwv, np.atleast_1d(wave))
         return self._apply_propagation(time, flux, transmission)
-
-
-class SNModel(sncosmo.Model):
-    """Similar to ``sncosmo.SNModel`` class, but removes type checks from
-    methods to allow duck-typing.
-    """
-
-    # Same as parent except allows duck-typing of ``effect`` arg
-    def _add_effect_partial(self, effect, name, frame):
-        """Like 'add effect', but don't sync parameter arrays"""
-
-        if frame not in ['rest', 'obs', 'free']:
-            raise ValueError("frame must be one of: {'rest', 'obs', 'free'}")
-
-        self._effects.append(copy(effect))
-        self._effect_names.append(name)
-        self._effect_frames.append(frame)
-
-        # for 'free' effects, add a redshift parameter
-        if frame == 'free':
-            self._param_names.append(name + 'z')
-            self.param_names_latex.append('{\\rm ' + name + '}\\,z')
-
-        # add all of this effect's parameters
-        for param_name in effect.param_names:
-            self._param_names.append(name + param_name)
-            self.param_names_latex.append('{\\rm ' + name + '}\\,' + param_name)
-
-    # Same as parent except adds support for ``VariablePropagationEffect`` effects
-    def _flux(self, time, wave):
-        """Array flux function."""
-
-        a = 1. / (1. + self._parameters[0])
-        phase = (time - self._parameters[1]) * a
-        restwave = wave * a
-
-        # Note that below we multiply by the scale factor to conserve
-        # bolometric luminosity.
-        f = a * self._source._flux(phase, restwave)
-
-        # Pass the flux through the PropagationEffects.
-        for effect, frame, zindex in zip(self._effects, self._effect_frames, self._effect_zindicies):
-            if frame == 'obs':
-                effect_wave = wave
-
-            elif frame == 'rest':
-                effect_wave = restwave
-
-            else:  # frame == 'free'
-                effect_a = 1. / (1. + self._parameters[zindex])
-                effect_wave = wave * effect_a
-
-            # This code block is new to the child class
-            if isinstance(effect, VariablePropagationEffect):
-                f = effect.propagate(effect_wave, f, time)
-
-            else:
-                f = effect.propagate(effect_wave, f)
-
-        return f
-
-    # Parent class copy enforces return is a parent class instance
-    # Allow child classes to return copies of their own type
-    def __copy__(self):
-        """Like a normal shallow copy, but makes an actual copy of the
-        parameter array."""
-
-        new_model = type(self)(self.source, self.effects, self.effect_names, self._effect_frames)
-        new_model.update(dict(zip(self.param_names, self.parameters)))
-        return new_model
