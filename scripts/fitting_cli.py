@@ -48,13 +48,19 @@ class AdvancedNamespace(argparse.Namespace):
     def _create_pwv_effect(self, pwv_variability):
         """Create a PWV transmission effect for use with supernova models
 
-        If ``pwv_variability`` is numeric, return a ``StaticPWVTrans`` object
-        set to the given PWV concentration (in mm). If ``pwv_variability`` equals
-        ``epoch``, return a ``VariablePWVTrans`` constructed from the CTIO receiver
-        (using 2016 data supplemented with 2017).
+        Note: ``pwv_variability`` should be a string!
+
+        If ``pwv_variability`` represents a numerical value, return a
+        ``StaticPWVTrans`` object set to the given PWV concentration (in mm).
+
+        If ``pwv_variability`` equals ``epoch``, return a ``VariablePWVTrans``
+        object.
+
+        If `pwv_variability`` equals ``seasonal``, return a
+        ``SeasonalPWVTrans`` object.
 
         Args:
-            pwv_variability (str, Numeric): How to vary PWV as a function of time
+            pwv_variability (str): Command line value for how to vary PWV as a function of time
 
         Returns:
             A propagation effect usable with a supernova model object
@@ -62,13 +68,9 @@ class AdvancedNamespace(argparse.Namespace):
 
         # The command line parser defaults to the pwv variability being a string
         # even if it is numeric. A typecast is sometimes in order.
-        if isinstance(pwv_variability, str) and pwv_variability.isnumeric():
-            pwv_variability = float(parsed_args.fit_variability)
-
-        # Keep a fixed PWV concentration
-        if isinstance(pwv_variability, (float, int)):
+        if pwv_variability.isnumeric():
             transmission_effect = models.StaticPWVTrans()
-            transmission_effect.set(pwv=pwv_variability)
+            transmission_effect.set(pwv=float(parsed_args.fit_variability))
             return transmission_effect
 
         # Model PWV continuously over the year using CTIO data
@@ -78,8 +80,7 @@ class AdvancedNamespace(argparse.Namespace):
         elif pwv_variability == 'seasonal':
             return models.SeasonalPWVTrans(self.pwv_model)
 
-        else:
-            raise NotImplementedError(f'Unknown variability: {pwv_variability}')
+        raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
     @property
     def pwv_model(self):
