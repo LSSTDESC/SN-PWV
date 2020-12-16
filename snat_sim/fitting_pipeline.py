@@ -167,8 +167,8 @@ class FittingPipeline(ProcessManager):
 
     def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
                  fitting_pool=1, simulation_pool=1, bounds=None,
-                 quality_callback=None, max_queue=25, pool_size=None,
-                 iter_lim=float('inf'), ref_stars=None, pwv_model=None):
+                 quality_callback=None, max_queue=25, iter_lim=float('inf'),
+                 ref_stars=None, pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
 
         Args:
@@ -186,10 +186,6 @@ class FittingPipeline(ProcessManager):
             ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with
             pwv_model        (PWVModel): Model for the PWV concentration the reference stars are observed at
         """
-
-        self.pool_size = mp.cpu_count() if pool_size is None else pool_size
-        if self.pool_size < 4:
-            raise RuntimeError('Cannot spawn pipeline with less than 4 processes.')
 
         if (ref_stars is None) and not (pwv_model is None):
             raise ValueError('Cannot perform reference star subtraction without ``pwv_model`` argument')
