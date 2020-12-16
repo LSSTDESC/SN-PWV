@@ -56,11 +56,9 @@ Module Docs
 """
 
 import abc
-import os
 import warnings
 from copy import copy
 from datetime import datetime
-from pathlib import Path
 
 import joblib
 import numpy as np
