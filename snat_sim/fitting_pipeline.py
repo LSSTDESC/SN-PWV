@@ -25,8 +25,8 @@ synchronously.
    >>> )
 
    >>> print('I/O Processes: 2')
-   >>> print('Simulation Processes:', pipeline.simulation_pool_size)
-   >>> print('Fitting Processes:', pipeline.fitting_pool_size)
+   >>> print('Simulation Processes:', pipeline.simulation_pool)
+   >>> print('Fitting Processes:', pipeline.fitting_pool)
    >>> pipeline.run()
 
 Module Docs
@@ -41,7 +41,7 @@ from pathlib import Path
 import numpy as np
 import sncosmo
 
-from . import plasticc, reference_stars, constants as const
+from . import constants as const, plasticc, reference_stars
 
 
 class KillSignal:
@@ -166,7 +166,8 @@ class FittingPipeline(ProcessManager):
     """Pipeline of parallel processes for simulating and fitting light-curves"""
 
     def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
-                 bounds=None, quality_callback=None, max_queue=25, pool_size=None,
+                 fitting_pool=1, simulation_pool=1, bounds=None,
+                 quality_callback=None, max_queue=25, pool_size=None,
                  iter_lim=float('inf'), ref_stars=None, pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -177,9 +178,10 @@ class FittingPipeline(ProcessManager):
             vparams         (list[str]): List of parameter names to vary in the fit
             bounds    (dict[str, list]): Bounds to impose on ``fit_model`` parameters when fitting light-curves
             out_path        (str, Path): Path to write results to (.csv extension is enforced)
+            fitting_pool          (int): Number of child processes allocated to simulating light-curves
+            simulation_pool       (int): Number of child processes allocated to fitting light-curves
             quality_callback (callable): Skip light-curves if this function returns False
             max_queue             (int): Maximum number of light-curves to store in pipeline at once
-            pool_size             (int): Total number of workers to spawn. Defaults to CPU count
             iter_lim              (int): Limit number of processed light-curves (Useful for profiling)
             ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with
             pwv_model        (PWVModel): Model for the PWV concentration the reference stars are observed at
@@ -197,6 +199,8 @@ class FittingPipeline(ProcessManager):
         self.fit_model = fit_model
         self.vparams = vparams
         self.out_path = Path(out_path).with_suffix('.csv')
+        self.fitting_pool = fitting_pool
+        self.simulation_pool = simulation_pool
         self.bounds = bounds
         self.quality_callback = quality_callback
         self.iter_lim = iter_lim
@@ -222,29 +226,16 @@ class FittingPipeline(ProcessManager):
         load_plasticc_process = mp.Process(target=self._load_queue_plasticc_lc)
         self._processes.append(load_plasticc_process)
 
-        for _ in range(self.simulation_pool_size):
+        for _ in range(self.simulation_pool):
             duplicate_lc_process = mp.Process(target=self._duplicate_light_curves)
             self._processes.append(duplicate_lc_process)
 
-        for _ in range(self.fitting_pool_size):
+        for _ in range(self.fitting_pool):
             fitting_process = mp.Process(target=self._fit_light_curves)
             self._processes.append(fitting_process)
 
         unload_results_process = mp.Process(target=self._unload_output_queue)
         self._processes.append(unload_results_process)
-
-    @property
-    def fitting_pool_size(self):
-        """Number of processes used for fitting light-curves"""
-
-        return (self.pool_size - 2) // 2
-
-    @property
-    def simulation_pool_size(self):
-        """Number of processes used for simulating light-curves"""
-
-        io_processes = 2
-        return self.pool_size - io_processes - self.fitting_pool_size
 
     def _load_queue_plasticc_lc(self):
         """Load PLaSTICC light-curves from disk into the pipeline"""
@@ -330,7 +321,7 @@ class FittingPipeline(ProcessManager):
             while True:
                 if isinstance(results := self.queue_fit_results.get(), KillSignal):
                     kill_count += 1
-                    if kill_count >= self.fitting_pool_size:
+                    if kill_count >= self.fitting_pool:
                         # No more simulations or fits are being run
                         self._processes = []
                         return
