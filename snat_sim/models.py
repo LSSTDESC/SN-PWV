@@ -97,7 +97,7 @@ class FixedResTransmission:
 
         self.norm_pwv = 2
         self.eff_exp = 0.6
-        self.samp_pwv = np.arange(0, 75.1, .1)
+        self.samp_pwv = np.arange(0, 60.25, .25)
         self.samp_wave = v1_transmission.samp_wave
         self.samp_transmission = v1_transmission(
             pwv=self.samp_pwv,
