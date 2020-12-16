@@ -162,6 +162,7 @@ class PWVModel:
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
         self.pwv_los = numpy_cache('date', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
+
         memory = joblib.Memory(str(get_data_dir()), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
         self.calc_airmass = memory.cache(self.calc_airmass)
 
@@ -493,18 +494,6 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
             transmission (ndarray): Array of sampled transmission values
         """
 
-        pwv = self._pwv_model.pwv_los(
-            date=time,
-            ra=self['ra'],
-            dec=self['dec'],
-            lat=self['lat'],
-            lon=self['lon'],
-            alt=self['alt'],
-            time_format=self._time_format)
-
-        transmission = self._transmission_model.calc_transmission(pwv=pwv, wave=np.atleast_1d(wave))
-
-
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
             if np.ndim(flux) == 1:
                 return flux * transmission
@@ -549,7 +538,7 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
         """
 
         pwv = self.assumed_pwv(time)
-        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
         return self._apply_propagation(time, flux, transmission)
 
 
@@ -587,5 +576,5 @@ class SeasonalPWVTrans(VariablePWVTrans):
         """
 
         pwv = self.assumed_pwv(time)
-        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
         return self._apply_propagation(time, flux, transmission)
