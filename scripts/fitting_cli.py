@@ -6,7 +6,6 @@ and then fitting them with a given SN model.
 
 import argparse
 import sys
-from functools import lru_cache
 from pathlib import Path
 
 from astropy.table import Table
@@ -219,7 +218,7 @@ def create_cli_parser():
 
     simulation_group = parser.add_argument_group(
         'Light-Curve Simulation',
-        description='Options for simulating supernova light-curve.')
+        description='Options for simulating supernova light-curves.')
 
     simulation_group.add_argument(
         '--sim_source',
@@ -291,7 +290,10 @@ def create_cli_parser():
     #######################################################################
 
     pwv_modeling_group = parser.add_argument_group(
-        'PWV Modeling')
+        'PWV Modeling',
+        description='Options used when building the PWV variability model'
+                    ' from SuomiNet GPS data.'
+    )
 
     pwv_modeling_group.add_argument(
         '--receiver_id',
