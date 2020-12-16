@@ -1,14 +1,15 @@
-"""The ``filters`` module is responsible for registering custom filter profiles
-with the ``sncosmo`` dependency package. When registering filters for a given
-survey, please check the documentation of the corresponding function to
-determine the names of the newly registered filter. Filters only need to be
-registered once within a given environment to be accessible by ``sncosmo``.
+"""The ``filters`` module is responsible for registering custom filter
+profiles with the ``sncosmo`` package (A core ``snat_sim`` dependancy).  When
+registering filters for a given survey, please check the documentation of the
+corresponding function to determine the names of the newly registered filters.
+Filters only need to be registered once within a given runtime to be
+accessible by ``sncosmo``.
 
 Usage Example
 -------------
 
 In the below example, filter profiles for the Legacy Survey of
-Space and Time (LSST) are registered with  and then retrieved by the
+Space and Time (LSST) are registered with and then retrieved from the
 ``sncosmo`` package.
 
 .. doctest:: python

@@ -32,8 +32,8 @@ pool (grey boxes) can be increased as necessary to meet performance requirements
 Data sources stored / written on to disk are shown in red, while objects cached
 in memory are shaded orange.
 
-.. image:: ./_static/images/pipeline.png
-   :width: 800
+.. image:: ./_static/images/pipeline.svg
+   :width: 80%
    :align: center
 
 Contribution and Usage
@@ -55,6 +55,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    Introduction<self>
    overview/install.rst
    overview/data_provenance.rst
+   overview/command_line.rst
 
 .. toctree::
    :hidden:
@@ -76,11 +77,11 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
 
    api/constants.rst
    api/filters.rst
-   api/fitting_pipeline.rst
-   api/lc_simulation.rst
    api/models.rst
    api/plasticc.rst
-   api/plotting.rst
+   api/lc_simulation.rst
    api/reference_stars.rst
-   api/sn_magnitudes.rst
+   api/fitting_pipeline.rst
    api/time_series_utils.rst
+   api/sn_magnitudes.rst
+   api/plotting.rst

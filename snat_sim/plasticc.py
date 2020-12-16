@@ -265,7 +265,7 @@ def duplicate_plasticc_sncosmo(
     else:
         x0 = lc_simulation.calc_x0_for_z(light_curve.meta[use_redshift], 'salt2', cosmo=cosmo)
 
-    # Params double as simulation parameters and meta-data meta data
+    # Params double as simulation parameters and meta-data
     params = {
         'SNID': light_curve.meta['SNID'],
         'ra': light_curve.meta['RA'],

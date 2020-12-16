@@ -1,4 +1,4 @@
-name: Documentation
+name: Deploy Documentation
 
 on:
   push:
@@ -30,7 +30,8 @@ jobs:
         run: |
           pip install . 
           pip install -r docs/requirements.txt
-          sudo apt-get install -y latexmk texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended pandoc
+          sudo apt-get update
+          sudo apt-get install -y pandoc
 
       - name: Build Documentation
         working-directory: ./docs
