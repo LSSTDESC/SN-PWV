@@ -212,6 +212,25 @@ from the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="snat_sim.models.FixedResTransmission.calc_transmission">
+<code class="sig-name descname">calc_transmission</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv</span></em>, <em class="sig-param"><span class="n">wave</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#FixedResTransmission.calc_transmission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.FixedResTransmission.calc_transmission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate transmission model at given wavelengths</p>
+<p>Returns a <code class="docutils literal notranslate"><span class="pre">Series</span></code> object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is a scalar, and a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>
+object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is an array. Wavelengths are expected in angstroms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pwv</strong> (<em>float</em><em>, </em><em>Iterable</em><em>[</em><em>float</em><em>]</em>) – Line of sight PWV to interpolate for</p></li>
+<li><p><strong>wave</strong> (<em>ndarray</em><em>, </em><em>DataFrame</em>) – Wavelengths to evaluate transmission</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The interpolated transmission at the given wavelengths / resolution</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -260,9 +279,9 @@ Observatory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>receiver</strong> (<em>GPSReceiver</em>) – GPS receiver to access data from</p></li>
+<li><p><strong>receiver</strong> (<em>pwv_kpno.GPSReceiver</em>) – GPS receiver to access data from</p></li>
 <li><p><strong>year</strong> (<em>float</em>) – Year to use data from when building the model</p></li>
-<li><p><strong>supp_years</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
+<li><p><strong>supp_years</strong> (<em>List</em><em>[</em><em>Numeric</em><em>]</em>) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
