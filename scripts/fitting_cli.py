@@ -83,7 +83,6 @@ class AdvancedNamespace(argparse.Namespace):
             raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
     @property
-    @lru_cache(maxsize=None)  # The function has no args so cache size is limited to a single return value
     def pwv_model(self):
         """Build a PWV model based on the command line argument"""
 
@@ -117,7 +116,7 @@ class AdvancedNamespace(argparse.Namespace):
         """Return the Supernova model used for fitting light-curves
 
         Returns:
-            An SNModel object with atmospheric propogation effects
+            An SNModel object with atmospheric propagation effects
         """
 
         propagation_effect = self._create_pwv_effect(self.sim_variability)
@@ -134,7 +133,7 @@ class AdvancedNamespace(argparse.Namespace):
         """Return the Supernova model used for simulating light-curves
 
         Returns:
-            An SNModel object with atmospheric propogation effects
+            An SNModel object with atmospheric propagation effects
         """
 
         propagation_effect = self._create_pwv_effect(self.fit_variability)
@@ -161,9 +160,10 @@ def run_pipeline(command_line_args):
         fit_model=command_line_args.fitting_model,
         vparams=command_line_args.vparams,
         out_path=command_line_args.out_path,
+        simulation_pool=command_line_args.sim_pool_size,
+        fitting_pool=command_line_args.fit_pool_size,
         bounds=command_line_args.fitting_bounds,
         quality_callback=passes_quality_cuts,
-        pool_size=command_line_args.pool_size,
         iter_lim=command_line_args.iter_lim,
         ref_stars=command_line_args.ref_stars,
         pwv_model=command_line_args.pwv_model
@@ -303,7 +303,7 @@ def create_cli_parser():
         '--pwv_model_years',
         type=float,
         nargs='+',
-        default=[2017, 2016]
+        default=[2016, 2017]
     )
 
     pwv_modeling_group.add_argument(
