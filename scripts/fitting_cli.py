@@ -61,6 +61,11 @@ class AdvancedNamespace(argparse.Namespace):
             A propagation effect usable with a supernova model object
         """
 
+        # The command line parser defaults to the pwv variability being a string
+        # even if it is numeric. A typecast is sometimes in order.
+        if isinstance(pwv_variability, str) and pwv_variability.isnumeric():
+            pwv_variability = float(parsed_args.fit_variability)
+
         # Keep a fixed PWV concentration
         if isinstance(pwv_variability, (float, int)):
             transmission_effect = models.StaticPWVTrans()
@@ -142,26 +147,26 @@ class AdvancedNamespace(argparse.Namespace):
             effect_frames=['obs'])
 
 
-def run_pipeline(cli_args):
-    """Run the fitting pipeline for a given cadence
+def run_pipeline(command_line_args):
+    """Run the analysis pipeline
 
     Args:
-        cli_args (Namespace): Parse command line arguments
+        command_line_args (AdvancedNamespace): Parsed command line arguments
     """
 
     print('Instantiating pipeline...')
     pipeline = FittingPipeline(
-        cadence=cli_args.cadence,
-        sim_model=cli_args.simulation_model,
-        fit_model=cli_args.fitting_model,
-        vparams=cli_args.vparams,
-        out_path=cli_args.out_path,
-        bounds=cli_args.fitting_bounds,
+        cadence=command_line_args.cadence,
+        sim_model=command_line_args.simulation_model,
+        fit_model=command_line_args.fitting_model,
+        vparams=command_line_args.vparams,
+        out_path=command_line_args.out_path,
+        bounds=command_line_args.fitting_bounds,
         quality_callback=passes_quality_cuts,
-        pool_size=cli_args.pool_size,
-        iter_lim=cli_args.iter_lim,
-        ref_stars=cli_args.ref_stars,
-        pwv_model=cli_args.pwv_model
+        pool_size=command_line_args.pool_size,
+        iter_lim=command_line_args.iter_lim,
+        ref_stars=command_line_args.ref_stars,
+        pwv_model=command_line_args.pwv_model
     )
 
     pipeline.run()
@@ -325,12 +330,4 @@ def create_cli_parser():
 if __name__ == '__main__':
     filters.register_lsst_filters()
     parsed_args = create_cli_parser().parse_args(namespace=AdvancedNamespace())
-
-    # Types cast PWV variability into float
-    if parsed_args.fit_variability.isnumeric():
-        parsed_args.fit_variability = float(parsed_args.fit_variability)
-
-    if parsed_args.sim_variability.isnumeric():
-        parsed_args.sim_variability = float(parsed_args.sim_variability)
-
     parsed_args.func(parsed_args)
