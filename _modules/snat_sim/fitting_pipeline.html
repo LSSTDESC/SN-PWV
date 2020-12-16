@@ -144,8 +144,8 @@
 <span class="sd">   &gt;&gt;&gt; )</span>
 
 <span class="sd">   &gt;&gt;&gt; print(&#39;I/O Processes: 2&#39;)</span>
-<span class="sd">   &gt;&gt;&gt; print(&#39;Simulation Processes:&#39;, pipeline.simulation_pool_size)</span>
-<span class="sd">   &gt;&gt;&gt; print(&#39;Fitting Processes:&#39;, pipeline.fitting_pool_size)</span>
+<span class="sd">   &gt;&gt;&gt; print(&#39;Simulation Processes:&#39;, pipeline.simulation_pool)</span>
+<span class="sd">   &gt;&gt;&gt; print(&#39;Fitting Processes:&#39;, pipeline.fitting_pool)</span>
 <span class="sd">   &gt;&gt;&gt; pipeline.run()</span>
 
 <span class="sd">Module Docs</span>
@@ -160,7 +160,7 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sncosmo</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plasticc</span><span class="p">,</span> <span class="n">reference_stars</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span><span class="p">,</span> <span class="n">plasticc</span><span class="p">,</span> <span class="n">reference_stars</span>
 
 
 <div class="viewcode-block" id="KillSignal"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.KillSignal">[docs]</a><span class="k">class</span> <span class="nc">KillSignal</span><span class="p">:</span>
@@ -285,8 +285,9 @@
     <span class="sd">&quot;&quot;&quot;Pipeline of parallel processes for simulating and fitting light-curves&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FittingPipeline.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.fitting_pipeline.FittingPipeline.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">,</span> <span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">out_path</span><span class="p">,</span>
-                 <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">quality_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_queue</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">pool_size</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                 <span class="n">iter_lim</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">ref_stars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pwv_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+                 <span class="n">fitting_pool</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">simulation_pool</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">quality_callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_queue</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">iter_lim</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span>
+                 <span class="n">ref_stars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pwv_model</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Fit light-curves using multiple processes and combine results into an output file</span>
 
 <span class="sd">        Args:</span>
@@ -296,17 +297,14 @@
 <span class="sd">            vparams         (list[str]): List of parameter names to vary in the fit</span>
 <span class="sd">            bounds    (dict[str, list]): Bounds to impose on ``fit_model`` parameters when fitting light-curves</span>
 <span class="sd">            out_path        (str, Path): Path to write results to (.csv extension is enforced)</span>
+<span class="sd">            fitting_pool          (int): Number of child processes allocated to simulating light-curves</span>
+<span class="sd">            simulation_pool       (int): Number of child processes allocated to fitting light-curves</span>
 <span class="sd">            quality_callback (callable): Skip light-curves if this function returns False</span>
 <span class="sd">            max_queue             (int): Maximum number of light-curves to store in pipeline at once</span>
-<span class="sd">            pool_size             (int): Total number of workers to spawn. Defaults to CPU count</span>
 <span class="sd">            iter_lim              (int): Limit number of processed light-curves (Useful for profiling)</span>
 <span class="sd">            ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with</span>
 <span class="sd">            pwv_model        (PWVModel): Model for the PWV concentration the reference stars are observed at</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">pool_size</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span> <span class="k">if</span> <span class="n">pool_size</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">pool_size</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_size</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot spawn pipeline with less than 4 processes.&#39;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="p">(</span><span class="n">ref_stars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">pwv_model</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Cannot perform reference star subtraction without ``pwv_model`` argument&#39;</span><span class="p">)</span>
@@ -316,6 +314,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span> <span class="o">=</span> <span class="n">fit_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span> <span class="o">=</span> <span class="n">vparams</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.csv&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fitting_pool</span> <span class="o">=</span> <span class="n">fitting_pool</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_pool</span> <span class="o">=</span> <span class="n">simulation_pool</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">bounds</span> <span class="o">=</span> <span class="n">bounds</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">quality_callback</span> <span class="o">=</span> <span class="n">quality_callback</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span> <span class="o">=</span> <span class="n">iter_lim</span>
@@ -341,29 +341,16 @@
         <span class="n">load_plasticc_process</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_load_queue_plasticc_lc</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">load_plasticc_process</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_pool_size</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulation_pool</span><span class="p">):</span>
             <span class="n">duplicate_lc_process</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_duplicate_light_curves</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">duplicate_lc_process</span><span class="p">)</span>
 
-        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_pool_size</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitting_pool</span><span class="p">):</span>
             <span class="n">fitting_process</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_fit_light_curves</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fitting_process</span><span class="p">)</span>
 
         <span class="n">unload_results_process</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">target</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_unload_output_queue</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unload_results_process</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">fitting_pool_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of processes used for fitting light-curves&quot;&quot;&quot;</span>
-
-        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pool_size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">simulation_pool_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Number of processes used for simulating light-curves&quot;&quot;&quot;</span>
-
-        <span class="n">io_processes</span> <span class="o">=</span> <span class="mi">2</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pool_size</span> <span class="o">-</span> <span class="n">io_processes</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_pool_size</span>
 
     <span class="k">def</span> <span class="nf">_load_queue_plasticc_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Load PLaSTICC light-curves from disk into the pipeline&quot;&quot;&quot;</span>
@@ -449,7 +436,7 @@
             <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">results</span> <span class="o">:=</span> <span class="bp">self</span><span class="o">.</span><span class="n">queue_fit_results</span><span class="o">.</span><span class="n">get</span><span class="p">(),</span> <span class="n">KillSignal</span><span class="p">):</span>
                     <span class="n">kill_count</span> <span class="o">+=</span> <span class="mi">1</span>
-                    <span class="k">if</span> <span class="n">kill_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_pool_size</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">kill_count</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitting_pool</span><span class="p">:</span>
                         <span class="c1"># No more simulations or fits are being run</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_processes</span> <span class="o">=</span> <span class="p">[]</span>
                         <span class="k">return</span>

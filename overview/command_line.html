@@ -129,64 +129,121 @@
 pipeline. This is particularly useful when running multiple pipeline instances
 for different configuration arguments. An outline of the command line arguments
 and their default values is provided below.</p>
-<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">fitting_cli</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">c</span> <span class="n">CADENCE</span> <span class="p">[</span><span class="o">-</span><span class="n">t</span> <span class="n">SOURCE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span> <span class="n">VPARAMS</span> <span class="p">[</span><span class="n">VPARAMS</span> <span class="o">...</span><span class="p">]]</span>
-                      <span class="o">-</span><span class="n">s</span> <span class="n">SIM_VARIABILITY</span> <span class="o">-</span><span class="n">f</span> <span class="n">FIT_VARIABILITY</span> <span class="p">[</span><span class="o">-</span><span class="n">p</span> <span class="n">POOL_SIZE</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">ITER_LIM</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">r</span> <span class="n">REF_STARS</span> <span class="p">[</span><span class="n">REF_STARS</span> <span class="o">...</span><span class="p">]]</span> <span class="o">-</span><span class="n">o</span> <span class="n">OUT_PATH</span>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">fitting_cli</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">c</span> <span class="n">CADENCE</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SIM_POOL_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">FIT_POOL_SIZE</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">ITER_LIM</span><span class="p">]</span> <span class="o">-</span><span class="n">o</span> <span class="n">OUT_PATH</span> <span class="p">[</span><span class="o">--</span><span class="n">sim_source</span> <span class="n">SIM_SOURCE</span><span class="p">]</span>
+                      <span class="o">--</span><span class="n">sim_variability</span> <span class="n">SIM_VARIABILITY</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">ref_stars</span> <span class="n">REF_STARS</span> <span class="p">[</span><span class="n">REF_STARS</span> <span class="o">...</span><span class="p">]]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">fit_source</span> <span class="n">FIT_SOURCE</span><span class="p">]</span> <span class="o">--</span><span class="n">fit_variability</span>
+                      <span class="n">FIT_VARIABILITY</span> <span class="p">[</span><span class="o">--</span><span class="n">vparams</span> <span class="n">VPARAMS</span> <span class="p">[</span><span class="n">VPARAMS</span> <span class="o">...</span><span class="p">]]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">bound_z</span> <span class="n">BOUND_Z</span> <span class="n">BOUND_Z</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">bound_t0</span> <span class="n">BOUND_T0</span> <span class="n">BOUND_T0</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">bound_x0</span> <span class="n">BOUND_X0</span> <span class="n">BOUND_X0</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">bound_x1</span> <span class="n">BOUND_X1</span> <span class="n">BOUND_X1</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">--</span><span class="n">bound_c</span> <span class="n">BOUND_C</span> <span class="n">BOUND_C</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">bound_c</span> <span class="n">BOUND_C</span> <span class="n">BOUND_C</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">receiver_id</span> <span class="n">RECEIVER_ID</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">pwv_model_years</span> <span class="n">PWV_MODEL_YEARS</span> <span class="p">[</span><span class="n">PWV_MODEL_YEARS</span> <span class="o">...</span><span class="p">]]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_pwv</span> <span class="n">CUT_PWV</span> <span class="n">CUT_PWV</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_press</span> <span class="n">CUT_PRESS</span> <span class="n">CUT_PRESS</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_temp</span> <span class="n">CUT_TEMP</span> <span class="n">CUT_TEMP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">cut_rh</span> <span class="n">CUT_RH</span> <span class="n">CUT_RH</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_zenith_delay</span> <span class="n">CUT_ZENITH_DELAY</span> <span class="n">CUT_ZENITH_DELAY</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="section" id="Named Arguments">
 <h2>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h2>
 <dl class="option-list">
 <dt><kbd>-c, --cadence</kbd></dt>
-<dd><p>Observational cadence to use when simulating light-curves.</p>
+<dd><p>Observational cadence to assume for the LSST.</p>
 </dd>
-<dt><kbd>-t, --source</kbd></dt>
-<dd><p>The name of the sncosmo spectral template to use when simulating AND fitting supernova light-curves.</p>
-<p>Default: “salt2-extended”</p>
+<dt><kbd>-s, --sim_pool_size</kbd></dt>
+<dd><p>Total number of workers to spawn for simulating supernova light-curves.</p>
+<p>Default: 1</p>
 </dd>
-<dt><kbd>-v, --vparams</kbd></dt>
-<dd><p>Parameters to vary when fitting light-curves.</p>
-<p>Default: (‘x0’, ‘x1’, ‘c’)</p>
-</dd>
-<dt><kbd>-s, --sim_variability</kbd></dt>
-<dd><p>Rate at which to vary PWV when simulating light-curves. Specify a numerical value for a fixed PWV concentration. Specify “epoch” to vary the PWV per observation.</p>
-</dd>
-<dt><kbd>-f, --fit_variability</kbd></dt>
-<dd><p>Rate at which to vary the assumed PWV when fitting light-curves. Specify a numerical value for a fixed PWV concentration. Specify “epoch” to vary the PWV per observation.</p>
-</dd>
-<dt><kbd>-p, --pool_size</kbd></dt>
-<dd><p>Total number of workers to spawn. Defaults to CPU count</p>
+<dt><kbd>-f, --fit_pool_size</kbd></dt>
+<dd><p>Total number of workers to spawn for fitting light-curves.</p>
+<p>Default: 1</p>
 </dd>
 <dt><kbd>-i, --iter_lim</kbd></dt>
 <dd><p>Exit pipeline after processing the given number of light-curves (Useful for profiling).</p>
 <p>Default: inf</p>
 </dd>
-<dt><kbd>-r, --ref_stars</kbd></dt>
+<dt><kbd>-o, --out_path</kbd></dt>
+<dd><p>Output file path (a .csv extension is enforced).</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="Light-Curve Simulation">
+<h2>Light-Curve Simulation<a class="headerlink" href="#Light-Curve Simulation" title="Permalink to this headline">¶</a></h2>
+<p>Options for simulating supernova light-curves.</p>
+<dl class="option-list">
+<dt><kbd>--sim_source</kbd></dt>
+<dd><p>The name of the sncosmo spectral template to use when simulating supernova light-curves.</p>
+<p>Default: “salt2-extended”</p>
+</dd>
+<dt><kbd>--sim_variability</kbd></dt>
+<dd><p>Rate at which to vary PWV when simulating light-curves. Specify a numerical value for a fixed PWV concentration. Specify “epoch” to vary the PWV per observation.</p>
+</dd>
+<dt><kbd>--ref_stars</kbd></dt>
 <dd><p>Reference star(s) to calibrate simulated SNe against.</p>
 <p>Default: (‘G2’, ‘M5’, ‘K2’)</p>
 </dd>
-<dt><kbd>-o, --out_path</kbd></dt>
-<dd><p>Output file path (in CSV format).</p>
+</dl>
+</div>
+<div class="section" id="Light-Curve Fitting">
+<h2>Light-Curve Fitting<a class="headerlink" href="#Light-Curve Fitting" title="Permalink to this headline">¶</a></h2>
+<p>Options for configuring supernova light-curve fits.</p>
+<dl class="option-list">
+<dt><kbd>--fit_source</kbd></dt>
+<dd><p>The name of the sncosmo spectral template to use when fitting supernova light-curves.</p>
+<p>Default: “salt2-extended”</p>
+</dd>
+<dt><kbd>--fit_variability</kbd></dt>
+<dd><p>Rate at which to vary the assumed PWV when fitting light-curves. Specify a numerical value for a fixed PWV concentration. Specify “epoch” to vary the PWV per observation.</p>
+</dd>
+<dt><kbd>--vparams</kbd></dt>
+<dd><p>Parameters to vary when fitting light-curves.</p>
+<p>Default: (‘x0’, ‘x1’, ‘c’)</p>
 </dd>
 <dt><kbd>--bound_z</kbd></dt>
-<dd><p>Upper and lower bounds for z parameter when fitting light-curves.</p>
+<dd><p>Upper and lower bounds for z parameter when fitting light-curves (Optional).</p>
 </dd>
 <dt><kbd>--bound_t0</kbd></dt>
-<dd><p>Upper and lower bounds for t0 parameter when fitting light-curves.</p>
+<dd><p>Upper and lower bounds for t0 parameter when fitting light-curves (Optional).</p>
 </dd>
 <dt><kbd>--bound_x0</kbd></dt>
-<dd><p>Upper and lower bounds for x0 parameter when fitting light-curves.</p>
+<dd><p>Upper and lower bounds for x0 parameter when fitting light-curves (Optional).</p>
 </dd>
 <dt><kbd>--bound_x1</kbd></dt>
-<dd><p>Upper and lower bounds for x1 parameter when fitting light-curves.</p>
+<dd><p>Upper and lower bounds for x1 parameter when fitting light-curves (Optional).</p>
 </dd>
 <dt><kbd>--bound_c</kbd></dt>
-<dd><p>Upper and lower bounds for c parameter when fitting light-curves.</p>
+<dd><p>Upper and lower bounds for c parameter when fitting light-curves (Optional).</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="PWV Modeling">
+<h2>PWV Modeling<a class="headerlink" href="#PWV Modeling" title="Permalink to this headline">¶</a></h2>
+<p>Options used when building the PWV variability model from SuomiNet GPS data.</p>
+<dl class="option-list">
+<dt><kbd>--receiver_id</kbd></dt>
+<dd><p>Default: “ctio”</p>
+</dd>
+<dt><kbd>--pwv_model_years</kbd></dt>
+<dd><p>Default: [2016, 2017]</p>
+</dd>
+<dt><kbd>--cut_pwv</kbd></dt>
+<dd><p>Only use measured data points with a PWV value within the given bounds (units of millimeters)</p>
+<p>Default: [0, 30]</p>
+</dd>
+<dt><kbd>--cut_press</kbd></dt>
+<dd><p>Only use measured data points with a surface pressure value within the given bounds (units of Millibars)</p>
+</dd>
+<dt><kbd>--cut_temp</kbd></dt>
+<dd><p>Only use measured data points with a temperature value within the given bounds (units of Centigrade)</p>
+</dd>
+<dt><kbd>--cut_rh</kbd></dt>
+<dd><p>Only use measured data points with a relative humidity value within the given bounds (units of Percentage)</p>
+</dd>
+<dt><kbd>--cut_zenith_delay</kbd></dt>
+<dd><p>Only use measured data points with a zenith delay value within the given bounds (units of Millimeters)</p>
 </dd>
 </dl>
 </div>
