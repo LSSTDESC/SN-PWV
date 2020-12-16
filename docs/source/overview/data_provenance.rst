@@ -52,7 +52,7 @@ Light-Curve Simulations
 
 **Repository Path:** *Not included with project source code*
 
-**Data Source:** Data is published by DESC and hosted on `Zenodo <https://zenodo.org/>`.
+**Data Source:** Data is published by DESC and hosted on `Zenodo <https://zenodo.org/>`_.
 
 **Description:**
     SN light-curves were simulated using a variety of cadences and supernova models.
