@@ -5,7 +5,6 @@ and then fitting them with a given SN model.
 """
 
 import argparse
-import os
 import sys
 from pathlib import Path
 
@@ -16,7 +15,6 @@ sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
 from snat_sim import filters, models
 from snat_sim.fitting_pipeline import FittingPipeline
 
-os.environ.setdefault('CADENCE_SIMS', '/mnt/md0/sn-sims')
 CTIO_PWV_MODEL = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 

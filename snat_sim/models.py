@@ -56,11 +56,13 @@ Module Docs
 """
 
 import abc
+import os
 import warnings
 from copy import copy
 from datetime import datetime
 from pathlib import Path
 
+import joblib
 import numpy as np
 import pandas as pd
 import sncosmo
@@ -74,8 +76,14 @@ from scipy.interpolate import RegularGridInterpolator
 
 from . import constants as const
 from . import time_series_utils as tsu
+from .cache_utils import numpy_cache
+from .plasticc import get_data_dir
 
-data_dir = Path(__file__).resolve().parent.parent.parent / 'data'
+# Todo: These were picked ad-hock and are likely too big.
+#  They should be set to a reasonable number further along in development
+PWV_CACHE_SIZE = 500_000
+TRANSMISSION_CACHE_SIZE = 500_00
+AIRMASS_CACHE_SIZE = 250_000
 
 
 ###############################################################################
@@ -107,8 +115,10 @@ class FixedResTransmission:
         self._interpolator = RegularGridInterpolator(
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
-    def __call__(self, pwv, wave=None):
-        """Evaluate transmission model at given wavelengths.
+        self.calc_transmission = numpy_cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
+
+    def calc_transmission(self, pwv, wave=None):
+        """Evaluate transmission model at given wavelengths
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
         object if ``pwv`` is an array. Wavelengths are expected in angstroms.
@@ -151,14 +161,19 @@ class PWVModel:
         self.pwv_model_data = tsu.periodic_interpolation(tsu.resample_data_across_year(pwv_series))
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
+        self.pwv_los = numpy_cache('date', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
+
+        memory = joblib.Memory(str(get_data_dir()), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
+        self.calc_airmass = memory.cache(self.calc_airmass)
+
     @staticmethod
     def from_suominet_receiver(receiver, year, supp_years=None):
         """Construct a ``PWVModel`` instance using data from a SuomiNet receiver
 
         Args:
-            receiver (GPSReceiver): GPS receiver to access data from
-            year           (float): Year to use data from when building the model
-            supp_years (List[int]): Years to supplement data with when missing from ``year``
+            receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
+            year                    (float): Year to use data from when building the model
+            supp_years      (List[Numeric]): Years to supplement data with when missing from ``year``
 
         Returns:
             An interpolation function that accepts ``date`` and ``format`` arguments
@@ -424,7 +439,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
         """
 
         # The class guarantees PWV is a scalar, so ``transmission`` is 1D
-        transmission = self._transmission_model(self.parameters[0], wave)
+        transmission = self._transmission_model.calc_transmission(self.parameters[0], wave)
 
         # ``flux`` is 2D, so we do a quick cast
         return flux * transmission.values[None, :]
@@ -523,7 +538,7 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
         """
 
         pwv = self.assumed_pwv(time)
-        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
         return self._apply_propagation(time, flux, transmission)
 
 
@@ -561,5 +576,5 @@ class SeasonalPWVTrans(VariablePWVTrans):
         """
 
         pwv = self.assumed_pwv(time)
-        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
         return self._apply_propagation(time, flux, transmission)
