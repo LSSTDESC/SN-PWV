@@ -1,4 +1,4 @@
-"""The ``time_series_utils.py`` module is used provides limited functionality
+"""The ``time_series_utils.py`` module provides limited functionality
 for manipulating time series data. It is intended to supplement existing
 functionality in the ``pandas`` package with support for tasks particular to
 dealing with atmospheric / weather data.
@@ -7,6 +7,7 @@ Module Docs
 -----------
 """
 
+import datetime
 import warnings
 
 import numpy as np
@@ -137,3 +138,29 @@ def resample_data_across_year(series):
     index_values = np.arange(start_time, end_time, delta).astype(pd.Timestamp) + offset
     new_index = pd.to_datetime(index_values).tz_localize(series.index.tz)
     return series.reindex(new_index)
+
+
+@np.vectorize
+def datetime_to_season(time):
+    """Determine the calendar season corresponding to a given datetime
+
+    Seasons are labeled as 'winter', 'spring', 'summer', or 'fall'.
+
+    Args:
+        time (Datetime, List[Datetime]): Datetime value(s)
+
+    Returns:
+        An array of strings
+    """
+
+    dummy_year = 2000  # dummy leap year to allow input X-02-29 (leap day)
+    seasons = [
+        ('winter', (datetime.date(dummy_year, 1, 1), datetime.date(dummy_year, 3, 20))),
+        ('spring', (datetime.date(dummy_year, 3, 20), datetime.date(dummy_year, 6, 20))),
+        ('summer', (datetime.date(dummy_year, 6, 20), datetime.date(dummy_year, 9, 22))),
+        ('fall', (datetime.date(dummy_year, 9, 22), datetime.date(dummy_year, 12, 20))),
+        ('winter', (datetime.date(dummy_year, 12, 20), datetime.date(dummy_year + 1, 1, 1)))
+    ]
+
+    time = time.date().replace(year=dummy_year)
+    return next(season for season, (start, end) in seasons if start <= time < end)

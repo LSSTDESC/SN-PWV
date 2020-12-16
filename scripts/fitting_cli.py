@@ -12,12 +12,13 @@ from pathlib import Path
 from astropy.table import Table
 from pwv_kpno.defaults import ctio
 
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
 from snat_sim import filters, models
 from snat_sim.fitting_pipeline import FittingPipeline
-from tests.mock import create_constant_pwv_model
 
 os.environ.setdefault('CADENCE_SIMS', '/mnt/md0/sn-sims')
+CTIO_PWV_MODEL = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
+SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 
 
 def passes_quality_cuts(light_curve):
@@ -42,47 +43,33 @@ def passes_quality_cuts(light_curve):
     return sum(passed_cuts) >= 2
 
 
-def create_pwv_model(pwv_variability):
-    """Create a ``PWVModel`` object
+def create_pwv_effect(pwv_variability):
+    """Create a PWV transmission effect for use with supernova models
+
+    If ``pwv_variability`` is numeric, return a ``StaticPWVTrans`` object
+    set to the given PWV concentration (in mm). If ``pwv_variability`` equals
+    ``epoch``, return a ``VariablePWVTrans`` constructed from the CTIO receiver
+    (using 2016 data supplemented with 2017).
 
     Args:
         pwv_variability (str, Numeric): How to vary PWV as a function of time
 
     Returns:
-        An instantiated ``PWVModel`` object
+        A propagation effect usable with a supernova model object
     """
 
     # Keep a fixed PWV concentration
     if isinstance(pwv_variability, (float, int)):
-        return create_constant_pwv_model(pwv_variability)
+        transmission_effect = models.StaticPWVTrans()
+        transmission_effect.set(pwv=pwv_variability)
+        return transmission_effect
 
     # Model PWV continuously over the year using CTIO data
     elif pwv_variability == 'epoch':
-        return models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
+        return models.VariablePWVTrans(CTIO_PWV_MODEL)
 
     else:
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
-
-
-def create_sn_model(source='salt2-extended', pwv_model=None):
-    """Create a supernova model with optional PWV effects
-
-    Args:
-        source (str, Source): Spectral template to use for the SN model
-        pwv_model (PWVModel): How to vary PWV as a function of time
-
-    Returns:
-        An instantiated ``snat_sim`` supernova model
-    """
-
-    model = models.SNModel(source=source)
-    if pwv_model is not None:
-        model.add_effect(
-            effect=models.VariablePWVTrans(pwv_model),
-            name='',
-            frame='obs')
-
-    return model
 
 
 def run_pipeline(cli_args):
@@ -92,13 +79,25 @@ def run_pipeline(cli_args):
         cli_args (Namespace): Parse command line arguments
     """
 
+    # Combine any parameter boundaries into a single dictionary
+    fitting_bounds = dict()
+    for param in SALT2_PARAMS:
+        if param_bound := getattr(cli_args, f'bound_{param}', None):
+            fitting_bounds[param] = param_bound
+
     print('Creating simulation model...')
-    pwv_model_sim = create_pwv_model(cli_args.sim_variability)
-    sn_model_sim = create_sn_model(cli_args.source, pwv_model_sim)
+    sn_model_sim = models.SNModel(cli_args.source)
+    sn_model_sim.add_effect(
+        effect=create_pwv_effect(cli_args.sim_variability),
+        name='',
+        frame='obs')
 
     print('Creating fitting model...')
-    pwv_model_fit = create_pwv_model(cli_args.fit_variability)
-    sn_model_fit = create_sn_model(cli_args.source, pwv_model_fit)
+    sn_model_fit = models.SNModel(cli_args.source)
+    sn_model_fit.add_effect(
+        effect=create_pwv_effect(cli_args.fit_variability),
+        name='',
+        frame='obs')
 
     print('Instantiating pipeline...')
     pipeline = FittingPipeline(
@@ -107,11 +106,12 @@ def run_pipeline(cli_args):
         fit_model=sn_model_fit,
         vparams=cli_args.vparams,
         out_path=cli_args.out_path,
+        bounds=fitting_bounds,
         quality_callback=passes_quality_cuts,
         pool_size=cli_args.pool_size,
         iter_lim=cli_args.iter_lim,
         ref_stars=cli_args.ref_stars,
-        pwv_model=pwv_model_sim
+        pwv_model=CTIO_PWV_MODEL
     )
 
     print('I/O Processes: 2')
@@ -128,14 +128,15 @@ def create_cli_parser():
         '-c', '--cadence',
         type=str,
         required=True,
-        help='Cadence to use when simulating light-curves'
+        help='Observational cadence to use when simulating light-curves.'
     )
 
     parser.add_argument(
         '-t', '--source',
         type=str,
         default='salt2-extended',
-        help='The name of the spectral template to use when simulating AND fitting'
+        help='The name of the sncosmo spectral template to use when simulating'
+             ' AND fitting supernova light-curves.'
     )
 
     parser.add_argument(
@@ -143,21 +144,25 @@ def create_cli_parser():
         type=str,
         default=('x0', 'x1', 'c'),
         nargs='+',
-        help='Parameters to vary when fitting'
+        help='Parameters to vary when fitting light-curves.'
     )
 
     parser.add_argument(
         '-s', '--sim_variability',
         type=str,
         required=True,
-        help='Rate at which to vary PWV in simulated light-curves'
+        help='Rate at which to vary PWV when simulating light-curves.'
+             ' Specify a numerical value for a fixed PWV concentration.'
+             ' Specify "epoch" to vary the PWV per observation.'
     )
 
     parser.add_argument(
         '-f', '--fit_variability',
         type=str,
         required=True,
-        help='Rate at which to vary assumed PWV when fitting light-curves'
+        help='Rate at which to vary the assumed PWV when fitting light-curves.'
+             ' Specify a numerical value for a fixed PWV concentration.'
+             ' Specify "epoch" to vary the PWV per observation.'
     )
 
     parser.add_argument(
@@ -171,7 +176,7 @@ def create_cli_parser():
         '-i', '--iter_lim',
         type=int,
         default=float('inf'),
-        help='Limit number of processed light-curves (Useful for profiling)'
+        help='Exit pipeline after processing the given number of light-curves (Useful for profiling).'
     )
 
     parser.add_argument(
@@ -179,15 +184,24 @@ def create_cli_parser():
         type=str,
         default=('G2', 'M5', 'K2'),
         nargs='+',
-        help='Reference star(s) to calibrate simulated SNe against'
+        help='Reference star(s) to calibrate simulated SNe against.'
     )
 
     parser.add_argument(
         '-o', '--out_path',
         type=Path,
         required=True,
-        help='Output file path (in CSV format)'
+        help='Output file path (in CSV format).'
     )
+
+    for param in SALT2_PARAMS:
+        parser.add_argument(
+            f'--bound_{param}',
+            type=float,
+            default=None,
+            nargs=2,
+            help=f'Upper and lower bounds for {param} parameter when fitting light-curves.'
+        )
 
     parser.set_defaults(func=run_pipeline)
     return parser
@@ -195,13 +209,13 @@ def create_cli_parser():
 
 if __name__ == '__main__':
     filters.register_lsst_filters()
-    cli_args = create_cli_parser().parse_args()
+    parsed_args = create_cli_parser().parse_args()
 
     # Types cast PWV variability into float
-    if cli_args.fit_variability.isnumeric():
-        cli_args.fit_variability = float(cli_args.fit_variability)
+    if parsed_args.fit_variability.isnumeric():
+        parsed_args.fit_variability = float(parsed_args.fit_variability)
 
-    if cli_args.sim_variability.isnumeric():
-        cli_args.sim_variability = float(cli_args.sim_variability)
+    if parsed_args.sim_variability.isnumeric():
+        parsed_args.sim_variability = float(parsed_args.sim_variability)
 
-    cli_args.func(cli_args)
+    parsed_args.func(parsed_args)

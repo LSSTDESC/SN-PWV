@@ -35,6 +35,7 @@ Module Docs
 
 import multiprocessing as mp
 import warnings
+from copy import copy
 from pathlib import Path
 
 import numpy as np
@@ -44,7 +45,7 @@ from . import plasticc, reference_stars, constants as const
 
 
 class KillSignal:
-    """Signal current process that it should try to exit gracefully"""
+    """Signal used to indicate a forked process should try and exit gracefully"""
 
     pass
 
@@ -89,17 +90,17 @@ class ProcessManager:
 class OutputDataModel:
     """Enforces the data model of pipeline output files"""
 
-    def __init__(self, sn_model):
+    def __init__(self, sim_model, fit_model):
         """Formats data from a given supernova model into a coherent tabular format
 
         Args:
-            sn_model (Model): Supernova model to reflect in the outputted data model
+            fit_model (Model): Supernova model to reflect in the outputted data model
         """
 
-        self._sn_model = sn_model
+        self.sim_model = copy(sim_model)
+        self.fit_model = copy(fit_model)
 
-    @staticmethod
-    def build_table_entry(meta, fitted_model, result):
+    def build_table_entry(self, meta, fitted_model, result):
         """Combine light-curve fit results into single row matching the output table file format
 
         Args:
@@ -112,6 +113,7 @@ class OutputDataModel:
         """
 
         out_list = [meta['SNID']]
+        out_list.extend(meta.get(param, -99) for param in self.sim_model.param_names)
         out_list.extend(result.parameters)
         out_list.extend(result.errors.values())
         out_list.append(result.chisq)
@@ -132,8 +134,13 @@ class OutputDataModel:
             A list of strings and floats with masked values set as -99
         """
 
-        num_columns = len(self.column_names)
-        return [meta['SNID'], *np.full(num_columns - 2, -99), str(excep)]
+        out_list = [meta['SNID']]
+        out_list.extend(meta.get(param, -99) for param in self.sim_model.param_names)
+
+        remaining_columns = len(self.column_names) - len(out_list)
+        out_list.extend(np.full(remaining_columns - 1, -99))
+        out_list.append(str(excep))
+        return out_list
 
     @property
     def column_names(self):
@@ -144,8 +151,9 @@ class OutputDataModel:
         """
 
         col_names = ['SNID']
-        col_names.extend(self._sn_model.param_names)
-        col_names.extend(param + '_err' for param in self._sn_model.param_names)
+        col_names.extend('sim_' + param for param in self.sim_model.param_names)
+        col_names.extend(self.fit_model.param_names)
+        col_names.extend(param + '_err' for param in self.fit_model.param_names)
         col_names.append('chisq')
         col_names.append('ndof')
         col_names.append('mb')
@@ -158,7 +166,7 @@ class FittingPipeline(ProcessManager):
     """Pipeline of parallel processes for simulating and fitting light-curves"""
 
     def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
-                 quality_callback=None, max_queue=25, pool_size=None,
+                 bounds=None, quality_callback=None, max_queue=25, pool_size=None,
                  iter_lim=float('inf'), ref_stars=None, pwv_model=None):
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -167,6 +175,7 @@ class FittingPipeline(ProcessManager):
             sim_model         (SNModel): Model to use when simulating light-curves
             fit_model         (SNModel): Model to use when fitting light-curves
             vparams         (list[str]): List of parameter names to vary in the fit
+            bounds    (dict[str, list]): Bounds to impose on ``fit_model`` parameters when fitting light-curves
             out_path        (str, Path): Path to write results to (.csv extension is enforced)
             quality_callback (callable): Skip light-curves if this function returns False
             max_queue             (int): Maximum number of light-curves to store in pipeline at once
@@ -186,15 +195,16 @@ class FittingPipeline(ProcessManager):
         self.cadence = cadence
         self.sim_model = sim_model
         self.fit_model = fit_model
-        self.out_path = Path(out_path).with_suffix('.csv')
         self.vparams = vparams
+        self.out_path = Path(out_path).with_suffix('.csv')
+        self.bounds = bounds
         self.quality_callback = quality_callback
         self.iter_lim = iter_lim
         self.reference_stars = ref_stars
         self.pwv_model = pwv_model
 
         self.out_path.parent.mkdir(exist_ok=True, parents=True)
-        self.data_model = OutputDataModel(fit_model)
+        self.data_model = OutputDataModel(sim_model, fit_model)
 
         # Set up queues to connect processes together
         manager = mp.Manager()
@@ -279,7 +289,7 @@ class FittingPipeline(ProcessManager):
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):
                 self.queue_fit_results.put(
-                    self.data_model.build_masked_entry(light_curve.meta, ValueError('Failed quality check'))
+                    self.data_model.build_masked_entry(duplicated_lc.meta, ValueError('Failed quality check'))
                 )
                 continue
 
@@ -298,7 +308,7 @@ class FittingPipeline(ProcessManager):
 
             try:
                 result, fitted_model = sncosmo.fit_lc(
-                    light_curve, self.fit_model, self.vparams,
+                    light_curve, self.fit_model, self.vparams, bounds=self.bounds,
                     guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
                 self.queue_fit_results.put(self.data_model.build_table_entry(light_curve.meta, fitted_model, result))

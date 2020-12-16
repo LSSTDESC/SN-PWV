@@ -29,13 +29,27 @@ div.sidebar-block p {
 }
 
 table {
-    margin-left: auto;
-    margin-right: auto;
-    margin-top: 30px;
+    margin: 30px auto 50px;
+    border-top: 1px;
+    border-top-style: solid;
+    border-bottom: 1px;
+    border-bottom-style: solid;
+    border-color: lightgray;
 }
 
 table.field-list {
     border: none;
+}
+
+th {
+    padding-top: 10px;
+    padding-left: 10px;
+}
+
+td {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    padding-left: 10px;
 }
 
 div.section {
@@ -50,20 +64,6 @@ dl {
     margin-bottom: 40px;
 }
 
-/* -- Code and API ---------------------------------------------------------- */
-
-
-.py.class, .py.function {
-    background: #fafafa;
-    padding: 10px;
-}
-
-.py.class code, .py.function code, .sig-name.descname, .sig-prename.descclassname {
-    background: #fafafa;
-}
-
-/* -- Rendered Notebooks ---------------------------------------------------- */
-
 div.highlight {
     overflow: hidden;
 }
@@ -74,4 +74,23 @@ a.copybtn {
 
 div.stderr a.copybtn, div.nboutput a.copybtn {
     display: none;
+}
+
+/* -- Code and API ---------------------------------------------------------- */
+
+
+.py.class, .py.function {
+    background: #fafafa;
+    padding: 10px;
+}
+
+.py.class code, .py.function code, .sig-name.descname, .sig-prename.descclassname {
+    background: none;
+}
+
+/* -- Command Line Interface Arguments -------------------------------------- */
+
+dl.option-list {
+    padding-left: 100px;
+    padding-right: 150px;
 }

@@ -3,12 +3,37 @@ physical phenomena. This includes SNe Ia light-curves, the propagation of
 light through atmospheric water vapor (with and without variation in time),
 and the seasonal variation of water vapor vs time.
 
+Model Summaries
+---------------
+
+A summary of the available models is provided below:
+
+.. autosummary::
+   :nosignatures:
+
+   FixedResTransmission
+   PWVModel
+   SNModel
+
+Supernova models (``SNModel``) are designed to closely resemble the behavior
+of the ``sncosmo`` package. However, unlike ``sncosmo.Model`` objects, the
+``snat_sim.SNModel`` class provides support for propogation effects that vary
+with time. A summary of propagation effects provided by the ``snat_sim``
+package is listed below:
+
+.. autosummary::
+   :nosignatures:
+
+   StaticPWVTrans
+   SeasonalPWVTrans
+   VariablePWVTrans
+
 Usage Example
 -------------
 
 To ensure backwards compatibility and ease of use, supernovae modeling with the
-``snat_sim`` package follows the
-`same design <https://sncosmo.readthedocs.io/en/stable/models.html>`_
+``snat_sim`` package follows the same
+`design pattern <https://sncosmo.readthedocs.io/en/stable/models.html>`_
 as the ``sncosmo`` package. Models are instantiated for a given spectral
 template and various propagation effects can be added to the model. In the
 following example, atmospheric propagation effects due to precipitable water
@@ -31,9 +56,12 @@ Module Docs
 """
 
 import abc
+import os
 import warnings
 from copy import copy
-import os
+from datetime import datetime
+from pathlib import Path
+
 import joblib
 import numpy as np
 import pandas as pd
@@ -43,6 +71,7 @@ from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
 from pwv_kpno.transmission import calc_pwv_eff
+from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
 
 from . import constants as const
@@ -56,6 +85,10 @@ PWV_CACHE_SIZE = 500_000
 TRANSMISSION_CACHE_SIZE = 500_00
 AIRMASS_CACHE_SIZE = 250_000
 
+
+###############################################################################
+# Core models for physical phenomena
+###############################################################################
 
 class FixedResTransmission:
     """Models atmospheric transmission due to PWV at a fixed resolution"""
@@ -72,7 +105,7 @@ class FixedResTransmission:
 
         self.norm_pwv = 2
         self.eff_exp = 0.6
-        self.samp_pwv = np.arange(0, 75.1, .1)
+        self.samp_pwv = np.arange(0, 60.25, .25)
         self.samp_wave = v1_transmission.samp_wave
         self.samp_transmission = v1_transmission(
             pwv=self.samp_pwv,
@@ -116,7 +149,7 @@ class FixedResTransmission:
 
 
 class PWVModel:
-    """Interpolation model for the PWV at a given point of the year"""
+    """Model for interpolating the atmospheric water vapor at a given date and time"""
 
     def __init__(self, pwv_series):
         """Build a model for time variable PWV by drawing from a given PWV time series
@@ -236,158 +269,37 @@ class PWVModel:
         return (self.pwv_zenith(date, time_format) *
                 self.calc_airmass(date, ra, dec, lat, lon, alt, time_format))
 
+    def seasonal_avg(self):
+        """Calculate the average PWV in each season
 
-class VariablePropagationEffect(sncosmo.PropagationEffect):
-    """Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
-    method accepts a ``time`` argument.
-    """
-
-    # noinspection PyMethodOverriding
-    @abc.abstractmethod
-    def propagate(self, wave, flux, time):
-        """Propagate the flux through the atmosphere
-
-        Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-            time (ndarray): Array of time values
+        Assumes seasons based on equinox and solstice dates in the year 2020.
 
         Returns:
-            An array of flux values after suffering propagation effects
+            A dictionary with the average PWV in each season (in mm)
         """
 
-        pass  # pragma: no cover
+        # Rough estimates for the start of each season
+        spring = tsu.datetime_to_sec_in_year(datetime(2020, 3, 20, tzinfo=utc))
+        summer = tsu.datetime_to_sec_in_year(datetime(2020, 6, 21, tzinfo=utc))
+        fall = tsu.datetime_to_sec_in_year(datetime(2020, 9, 22, tzinfo=utc))
+        winter = tsu.datetime_to_sec_in_year(datetime(2020, 12, 21, tzinfo=utc))
 
+        # Separate PWV data based on season
+        winter_pwv = self.pwv_model_data[(self.pwv_model_data.index < spring) | (self.pwv_model_data.index > winter)]
+        spring_pwv = self.pwv_model_data[(self.pwv_model_data.index > spring) & (self.pwv_model_data.index < summer)]
+        summer_pwv = self.pwv_model_data[(self.pwv_model_data.index > summer) & (self.pwv_model_data.index < fall)]
+        fall_pwv = self.pwv_model_data[(self.pwv_model_data.index > fall) & (self.pwv_model_data.index < winter)]
 
-class StaticPWVTrans(sncosmo.PropagationEffect):
-    """Atmospheric propagation effect for time static PWV"""
-
-    _minwave = 3000.0
-    _maxwave = 12000.0
-
-    def __init__(self, transmission_res=5):
-        """Time independent atmospheric transmission due to PWV
-
-        Setting the ``transmission_res`` argument to ``None`` results in the
-        highest available transmission model available.
-
-        Effect Parameters:
-            pwv: Atmospheric concentration of PWV along line of sight in mm
-
-        Args:
-            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
-        """
-
-        self._transmission_res = transmission_res
-        self._param_names = ['pwv']
-        self.param_names_latex = ['PWV']
-        self._parameters = np.array([0.])
-        self._transmission_model = FixedResTransmission(transmission_res)
-
-    @property
-    def transmission_res(self):
-        """Resolution used when binning the underlying atmospheric transmission model"""
-
-        return self._transmission_res
-
-    def propagate(self, wave, flux, *args):
-        """Propagate the flux through the atmosphere
-
-        Args:
-            wave (ndarray): A 1D array of wavelength values
-            flux (ndarray): An array of flux values
-
-        Returns:
-            An array of flux values after suffering from PWV absorption
-        """
-
-        # The class guarantees PWV is a scalar, so ``transmission`` is 1D
-        transmission = self._transmission_model.calc_transmission(self.parameters[0], wave)
-
-        # ``flux`` is 2D, so we do a quick cast
-        return flux * transmission.values[None, :]
-
-
-class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
-    """Atmospheric propagation effect for temporally variable PWV"""
-
-    def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
-        """Time variable atmospheric transmission due to PWV
-
-        Setting the ``transmission_res`` argument to ``None`` results in the
-        highest available transmission model available.
-
-        Effect Parameters:
-            ra: Target Right Ascension in degrees
-            dec: Target Declination in degrees
-            lat: Observer latitude in degrees (defaults to location of VRO)
-            lon: Observer longitude in degrees (defaults to location of VRO)
-            alt: Observer altitude in meters  (defaults to height of VRO)
-
-        Args:
-            pwv_model       (PWVModel): Returns PWV at zenith for a given time value and time format
-            time_format          (str): Astropy recognized time format used by the ``pwv_interpolator``
-            transmission_res   (float): Reduce the underlying transmission model by binning to the given resolution
-        """
-
-        # Create atmospheric transmission model
-        super().__init__(transmission_res=transmission_res)
-
-        self._time_format = time_format
-        self._pwv_model = pwv_model
-
-        # Define wavelength range of propagation effect
-        self._minwave = self._transmission_model.samp_wave.min()
-        self._maxwave = self._transmission_model.samp_wave.max()
-
-        # Define and store default modeling parameters
-        self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt']
-        self.param_names_latex = [
-            'Target RA', 'Target Dec',
-            'Observer Latitude (deg)', 'Observer Longitude (deg)', 'Observer Altitude (m)']
-
-        self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
-
-    def propagate(self, wave, flux, time):
-        """Propagate the flux through the atmosphere
-
-        Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-            time (ndarray): Array of time values to determine PWV for
-
-        Returns:
-            An array of flux values after suffering from PWV absorption
-        """
-
-        pwv = self._pwv_model.pwv_los(
-            date=time,
-            ra=self['ra'],
-            dec=self['dec'],
-            lat=self['lat'],
-            lon=self['lon'],
-            alt=self['alt'],
-            time_format=self._time_format)
-
-        transmission = self._transmission_model.calc_transmission(pwv=pwv, wave=np.atleast_1d(wave))
-
-        if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
-            if np.ndim(flux) == 1:
-                return flux * transmission
-
-            if np.ndim(flux) == 2:
-                return flux * np.atleast_2d(transmission)
-
-        if np.ndim(time) == 1 and np.ndim(flux) == 2:  # PWV will be a vector and transmission will be a DataFrame
-            return flux * transmission.values.T
-
-        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
+        return {
+            'winter': winter_pwv.mean(),
+            'spring': spring_pwv.mean(),
+            'summer': summer_pwv.mean(),
+            'fall': fall_pwv.mean()
+        }
 
 
 class SNModel(sncosmo.Model):
-    """Similar to ``sncosmo.SNModel`` class, but removes type checks from
-    methods to allow duck-typing.
-    """
+    """An observer-frame supernova model composed of a Source and zero or more effects"""
 
     # Same as parent except allows duck-typing of ``effect`` arg
     def _add_effect_partial(self, effect, name, frame):
@@ -452,3 +364,228 @@ class SNModel(sncosmo.Model):
         new_model = type(self)(self.source, self.effects, self.effect_names, self._effect_frames)
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
+
+
+###############################################################################
+# Propagation effects
+###############################################################################
+
+
+class VariablePropagationEffect(sncosmo.PropagationEffect):
+    """Base class for propogation effects that vary with time
+
+    Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
+    method accepts a ``time`` argument.
+    """
+
+    # noinspection PyMethodOverriding
+    @abc.abstractmethod
+    def propagate(self, wave, flux, time):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+            time (ndarray): Array of time values
+
+        Returns:
+            An array of flux values after suffering propagation effects
+        """
+
+        pass  # pragma: no cover
+
+
+class StaticPWVTrans(sncosmo.PropagationEffect):
+    """Propagation effect for the atmospheric absorption of light due to time static PWV"""
+
+    _minwave = 3000.0
+    _maxwave = 12000.0
+
+    def __init__(self, transmission_res=5):
+        """Time independent atmospheric transmission due to PWV
+
+        Setting the ``transmission_res`` argument to ``None`` results in the
+        highest available transmission model available.
+
+        Effect Parameters:
+            pwv: Atmospheric concentration of PWV along line of sight in mm
+
+        Args:
+            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
+        """
+
+        self._transmission_res = transmission_res
+        self._param_names = ['pwv']
+        self.param_names_latex = ['PWV']
+        self._parameters = np.array([0.])
+        self._transmission_model = FixedResTransmission(transmission_res)
+
+    @property
+    def transmission_res(self):
+        """Resolution used when binning the underlying atmospheric transmission model"""
+
+        return self._transmission_res
+
+    def propagate(self, wave, flux, *args):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): A 1D array of wavelength values
+            flux (ndarray): An array of flux values
+
+        Returns:
+            An array of flux values after suffering from PWV absorption
+        """
+
+        # The class guarantees PWV is a scalar, so ``transmission`` is 1D
+        transmission = self._transmission_model.calc_transmission(self.parameters[0], wave)
+
+        # ``flux`` is 2D, so we do a quick cast
+        return flux * transmission.values[None, :]
+
+
+class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
+    """Propagation effect for the atmospheric absorption of light due to time variable PWV"""
+
+    def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
+        """Time variable atmospheric transmission due to PWV
+
+        Setting the ``transmission_res`` argument to ``None`` results in the
+        highest available transmission model available.
+
+        Effect Parameters:
+            ra: Target Right Ascension in degrees
+            dec: Target Declination in degrees
+            lat: Observer latitude in degrees (defaults to location of VRO)
+            lon: Observer longitude in degrees (defaults to location of VRO)
+            alt: Observer altitude in meters  (defaults to height of VRO)
+
+        Args:
+            pwv_model       (PWVModel): Returns PWV at zenith for a given time value and time format
+            time_format          (str): Astropy recognized time format used by the ``pwv_interpolator``
+            transmission_res   (float): Reduce the underlying transmission model by binning to the given resolution
+        """
+
+        # Create atmospheric transmission model
+        super().__init__(transmission_res=transmission_res)
+
+        self._time_format = time_format
+        self._pwv_model = pwv_model
+
+        # Define wavelength range of propagation effect
+        self._minwave = self._transmission_model.samp_wave.min()
+        self._maxwave = self._transmission_model.samp_wave.max()
+
+        # Define and store default modeling parameters
+        self._param_names = ['ra', 'dec', 'lat', 'lon', 'alt']
+        self.param_names_latex = [
+            'Target RA', 'Target Dec',
+            'Observer Latitude (deg)', 'Observer Longitude (deg)', 'Observer Altitude (m)']
+
+        self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
+
+    def _apply_propagation(self, time, flux, transmission):
+        """Apply an atmospheric transmission to flux values
+
+        Args:
+            time         (ndarray): Time values for the sampled flux and transmission values
+            flux         (ndarray): Array of flux values
+            transmission (ndarray): Array of sampled transmission values
+        """
+
+        pwv = self._pwv_model.pwv_los(
+            date=time,
+            ra=self['ra'],
+            dec=self['dec'],
+            lat=self['lat'],
+            lon=self['lon'],
+            alt=self['alt'],
+            time_format=self._time_format)
+
+        transmission = self._transmission_model.calc_transmission(pwv=pwv, wave=np.atleast_1d(wave))
+
+
+        if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
+            if np.ndim(flux) == 1:
+                return flux * transmission
+
+            if np.ndim(flux) == 2:
+                return flux * np.atleast_2d(transmission)
+
+        if np.ndim(time) == 1 and np.ndim(flux) == 2:  # PWV will be a vector and transmission will be a DataFrame
+            return flux * transmission.values.T
+
+        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
+
+    def assumed_pwv(self, time):
+        """The PWV concentration used by the propagation effect at a given time
+
+        Args:
+            time (float, array): Time to get the PWV concentration for
+
+        Returns:
+            An array of PWV values in units of mm
+        """
+
+        return self._pwv_model.pwv_los(
+            time,
+            ra=self['ra'],
+            dec=self['dec'],
+            lat=self['lat'],
+            lon=self['lon'],
+            alt=self['alt'],
+            time_format=self._time_format)
+
+    def propagate(self, wave, flux, time):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+            time (ndarray): Array of time values to determine PWV for
+
+        Returns:
+            An array of flux values after suffering from PWV absorption
+        """
+
+        pwv = self.assumed_pwv(time)
+        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        return self._apply_propagation(time, flux, transmission)
+
+
+class SeasonalPWVTrans(VariablePWVTrans):
+    """Atmospheric propagation effect for a fixed PWV concentration per-season"""
+
+    def assumed_pwv(self, time):
+        """The PWV concentration used by the propagation effect at a given time
+
+        Args:
+            time (float, array): Time to get the PWV concentration for
+
+        Returns:
+            An array of PWV values in units of mm
+        """
+
+        # Convert time values to their corresponding season
+        datetime_objects = Time(time, format=self._time_format).to_datetime()
+        seasons = tsu.datetime_to_season(datetime_objects)
+
+        # Get the average PWV for each season
+        avg_pwv_per_season = self._pwv_model.seasonal_avg()
+        return [avg_pwv_per_season[season] for season in seasons]
+
+    def propagate(self, wave, flux, time):
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave (ndarray): An array of wavelength values
+            flux (ndarray): An array of flux values
+            time (ndarray): Array of time values to determine PWV for
+
+        Returns:
+            An array of flux values after suffering from PWV absorption
+        """
+
+        pwv = self.assumed_pwv(time)
+        transmission = self._transmission_model(pwv, np.atleast_1d(wave))
+        return self._apply_propagation(time, flux, transmission)

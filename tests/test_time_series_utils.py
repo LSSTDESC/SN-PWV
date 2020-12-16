@@ -1,4 +1,4 @@
-"""Tests for the ``weather`` module"""
+"""Tests for the ``time_series_utils`` module"""
 
 from datetime import datetime, timedelta
 from unittest import TestCase
@@ -227,3 +227,50 @@ class BuildPWVModel(TestCase):
         return_for_datetime = self.pwv_model.pwv_zenith(test_date, time_format=None)
         return_for_mjd = self.pwv_model.pwv_zenith(Time(test_date).to_value('mjd'), time_format='mjd')
         self.assertEqual(return_for_mjd, return_for_datetime)
+
+
+class DatetimeToSeason(TestCase):
+    """Tests for the ``datetime_to_season`` function"""
+
+    def assert_dates_match_season(self, season, dates):
+        """Test the given dates all match the given season
+
+        Args:
+            season           (str): Expected season
+            dates (list[datetime]): Dates to test for
+        """
+
+        returned_seasons = time_series_utils.datetime_to_season(dates)
+        np.testing.assert_array_equal(returned_seasons, [season for d in dates])
+
+    def test_vector_support(self):
+        """Test the function supports array arguments"""
+
+        time_vals = [datetime(2010, 1, 1), datetime(2010, 1, 2)]
+        seasons = time_series_utils.datetime_to_season(time_vals)
+        self.assertIsInstance(seasons, np.ndarray)
+        self.assertEqual(len(time_vals), len(seasons))
+
+    def test_winter_dates(self):
+        """Test a handful of known winter dates"""
+
+        winter_dates = (datetime(2004, 1, 1), datetime(2005, 3, 19), datetime(2004, 12, 20), datetime(2005, 12, 31))
+        self.assert_dates_match_season('winter', winter_dates)
+
+    def test_spring_dates(self):
+        """Test a handful of known spring dates"""
+
+        spring_dates = (datetime(2004, 3, 20), datetime(2005, 6, 19))
+        self.assert_dates_match_season('spring', spring_dates)
+
+    def test_summer_dates(self):
+        """Test a handful of known summer dates"""
+
+        summer_dates = (datetime(2004, 6, 20), datetime(2005, 9, 21))
+        self.assert_dates_match_season('summer', summer_dates)
+
+    def test_fall_dates(self):
+        """Test a handful of known fall dates"""
+
+        fall_dates = (datetime(2004, 9, 22), datetime(2005, 12, 19))
+        self.assert_dates_match_season('fall', fall_dates)
