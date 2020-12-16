@@ -9,16 +9,17 @@ import sys
 from pathlib import Path
 
 from astropy.table import Table
-from pwv_kpno.defaults import ctio
+from pwv_kpno.gps_pwv import GPSReceiver
 
 sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
 from snat_sim import filters, models
 from snat_sim.fitting_pipeline import FittingPipeline
 
-CTIO_PWV_MODEL = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
+SUOMINET_VALUES = ('press', 'temp', 'rh', 'zenith_delay')
 
 
+# Todo: This should be in the snat_sim package so it can be tested
 def passes_quality_cuts(light_curve):
     """Return whether light-curve has 2+ two bands each with 1+ data point with SNR > 5
 
@@ -41,80 +42,133 @@ def passes_quality_cuts(light_curve):
     return sum(passed_cuts) >= 2
 
 
-def create_pwv_effect(pwv_variability):
-    """Create a PWV transmission effect for use with supernova models
+class AdvancedNamespace(argparse.Namespace):
+    """Represents parsed command line arguments cast into friendly object types"""
 
-    If ``pwv_variability`` is numeric, return a ``StaticPWVTrans`` object
-    set to the given PWV concentration (in mm). If ``pwv_variability`` equals
-    ``epoch``, return a ``VariablePWVTrans`` constructed from the CTIO receiver
-    (using 2016 data supplemented with 2017).
+    def _create_pwv_effect(self, pwv_variability):
+        """Create a PWV transmission effect for use with supernova models
 
-    Args:
-        pwv_variability (str, Numeric): How to vary PWV as a function of time
+        Note: ``pwv_variability`` should be a string!
 
-    Returns:
-        A propagation effect usable with a supernova model object
-    """
+        If ``pwv_variability`` represents a numerical value, return a
+        ``StaticPWVTrans`` object set to the given PWV concentration (in mm).
 
-    # Keep a fixed PWV concentration
-    if isinstance(pwv_variability, (float, int)):
-        transmission_effect = models.StaticPWVTrans()
-        transmission_effect.set(pwv=pwv_variability)
-        return transmission_effect
+        If ``pwv_variability`` equals ``epoch``, return a ``VariablePWVTrans``
+        object.
 
-    # Model PWV continuously over the year using CTIO data
-    elif pwv_variability == 'epoch':
-        return models.VariablePWVTrans(CTIO_PWV_MODEL)
+        If `pwv_variability`` equals ``seasonal``, return a
+        ``SeasonalPWVTrans`` object.
 
-    else:
+        Args:
+            pwv_variability (str): Command line value for how to vary PWV as a function of time
+
+        Returns:
+            A propagation effect usable with a supernova model object
+        """
+
+        # The command line parser defaults to the pwv variability being a string
+        # even if it is numeric. A typecast is sometimes in order.
+        if pwv_variability.isnumeric():
+            transmission_effect = models.StaticPWVTrans()
+            transmission_effect.set(pwv=float(parsed_args.fit_variability))
+            return transmission_effect
+
+        # Model PWV continuously over the year using CTIO data
+        elif pwv_variability == 'epoch':
+            return models.VariablePWVTrans(self.pwv_model)
+
+        elif pwv_variability == 'seasonal':
+            return models.SeasonalPWVTrans(self.pwv_model)
+
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
+    @property
+    def pwv_model(self):
+        """Build a PWV model based on the command line argument"""
 
-def run_pipeline(cli_args):
-    """Run the fitting pipeline for a given cadence
+        print('Building PWV Model...')
+        data_cuts = dict()
+        for value in SUOMINET_VALUES:
+            if param_bound := getattr(self, f'cut_{value}', None):
+                data_cuts[value] = param_bound
+
+        primary_year, *supp_years = self.pwv_model_years
+        receiver = GPSReceiver(self.receiver_id, data_cuts=data_cuts)
+        return models.PWVModel.from_suominet_receiver(receiver, primary_year, supp_years)
+
+    @property
+    def fitting_bounds(self):
+        """Parameter boundaries to enforce when fitting light-curves
+
+        Returns:
+            A dictionary {<Param Name>: [<Lower Bound>, <Upper Bound>]}
+        """
+
+        fitting_bounds = dict()
+        for param in SALT2_PARAMS:
+            if param_bound := getattr(self, f'bound_{param}', None):
+                fitting_bounds[param] = param_bound
+
+        return fitting_bounds
+
+    @property
+    def simulation_model(self):
+        """Return the Supernova model used for fitting light-curves
+
+        Returns:
+            An SNModel object with atmospheric propagation effects
+        """
+
+        propagation_effect = self._create_pwv_effect(self.sim_variability)
+
+        print('Building supernova simulation model...')
+        return models.SNModel(
+            source=self.sim_source,
+            effects=[propagation_effect],
+            effect_names=[''],
+            effect_frames=['obs'])
+
+    @property
+    def fitting_model(self):
+        """Return the Supernova model used for simulating light-curves
+
+        Returns:
+            An SNModel object with atmospheric propagation effects
+        """
+
+        propagation_effect = self._create_pwv_effect(self.fit_variability)
+
+        print('Building supernova fitting model...')
+        return models.SNModel(
+            source=self.sim_source,
+            effects=[propagation_effect],
+            effect_names=[''],
+            effect_frames=['obs'])
+
+
+def run_pipeline(command_line_args):
+    """Run the analysis pipeline
 
     Args:
-        cli_args (Namespace): Parse command line arguments
+        command_line_args (AdvancedNamespace): Parsed command line arguments
     """
-
-    # Combine any parameter boundaries into a single dictionary
-    fitting_bounds = dict()
-    for param in SALT2_PARAMS:
-        if param_bound := getattr(cli_args, f'bound_{param}', None):
-            fitting_bounds[param] = param_bound
-
-    print('Creating simulation model...')
-    sn_model_sim = models.SNModel(cli_args.source)
-    sn_model_sim.add_effect(
-        effect=create_pwv_effect(cli_args.sim_variability),
-        name='',
-        frame='obs')
-
-    print('Creating fitting model...')
-    sn_model_fit = models.SNModel(cli_args.source)
-    sn_model_fit.add_effect(
-        effect=create_pwv_effect(cli_args.fit_variability),
-        name='',
-        frame='obs')
 
     print('Instantiating pipeline...')
     pipeline = FittingPipeline(
-        cadence=cli_args.cadence,
-        sim_model=sn_model_sim,
-        fit_model=sn_model_fit,
-        vparams=cli_args.vparams,
-        out_path=cli_args.out_path,
-        bounds=fitting_bounds,
+        cadence=command_line_args.cadence,
+        sim_model=command_line_args.simulation_model,
+        fit_model=command_line_args.fitting_model,
+        vparams=command_line_args.vparams,
+        out_path=command_line_args.out_path,
+        simulation_pool=command_line_args.sim_pool_size,
+        fitting_pool=command_line_args.fit_pool_size,
+        bounds=command_line_args.fitting_bounds,
         quality_callback=passes_quality_cuts,
-        pool_size=cli_args.pool_size,
-        iter_lim=cli_args.iter_lim,
-        ref_stars=cli_args.ref_stars,
-        pwv_model=CTIO_PWV_MODEL
+        iter_lim=command_line_args.iter_lim,
+        ref_stars=command_line_args.ref_stars,
+        pwv_model=command_line_args.pwv_model
     )
 
-    print('I/O Processes: 2')
-    print(f'Simulation Processes:', pipeline.simulation_pool_size)
-    print('Fitting Processes:', pipeline.fitting_pool_size)
     pipeline.run()
 
 
@@ -122,52 +176,27 @@ def create_cli_parser():
     """Return a command line argument parser"""
 
     parser = argparse.ArgumentParser()
+    parser.set_defaults(func=run_pipeline)
+
     parser.add_argument(
         '-c', '--cadence',
         type=str,
         required=True,
-        help='Observational cadence to use when simulating light-curves.'
+        help='Observational cadence to assume for the LSST.'
     )
 
     parser.add_argument(
-        '-t', '--source',
-        type=str,
-        default='salt2-extended',
-        help='The name of the sncosmo spectral template to use when simulating'
-             ' AND fitting supernova light-curves.'
-    )
-
-    parser.add_argument(
-        '-v', '--vparams',
-        type=str,
-        default=('x0', 'x1', 'c'),
-        nargs='+',
-        help='Parameters to vary when fitting light-curves.'
-    )
-
-    parser.add_argument(
-        '-s', '--sim_variability',
-        type=str,
-        required=True,
-        help='Rate at which to vary PWV when simulating light-curves.'
-             ' Specify a numerical value for a fixed PWV concentration.'
-             ' Specify "epoch" to vary the PWV per observation.'
-    )
-
-    parser.add_argument(
-        '-f', '--fit_variability',
-        type=str,
-        required=True,
-        help='Rate at which to vary the assumed PWV when fitting light-curves.'
-             ' Specify a numerical value for a fixed PWV concentration.'
-             ' Specify "epoch" to vary the PWV per observation.'
-    )
-
-    parser.add_argument(
-        '-p', '--pool_size',
+        '-s', '--sim_pool_size',
         type=int,
-        default=None,
-        help='Total number of workers to spawn. Defaults to CPU count'
+        default=1,
+        help='Total number of workers to spawn for simulating supernova light-curves.'
+    )
+
+    parser.add_argument(
+        '-f', '--fit_pool_size',
+        type=int,
+        default=1,
+        help='Total number of workers to spawn for fitting light-curves.'
     )
 
     parser.add_argument(
@@ -178,42 +207,130 @@ def create_cli_parser():
     )
 
     parser.add_argument(
-        '-r', '--ref_stars',
+        '-o', '--out_path',
+        type=Path,
+        required=True,
+        help='Output file path (a .csv extension is enforced).'
+    )
+
+    #######################################################################
+    # Light-curve simulation
+    #######################################################################
+
+    simulation_group = parser.add_argument_group(
+        'Light-Curve Simulation',
+        description='Options for simulating supernova light-curves.')
+
+    simulation_group.add_argument(
+        '--sim_source',
+        type=str,
+        default='salt2-extended',
+        help='The name of the sncosmo spectral template to use when simulating supernova light-curves.'
+    )
+
+    simulation_group.add_argument(
+        '--sim_variability',
+        type=str,
+        required=True,
+        help='Rate at which to vary PWV when simulating light-curves.'
+             ' Specify a numerical value for a fixed PWV concentration.'
+             ' Specify "epoch" to vary the PWV per observation.'
+    )
+
+    simulation_group.add_argument(
+        '--ref_stars',
         type=str,
         default=('G2', 'M5', 'K2'),
         nargs='+',
         help='Reference star(s) to calibrate simulated SNe against.'
     )
 
-    parser.add_argument(
-        '-o', '--out_path',
-        type=Path,
+    #######################################################################
+    # Light-curve fitting
+    #######################################################################
+
+    fitting_group = parser.add_argument_group(
+        'Light-Curve Fitting',
+        description='Options for configuring supernova light-curve fits.')
+
+    fitting_group.add_argument(
+        '--fit_source',
+        type=str,
+        default='salt2-extended',
+        help='The name of the sncosmo spectral template to use when fitting supernova light-curves.'
+    )
+
+    fitting_group.add_argument(
+        '--fit_variability',
+        type=str,
         required=True,
-        help='Output file path (in CSV format).'
+        help='Rate at which to vary the assumed PWV when fitting light-curves.'
+             ' Specify a numerical value for a fixed PWV concentration.'
+             ' Specify "epoch" to vary the PWV per observation.'
+    )
+
+    fitting_group.add_argument(
+        '--vparams',
+        type=str,
+        default=('x0', 'x1', 'c'),
+        nargs='+',
+        help='Parameters to vary when fitting light-curves.'
     )
 
     for param in SALT2_PARAMS:
-        parser.add_argument(
+        fitting_group.add_argument(
             f'--bound_{param}',
             type=float,
             default=None,
             nargs=2,
-            help=f'Upper and lower bounds for {param} parameter when fitting light-curves.'
+            help=f'Upper and lower bounds for {param} parameter when fitting light-curves (Optional).'
         )
 
-    parser.set_defaults(func=run_pipeline)
+    #######################################################################
+    # PWV Modeling
+    #######################################################################
+
+    pwv_modeling_group = parser.add_argument_group(
+        'PWV Modeling',
+        description='Options used when building the PWV variability model'
+                    ' from SuomiNet GPS data.'
+    )
+
+    pwv_modeling_group.add_argument(
+        '--receiver_id',
+        type=str,
+        default='ctio'
+    )
+
+    pwv_modeling_group.add_argument(
+        '--pwv_model_years',
+        type=float,
+        nargs='+',
+        default=[2016, 2017]
+    )
+
+    pwv_modeling_group.add_argument(
+        '--cut_pwv',
+        type=float,
+        nargs=2,
+        default=[0, 30],
+        help='Only use measured data points with a PWV value within the given bounds (units of millimeters)'
+    )
+
+    data_cut_names = ('surface pressure', 'temperature', 'relative humidity', 'zenith delay')
+    data_cut_units = ('Millibars', 'Centigrade', 'Percentage', 'Millimeters')
+    for arg, name, unit in zip(SUOMINET_VALUES, data_cut_names, data_cut_units):
+        pwv_modeling_group.add_argument(
+            f'--cut_{arg}',
+            type=float,
+            nargs=2,
+            help=f'Only use measured data points with a {name} value within the given bounds (units of {unit})'
+        )
+
     return parser
 
 
 if __name__ == '__main__':
     filters.register_lsst_filters()
-    parsed_args = create_cli_parser().parse_args()
-
-    # Types cast PWV variability into float
-    if parsed_args.fit_variability.isnumeric():
-        parsed_args.fit_variability = float(parsed_args.fit_variability)
-
-    if parsed_args.sim_variability.isnumeric():
-        parsed_args.sim_variability = float(parsed_args.sim_variability)
-
+    parsed_args = create_cli_parser().parse_args(namespace=AdvancedNamespace())
     parsed_args.func(parsed_args)
