@@ -15,7 +15,6 @@ sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
 from snat_sim import filters, models
 from snat_sim.fitting_pipeline import FittingPipeline
 
-CTIO_PWV_MODEL = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 
 
@@ -41,7 +40,7 @@ def passes_quality_cuts(light_curve):
     return sum(passed_cuts) >= 2
 
 
-def create_pwv_effect(pwv_variability):
+def create_pwv_effect(pwv_variability, pwv_model):
     """Create a PWV transmission effect for use with supernova models
 
     If ``pwv_variability`` is numeric, return a ``StaticPWVTrans`` object
@@ -64,7 +63,10 @@ def create_pwv_effect(pwv_variability):
 
     # Model PWV continuously over the year using CTIO data
     elif pwv_variability == 'epoch':
-        return models.VariablePWVTrans(CTIO_PWV_MODEL)
+        return models.VariablePWVTrans(pwv_model)
+
+    elif pwv_variability == 'seasonal':
+        return models.SeasonalPWVTrans(pwv_model)
 
     else:
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
@@ -83,17 +85,20 @@ def run_pipeline(cli_args):
         if param_bound := getattr(cli_args, f'bound_{param}', None):
             fitting_bounds[param] = param_bound
 
-    print('Creating simulation model...')
+    print('Creating PWV variability model...')
+    ctio_pwv_model = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
+
+    print('Creating supernova simulation model...')
     sn_model_sim = models.SNModel(cli_args.source)
     sn_model_sim.add_effect(
-        effect=create_pwv_effect(cli_args.sim_variability),
+        effect=create_pwv_effect(cli_args.sim_variability, ctio_pwv_model),
         name='',
         frame='obs')
 
-    print('Creating fitting model...')
+    print('Creating supernova fitting model...')
     sn_model_fit = models.SNModel(cli_args.source)
     sn_model_fit.add_effect(
-        effect=create_pwv_effect(cli_args.fit_variability),
+        effect=create_pwv_effect(cli_args.fit_variability, ctio_pwv_model),
         name='',
         frame='obs')
 
@@ -109,7 +114,7 @@ def run_pipeline(cli_args):
         pool_size=cli_args.pool_size,
         iter_lim=cli_args.iter_lim,
         ref_stars=cli_args.ref_stars,
-        pwv_model=CTIO_PWV_MODEL
+        pwv_model=ctio_pwv_model
     )
 
     print('I/O Processes: 2')
