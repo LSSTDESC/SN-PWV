@@ -15,19 +15,19 @@ below.
 |                              | meters.                                      |
 +------------------------------+----------------------------------------------+
 | ``betoule_alpha``            | Nuisance parameter alpha                     |
-|                              | from Betoule+ 2014.                          |
+|                              | from Betoule+ 2014 (units of magnitudes).    |
 +------------------------------+----------------------------------------------+
 | ``betoule_beta``             | Nuisance parameter beta                      |
-|                              | from Betoule+ 2014.                          |
+|                              | from Betoule+ 2014 (units of magnitudes).    |
 +------------------------------+----------------------------------------------+
 | ``betoule_omega_m``          | Cosmological mater density as determined in  |
-|                              | Betoule+ 2014.                               |
+|                              | Betoule+ 2014 (Dimensionless).               |
 +------------------------------+----------------------------------------------+
-| ``betoule_abs_mb``           | Intrinsic absolute magnitude of SNe Ia as    |
-|                              | determined in Betoule+ 2014.                 |
+| ``betoule_abs_mb``           | Intrinsic absolute magnitude of SNe Ia       |
+|                              | from Betoule+ 2014 (units of magnitudes).    |
 +------------------------------+----------------------------------------------+
-| ``betoule_H0``               | Cosmological Hubble parameter as             |
-|                              | determined in Betoule+ 2014.                 |
+| ``betoule_H0``               | Cosmological Hubble parameter from           |
+|                              | Betoule+ 2014 in  km / s / Mpc.              |
 +------------------------------+----------------------------------------------+
 | ``betoule_cosmo``            | ``astropy.Cosmology`` object representing    |
 |                              | the best fit cosmology in Betoule+ 2014.     |
