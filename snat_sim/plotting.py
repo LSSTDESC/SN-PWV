@@ -143,7 +143,7 @@ def plot_pwv_mag_effects(
         z_arr: np.ndarray,
         delta_mag: dict,
         slopes: np.ndarray,
-        bands: List[str, ...],
+        bands: List[str],
         figsize: Tuple[Numeric, Numeric] = (10, 8)
 ) -> Tuple[plt.Figure, plt.Axes]:
     """Multi panel plot with a column for each band and rows for the change in magnitude vs pwv and redshift parameters.
@@ -345,7 +345,7 @@ def plot_magnitude(
 
 
 def plot_fitted_params(
-        fitted_params: Dict[str: np.ndarray], pwv_arr: np.ndarray, z_arr: np.ndarray, bands: List[str]
+        fitted_params: Dict[str, np.ndarray], pwv_arr: np.ndarray, z_arr: np.ndarray, bands: List[str]
 ) -> Tuple[plt.Figure, np.array]:
     """Multi-panel plot showing subplots for each salt2 parameter vs redshift.
 

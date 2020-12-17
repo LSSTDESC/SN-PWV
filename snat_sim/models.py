@@ -9,7 +9,7 @@ Model Summaries
 A summary of the available models is provided below:
 
 .. autosummary::
-:nosignatures:
+   :nosignatures:
 
    FixedResTransmission
    PWVModel
@@ -22,7 +22,7 @@ with time. A summary of propagation effects provided by the ``snat_sim``
 package is listed below:
 
 .. autosummary::
-:nosignatures:
+   :nosignatures:
 
    StaticPWVTrans
    SeasonalPWVTrans

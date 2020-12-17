@@ -1,4 +1,4 @@
-"""The ``time_series.py`` module provides limited functionality
+"""The ``time_series`` module provides limited functionality
 for manipulating time series data. It is intended to supplement existing
 functionality in the ``pandas`` package with support for tasks particular to
 dealing with atmospheric / weather data.
