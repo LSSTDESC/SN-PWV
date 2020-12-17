@@ -75,7 +75,7 @@ def calc_x0_for_z(
     return model['x0']
 
 
-# Todo: The default gain va;lue here makes no physical sense
+# Todo: The default gain value here makes no physical sense
 def create_observations_table(
         phases: Collection[float] = range(-20, 51),
         bands: Collection[str] = ('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
@@ -122,6 +122,7 @@ def create_observations_table(
     return observations
 
 
+# Todo: The default gain value should match create_observations_table
 def simulate_lc_fixed_snr(observations: Table, model: SNModel, snr: float = .05, **params) -> Table:
     """Simulate a SN light-curve with a fixed SNR given a set of observations
 
@@ -146,8 +147,7 @@ def simulate_lc_fixed_snr(observations: Table, model: SNModel, snr: float = .05,
     model.set(x0=x0)
 
     light_curve = observations[['time', 'band', 'zp', 'zpsys']]
-    light_curve['flux'] = model.bandflux(observations['band'], observations['time'], observations['zp'],
-                                         observations['zpsys'])
+    light_curve['flux'] = model.bandflux(observations['band'], observations['time'], observations['zp'], observations['zpsys'])
     light_curve['fluxerr'] = light_curve['flux'] / snr
     light_curve.meta = dict(zip(model.param_names, model.parameters))
     return light_curve

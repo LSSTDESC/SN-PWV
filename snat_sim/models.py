@@ -55,6 +55,8 @@ Module Docs
 -----------
 """
 
+from __future__ import annotations
+
 import abc
 import warnings
 from copy import copy
@@ -84,6 +86,8 @@ from .plasticc import get_data_dir
 PWV_CACHE_SIZE = 500_000
 TRANSMISSION_CACHE_SIZE = 500_00
 AIRMASS_CACHE_SIZE = 250_000
+
+NumpyVar = TypeVar('NumpyVar', float, np.ndarray)
 
 
 ###############################################################################
@@ -117,9 +121,15 @@ class FixedResTransmission:
 
         self.calc_transmission = numpy_cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
 
-    def calc_transmission(
-            self, pwv: Union[float, Collection[float]], wave: Union[np.ndarray, pd.Series] = None
-    ) -> Union[pd.Series, pd.DataFrame]:
+    @overload
+    def calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
+        ...
+
+    @overload
+    def calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
+        ...
+
+    def calc_transmission(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
@@ -127,7 +137,7 @@ class FixedResTransmission:
 
         Args:
             pwv: Line of sight PWV to interpolate for
-            wave: Wavelengths to evaluate transmission
+            wave: Wavelengths to evaluate transmission (Defaults to ``samp_wave`` attribute)
 
         Returns:
             The interpolated transmission at the given wavelengths / resolution
@@ -168,8 +178,8 @@ class PWVModel:
         memory = joblib.Memory(str(get_data_dir()), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
         self.calc_airmass = memory.cache(self.calc_airmass)
 
-    @staticmethod  # Todo: Add return type
-    def from_suominet_receiver(receiver: GPSReceiver, year: int, supp_years: Collection[int] = None):
+    @staticmethod
+    def from_suominet_receiver(receiver: GPSReceiver, year: int, supp_years: Collection[int] = None) -> PWVModel:
         """Construct a ``PWVModel`` instance using data from a SuomiNet receiver
 
         Args:
@@ -191,15 +201,19 @@ class PWVModel:
         supp_data = tsu.supplemented_data(weather_data, year, supp_years)
         return PWVModel(supp_data)
 
+    @overload
+    def calc_airmass(
+            self, time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str) -> float:
+        ...
+
+    @overload
+    def calc_airmass(
+            self, time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str) -> np.array:
+        ...
+
     @staticmethod
     def calc_airmass(
-            time: Union[float, List[float]],
-            ra: float,
-            dec: float,
-            lat: float = const.vro_latitude,
-            lon: float = const.vro_longitude, alt=const.vro_altitude,
-            time_format: str = 'mjd'
-    ) -> Union[float, List[float]]:
+            time, ra, dec, lat=const.vro_latitude, lon=const.vro_longitude, alt=const.vro_altitude, time_format='mjd'):
         """Calculate the airmass through which a target is observed
 
         Default latitude, longitude, and altitude are set to the Rubin
@@ -231,7 +245,15 @@ class PWVModel:
             altaz = AltAz(obstime=obs_time, location=observer_location)
             return target_coord.transform_to(altaz).secz.value
 
-    def pwv_zenith(self, time: Union[float, List[float]], time_format: str = 'mjd') -> Union[float, np.array]:
+    @overload
+    def pwv_zenith(self, time: float, time_format: str) -> float:
+        ...
+
+    @overload
+    def pwv_zenith(self, time: List[float], time_format: str) -> np.array:
+        ...
+
+    def pwv_zenith(self, time, time_format='mjd'):
         """Interpolate the PWV at zenith as a function of time
 
         The ``time_format`` argument can be set to ``None`` when passing datetime
@@ -255,6 +277,17 @@ class PWVModel:
             xp=self.pwv_model_data.index,
             fp=self.pwv_model_data.values
         )
+
+    @overload
+    def pwv_los(
+            self, time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str) -> float:
+        ...
+
+    @overload
+    def pwv_los(
+            self, time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float,
+            time_format: str) -> np.array:
+        ...
 
     def pwv_los(
             self,
@@ -286,7 +319,7 @@ class PWVModel:
         return (self.pwv_zenith(time, time_format) *
                 self.calc_airmass(time, ra, dec, lat, lon, alt, time_format))
 
-    def seasonal_avg(self) -> Dict[str, float]:
+    def seasonal_averages(self) -> Dict[str, float]:
         """Calculate the average PWV in each season
 
         Assumes seasons based on equinox and solstice dates in the year 2020.
@@ -319,7 +352,7 @@ class SNModel(sncosmo.Model):
     """An observer-frame supernova model composed of a Source and zero or more effects"""
 
     # Same as parent except allows duck-typing of ``effect`` arg
-    def _add_effect_partial(self, effect, name, frame):
+    def _add_effect_partial(self, effect, name, frame) -> None:
         """Like 'add effect', but don't sync parameter arrays"""
 
         if frame not in ['rest', 'obs', 'free']:
@@ -340,7 +373,7 @@ class SNModel(sncosmo.Model):
             self.param_names_latex.append('{\\rm ' + name + '}\\,' + param_name)
 
     # Same as parent except adds support for ``VariablePropagationEffect`` effects
-    def _flux(self, time, wave):
+    def _flux(self, time, wave) -> np.ndarray:
         """Array flux function."""
 
         a = 1. / (1. + self._parameters[0])
@@ -374,7 +407,7 @@ class SNModel(sncosmo.Model):
 
     # Parent class copy enforces return is a parent class instance
     # Allow child classes to return copies of their own type
-    def __copy__(self):
+    def __copy__(self) -> SNModel:
         """Like a normal shallow copy, but makes an actual copy of the
         parameter array."""
 
@@ -397,13 +430,13 @@ class VariablePropagationEffect(sncosmo.PropagationEffect):
 
     # noinspection PyMethodOverriding
     @abc.abstractmethod
-    def propagate(self, wave, flux, time):
+    def propagate(self, wave: np.ndarray, flux: np.ndarray, time: np.ndarray) -> np.ndarray:
         """Propagate the flux through the atmosphere
 
         Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-            time (ndarray): Array of time values
+            wave: An array of wavelength values
+            flux: An array of flux values
+            time: Array of time values
 
         Returns:
             An array of flux values after suffering propagation effects
@@ -418,7 +451,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
     _minwave = 3000.0
     _maxwave = 12000.0
 
-    def __init__(self, transmission_res=5):
+    def __init__(self, transmission_res: float = 5) -> None:
         """Time independent atmospheric transmission due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
@@ -438,17 +471,17 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
         self._transmission_model = FixedResTransmission(transmission_res)
 
     @property
-    def transmission_res(self):
+    def transmission_res(self) -> float:
         """Resolution used when binning the underlying atmospheric transmission model"""
 
         return self._transmission_res
 
-    def propagate(self, wave, flux, *args):
+    def propagate(self, wave: np.ndarray, flux: np.ndarray, *args) -> np.ndarray:
         """Propagate the flux through the atmosphere
 
         Args:
-            wave (ndarray): A 1D array of wavelength values
-            flux (ndarray): An array of flux values
+            wave: A 1D array of wavelength values
+            flux: An array of flux values
 
         Returns:
             An array of flux values after suffering from PWV absorption
@@ -464,7 +497,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
     """Propagation effect for the atmospheric absorption of light due to time variable PWV"""
 
-    def __init__(self, pwv_model, time_format='mjd', transmission_res=5.):
+    def __init__(self, pwv_model: PWVModel, time_format: str = 'mjd', transmission_res: float = 5.) -> None:
         """Time variable atmospheric transmission due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
@@ -478,9 +511,9 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
             alt: Observer altitude in meters  (defaults to height of VRO)
 
         Args:
-            pwv_model       (PWVModel): Returns PWV at zenith for a given time value and time format
-            time_format          (str): Astropy recognized time format used by the ``pwv_interpolator``
-            transmission_res   (float): Reduce the underlying transmission model by binning to the given resolution
+            pwv_model: Returns PWV at zenith for a given time value and time format
+            time_format: Astropy recognized time format used by the ``pwv_interpolator``
+            transmission_res: Reduce the underlying transmission model by binning to the given resolution
         """
 
         # Create atmospheric transmission model
@@ -501,13 +534,14 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 
         self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
-    def _apply_propagation(self, time, flux, transmission):
+    def _apply_propagation(self, time: Union[float, np.ndarray], flux: np.ndarray,
+                           transmission: np.ndarray) -> np.ndarray:
         """Apply an atmospheric transmission to flux values
 
         Args:
-            time         (ndarray): Time values for the sampled flux and transmission values
-            flux         (ndarray): Array of flux values
-            transmission (ndarray): Array of sampled transmission values
+            time: Time values for the sampled flux and transmission values
+            flux: Array of flux values
+            transmission: Array of sampled transmission values
         """
 
         if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
@@ -522,7 +556,7 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 
         raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
 
-    def assumed_pwv(self, time):
+    def assumed_pwv(self, time: NumpyVar) -> NumpyVar:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
@@ -541,13 +575,13 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
             alt=self['alt'],
             time_format=self._time_format)
 
-    def propagate(self, wave, flux, time):
+    def propagate(self, wave: np.ndarray, flux: np.ndarray, time: Union[float, np.ndarray]) -> np.ndarray:
         """Propagate the flux through the atmosphere
 
         Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-            time (ndarray): Array of time values to determine PWV for
+            wave: An array of wavelength values
+            flux: An array of flux values
+            time: Array of time values to determine PWV for
 
         Returns:
             An array of flux values after suffering from PWV absorption
@@ -561,7 +595,7 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 class SeasonalPWVTrans(VariablePWVTrans):
     """Atmospheric propagation effect for a fixed PWV concentration per-season"""
 
-    def assumed_pwv(self, time):
+    def assumed_pwv(self, time: NumpyVar) -> NumpyVar:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
@@ -576,10 +610,10 @@ class SeasonalPWVTrans(VariablePWVTrans):
         seasons = tsu.datetime_to_season(datetime_objects)
 
         # Get the average PWV for each season
-        avg_pwv_per_season = self._pwv_model.seasonal_avg()
-        return [avg_pwv_per_season[season] for season in seasons]
+        avg_pwv_per_season = self._pwv_model.seasonal_averages()
+        return np.array([avg_pwv_per_season[season] for season in seasons])
 
-    def propagate(self, wave, flux, time):
+    def propagate(self, wave: np.ndarray, flux: np.ndarray, time: Union[float, np.ndarray]) -> np.ndarray:
         """Propagate the flux through the atmosphere
 
         Args:
