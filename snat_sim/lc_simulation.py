@@ -123,14 +123,14 @@ def create_observations_table(
 
 
 # Todo: The default gain value should match create_observations_table
-def simulate_lc_fixed_snr(observations: Table, model: SNModel, snr: float = .05, **params) -> Table:
+def simulate_lc_fixed_snr(obs: Table, model: SNModel, snr: float = .05, **params) -> Table:
     """Simulate a SN light-curve with a fixed SNR given a set of observations
 
     The ``obs`` table is expected to have columns for 'time', 'band', 'zp',
     and 'zpsys'.
 
     Args:
-        observations: Table outlining the observation cadence
+        obs: Table outlining the observation cadence
         model: Supernova model to evaluate
         snr: Signal to noise ratio
         **params: Values for any model parameters
@@ -146,8 +146,8 @@ def simulate_lc_fixed_snr(observations: Table, model: SNModel, snr: float = .05,
     x0 = params.get('x0', calc_x0_for_z(model['z'], model.source))
     model.set(x0=x0)
 
-    light_curve = observations[['time', 'band', 'zp', 'zpsys']]
-    light_curve['flux'] = model.bandflux(observations['band'], observations['time'], observations['zp'], observations['zpsys'])
+    light_curve = obs[['time', 'band', 'zp', 'zpsys']]
+    light_curve['flux'] = model.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
     light_curve['fluxerr'] = light_curve['flux'] / snr
     light_curve.meta = dict(zip(model.param_names, model.parameters))
     return light_curve

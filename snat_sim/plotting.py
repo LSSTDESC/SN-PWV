@@ -611,7 +611,7 @@ def plot_year_pwv_vs_time(
 
 
 # Ignore arguments with uppercase letters
-# noinspection PyPep8Naming 
+# noinspection PyPep8Naming
 def plot_cosmology_fit(
         data: pd.DataFrame, abs_mag: Numeric, H0: Numeric, Om0: Numeric, w0: Numeric, alpha: Numeric, beta: Numeric
 ) -> Tuple[plt.figure, np.ndarray, np.ndarray]:

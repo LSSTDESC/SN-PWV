@@ -203,12 +203,14 @@ class PWVModel:
 
     @overload
     def calc_airmass(
-            self, time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str) -> float:
+            self, time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
+    ) -> float:
         ...
 
     @overload
     def calc_airmass(
-            self, time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str) -> np.array:
+            self, time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
+    ) -> np.array:
         ...
 
     @staticmethod
