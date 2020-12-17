@@ -1,4 +1,4 @@
-"""The ``cache_utils`` module defines numpy compatible function wrappers
+"""The ``caching`` module defines numpy compatible function wrappers
 for implementing memoization.
 
 Module API
@@ -9,7 +9,7 @@ import inspect
 import sys
 from collections import OrderedDict
 from functools import wraps
-from typing import *
+from typing import Any, Callable, Hashable
 
 import numpy as np
 
@@ -28,9 +28,11 @@ class MemoryCache(OrderedDict):
         """
 
         super(MemoryCache, self).__init__()
+
         self.max_size = max_size
-        if self.max_size and self.max_size <= (min_size := sys.getsizeof(self)):
-            raise RuntimeError(f'Dictionary size limit must exceed {min_size} bytes')
+        size_when_empty = sys.getsizeof(self)
+        if self.max_size and self.max_size <= size_when_empty:
+            raise RuntimeError(f'Dictionary size limit must exceed {size_when_empty} bytes')
 
     def __setitem__(self, key: Hashable, value: Any):
         OrderedDict.__setitem__(self, key, value)
@@ -42,7 +44,7 @@ class MemoryCache(OrderedDict):
                 self.popitem(last=False)
 
 
-def numpy_cache(*numpy_args: str, cache_size: int = None):
+def numpy_cache(*numpy_args: str, cache_size: int = None) -> Callable:
     """Memoization decorator supporting ``numpy`` arrays
 
     Args:
@@ -53,7 +55,7 @@ def numpy_cache(*numpy_args: str, cache_size: int = None):
         A callable function decorator
     """
 
-    def decorator(function: Callable):
+    def decorator(function: Callable) -> Callable:
         class Memoization(MemoryCache):
             """Dictionary like object that stores recent function calls in memory"""
 

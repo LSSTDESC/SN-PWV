@@ -16,13 +16,19 @@ import numpy as np
 import pandas as pd
 from astropy.table import Table
 
-_PARENT = Path(__file__).resolve()
-_DATA_DIR = _PARENT.parent.parent / 'data'
-_STELLAR_SPECTRA_DIR = _DATA_DIR / 'stellar_spectra'
-_STELLAR_FLUX_DIR = _DATA_DIR / 'stellar_fluxes'
+from ._data_paths import data_paths
 
 Numeric = Union[int, float]
-available_types = sorted(f.stem for f in _STELLAR_FLUX_DIR.glob('*.txt'))
+
+
+def get_available_types() -> List[str]:
+    """Return the spectral types available on disk
+
+    Returns:
+        A list fo spectral types
+    """
+
+    return sorted(f.stem for f in data_paths.stellar_flux_dir.glob('*.txt'))
 
 
 def _read_stellar_spectra_path(fpath: Union[str, Path]) -> pd.Series:
@@ -79,8 +85,7 @@ def get_stellar_spectra(spectral_type: str) -> pd.Series:
     """
 
     # Load spectra for different spectral types
-    stellar_spectra_dir = _STELLAR_SPECTRA_DIR
-    path = next(stellar_spectra_dir.glob(spectral_type + '*.fits'))
+    path = next(data_paths.stellar_spectra_dir.glob(spectral_type + '*.fits'))
     return _read_stellar_spectra_path(path)
 
 
@@ -95,7 +100,7 @@ def get_ref_star_dataframe(spectral_type: str = 'G2') -> pd.DataFrame:
         A DataFrame indexed by PWV with columns for flux
     """
 
-    rpath = _STELLAR_FLUX_DIR / f'{spectral_type}.txt'
+    rpath = data_paths.stellar_flux_dir / f'{spectral_type}.txt'
     if not rpath.exists():
         raise ValueError(
             f'Data not available for specified star {spectral_type}. '

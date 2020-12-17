@@ -1,4 +1,4 @@
-"""The ``time_series_utils.py`` module provides limited functionality
+"""The ``time_series.py`` module provides limited functionality
 for manipulating time series data. It is intended to supplement existing
 functionality in the ``pandas`` package with support for tasks particular to
 dealing with atmospheric / weather data.
@@ -7,8 +7,8 @@ Module Docs
 -----------
 """
 
-import datetime
 import warnings
+from datetime import date, datetime
 from typing import *
 
 import numpy as np
@@ -166,11 +166,11 @@ def datetime_to_season(time: Union[datetime, Collection[datetime]]) -> np.ndarra
 
     dummy_year = 2000  # dummy leap year to allow input X-02-29 (leap day)
     seasons = [
-        ('winter', (datetime.date(dummy_year, 1, 1), datetime.date(dummy_year, 3, 20))),
-        ('spring', (datetime.date(dummy_year, 3, 20), datetime.date(dummy_year, 6, 20))),
-        ('summer', (datetime.date(dummy_year, 6, 20), datetime.date(dummy_year, 9, 22))),
-        ('fall', (datetime.date(dummy_year, 9, 22), datetime.date(dummy_year, 12, 20))),
-        ('winter', (datetime.date(dummy_year, 12, 20), datetime.date(dummy_year + 1, 1, 1)))
+        ('winter', (date(dummy_year, 1, 1), date(dummy_year, 3, 20))),  # type: ignore
+        ('spring', (date(dummy_year, 3, 20), date(dummy_year, 6, 20))),  # type: ignore
+        ('summer', (date(dummy_year, 6, 20), date(dummy_year, 9, 22))),  # type: ignore
+        ('fall', (date(dummy_year, 9, 22), date(dummy_year, 12, 20))),  # type: ignore
+        ('winter', (date(dummy_year, 12, 20), date(dummy_year + 1, 1, 1)))  # type: ignore
     ]
 
     time = time.date().replace(year=dummy_year)

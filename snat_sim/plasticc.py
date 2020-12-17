@@ -43,10 +43,8 @@ Module Docs
 -----------
 """
 
-import os
 from pathlib import Path
 from typing import *
-from warnings import warn
 
 import pandas as pd
 from astropy.cosmology.core import Cosmology
@@ -55,41 +53,19 @@ from astropy.table import Table
 from tqdm import tqdm
 
 from . import constants as const, lc_simulation
+from ._data_paths import data_paths
 from .models import SNModel
 
 Numeric = Union[float, int]
 
-DEFAULT_DATA_DIR = Path(__file__).resolve().parent.parent / 'data' / 'plasticc'
 
-
-def get_data_dir() -> Path:
-    """Return the directory where the package expects PLaSTICC simulation to be located
-
-    This value is the same as the environmental ``CADENCE_SIMS`` directory.
-    If the environmental variable is not set, defaults to the project's
-    ``data`` directory.
-
-    Args:
-        A ``Path`` object pointing to the data directory
-    """
-
-    try:
-        plasticc_simulations_directory = Path(os.environ['CADENCE_SIMS'])
-
-    except KeyError:
-        warn(f'``CADENCE_SIMS`` is not set in environment. Defaulting to {DEFAULT_DATA_DIR}')
-        plasticc_simulations_directory = DEFAULT_DATA_DIR
-
-    return plasticc_simulations_directory
-
-
-def get_available_cadences() -> List[str, ...]:
+def get_available_cadences() -> List[str]:
     """Return a list of all available cadences in the PLaSTICC simulation directory"""
 
-    return [p.name for p in get_data_dir().glob('*') if p.is_dir()]
+    return [p.name for p in data_paths.get_plasticc_dir().glob('*') if p.is_dir()]
 
 
-def get_model_headers(cadence: str, model: int) -> List[Path, ...]:
+def get_model_headers(cadence: str, model: int) -> List[Path]:
     """Return a list of all header files for a given cadence and model
 
     Default is model 11 (Normal SNe)
@@ -102,8 +78,7 @@ def get_model_headers(cadence: str, model: int) -> List[Path, ...]:
         A list of Path objects
     """
 
-    sim_dir = get_data_dir() / cadence / f'LSST_WFD_{cadence}_MODEL{model}'
-    return list(sim_dir.glob('*HEAD.FITS'))
+    return list(data_paths.get_plasticc_dir(cadence, model).glob('*HEAD.FITS'))
 
 
 def count_light_curves(cadence: str, model: int) -> int:

@@ -41,9 +41,8 @@ from matplotlib.ticker import MultipleLocator
 from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
-from . import constants as const, filters, lc_simulation
+from . import constants as const, lc_simulation
 
-filters.register_lsst_filters(force=True)
 Numeric = Union[int, float]
 
 

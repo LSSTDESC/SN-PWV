@@ -21,18 +21,15 @@ from astropy.table import Table
 from tqdm import tqdm
 
 from . import constants as const, lc_simulation
+from ._data_paths import data_paths
 from .models import SNModel
 
 Numeric = Union[int, float]
-Collection = Union[Collection, np.ndarray]
-
-# Reference pwv values
-_CONFIG_PATH = Path(__file__).resolve().parent / 'defaults' / 'ref_pwv.yaml'
 
 
 # Todo: Add dictionary keys to docs - consider named tuple?
 @lru_cache()  # Cache I/O
-def get_config_pwv_vals(config_path: Union[str, Path] = _CONFIG_PATH) -> Dict[str, float]:
+def get_config_pwv_vals(config_path: Union[str, Path] = data_paths._config_path) -> Dict[str, float]:
     """Retrieve PWV values to use as reference values
 
     Returned values include:

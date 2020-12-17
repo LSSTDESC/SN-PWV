@@ -9,6 +9,7 @@ import sncosmo
 from numpy.testing import assert_equal
 
 from snat_sim import plasticc
+from snat_sim._data_paths import data_paths
 from snat_sim.filters import register_lsst_filters
 from snat_sim.lc_simulation import calc_x0_for_z
 from tests.mock import create_mock_plasticc_light_curve
@@ -35,28 +36,6 @@ def tearDownModule():
     del os.environ[_ENVIRON_VAR_NAME]
     if _OLD_ENV_VALUE:
         os.environ[_ENVIRON_VAR_NAME] = _OLD_ENV_VALUE
-
-
-class GetDataDir(TestCase):
-    """Tests for the ``get_data_dir`` function"""
-
-    def test_is_using_environmental_variable(self):
-        """Test the data directory matches the environmental variable"""
-
-        self.assertEqual(plasticc.get_data_dir(), Path(os.environ['CADENCE_SIMS']))
-
-    def test_default_dir_matches_project_root(self):
-        """Test the data directory matches the project data directory
-        when not set in the environment
-        """
-
-        old_environ = os.environ.copy()
-        try:
-            del os.environ[_ENVIRON_VAR_NAME]
-            self.assertEqual(plasticc.get_data_dir(), plasticc.DEFAULT_DATA_DIR)
-
-        finally:
-            os.environ.update(old_environ)
 
 
 class GetAvailableCadences(TestCase):

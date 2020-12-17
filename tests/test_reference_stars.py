@@ -7,6 +7,7 @@ from astropy.table import Table
 from pandas.testing import assert_series_equal
 
 from snat_sim import reference_stars
+from snat_sim._data_paths import data_paths
 
 
 class StellarSpectraParsing(TestCase):
@@ -36,7 +37,7 @@ class StellarSpectraParsing(TestCase):
 
     def runTest(self):
         for stellar_type, fname in zip(self.stellar_types, self.file_names):
-            full_path = reference_stars._STELLAR_SPECTRA_DIR / fname
+            full_path = data_paths.stellar_spectra_dir / fname
             spec_by_path = reference_stars._read_stellar_spectra_path(full_path)
             spec_by_type = reference_stars.get_stellar_spectra(stellar_type)
             assert_series_equal(spec_by_path, spec_by_type)
@@ -86,7 +87,7 @@ class GetReferenceStarDataframe(TestCase):
     def test_known_types_parsed(self):
         """Test all stellar types in ``_stellar_type_paths`` are parsed"""
 
-        for stellar_type in reference_stars.available_types:
+        for stellar_type in reference_stars.get_available_types():
             dataframe = reference_stars.get_ref_star_dataframe(stellar_type)
             self.assertFalse(dataframe.empty)
 

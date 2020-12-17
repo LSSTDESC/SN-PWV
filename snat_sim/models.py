@@ -77,9 +77,9 @@ from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
 
 from . import constants as const
-from . import time_series_utils as tsu
-from .cache_utils import numpy_cache
-from .plasticc import get_data_dir
+from .utils import time_series as tsu
+from snat_sim.utils.caching import numpy_cache
+from ._data_paths import data_paths
 
 # Todo: These were picked ad-hock and are likely too big.
 #  They should be set to a reasonable number further along in development
@@ -175,7 +175,7 @@ class PWVModel:
 
         self.pwv_los = numpy_cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
-        memory = joblib.Memory(str(get_data_dir()), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
+        memory = joblib.Memory(str(data_paths.data_dir), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
         self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod

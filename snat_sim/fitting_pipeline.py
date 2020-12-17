@@ -104,7 +104,7 @@ class OutputDataModel:
         self.fit_model = copy(fit_model)
 
     def build_table_entry(
-            self, meta: dict, fitted_model: SNModel, result: sncosmo.utils.Result) -> List[str, float, ...]:
+            self, meta: dict, fitted_model: SNModel, result: sncosmo.utils.Result) -> List:
         """Combine light-curve fit results into single row matching the output table file format
 
         Args:
@@ -127,7 +127,7 @@ class OutputDataModel:
         out_list.append(result.message)
         return out_list
 
-    def build_masked_entry(self, meta: dict, exception: Exception) -> List[str, float, ...]:
+    def build_masked_entry(self, meta: dict, exception: Exception) -> List:
         """Create a masked table entry for a failed light-curve fit
 
         Args:
@@ -147,7 +147,7 @@ class OutputDataModel:
         return out_list
 
     @property
-    def column_names(self) -> List[str, ...]:
+    def column_names(self) -> List[str]:
         """Return a list of column names for the data model
 
         Returns:
@@ -174,7 +174,7 @@ class FittingPipeline(ProcessManager):
             cadence: str,
             sim_model: SNModel,
             fit_model: SNModel,
-            vparams: List[str, ...],
+            vparams: List[str],
             out_path: Union[str, Path],
             fitting_pool: int = 1,
             simulation_pool: int = 1,
