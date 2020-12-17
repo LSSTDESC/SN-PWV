@@ -91,7 +91,7 @@ class TestStaticPWVTrans(TestCase):
         pwv = 5
 
         wave = np.arange(4000, 5000)
-        transmission_model = models.FixedResTransmission(res=self.transmission_effect.transmission_res)
+        transmission_model = models.FixedResTransmission(resolution=self.transmission_effect.transmission_res)
         transmission = transmission_model.calc_transmission(pwv=pwv, wave=wave)
 
         # Get the expected flux

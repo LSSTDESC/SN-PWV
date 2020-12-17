@@ -9,7 +9,7 @@ Model Summaries
 A summary of the available models is provided below:
 
 .. autosummary::
-   :nosignatures:
+:nosignatures:
 
    FixedResTransmission
    PWVModel
@@ -22,7 +22,7 @@ with time. A summary of propagation effects provided by the ``snat_sim``
 package is listed below:
 
 .. autosummary::
-   :nosignatures:
+:nosignatures:
 
    StaticPWVTrans
    SeasonalPWVTrans
@@ -59,6 +59,7 @@ import abc
 import warnings
 from copy import copy
 from datetime import datetime
+from typing import *
 
 import joblib
 import numpy as np
@@ -68,6 +69,7 @@ from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
+from pwv_kpno.gps_pwv import GPSReceiver
 from pwv_kpno.transmission import calc_pwv_eff
 from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
@@ -91,14 +93,14 @@ AIRMASS_CACHE_SIZE = 250_000
 class FixedResTransmission:
     """Models atmospheric transmission due to PWV at a fixed resolution"""
 
-    def __init__(self, res=None):
+    def __init__(self, resolution: float = None) -> None:
         """Instantiate a PWV transmission model at the given resolution
 
         Transmission values are determined using the ``v1_transmission`` model
         from the ``pwv_kpno`` package.
 
         Args:
-            res (float):  Resolution to bin the atmospheric model to
+            resolution: Resolution to bin the atmospheric model to
         """
 
         self.norm_pwv = 2
@@ -108,22 +110,24 @@ class FixedResTransmission:
         self.samp_transmission = v1_transmission(
             pwv=self.samp_pwv,
             wave=self.samp_wave,
-            res=res).values.T
+            res=resolution).values.T
 
         self._interpolator = RegularGridInterpolator(
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
         self.calc_transmission = numpy_cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
 
-    def calc_transmission(self, pwv, wave=None):
+    def calc_transmission(
+            self, pwv: Union[float, Collection[float]], wave: Union[np.ndarray, pd.Series] = None
+    ) -> Union[pd.Series, pd.DataFrame]:
         """Evaluate transmission model at given wavelengths
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
         object if ``pwv`` is an array. Wavelengths are expected in angstroms.
 
         Args:
-            pwv (float, Iterable[float]): Line of sight PWV to interpolate for
-            wave    (ndarray, DataFrame): Wavelengths to evaluate transmission
+            pwv: Line of sight PWV to interpolate for
+            wave: Wavelengths to evaluate transmission
 
         Returns:
             The interpolated transmission at the given wavelengths / resolution
@@ -147,34 +151,34 @@ class FixedResTransmission:
 
 
 class PWVModel:
-    """Model for interpolating the atmospheric water vapor at a given date and time"""
+    """Model for interpolating the atmospheric water vapor at a given time and time"""
 
-    def __init__(self, pwv_series):
+    def __init__(self, pwv_series: pd.Series) -> None:
         """Build a model for time variable PWV by drawing from a given PWV time series
 
         Args:
-            pwv_series (Series): PWV values with a datetime index
+            pwv_series: PWV values with a datetime index
         """
 
         self.pwv_model_data = tsu.periodic_interpolation(tsu.resample_data_across_year(pwv_series))
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        self.pwv_los = numpy_cache('date', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
+        self.pwv_los = numpy_cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
         memory = joblib.Memory(str(get_data_dir()), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
         self.calc_airmass = memory.cache(self.calc_airmass)
 
-    @staticmethod
-    def from_suominet_receiver(receiver, year, supp_years=None):
+    @staticmethod  # Todo: Add return type
+    def from_suominet_receiver(receiver: GPSReceiver, year: int, supp_years: Collection[int] = None):
         """Construct a ``PWVModel`` instance using data from a SuomiNet receiver
 
         Args:
-            receiver (pwv_kpno.GPSReceiver): GPS receiver to access data from
-            year                    (float): Year to use data from when building the model
-            supp_years      (List[Numeric]): Years to supplement data with when missing from ``year``
+            receiver: GPS receiver to access data from
+            year: Year to use data from when building the model
+            supp_years: Years to supplement data with when missing from ``year``
 
         Returns:
-            An interpolation function that accepts ``date`` and ``format`` arguments
+            An interpolation function that accepts ``time`` and ``format`` arguments
         """
 
         all_years = [year]
@@ -188,22 +192,27 @@ class PWVModel:
         return PWVModel(supp_data)
 
     @staticmethod
-    def calc_airmass(time, ra, dec, lat=const.vro_latitude,
-                     lon=const.vro_longitude, alt=const.vro_altitude,
-                     time_format='mjd'):
+    def calc_airmass(
+            time: Union[float, List[float]],
+            ra: float,
+            dec: float,
+            lat: float = const.vro_latitude,
+            lon: float = const.vro_longitude, alt=const.vro_altitude,
+            time_format: str = 'mjd'
+    ) -> Union[float, List[float]]:
         """Calculate the airmass through which a target is observed
 
         Default latitude, longitude, and altitude are set to the Rubin
         Observatory.
 
         Args:
-            time (float, List[float]): Time at which the target is observed
-            ra        (float): Right Ascension of the target (Deg)
-            dec       (float): Declination of the target (Deg)
-            lat       (float): Latitude of the observer (Deg)
-            lon       (float): Longitude of the observer (Deg)
-            alt       (float): Altitude of the observer (m)
-            time_format (str): Astropy supported format of the time value (Default: 'mjd')
+            time: Time at which the target is observed
+            ra: Right Ascension of the target (Deg)
+            dec: Declination of the target (Deg)
+            lat: Latitude of the observer (Deg)
+            lon: Longitude of the observer (Deg)
+            alt: Altitude of the observer (m)
+            time_format: Astropy supported format of the time value (Default: 'mjd')
 
         Returns:
             Airmass in units of Sec(z)
@@ -222,23 +231,23 @@ class PWVModel:
             altaz = AltAz(obstime=obs_time, location=observer_location)
             return target_coord.transform_to(altaz).secz.value
 
-    def pwv_zenith(self, date, time_format='mjd'):
+    def pwv_zenith(self, time: Union[float, List[float]], time_format: str = 'mjd') -> Union[float, np.array]:
         """Interpolate the PWV at zenith as a function of time
 
         The ``time_format`` argument can be set to ``None`` when passing datetime
-        objects instead of numerical values for ``date``.
+        objects instead of numerical values for ``time``.
 
         Args:
-            date (float, List[float]): The date to interpolate PWV for
-            time_format         (str): Astropy supported format of the time value (Default: 'mjd')
+            time: The time to interpolate PWV for
+            time_format: Astropy supported format of the time value (Default: 'mjd')
 
         Returns:
-            The PWV at zenith for the given date(s)
+            The PWV at zenith for the given time(s)
         """
 
         with warnings.catch_warnings():
             warnings.filterwarnings("ignore")
-            x_as_datetime = Time(date, format=time_format).to_datetime()
+            x_as_datetime = Time(time, format=time_format).to_datetime()
             x_in_seconds = tsu.datetime_to_sec_in_year(x_as_datetime)
 
         return np.interp(
@@ -247,28 +256,37 @@ class PWVModel:
             fp=self.pwv_model_data.values
         )
 
-    def pwv_los(self, date, ra, dec, lat=const.vro_latitude,
-                lon=const.vro_longitude, alt=const.vro_altitude,
-                time_format='mjd'):
+    def pwv_los(
+            self,
+            time: Union[float, List[float]],
+            ra: float,
+            dec: float,
+            lat: float = const.vro_latitude,
+            lon: float = const.vro_longitude, alt=const.vro_altitude,
+            time_format: str = 'mjd'
+    ) -> Union[float, np.array]:
         """Interpolate the PWV along the line of sight as a function of time
 
         The ``time_format`` argument can be set to ``None`` when passing datetime
-        objects instead of numerical values for ``date``.
+        objects instead of numerical values for ``time``.
 
         Args:
-            date (float, List[float]): Time at which the target is observed
-            ra                (float): Right Ascension of the target (Deg)
-            dec               (float): Declination of the target (Deg)
-            lat               (float): Latitude of the observer (Deg)
-            lon               (float): Longitude of the observer (Deg)
-            alt               (float): Altitude of the observer (m)
-            time_format         (str): Astropy supported format of the time value (Default: 'mjd')
+            time: Time at which the target is observed
+            ra: Right Ascension of the target (Deg)
+            dec: Declination of the target (Deg)
+            lat: Latitude of the observer (Deg)
+            lon: Longitude of the observer (Deg)
+            alt: Altitude of the observer (m)
+            time_format: Astropy supported format of the time value (Default: 'mjd')
+
+        Returns:
+            The PWV concentration along the line of sight to the target
         """
 
-        return (self.pwv_zenith(date, time_format) *
-                self.calc_airmass(date, ra, dec, lat, lon, alt, time_format))
+        return (self.pwv_zenith(time, time_format) *
+                self.calc_airmass(time, ra, dec, lat, lon, alt, time_format))
 
-    def seasonal_avg(self):
+    def seasonal_avg(self) -> Dict[str, float]:
         """Calculate the average PWV in each season
 
         Assumes seasons based on equinox and solstice dates in the year 2020.

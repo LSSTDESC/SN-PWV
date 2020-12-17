@@ -17,8 +17,8 @@ def create_mock_pwv_data(
     """Return a ``Series`` of mock PWV values that alternate between .5 and 1
 
     Args:
-        start_time (datetime): Start date of the returned series index
-        end_time   (datetime): End date of the returned series index
+        start_time (datetime): Start time of the returned series index
+        end_time   (datetime): End time of the returned series index
         delta     (timedelta): Sampling rate of the datetime values
         offset    (timedelta): Apply a linear offset to the returned values
 

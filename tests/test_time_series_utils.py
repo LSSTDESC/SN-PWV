@@ -16,7 +16,7 @@ class DatetimeToSecInYear(TestCase):
     """Tests for the ``datetime_to_sec_in_year`` function"""
 
     def setUp(self):
-        """Create a fixed date to test against"""
+        """Create a fixed time to test against"""
 
         self.test_date = datetime(2020, 6, 12)
 
@@ -31,7 +31,7 @@ class DatetimeToSecInYear(TestCase):
         self.assertEqual(time_series_utils.datetime_to_sec_in_year(datetime(2020, 1, 1)), 0)
 
     def test_seconds_for_known_date(self):
-        """Test correct number of seconds are returned for a pre-specified date"""
+        """Test correct number of seconds are returned for a pre-specified time"""
 
         returned_seconds = time_series_utils.datetime_to_sec_in_year(self.test_date)
         self.assertEqual(returned_seconds, self.seconds)
@@ -174,7 +174,7 @@ class ResampleDataAcrossYear(TestCase):
         self.assertEqual(self.delta, delta)
 
     def test_returned_date_range(self):
-        """Test date range of returned index spans the entire year"""
+        """Test time range of returned index spans the entire year"""
 
         expected_start = self.start_time.replace(month=1, day=1) + self.offset
         self.assertEqual(expected_start, self.resampled_series.index.min(), 'Incorrect start value for range.')
