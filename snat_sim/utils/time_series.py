@@ -166,11 +166,11 @@ def datetime_to_season(time: Union[datetime, Collection[datetime]]) -> np.ndarra
 
     dummy_year = 2000  # dummy leap year to allow input X-02-29 (leap day)
     seasons = [
-        ('winter', (date(dummy_year, 1, 1), date(dummy_year, 3, 20))),  # type: ignore
-        ('spring', (date(dummy_year, 3, 20), date(dummy_year, 6, 20))),  # type: ignore
-        ('summer', (date(dummy_year, 6, 20), date(dummy_year, 9, 22))),  # type: ignore
-        ('fall', (date(dummy_year, 9, 22), date(dummy_year, 12, 20))),  # type: ignore
-        ('winter', (date(dummy_year, 12, 20), date(dummy_year + 1, 1, 1)))  # type: ignore
+        ('winter', (date(dummy_year, 1, 1), date(dummy_year, 3, 20))),
+        ('spring', (date(dummy_year, 3, 20), date(dummy_year, 6, 20))),
+        ('summer', (date(dummy_year, 6, 20), date(dummy_year, 9, 22))),
+        ('fall', (date(dummy_year, 9, 22), date(dummy_year, 12, 20))),
+        ('winter', (date(dummy_year, 12, 20), date(dummy_year + 1, 1, 1)))
     ]
 
     time = time.date().replace(year=dummy_year)
