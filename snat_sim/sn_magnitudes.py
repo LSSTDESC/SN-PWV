@@ -11,20 +11,28 @@ from copy import copy
 from copy import deepcopy
 from functools import lru_cache
 from pathlib import Path
+from typing import *
 
 import numpy as np
 import sncosmo
 import yaml
+from astropy.cosmology.core import Cosmology
+from astropy.table import Table
 from tqdm import tqdm
 
 from . import constants as const, lc_simulation
+from .models import SNModel
+
+Numeric = Union[int, float]
+Collection = Union[Collection, np.ndarray]
 
 # Reference pwv values
 _CONFIG_PATH = Path(__file__).resolve().parent / 'defaults' / 'ref_pwv.yaml'
 
 
+# Todo: Add dictionary keys to docs - consider named tuple?
 @lru_cache()  # Cache I/O
-def get_config_pwv_vals(config_path=_CONFIG_PATH):
+def get_config_pwv_vals(config_path: Union[str, Path] = _CONFIG_PATH) -> Dict[str, float]:
     """Retrieve PWV values to use as reference values
 
     Returned values include:
@@ -33,7 +41,7 @@ def get_config_pwv_vals(config_path=_CONFIG_PATH):
         - Upper pwv bound for calculating slope
 
     Args:
-        config_path (str): Path of config file if not default
+        config_path: Path of config file if not default
 
     Returns:
         Dictionary with PWV values in mm
@@ -51,18 +59,24 @@ def get_config_pwv_vals(config_path=_CONFIG_PATH):
 ###############################################################################
 
 
-def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
+def tabulate_mag(
+        model: SNModel,
+        pwv_arr: Collection[Numeric],
+        z_arr: Collection[Numeric],
+        bands: List[str],
+        verbose: bool = True
+) -> Dict[str, np.ndarray]:
     """Calculate apparent magnitude due to presence of PWV
 
     Magnitude is calculated for the model by adding PWV effects
     to a model and leaving all other parameters unchanged.
 
     Args:
-        model   (SNModel): The sncosmo model to use in the simulations
-        pwv_arr (ndarray): Array of PWV values
-        z_arr   (ndarray): Array of redshift values
-        bands (list[str]): Name of the bands to tabulate magnitudes for
-        verbose    (bool): Show a progress bar
+        model: The sncosmo model to use in the simulations
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
+        bands: Name of the bands to tabulate magnitudes for
+        verbose: Show a progress bar
 
     Returns:
         A dictionary with 2d arrays for the magnitude at each PWV and redshift
@@ -97,17 +111,19 @@ def tabulate_mag(model, pwv_arr, z_arr, bands, verbose=True):
     return magnitudes
 
 
-def tabulate_fiducial_mag(model, z_arr, bands, fid_pwv_dict=None):
+def tabulate_fiducial_mag(
+        model: SNModel, z_arr: np.ndarray, bands: List[str], fid_pwv_dict: Dict[str, float] = None
+) -> Dict[str, np.ndarray]:
     """Get SN magnitudes corresponding to the fiducial atmosphere
 
     Returns a dictionary of the form
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
 
     Args:
-        model     (SNModel): The sncosmo model to use in the simulations
-        z_arr     (ndarray): Array of redshift values
-        bands   (list[str]): Name of the bands to tabulate magnitudes for
-        fid_pwv_dict (dict): Config dictionary for fiducial atmosphere
+        model: The sncosmo model to use in the simulations
+        z_arr: Array of redshift values
+        bands: Name of the bands to tabulate magnitudes for
+        fid_pwv_dict: Config dictionary for fiducial atmosphere
 
     Returns:
         A dictionary with fiducial magnitudes in each band
@@ -137,17 +153,20 @@ def tabulate_fiducial_mag(model, z_arr, bands, fid_pwv_dict=None):
 ###############################################################################
 
 
-def correct_mag(model, mag, params, alpha=const.betoule_alpha, beta=const.betoule_beta):
+def correct_mag(
+        model: SNModel, mag: np.ndarray, params: np.ndarray,
+        alpha: Numeric = const.betoule_alpha, beta: Numeric = const.betoule_beta
+) -> np.ndarray:
     """Correct fitted supernova magnitude for stretch and color
 
     calibrated mag = mag + α * x1 - β * c
 
     Args:
-        model  (SNModel): Model used to fit the given magnitudes
-        mag    (ndarray): (n)d array of magnitudes for pwv and redshift
-        params (ndarray): (n+1)d array with dimensions for pwv, redshift, parameter
-        alpha    (float): Alpha parameter value
-        beta     (float): Beta parameter value
+        model: Model used to fit the given magnitudes
+        mag: (n)d array of magnitudes for pwv and redshift
+        params: (n+1)d array with dimensions for pwv, redshift, parameter
+        alpha: Alpha parameter value
+        beta: Beta parameter value
 
     Returns:
         Array of calibrated magnitudes with same dimensions as ``mag``
@@ -164,18 +183,26 @@ def correct_mag(model, mag, params, alpha=const.betoule_alpha, beta=const.betoul
     return mag + alpha * params[..., i_x1] - beta * params[..., i_c]
 
 
-def fit_mag(model, light_curves, vparams, bands, pwv_arr=None, z_arr=None, **kwargs):
+def fit_mag(
+        model: SNModel,
+        light_curves: Collection[Table],
+        vparams: Collection[str],
+        bands: Collection[str],
+        pwv_arr: Collection[Numeric] = None,
+        z_arr: Collection[Numeric] = None,
+        **kwargs
+) -> Tuple[Dict[str, np.ndarray], ...]:
     """Determine apparent mag by fitting simulated light-curves
 
     Returned arrays are shape  (len(pwv_arr), len(z_arr)).
 
     Args:
-        model        (SNModel): The sncosmo model to use when fitting
-        light_curves (ndarray): Array of light-curves to fit
-        vparams         (list): Parameters to vary with the fit
-        pwv_arr      (ndarray): Array of PWV values
-        z_arr        (ndarray): Array of redshift values
-        bands      (list[str]): Name of the bands to tabulate magnitudes for
+        model: The sncosmo model to use when fitting
+        light_curves: Array of light-curves to fit
+        vparams: Parameters to vary with the fit
+        bands: Name of the bands to tabulate magnitudes for
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
         Any arguments for ``sncosmo.fit_lc``.
 
     Returns:
@@ -213,20 +240,28 @@ def fit_mag(model, light_curves, vparams, bands, pwv_arr=None, z_arr=None, **kwa
     return fitted_mag, fitted_params
 
 
-def fit_fiducial_mag(sim_model, fit_model, obs, vparams, z_arr, bands, fid_pwv_dict=None):
+def fit_fiducial_mag(
+        sim_model: SNModel,
+        fit_model: SNModel,
+        obs: Table,
+        vparams: List[str],
+        z_arr: Collection[Numeric],
+        bands: Collection[str],
+        fid_pwv_dict: Dict[str, float] = None
+) -> Tuple[Dict[str, np.ndarray], ...]:
     """Get fitted SN magnitudes corresponding to the fiducial atmosphere
 
     Returns a dictionary of the form
       {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
 
     Args:
-        sim_model      (SNModel): The sncosmo model to use when simulating light-curves
-        fit_model      (SNModel): The sncosmo model to use when fitting
-        obs              (Table): Array of light-curves to fit
-        vparams           (list): Parameters to vary with the fit
-        z_arr          (ndarray): Array of redshift values
-        bands        (list[str]): Name of band to return mag for
-        fid_pwv_dict (dict): Config dictionary for fiducial atmosphere
+        sim_model: The sncosmo model to use when simulating light-curves
+        fit_model: The sncosmo model to use when fitting
+        obs: Array of light-curves to fit
+        vparams: Parameters to vary with the fit
+        z_arr: Array of redshift values
+        bands: Name of band to return mag for
+        fid_pwv_dict: Config dictionary for fiducial atmosphere
 
     Returns:
         - A dictionary with 2d array of fitted magnitudes in each band
@@ -259,16 +294,18 @@ def fit_fiducial_mag(sim_model, fit_model, obs, vparams, z_arr, bands, fid_pwv_d
 # Calculating how the values determined above change with PWV
 ###############################################################################
 
-def calc_delta_mag(mag, fiducial_mag, fiducial_pwv):
+def calc_delta_mag(
+        mag: Dict[str, np.ndarray], fiducial_mag: Dict[str, np.ndarray], fiducial_pwv: Dict[str, np.ndarray]
+) -> Tuple[Dict[str, np.ndarray], ...]:
     """Determine the change in magnitude relative to the fiducial atmosphere
 
     This is also equivalent to determining the apparent magnitude of a SN
     normalized to the magnitude at the fiducial atmosphere.
 
     Args:
-        mag          (dict): Dictionary with magnitudes in each band
-        fiducial_mag (dict): Dictionary for fiducial atmosphere mag vals
-        fiducial_pwv (dict): Dictionary for fiducial atmosphere pwv vals
+        mag: Dictionary with magnitudes in each band
+        fiducial_mag: Dictionary for fiducial atmosphere mag vals
+        fiducial_pwv: Dictionary for fiducial atmosphere pwv vals
 
     Returns:
         - A dictionary with the change in magnitude for each band
@@ -295,12 +332,12 @@ def calc_delta_mag(mag, fiducial_mag, fiducial_pwv):
 # Distance Modulus Calculations
 ###############################################################################
 
-def calc_mu_for_model(model, cosmo=const.betoule_cosmo):
+def calc_mu_for_model(model: SNModel, cosmo: Cosmology = const.betoule_cosmo) -> float:
     """Calculate the distance modulus of a model
 
     Args:
-        model   (SNModel): An sncosmo model
-        cosmo (Cosmology): Cosmology to use in the calculation
+        model: An sncosmo model
+        cosmo: Cosmology to use in the calculation
 
     Returns:
         mu = m_B - M_B
@@ -317,12 +354,12 @@ def calc_mu_for_model(model, cosmo=const.betoule_cosmo):
     return apparent_mag - absolute_mag
 
 
-def calc_mu_for_params(model, params):
+def calc_mu_for_params(model: SNModel, params: np.ndarray) -> np.ndarray:
     """Calculate the distance modulus for an array of fitted params
 
     Args:
-        model  (SNModel): The sncosmo model to use in the simulations
-        params (ndarray): n-dimensional array of parameters
+        model: The sncosmo model to use in the simulations
+        params: n-dimensional array of parameters
 
     Returns:
         An array of distance moduli with one dimension less than ``params``
@@ -343,14 +380,14 @@ def calc_mu_for_params(model, params):
     return np.reshape(mu, param_shape)
 
 
-def calc_calibration_factor_for_params(model, params):
+def calc_calibration_factor_for_params(model: SNModel, params: np.ndarray) -> np.ndarray:
     """Calculate the distance modulus for an array of fitted params
 
     returns constants.alpha * x_1 - constants.beta * c
 
     Args:
-        model  (SNModel): The sncosmo model to use in the simulations
-        params (ndarray): n-dimensional array of parameters
+        model: The sncosmo model to use in the simulations
+        params: n-dimensional array of parameters
 
     Returns:
         An array of calibration factors with one dimension less than ``params``
