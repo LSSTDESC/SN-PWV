@@ -37,14 +37,14 @@ from astropy.table import Table
 FILTER_DIR = Path(__file__).resolve().parent.parent / 'data' / 'filters'
 
 
-def register_sncosmo_filter(wave, trans, name, force=False) -> None:
+def register_sncosmo_filter(wave: np.array, trans: np.array, name: str, force: bool = False) -> None:
     """Register a filter profile with sncosmo
 
     Args:
-        wave  (array): Array of wavelength values in Angstroms
-        trans (array): Array of transmission values between 0 and 1
-        name    (str): Name of the filter to register
-        force  (bool): Whether to overwrite an existing filter with the given name
+        wave: Array of wavelength values in Angstroms
+        trans: Array of transmission values between 0 and 1
+        name: Name of the filter to register
+        force: Whether to overwrite an existing filter with the given name
     """
 
     # Specifying the name argument in the constructor seems to not work in
@@ -54,7 +54,7 @@ def register_sncosmo_filter(wave, trans, name, force=False) -> None:
     sncosmo.register(sncosmo_ccd, force=force)
 
 
-def register_decam_filters(force=False):
+def register_decam_filters(force: bool = False) -> None:
     """Register DECam filter scripts, CCD response, and fiducial ATM with sncosmo
 
     Registered Filters:
@@ -63,7 +63,7 @@ def register_decam_filters(force=False):
         - DECam_ccd: DECam CCD Response curve
 
     Args:
-        force (bool): Re-register bands even if they are already registered
+        force: Re-register bands even if they are already registered
     """
 
     # Register each filter
@@ -88,7 +88,7 @@ def register_decam_filters(force=False):
     register_sncosmo_filter(throughput['wave'], throughput['atm'], 'DECam_atm', force)
 
 
-def register_lsst_filters(force=False):
+def register_lsst_filters(force: bool = False) -> None:
     """Register LSST filter scripts, hardware responses, and fiducial ATM with sncosmo
 
     Registered Filters:
@@ -105,7 +105,7 @@ def register_lsst_filters(force=False):
         - lsst_<ugrizy>_no_atm: Throughput in each band without a fiducial atmosphere
 
     Args:
-        force (bool): Re-register bands even if they are already registered
+        force: Re-register bands even if they are already registered
     """
 
     lsst_filter_dir = FILTER_DIR / 'lsst_baseline'
