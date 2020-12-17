@@ -8,21 +8,24 @@ Module Docs
 
 from functools import lru_cache
 from pathlib import Path
+from typing import *
 from typing import Collection
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
+from astropy.table import Table
 
 _PARENT = Path(__file__).resolve()
 _DATA_DIR = _PARENT.parent.parent / 'data'
 _STELLAR_SPECTRA_DIR = _DATA_DIR / 'stellar_spectra'
 _STELLAR_FLUX_DIR = _DATA_DIR / 'stellar_fluxes'
 
+Numeric = Union[int, float]
 available_types = sorted(f.stem for f in _STELLAR_FLUX_DIR.glob('*.txt'))
 
 
-def _read_stellar_spectra_path(fpath):
+def _read_stellar_spectra_path(fpath: Union[str, Path]) -> pd.Series:
     """Load fits file with stellar spectrum from phoenix
 
     Fits files can be downloaded from:
@@ -35,7 +38,7 @@ def _read_stellar_spectra_path(fpath):
     wavelength values in Angstroms.
 
     Args:
-        fpath  (str, Path): Path of the file to read
+        fpath: Path of the file to read
 
     Returns:
         Flux values as a pandas Series
@@ -62,14 +65,14 @@ def _read_stellar_spectra_path(fpath):
     return pd.Series(spec[indices], index=lam[indices])
 
 
-def get_stellar_spectra(spec_type):
+def get_stellar_spectra(spectral_type: str) -> pd.Series:
     """Load spectrum for given spectral type
 
     Flux values are returned in phot/cm2/s/angstrom and are index by
     wavelength values in Angstroms.
 
     Args:
-        spec_type (str): Spectral type (e.g., G2)
+        spectral_type: Spectral type (e.g., G2)
 
     Returns:
         Flux values as a pandas Series
@@ -77,25 +80,25 @@ def get_stellar_spectra(spec_type):
 
     # Load spectra for different spectral types
     stellar_spectra_dir = _STELLAR_SPECTRA_DIR
-    path = next(stellar_spectra_dir.glob(spec_type + '*.fits'))
+    path = next(stellar_spectra_dir.glob(spectral_type + '*.fits'))
     return _read_stellar_spectra_path(path)
 
 
 @lru_cache()  # Cache I/O
-def get_ref_star_dataframe(reference_type='G2'):
+def get_ref_star_dataframe(spectral_type: str = 'G2') -> pd.DataFrame:
     """Retrieve PWV values to use as reference values
 
     Args:
-        reference_type (str): Type of reference star (Default 'G2')
+        spectral_type: Type of reference star (Default 'G2')
 
     Returns:
         A DataFrame indexed by PWV with columns for flux
     """
 
-    rpath = _STELLAR_FLUX_DIR / f'{reference_type}.txt'
+    rpath = _STELLAR_FLUX_DIR / f'{spectral_type}.txt'
     if not rpath.exists():
         raise ValueError(
-            f'Data not available for specified star {reference_type}. '
+            f'Data not available for specified star {spectral_type}. '
             f'Could not find: {rpath}')
 
     band_names = [f'lsst_hardware_{b}' for b in 'ugrizy']
@@ -117,19 +120,19 @@ def get_ref_star_dataframe(reference_type='G2'):
     return reference_star_flux
 
 
-def interp_norm_flux(band, pwv, reference_type='G2'):
+def interp_norm_flux(band: str, pwv: Union[Numeric, np.array], spectral_type='G2') -> np.ndarray:
     """Return normalized reference star flux values
 
     Args:
-        band           (str): Band to get flux for
-        pwv (float, ndarray): PWV values to get magnitudes for
-        reference_type (str): Type of reference star (Default 'G2')
+        band: Band to get flux for
+        pwv: PWV values to get magnitudes for
+        spectral_type: Type of reference star (Default 'G2')
 
     Returns:
         The normalized flux at the given PWV value(s)
     """
 
-    reference_star_flux = get_ref_star_dataframe(reference_type)
+    reference_star_flux = get_ref_star_dataframe(spectral_type)
     if np.any(
             (pwv < reference_star_flux.index.min()) |
             (pwv > reference_star_flux.index.max())):
@@ -139,31 +142,35 @@ def interp_norm_flux(band, pwv, reference_type='G2'):
     return np.interp(pwv, norm_flux.index, norm_flux)
 
 
-def average_norm_flux(band, pwv, reference_types=('G2', 'M5', 'K2')):
+def average_norm_flux(
+        band: str, pwv: Union[Numeric, np.ndarray], spectral_types: Collection[str] = ('G2', 'M5', 'K2')
+) -> np.ndarray:
     """Return the average normalized reference star flux
 
     Args:
-        band                        (str): Band to get flux for
-        pwv              (float, ndarray): PWV values to get magnitudes for
-        reference_types (collection[str]): Types of reference stars to average over
+        band: Band to get flux for
+        pwv: PWV values to get magnitudes for
+        spectral_types: Types of reference stars to average over
 
     Returns:
         The normalized flux at the given PWV value(s)
     """
 
-    return np.average([interp_norm_flux(band, pwv, stype) for stype in reference_types], axis=0)
+    return np.average([interp_norm_flux(band, pwv, stype) for stype in spectral_types], axis=0)
 
 
-def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):
+def divide_ref_from_lc(
+        lc_table: Table, pwv: Union[Numeric, np.ndarray], spectral_types: Collection[str] = ('G2', 'M5', 'K2')
+) -> Table:
     """Divide reference flux from a light-curve
 
     Recalibrate flux values using the average change in flux of a collection of
     reference stars.
 
     Args:
-        lc_table                  (Table): Astropy table with columns ``flux`` and ``band``
-        pwv  (Number, Collection[Number]): PWV value to subtract reference star for
-        reference_types (Collection[str]): Type of reference stars to use in calibration
+        lc_table: Astropy table with columns ``flux`` and ``band``
+        pwv: PWV value to subtract reference star for
+        spectral_types: Type of reference stars to use in calibration
 
     Returns:
         A modified copy of ``lc_table``
@@ -181,6 +188,6 @@ def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):
     table_copy = lc_table.copy()
     for band in set(table_copy['band']):
         band_indices = np.where(table_copy['band'] == band)[0]
-        table_copy['flux'][band_indices] /= average_norm_flux(band, pwv[band_indices], reference_types)
+        table_copy['flux'][band_indices] /= average_norm_flux(band, pwv[band_indices], spectral_types)
 
     return table_copy

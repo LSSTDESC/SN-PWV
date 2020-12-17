@@ -130,18 +130,18 @@ class AverageNormFlux(TestCase):
         """Test the return matches the average norm flux at a single PWV for two reference types"""
 
         test_pwv = 5
-        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
-        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
-        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
+        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, spectral_types=['G2', 'M5'])
+        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, spectral_type='G2')
+        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, spectral_type='M5')
         self.assertEqual(avg_flux, np.average((g2_flux, m52_flux)))
 
     def test_average_matches_ref_star_for_array(self):
         """Test the return matches the average norm flux at an array of PWV for two reference types"""
 
         test_pwv = [5, 6]
-        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
-        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
-        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
+        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, spectral_types=['G2', 'M5'])
+        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, spectral_type='G2')
+        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, spectral_type='M5')
 
         self.assertIsInstance(avg_flux, np.ndarray, 'Returned average was not an array')
         np.testing.assert_array_equal(avg_flux, np.average((g2_flux, m52_flux), axis=0))
