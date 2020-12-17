@@ -26,13 +26,16 @@ Module Docs
 
 from datetime import datetime
 from datetime import timedelta
+from typing import *
 
 import matplotlib.dates as mdates
 import numpy as np
+import pandas as pd
 import sncosmo
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.cosmology import FlatwCDM
+from astropy.cosmology.core import Cosmology
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from pwv_kpno.defaults import v1_transmission
@@ -41,19 +44,22 @@ from pytz import utc
 from . import constants as const, filters, lc_simulation
 
 filters.register_lsst_filters(force=True)
+Numeric = Union[int, float]
 
 
-def _multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
+def _multi_line_plot(
+        x_arr: np.ndarray, y_arr: np.ndarray, z_arr: np.ndarray,
+        axis: plt.Axes, label: Optional[str] = None) -> None:
     """Plot a 2d y array vs a 1d x array.
 
     Lines are color coded according to values of a 2d z array
 
     Args:
-        x_arr (ndarray): A 1d array
-        y_arr (ndarray): A 2d array
-        z_arr (ndarray): A 2d array
-        axis     (Axis): Axis to plot on
-        label     (str): Optional label to format with ``z`` value
+        x_arr: A 1d array
+        y_arr: A 2d array
+        z_arr: A 2d array
+        axis: Axis to plot on
+        label: Optional label to format with ``z`` value
     """
 
     # noinspection PyUnresolvedReferences
@@ -68,15 +74,17 @@ def _multi_line_plot(x_arr, y_arr, z_arr, axis, label=None):
     axis.set_xlim(x_arr[0], x_arr[-1])
 
 
-def plot_delta_mag_vs_z(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
+def plot_delta_mag_vs_z(
+        pwv_arr: np.ndarray, z_arr: np.ndarray, delta_mag_arr: np.ndarray,
+        axis: Optional[plt.axis] = None, label: Optional[str] = None) -> None:
     """Single panel, multi-line plot of change in magnitude vs z. Color coded by PWV.
 
     Args:
-        pwv_arr       (ndarray): Array of PWV values
-        z_arr         (ndarray): Array of redshift values
-        delta_mag_arr (ndarray): Array of delta mag values
-        axis             (Axis): Optionally plot on a given axis
-        label             (str): Optional label to format with PWV
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
+        delta_mag_arr: Array of delta mag values
+        axis: Optionally plot on a given axis
+        label: Optional label to format with PWV
     """
 
     if axis is None:
@@ -88,15 +96,17 @@ def plot_delta_mag_vs_z(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
     axis.set_ylabel(r'$\Delta m$', fontsize=20)
 
 
-def plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
+def plot_delta_mag_vs_pwv(
+        pwv_arr: np.ndarray, z_arr: np.ndarray, delta_mag_arr: np.ndarray,
+        axis: Optional[plt.axis] = None, label: Optional[str] = None) -> None:
     """Single panel, multi-line plot for change in magnitude vs PWV. Color coded by redshift.
 
     Args:
-        pwv_arr       (ndarray): Array of PWV values
-        z_arr         (ndarray): Array of redshift values
-        delta_mag_arr (ndarray): Array of delta mag values
-        axis             (Axis): Optionally plot on a given axis
-        label             (str): Optional label to format with redshift
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
+        delta_mag_arr: Array of delta mag values
+        axis: Optionally plot on a given axis
+        label: Optional label to format with redshift
     """
 
     if axis is None:
@@ -109,14 +119,15 @@ def plot_delta_mag_vs_pwv(pwv_arr, z_arr, delta_mag_arr, axis=None, label=None):
 
 
 # noinspection PyUnusedLocal
-def plot_derivative_mag_vs_z(pwv_arr, z_arr, slope_arr, axis=None):
+def plot_derivative_mag_vs_z(
+        pwv_arr: np.ndarray, z_arr: np.ndarray, slope_arr: np.ndarray, axis: Optional[plt.axis] = None) -> None:
     """Single panel, multi-line plot of slope in delta magnitude vs z. Color coded by PWV.
 
     Args:
-        pwv_arr   (ndarray): Array of PWV values
-        z_arr     (ndarray): Array of redshift values
-        slope_arr (ndarray): Slope of delta mag at reference PWV
-        axis         (Axis): Optionally plot on a given axis
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
+        slope_arr: Slope of delta mag at reference PWV
+        axis: Optionally plot on a given axis
     """
 
     if axis is None:
@@ -128,7 +139,14 @@ def plot_derivative_mag_vs_z(pwv_arr, z_arr, slope_arr, axis=None):
     axis.set_ylabel(r'$\frac{\Delta \, m}{\Delta \, PWV} |_{PWV = 4 mm}$', fontsize=20)
 
 
-def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 8)):
+def plot_pwv_mag_effects(
+        pwv_arr: np.ndarray,
+        z_arr: np.ndarray,
+        delta_mag: dict,
+        slopes: np.ndarray,
+        bands: List[str, ...],
+        figsize: Tuple[Numeric, Numeric] = (10, 8)
+) -> Tuple[plt.Figure, plt.Axes]:
     """Multi panel plot with a column for each band and rows for the change in magnitude vs pwv and redshift parameters.
 
     ``delta_mag`` is expected to have band names as keys, and 2d arrays as
@@ -136,15 +154,15 @@ def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 
     given PWV and redshift
 
     Args:
-        pwv_arr  (ndarray): PWV values used in the calculation
-        z_arr    (ndarray): Redshift values used in the calculation
-        delta_mag   (dict): Dictionary with delta mag for each band
-        slopes   (ndarray): Slope in delta_mag for each redshift
-        bands      (bands): Order of bands to plot
-        figsize    (tuple): The size of the figure
+        pwv_arr: PWV values used in the calculation
+        z_arr: Redshift values used in the calculation
+        delta_mag: Dictionary with delta mag for each band
+        slopes: Slope in delta_mag for each redshift
+        bands: Order of bands to plot
+        figsize: The size of the figure
 
-    returns:
-        Tuple with a matplotlib figure and axis
+    Returns:
+        The matplotlib figure and axis
     """
 
     fig, axes = plt.subplots(3, len(delta_mag), figsize=figsize)
@@ -204,7 +222,7 @@ def plot_pwv_mag_effects(pwv_arr, z_arr, delta_mag, slopes, bands, figsize=(10, 
 
 
 # https://stackoverflow.com/questions/18311909/how-do-i-annotate-with-power-of-ten-formatting
-def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
+def sci_notation(num: Numeric, decimal_digits: int = 1, precision: int = None, exponent: int = None) -> str:
     """Return a string representation of number in scientific notation."""
 
     if exponent is None:
@@ -220,20 +238,28 @@ def sci_notation(num, decimal_digits=1, precision=None, exponent=None):
     return r"${0:.{2}f}\cdot10^{{{1:d}}}$".format(coeff, exponent, precision)
 
 
-def plot_spectral_template(source, wave_arr, z_arr, pwv, phase=0, resolution=2, figsize=(6, 4)):
+def plot_spectral_template(
+        source: Union[str, sncosmo.Source],
+        wave_arr: np.ndarray,
+        z_arr: np.ndarray,
+        pwv: np.ndarray,
+        phase: float = Numeric,
+        resolution: float = Numeric,
+        figsize: Tuple[Numeric, Numeric] = (6, 4)
+) -> Tuple[plt.Figure, np.array]:
     """Plot of the salt2-extended spectral template with overlaid PWV and bandpass throughput curves.
 
     Args:
-        source (Source, str): sncosmo source to use as spectral template
-        wave_arr   (ndarray): The observer frame wavelengths to plot flux for in Angstroms
-        z_arr      (ndarray): The redshifts to plot the template at
-        pwv          (float): The PWV to plot the transmission function for
-        phase        (float): The phase of the template to plot
-        resolution   (float): The resolution of the atmospheric model
-        figsize      (tuple): The size of the figure
+        source: sncosmo source to use as spectral template
+        wave_arr: The observer frame wavelengths to plot flux for in Angstroms
+        z_arr: The redshifts to plot the template at
+        pwv: The PWV to plot the transmission function for
+        phase: The phase of the template to plot
+        resolution: The resolution of the atmospheric model
+        figsize: The size of the figure
 
     Returns:
-        Tuple with a matplotlib figure and axis
+        The matplotlib figure and an array of matplotlib axes
     """
 
     fig, (top_ax, bottom_ax) = plt.subplots(
@@ -283,17 +309,19 @@ def plot_spectral_template(source, wave_arr, z_arr, pwv, phase=0, resolution=2, 
     return fig, np.array([top_ax, bottom_ax])
 
 
-def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
+def plot_magnitude(
+        mags: Dict[str, np.ndarray], pwv: np.ndarray, z: np.ndarray, figsize: Tuple[Numeric, Numeric] = (9, 6)
+) -> Tuple[plt.figure, plt.Axes]:
     """Multi-panel plot showing magnitudes in different columns vs PWV and redshift in different rows.
 
     Args:
-        mags  (ndarray): Simulated magnitude values
-        pwv   (ndarray): Array of PWV values
-        z     (ndarray): Array of redshift values
-        figsize (tuple): Size of the figure
+        mags: Simulated magnitude values for each band
+        pwv: Array of PWV values
+        z: Array of redshift values
+        figsize: Size of the figure
 
     Returns:
-        Tuple with a matplotlib figure and axis
+        The matplotlib figure and axis
     """
 
     fig, axes = plt.subplots(2, len(mags), figsize=figsize, sharey='row')
@@ -317,19 +345,21 @@ def plot_magnitude(mags, pwv, z, figsize=(9, 6)):
     return fig, axes
 
 
-def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
+def plot_fitted_params(
+        fitted_params: Dict[str: np.ndarray], pwv_arr: np.ndarray, z_arr: np.ndarray, bands: List[str]
+) -> Tuple[plt.Figure, np.array]:
     """Multi-panel plot showing subplots for each salt2 parameter vs redshift.
 
     Multiple lines included for different PWV values.
 
     Args:
-        fitted_params (dict[str: ndarray]): Dictionary with fitted parameters in each band
-        pwv_arr                  (ndarray): PWV value used for each supernova fit
-        z_arr                    (ndarray): Redshift value used for each supernova fit
-        bands                       (list): Bands to include in the plot. Must be keys of ``fitted_params``
+        fitted_params: Dictionary with fitted parameters in each band
+        pwv_arr: PWV value used for each supernova fit
+        z_arr: Redshift value used for each supernova fit
+        bands: Bands to include in the plot. Must be keys of ``fitted_params``
 
     Returns:
-        Tuple with a matplotlib figure and an array of axes
+        The matplotlib figure and an array of matplotlib axes
     """
 
     # Parse the fitted parameters for easier plotting
@@ -361,14 +391,16 @@ def plot_fitted_params(fitted_params, pwv_arr, z_arr, bands):
     return fig, axes
 
 
-def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
+def plot_delta_x0(
+        source: Union[str, sncosmo.Source], pwv_arr: np.ndarray, z_arr: np.ndarray, params_dict: Dict[str, np.ndarray]
+) -> None:
     """Plot the variation in x0 as a function of redshift and PWV.
 
     Args:
-        source    (Source): Source corresponding to the provided parameters
-        pwv_arr  (ndarray): Array of PWV values
-        z_arr    (ndarray): Array of redshift values
-        params_dict (dict): Dictionary with fitted parameters for each pwv and z
+        source: Source corresponding to the provided parameters
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
+        params_dict: Dictionary with fitted parameters for each pwv and z
     """
 
     x0_cosmo = np.array([lc_simulation.calc_x0_for_z(z, source) for z in z_arr])
@@ -395,15 +427,17 @@ def plot_delta_x0(source, pwv_arr, z_arr, params_dict):
     plt.tight_layout()
 
 
-def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
+def plot_delta_colors(
+        pwv_arr: np.ndarray, z_arr: np.ndarray, mag_dict: Dict[str, np.ndarray],
+        colors: List[Tuple[str, str]], ref_pwv: Numeric = 0) -> None:
     """Shows the change in color as a function of redshift. Color coded by PWV.
 
     Args:
-        pwv_arr    (ndarray): Array of PWV values
-        z_arr      (ndarray): Array of redshift values
-        mag_dict      (dict): Dictionary with magnitudes for each band
-        colors (list[tuple]): Band combinations to plot colors for
-        ref_pwv      (float): Plot values relative to given reference PWV
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
+        mag_dict: Dictionary with magnitudes for each band
+        colors: Band combinations to plot colors for
+        ref_pwv: Plot values relative to given reference PWV
     """
 
     num_cols = len(colors)
@@ -426,14 +460,15 @@ def plot_delta_colors(pwv_arr, z_arr, mag_dict, colors, ref_pwv=0):
 
 
 # noinspection PyUnusedLocal
-def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=const.betoule_cosmo):
+def plot_delta_mu(
+        mu: np.ndarray, pwv_arr: np.nditer, z_arr: np.ndarray, cosmo: Cosmology = const.betoule_cosmo) -> None:
     """Plot the variation in fitted distance modulus as a function of redshift and PWV.
 
     Args:
-        mu      (ndarray): Array of distance moduli
-        pwv_arr (ndarray): Array of PWV values
-        z_arr   (ndarray): Array of redshift values
-        cosmo (Cosmology): Astropy cosmology to compare results against
+        mu: Array of distance moduli
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
+        cosmo: Astropy cosmology to compare results against
     """
 
     cosmo_mu = cosmo.distmod(z_arr).value
@@ -463,19 +498,20 @@ def plot_delta_mu(mu, pwv_arr, z_arr, cosmo=const.betoule_cosmo):
     plt.tight_layout()
 
 
-def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
+def plot_year_pwv_vs_time(
+        pwv_series: pd.Series, figsize: Tuple[Numeric, Numeric] = (10, 4), missing: Numeric = 1
+) -> Tuple[plt.figure, plt.Axes]:
     """Plot PWV measurements taken over a single year as a function of time.
 
     Set ``missing=None`` to disable plotting of missing data windows.
 
     Args:
-        pwv_series (Series): Measured PWV index by datetime
-        figsize     (tuple): Size of the figure in inches
-        missing     (float): Highlight time ranges larger than given number of
-                             days with missing PWV
+        pwv_series: Measured PWV index by datetime
+        figsize: Size of the figure in inches
+        missing: Highlight time ranges larger than given number of days with missing PWV
 
     Returns:
-        Tuple with a matplotlib figure and axis
+        The matplotlib figure and axis
     """
 
     pwv_series = pwv_series.sort_index()
@@ -496,10 +532,10 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
     summer_pwv = pwv_series[(pwv_series.index > jun_equinox) & (pwv_series.index < sep_equinox)]
     fall_pwv = pwv_series[(pwv_series.index > sep_equinox) & (pwv_series.index < dec_equinox)]
 
-    print(f'Winter Average: {winter_pwv.mean(): .2f} +\\- {winter_pwv.std() : .2f} mm')
-    print(f'Spring Average: {spring_pwv.mean(): .2f} +\\- {spring_pwv.std() : .2f} mm')
-    print(f'Summer Average: {summer_pwv.mean(): .2f} +\\- {summer_pwv.std() : .2f} mm')
-    print(f'Fall Average:  {fall_pwv.mean(): .2f} +\\- {fall_pwv.std() : .2f} mm')
+    print(f'Winter Average: {winter_pwv.mean(): .2f} +\\- {winter_pwv.std(): .2f} mm')
+    print(f'Spring Average: {spring_pwv.mean(): .2f} +\\- {spring_pwv.std(): .2f} mm')
+    print(f'Summer Average: {summer_pwv.mean(): .2f} +\\- {summer_pwv.std(): .2f} mm')
+    print(f'Fall Average:  {fall_pwv.mean(): .2f} +\\- {fall_pwv.std(): .2f} mm')
 
     fig, axis = plt.subplots(figsize=figsize)
     axis.set_ylabel('Median Folded PWV (mm)')
@@ -574,21 +610,24 @@ def plot_year_pwv_vs_time(pwv_series, figsize=(10, 4), missing=1):
     return fig, axis
 
 
-# noinspection PyPep8Naming
-def plot_cosmology_fit(data, abs_mag, H0, Om0, w0, alpha, beta):
+# Ignore arguments with uppercase letters
+# noinspection PyPep8Naming 
+def plot_cosmology_fit(
+        data: pd.DataFrame, abs_mag: Numeric, H0: Numeric, Om0: Numeric, w0: Numeric, alpha: Numeric, beta: Numeric
+) -> Tuple[plt.figure, np.ndarray, np.ndarray]:
     """Plot a cosmological fit to a set of supernova data.
 
     Args:
-        data (DataFrame): Results from the snat_sim fitting pipeline
-        abs_mag  (float): Intrinsic absolute magnitude of SNe Ia
-        H0       (float): Fitted Hubble constant at z = 0 in [km/sec/Mpc]
-        Om0      (float): Omega matter density in units of the critical density at z=0
-        w0       (float): Dark energy equation of state
-        alpha    (float): Fitted nuisance parameter for supernova stretch correction
-        beta     (float): Fitted nuisance parameter for supernova color correction
+        data: Results from the snat_sim fitting pipeline
+        abs_mag: Intrinsic absolute magnitude of SNe Ia
+        H0: Fitted Hubble constant at z = 0 in [km/sec/Mpc]
+        Om0: Omega matter density in units of the critical density at z=0
+        w0: Dark energy equation of state
+        alpha: Fitted nuisance parameter for supernova stretch correction
+        beta: Fitted nuisance parameter for supernova color correction
 
     Returns:
-        Tuple with a matplotlib figure, axis, and tabulated residuals
+        The matplotlib figure, fitted distance modulus, and tabulated residuals
     """
 
     data = data.sort_values('z')
@@ -618,17 +657,19 @@ def plot_cosmology_fit(data, abs_mag, H0, Om0, w0, alpha, beta):
     return fig, fitted_mu, residuals
 
 
-def plot_residuals_on_sky(ra, dec, residual, cmap='coolwarm'):
+def plot_residuals_on_sky(
+        ra: np.array, dec: np.array, residual: np.array, cmap: str = 'coolwarm'
+) -> Tuple[plt.figure, plt.Axes]:
     """Plot hubble residuals as a function of supernova coordinates.
 
     Args:
-        ra       (list): Right Ascension for each supernova
-        dec      (list): Declination of each supernova
-        residual (list): Hubble residual for each supernova
-        cmap      (str): Name of the matplotlib color map to use
+        ra: Right Ascension for each supernova
+        dec: Declination of each supernova
+        residual: Hubble residual for each supernova
+        cmap: Name of the matplotlib color map to use
 
     Returns:
-        Tuple with a matplotlib figure and axis
+        The matplotlib figure and axis
     """
 
     sn_coord = SkyCoord(ra, dec, unit=u.deg).galactic

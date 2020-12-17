@@ -47,7 +47,7 @@ from .models import SNModel
 
 def calc_x0_for_z(
         z: float,
-        source: str,
+        source: Union[str, sncosmo.Source],
         cosmo: Cosmology = const.betoule_cosmo,
         abs_mag: float = const.betoule_abs_mb,
         band: str = 'standard::b',
