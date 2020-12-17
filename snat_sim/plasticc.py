@@ -45,19 +45,24 @@ Module Docs
 
 import os
 from pathlib import Path
+from typing import *
 from warnings import warn
 
 import pandas as pd
+from astropy.cosmology.core import Cosmology
 from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
 from . import constants as const, lc_simulation
+from .models import SNModel
+
+Numeric = Union[float, int]
 
 DEFAULT_DATA_DIR = Path(__file__).resolve().parent.parent / 'data' / 'plasticc'
 
 
-def get_data_dir():
+def get_data_dir() -> Path:
     """Return the directory where the package expects PLaSTICC simulation to be located
 
     This value is the same as the environmental ``CADENCE_SIMS`` directory.
@@ -78,20 +83,20 @@ def get_data_dir():
     return plasticc_simulations_directory
 
 
-def get_available_cadences():
+def get_available_cadences() -> List[str, ...]:
     """Return a list of all available cadences in the PLaSTICC simulation directory"""
 
     return [p.name for p in get_data_dir().glob('*') if p.is_dir()]
 
 
-def get_model_headers(cadence, model):
+def get_model_headers(cadence: str, model: int) -> List[Path, ...]:
     """Return a list of all header files for a given cadence and model
 
     Default is model 11 (Normal SNe)
 
     Args:
-        cadence (str): Name of the cadence to list header files for
-        model   (int): Model number to retrieve header paths for
+        cadence: Name of the cadence to list header files for
+        model: Model number to retrieve header paths for
 
     Returns:
         A list of Path objects
@@ -101,12 +106,12 @@ def get_model_headers(cadence, model):
     return list(sim_dir.glob('*HEAD.FITS'))
 
 
-def count_light_curves(cadence, model):
+def count_light_curves(cadence: str, model: int) -> int:
     """Return the number of available light-curve simulations for a given cadence and model
 
     Args:
-        cadence (str): Name of the cadence to list header files for
-        model   (int): Model number to retrieve header paths for
+        cadence: Name of the cadence to list header files for
+        model: Model number to retrieve header paths for
 
     Returns:
         Number of simulated light-curves available in the working environment
@@ -122,15 +127,15 @@ def count_light_curves(cadence, model):
     return total_lc
 
 
-def iter_lc_for_header(header_path, verbose=True):
+def iter_lc_for_header(header_path: Union[Path, str], verbose: bool = True):
     """Iterate over light-curves from a given header file
 
     Files are expected in pairs of a header file (`*HEAD.fits`) that stores target
     meta data and a photometry file (`*PHOT.fits`) with simulated light-curves.
 
     Args:
-        header_path     (Path, str): Path of the header file
-        verbose (bool): Display a progress bar
+        header_path: Path of the header file
+        verbose: Display a progress bar
 
     Yields:
         An Astropy table with the MJD and filter for each observation
@@ -158,18 +163,18 @@ def iter_lc_for_header(header_path, verbose=True):
             lc = phot_data[lc_start: lc_end]
             lc.meta.update(meta)
 
-            yield lc
-            pbar.update(1)
+            pbar.update()
             pbar.refresh()
+            yield lc
 
 
-def iter_lc_for_cadence_model(cadence, model, verbose=True):
+def iter_lc_for_cadence_model(cadence: str, model: int, verbose: bool = True) -> Iterable[Table]:
     """Iterate over simulated light-curves  for a given cadence
 
     Args:
-        cadence  (str): Name of the cadence to summarize
-        model    (int): Model number to retrieve light-curves for
-        verbose (bool): Display a progress bar
+        cadence: Name of the cadence to summarize
+        model: Model number to retrieve light-curves for
+        verbose: Display a progress bar
 
     Yields:
         An Astropy table with the MJD and filter for each observation
@@ -181,16 +186,16 @@ def iter_lc_for_cadence_model(cadence, model, verbose=True):
     with tqdm(light_curve_iter, desc=cadence, total=total, disable=not verbose) as pbar:
         for header_path in pbar:
             for lc in iter_lc_for_header(header_path, verbose=False):
-                yield lc
-                pbar.update(1)
+                pbar.update()
                 pbar.refresh()
+                yield lc
 
 
-def format_plasticc_sncosmo(light_curve):
+def format_plasticc_sncosmo(light_curve: Table) -> Table:
     """Format a PLaSTICC light-curve to be compatible with sncosmo
 
     Args:
-        light_curve (Table): Table of PLaSTICC light-curve data
+        light_curve: Table of PLaSTICC light-curve data
 
     Returns:
         An astropy table formatted for use with sncosmo
@@ -210,7 +215,13 @@ def format_plasticc_sncosmo(light_curve):
     return lc
 
 
-def extract_cadence_data(light_curve, zp=25, gain=1, skynoise=0, drop_nondetection=False):
+def extract_cadence_data(
+        light_curve: Table,
+        zp: Numeric = 25,
+        gain: Numeric = 1,
+        skynoise: Numeric = 0,
+        drop_nondetection: bool = False
+) -> Table:
     """Extract the observational cadence from a PLaSTICC light-curve
 
     Returned table is formatted for use with ``sncosmo.realize_lcs``.
@@ -242,17 +253,24 @@ def extract_cadence_data(light_curve, zp=25, gain=1, skynoise=0, drop_nondetecti
 
 
 def duplicate_plasticc_sncosmo(
-        light_curve, model, zp=None, gain=1, skynoise=None, scatter=True, cosmo=const.betoule_cosmo):
+        light_curve: Table,
+        model: SNModel,
+        zp: Numeric = None,
+        gain: Numeric = 1,
+        skynoise: Numeric = None,
+        scatter: bool = True,
+        cosmo: Cosmology = const.betoule_cosmo
+) -> Table:
     """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
 
     Args:
-        light_curve  (Table): Astropy table with PLaSTICC light-curve data
-        model      (SNModel): SNModel to use when simulating light-curve flux
-        zp    (float, array): Optionally overwrite the PLaSTICC zero-point with this value
-        gain         (float): Gain to use during simulation
-        skynoise     (float):  Optionally overwrite the PLaSTICC skynoise with this value
-        scatter       (bool): Add random noise to the flux values
-        cosmo    (Cosmology): Rescale the ``x0`` parameter according to the given cosmology
+        light_curve: Astropy table with PLaSTICC light-curve data
+        model: SNModel to use when simulating light-curve flux
+        zp: Optionally overwrite the PLaSTICC zero-point with this value
+        gain: Gain to use during simulation
+        skynoise:  Optionally overwrite the PLaSTICC skynoise with this value
+        scatter: Add random noise to the flux values
+        cosmo: Rescale the ``x0`` parameter according to the given cosmology
 
     Returns:
         Astropy table with data for the simulated light-curve

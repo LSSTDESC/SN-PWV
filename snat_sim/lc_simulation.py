@@ -37,7 +37,7 @@ from typing import *
 
 import numpy as np
 import sncosmo
-from astropy.cosmology import Cosmology
+from astropy.cosmology.core import Cosmology
 from astropy.table import Table
 from tqdm import tqdm
 
