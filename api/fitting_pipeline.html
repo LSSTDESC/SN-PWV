@@ -31,8 +31,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.time_series_utils" href="time_series_utils.html" />
-    <link rel="prev" title="snat_sim.reference_stars" href="reference_stars.html" />
+    <link rel="next" title="snat_sim.lc_simulation" href="lc_simulation.html" />
+    <link rel="prev" title="snat_sim.filters" href="filters.html" />
   
    
 
@@ -47,10 +47,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="time_series_utils.html" title="snat_sim.time_series_utils"
+          <a href="lc_simulation.html" title="snat_sim.lc_simulation"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="reference_stars.html" title="snat_sim.reference_stars"
+          <a href="filters.html" title="snat_sim.filters"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.fitting_pipeline</a></li> 
@@ -103,14 +103,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="time_series_utils.html">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_caching.html">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -166,19 +167,19 @@ synchronously.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cadence</strong> (<em>str</em>) – Cadence to use when simulating light-curves</p></li>
-<li><p><strong>sim_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><em>SNModel</em></a>) – Model to use when simulating light-curves</p></li>
-<li><p><strong>fit_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><em>SNModel</em></a>) – Model to use when fitting light-curves</p></li>
-<li><p><strong>vparams</strong> (<em>list</em><em>[</em><em>str</em><em>]</em>) – List of parameter names to vary in the fit</p></li>
-<li><p><strong>bounds</strong> (<em>dict</em><em>[</em><em>str</em><em>, </em><em>list</em><em>]</em>) – Bounds to impose on <code class="docutils literal notranslate"><span class="pre">fit_model</span></code> parameters when fitting light-curves</p></li>
-<li><p><strong>out_path</strong> (<em>str</em><em>, </em><em>Path</em>) – Path to write results to (.csv extension is enforced)</p></li>
-<li><p><strong>fitting_pool</strong> (<em>int</em>) – Number of child processes allocated to simulating light-curves</p></li>
-<li><p><strong>simulation_pool</strong> (<em>int</em>) – Number of child processes allocated to fitting light-curves</p></li>
-<li><p><strong>quality_callback</strong> (<em>callable</em>) – Skip light-curves if this function returns False</p></li>
-<li><p><strong>max_queue</strong> (<em>int</em>) – Maximum number of light-curves to store in pipeline at once</p></li>
-<li><p><strong>iter_lim</strong> (<em>int</em>) – Limit number of processed light-curves (Useful for profiling)</p></li>
-<li><p><strong>ref_stars</strong> (<em>List</em><em>[</em><em>str</em><em>]</em>) – List of reference star types to calibrate simulated supernova with</p></li>
-<li><p><strong>pwv_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.PWVModel" title="snat_sim.models.PWVModel"><em>PWVModel</em></a>) – Model for the PWV concentration the reference stars are observed at</p></li>
+<li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Cadence to use when simulating light-curves</p></li>
+<li><p><strong>sim_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Model to use when simulating light-curves</p></li>
+<li><p><strong>fit_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Model to use when fitting light-curves</p></li>
+<li><p><strong>vparams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of parameter names to vary in the fit</p></li>
+<li><p><strong>bounds</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>]]]) – Bounds to impose on <code class="docutils literal notranslate"><span class="pre">fit_model</span></code> parameters when fitting light-curves</p></li>
+<li><p><strong>out_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path to write results to (.csv extension is enforced)</p></li>
+<li><p><strong>fitting_pool</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of child processes allocated to simulating light-curves</p></li>
+<li><p><strong>simulation_pool</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of child processes allocated to fitting light-curves</p></li>
+<li><p><strong>quality_callback</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">callable</span></code>]) – Skip light-curves if this function returns False</p></li>
+<li><p><strong>max_queue</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Maximum number of light-curves to store in pipeline at once</p></li>
+<li><p><strong>iter_lim</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Limit number of processed light-curves (Useful for profiling)</p></li>
+<li><p><strong>ref_stars</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – List of reference star types to calibrate simulated supernova with</p></li>
+<li><p><strong>pwv_model</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>]) – Model for the PWV concentration the reference stars are observed at</p></li>
 </ul>
 </dd>
 </dl>
@@ -209,17 +210,20 @@ synchronously.</p>
 
 <dl class="py method">
 <dt id="snat_sim.fitting_pipeline.OutputDataModel.build_masked_entry">
-<code class="sig-name descname">build_masked_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta</span></em>, <em class="sig-param"><span class="n">excep</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.build_masked_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.build_masked_entry" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">build_masked_entry</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">meta</span></em>, <em class="sig-param"><span class="n">exception</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#OutputDataModel.build_masked_entry"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.build_masked_entry" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a masked table entry for a failed light-curve fit</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>meta</strong> (<em>dict</em>) – Meta data for the simulated light-curve</p></li>
-<li><p><strong>excep</strong> (<em>Exception</em>) – Exception raised by the failed fit</p></li>
+<li><p><strong>meta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – Meta data for the simulated light-curve</p></li>
+<li><p><strong>exception</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code>) – Exception raised by the failed fit</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A list of strings and floats with masked values set as -99</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of strings and floats with masked values set as -99</p>
 </dd>
 </dl>
 </dd></dl>
@@ -231,13 +235,16 @@ synchronously.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>meta</strong> (<em>dict</em>) – Meta data for the simulated light-curve</p></li>
-<li><p><strong>fitted_model</strong> (<em>Model</em>) – Supernova model fitted to the data</p></li>
-<li><p><strong>result</strong> (<em>Result</em>) – sncosmo fit Result object</p></li>
+<li><p><strong>meta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – Meta data for the simulated light-curve</p></li>
+<li><p><strong>fitted_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Supernova model fitted to the data</p></li>
+<li><p><strong>result</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Result</span></code>) – sncosmo fit Result object</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A list of strings and floats</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of strings and floats</p>
 </dd>
 </dl>
 </dd></dl>
@@ -247,8 +254,11 @@ synchronously.</p>
 <em class="property">property </em><code class="sig-name descname">column_names</code><a class="headerlink" href="#snat_sim.fitting_pipeline.OutputDataModel.column_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of column names for the data model</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>List of column names as strings</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>List of column names as strings</p>
 </dd>
 </dl>
 </dd></dl>
@@ -265,7 +275,7 @@ synchronously.</p>
 <dd><p>Manage a collection of forked processes</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>processes</strong> (<em>List</em><em>[</em><em>Process</em><em>]</em>) – List of processes to manage</p>
+<dd class="field-odd"><p><strong>processes</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Process</span></code>]]) – List of processes to manage</p>
 </dd>
 </dl>
 </dd></dl>
@@ -274,24 +284,44 @@ synchronously.</p>
 <dt id="snat_sim.fitting_pipeline.ProcessManager.kill">
 <code class="sig-name descname">kill</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.kill"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.kill" title="Permalink to this definition">¶</a></dt>
 <dd><p>Kill all running pipeline processes without trying to exit gracefully</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="snat_sim.fitting_pipeline.ProcessManager.run">
 <code class="sig-name descname">run</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.run" title="Permalink to this definition">¶</a></dt>
 <dd><p>Similar to <code class="docutils literal notranslate"><span class="pre">run_async</span></code> but blocks further execution until finished</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="snat_sim.fitting_pipeline.ProcessManager.run_async">
 <code class="sig-name descname">run_async</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.run_async"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.run_async" title="Permalink to this definition">¶</a></dt>
 <dd><p>Start all processes asynchronously</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="snat_sim.fitting_pipeline.ProcessManager.wait_for_exit">
 <code class="sig-name descname">wait_for_exit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/fitting_pipeline.html#ProcessManager.wait_for_exit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.fitting_pipeline.ProcessManager.wait_for_exit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wait for the pipeline to finish running before continuing execution</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -314,10 +344,10 @@ synchronously.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="time_series_utils.html" title="snat_sim.time_series_utils"
+          <a href="lc_simulation.html" title="snat_sim.lc_simulation"
              >next</a> |</li>
         <li class="right" >
-          <a href="reference_stars.html" title="snat_sim.reference_stars"
+          <a href="filters.html" title="snat_sim.filters"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.fitting_pipeline</a></li> 

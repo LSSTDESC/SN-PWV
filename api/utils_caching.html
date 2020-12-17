@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>snat_sim.time_series_utils &#8212; Supernova Atmospheric Simulation</title>
+    <title>snat_sim.utils.caching &#8212; Supernova Atmospheric Simulation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -31,8 +31,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.sn_magnitudes" href="sn_magnitudes.html" />
-    <link rel="prev" title="snat_sim.fitting_pipeline" href="fitting_pipeline.html" />
+    <link rel="prev" title="snat_sim.utils.time_series" href="utils_time_series.html" />
   
    
 
@@ -47,13 +46,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sn_magnitudes.html" title="snat_sim.sn_magnitudes"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
+          <a href="utils_time_series.html" title="snat_sim.utils.time_series"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">snat_sim.time_series_utils</a></li> 
+        <li class="nav-item nav-item-this"><a href="">snat_sim.utils.caching</a></li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -103,14 +99,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -123,79 +120,47 @@
 
           <div class="document clearer body">
             
-  <div class="section" id="module-snat_sim.time_series_utils">
-<span id="snat-sim-time-series-utils"></span><h1>snat_sim.time_series_utils<a class="headerlink" href="#module-snat_sim.time_series_utils" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">time_series_utils.py</span></code> module provides limited functionality
-for manipulating time series data. It is intended to supplement existing
-functionality in the <code class="docutils literal notranslate"><span class="pre">pandas</span></code> package with support for tasks particular to
-dealing with atmospheric / weather data.</p>
-<div class="section" id="module-docs">
-<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="snat_sim.time_series_utils.datetime_to_sec_in_year">
-<code class="sig-prename descclassname">snat_sim.time_series_utils.</code><code class="sig-name descname">datetime_to_sec_in_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/time_series_utils.html#datetime_to_sec_in_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.time_series_utils.datetime_to_sec_in_year" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate number of seconds elapsed modulo 1 year</p>
-<p>Accurate to within a microsecond.</p>
+  <div class="section" id="module-snat_sim.utils.caching">
+<span id="snat-sim-utils-caching"></span><h1>snat_sim.utils.caching<a class="headerlink" href="#module-snat_sim.utils.caching" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">caching</span></code> module defines numpy compatible function wrappers
+for implementing memoization.</p>
+<div class="section" id="module-api">
+<h2>Module API<a class="headerlink" href="#module-api" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="snat_sim.utils.caching.MemoryCache">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.utils.caching.</code><code class="sig-name descname">MemoryCache</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#MemoryCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.MemoryCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ordered dictionary with an imposed limit on overall memory usage</p>
+<dl class="py method">
+<dt id="snat_sim.utils.caching.MemoryCache.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#MemoryCache.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.MemoryCache.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ordered dictionary with an imposed size limit im memory</p>
+<p>When memory usage exceeds the predefined amount, remove the oldest
+entry from the cache.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>date</strong> (<em>datetime</em><em>, </em><em>array</em><em>, </em><em>pd.Datetime</em>) – Pandas datetime array</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A single float or a numpy array of integers</p>
+<dd class="field-odd"><p><strong>max_size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Maximum memory size in bytes</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="snat_sim.time_series_utils.periodic_interpolation">
-<code class="sig-prename descclassname">snat_sim.time_series_utils.</code><code class="sig-name descname">periodic_interpolation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/time_series_utils.html#periodic_interpolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.time_series_utils.periodic_interpolation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Similar to linear interpolation on a pandas array, but missing values
-at the beginning and end of the series are interpolated assuming a periodic
-boundary condition.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>series</strong> (<em>pandas.Series</em>) – A Pandas Series to infill by linear interpolation</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An interpolated copy of the passed series</p>
-</dd>
-</dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.time_series_utils.resample_data_across_year">
-<code class="sig-prename descclassname">snat_sim.time_series_utils.</code><code class="sig-name descname">resample_data_across_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/time_series_utils.html#resample_data_across_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.time_series_utils.resample_data_across_year" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of a pandas series resampled evenly from the
-beginning of the earliest year through the end of the latest year.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>series</strong> (<em>pd.Series</em>) – A series with a Datetime index</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A copy of the passed series interpolated for January first through December 31st</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.time_series_utils.supplemented_data">
-<code class="sig-prename descclassname">snat_sim.time_series_utils.</code><code class="sig-name descname">supplemented_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_data</span></em>, <em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">supp_years</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/time_series_utils.html#supplemented_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.time_series_utils.supplemented_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the supplemented subset of a dataframe corresponding to a given year</p>
-<p>Data for the given year is supplemented with any available data from
-supplementary years by asserting that the measured values from
-supplementary years are exactly the same as they would be if taken during
-the primary year. Priority is given to supplementary years in the order
-specified by the <code class="docutils literal notranslate"><span class="pre">supp_years</span></code> argument.</p>
+<dt id="snat_sim.utils.caching.numpy_cache">
+<code class="sig-prename descclassname">snat_sim.utils.caching.</code><code class="sig-name descname">numpy_cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">numpy_args</span></em>, <em class="sig-param"><span class="n">cache_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#numpy_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.numpy_cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Memoization decorator supporting <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_data</strong> (<em>pandas.Series</em>) – Series of data to use indexed by datetime</p></li>
-<li><p><strong>year</strong> (<em>float</em>) – Year to supplement data for</p></li>
-<li><p><strong>supp_years</strong> (<em>collection</em><em>[</em><em>float</em><em>]</em>) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
+<li><p><strong>*numpy_args</strong> – Function arguments to treat as numpy arrays</p></li>
+<li><p><strong>cache_size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Maximum memory to allocate to cached data in bytes</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A pandas Series object</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A callable function decorator</p>
 </dd>
 </dl>
 </dd></dl>
@@ -218,13 +183,10 @@ specified by the <code class="docutils literal notranslate"><span class="pre">su
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="sn_magnitudes.html" title="snat_sim.sn_magnitudes"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
+          <a href="utils_time_series.html" title="snat_sim.utils.time_series"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">snat_sim.time_series_utils</a></li> 
+        <li class="nav-item nav-item-this"><a href="">snat_sim.utils.caching</a></li> 
       </ul>
     </div>
 <script type="text/javascript">

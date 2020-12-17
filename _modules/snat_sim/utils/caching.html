@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.utils.caching &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.utils.caching</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/command_line.html">Command Line Interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils_caching.html">snat_sim.utils.caching</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <h1>Source code for snat_sim.utils.caching</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The ``caching`` module defines numpy compatible function wrappers</span>
+<span class="sd">for implementing memoization.</span>
+
+<span class="sd">Module API</span>
+<span class="sd">----------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">inspect</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Hashable</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="MemoryCache"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.MemoryCache">[docs]</a><span class="k">class</span> <span class="nc">MemoryCache</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Ordered dictionary with an imposed limit on overall memory usage&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="MemoryCache.__init__"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.MemoryCache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Ordered dictionary with an imposed size limit im memory</span>
+
+<span class="sd">        When memory usage exceeds the predefined amount, remove the oldest</span>
+<span class="sd">        entry from the cache.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            max_size: Maximum memory size in bytes</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">(</span><span class="n">MemoryCache</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">=</span> <span class="n">max_size</span>
+        <span class="n">size_when_empty</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">&lt;=</span> <span class="n">size_when_empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Dictionary size limit must exceed </span><span class="si">{</span><span class="n">size_when_empty</span><span class="si">}</span><span class="s1"> bytes&#39;</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="n">OrderedDict</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_check_size_limit</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">_check_size_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">while</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="numpy_cache"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.numpy_cache">[docs]</a><span class="k">def</span> <span class="nf">numpy_cache</span><span class="p">(</span><span class="o">*</span><span class="n">numpy_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Memoization decorator supporting ``numpy`` arrays</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        *numpy_args: Function arguments to treat as numpy arrays</span>
+<span class="sd">        cache_size: Maximum memory to allocate to cached data in bytes</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A callable function decorator</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="k">class</span> <span class="nc">Memoization</span><span class="p">(</span><span class="n">MemoryCache</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Dictionary like object that stores recent function calls in memory&quot;&quot;&quot;</span>
+
+            <span class="nd">@wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+            <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+                <span class="sd">&quot;&quot;&quot;Wrapped version of the given function</span>
+
+<span class="sd">                Arguments and returns are the same as ``function``</span>
+<span class="sd">                &quot;&quot;&quot;</span>
+
+                <span class="n">kwargs_for_key</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getcallargs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">arg_to_cast</span> <span class="ow">in</span> <span class="n">numpy_args</span><span class="p">:</span>
+                    <span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">])</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+
+                <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">return</span> <span class="n">Memoization</span><span class="p">(</span><span class="n">max_size</span><span class="o">=</span><span class="n">cache_size</span><span class="p">)</span><span class="o">.</span><span class="n">wrapped</span>
+
+    <span class="k">return</span> <span class="n">decorator</span></div>
+</pre></div>
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.utils.caching</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

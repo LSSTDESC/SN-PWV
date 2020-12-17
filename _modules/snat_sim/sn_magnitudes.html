@@ -96,14 +96,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils_caching.html">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -130,20 +131,25 @@
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="kn">import</span> <span class="nn">yaml</span>
+<span class="kn">from</span> <span class="nn">astropy.cosmology.core</span> <span class="kn">import</span> <span class="n">Cosmology</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span><span class="p">,</span> <span class="n">lc_simulation</span>
+<span class="kn">from</span> <span class="nn">._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">SNModel</span>
 
-<span class="c1"># Reference pwv values</span>
-<span class="n">_CONFIG_PATH</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;defaults&#39;</span> <span class="o">/</span> <span class="s1">&#39;ref_pwv.yaml&#39;</span>
+<span class="n">Numeric</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
 
 
+<span class="c1"># Todo: Add dictionary keys to docs - consider named tuple?</span>
 <div class="viewcode-block" id="get_config_pwv_vals"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.get_config_pwv_vals">[docs]</a><span class="nd">@lru_cache</span><span class="p">()</span>  <span class="c1"># Cache I/O</span>
-<span class="k">def</span> <span class="nf">get_config_pwv_vals</span><span class="p">(</span><span class="n">config_path</span><span class="o">=</span><span class="n">_CONFIG_PATH</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">get_config_pwv_vals</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">_config_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve PWV values to use as reference values</span>
 
 <span class="sd">    Returned values include:</span>
@@ -152,7 +158,7 @@
 <span class="sd">        - Upper pwv bound for calculating slope</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        config_path (str): Path of config file if not default</span>
+<span class="sd">        config_path: Path of config file if not default</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Dictionary with PWV values in mm</span>
@@ -170,18 +176,24 @@
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="tabulate_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.tabulate_mag">[docs]</a><span class="k">def</span> <span class="nf">tabulate_mag</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="tabulate_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.tabulate_mag">[docs]</a><span class="k">def</span> <span class="nf">tabulate_mag</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
+        <span class="n">pwv_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">],</span>
+        <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">],</span>
+        <span class="n">bands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Calculate apparent magnitude due to presence of PWV</span>
 
 <span class="sd">    Magnitude is calculated for the model by adding PWV effects</span>
 <span class="sd">    to a model and leaving all other parameters unchanged.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model   (SNModel): The sncosmo model to use in the simulations</span>
-<span class="sd">        pwv_arr (ndarray): Array of PWV values</span>
-<span class="sd">        z_arr   (ndarray): Array of redshift values</span>
-<span class="sd">        bands (list[str]): Name of the bands to tabulate magnitudes for</span>
-<span class="sd">        verbose    (bool): Show a progress bar</span>
+<span class="sd">        model: The sncosmo model to use in the simulations</span>
+<span class="sd">        pwv_arr: Array of PWV values</span>
+<span class="sd">        z_arr: Array of redshift values</span>
+<span class="sd">        bands: Name of the bands to tabulate magnitudes for</span>
+<span class="sd">        verbose: Show a progress bar</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary with 2d arrays for the magnitude at each PWV and redshift</span>
@@ -216,17 +228,19 @@
     <span class="k">return</span> <span class="n">magnitudes</span></div>
 
 
-<div class="viewcode-block" id="tabulate_fiducial_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.tabulate_fiducial_mag">[docs]</a><span class="k">def</span> <span class="nf">tabulate_fiducial_mag</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">fid_pwv_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="tabulate_fiducial_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.tabulate_fiducial_mag">[docs]</a><span class="k">def</span> <span class="nf">tabulate_fiducial_mag</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">bands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">fid_pwv_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Get SN magnitudes corresponding to the fiducial atmosphere</span>
 
 <span class="sd">    Returns a dictionary of the form</span>
 <span class="sd">      {&lt;band&gt;: [&lt;slope start mag&gt; , &lt;reference pwv mag&gt;, &lt;slope end mag&gt;]</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model     (SNModel): The sncosmo model to use in the simulations</span>
-<span class="sd">        z_arr     (ndarray): Array of redshift values</span>
-<span class="sd">        bands   (list[str]): Name of the bands to tabulate magnitudes for</span>
-<span class="sd">        fid_pwv_dict (dict): Config dictionary for fiducial atmosphere</span>
+<span class="sd">        model: The sncosmo model to use in the simulations</span>
+<span class="sd">        z_arr: Array of redshift values</span>
+<span class="sd">        bands: Name of the bands to tabulate magnitudes for</span>
+<span class="sd">        fid_pwv_dict: Config dictionary for fiducial atmosphere</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A dictionary with fiducial magnitudes in each band</span>
@@ -256,17 +270,20 @@
 <span class="c1">###############################################################################</span>
 
 
-<div class="viewcode-block" id="correct_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.correct_mag">[docs]</a><span class="k">def</span> <span class="nf">correct_mag</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">mag</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_alpha</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_beta</span><span class="p">):</span>
+<div class="viewcode-block" id="correct_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.correct_mag">[docs]</a><span class="k">def</span> <span class="nf">correct_mag</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">mag</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_beta</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Correct fitted supernova magnitude for stretch and color</span>
 
 <span class="sd">    calibrated mag = mag + α * x1 - β * c</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model  (SNModel): Model used to fit the given magnitudes</span>
-<span class="sd">        mag    (ndarray): (n)d array of magnitudes for pwv and redshift</span>
-<span class="sd">        params (ndarray): (n+1)d array with dimensions for pwv, redshift, parameter</span>
-<span class="sd">        alpha    (float): Alpha parameter value</span>
-<span class="sd">        beta     (float): Beta parameter value</span>
+<span class="sd">        model: Model used to fit the given magnitudes</span>
+<span class="sd">        mag: (n)d array of magnitudes for pwv and redshift</span>
+<span class="sd">        params: (n+1)d array with dimensions for pwv, redshift, parameter</span>
+<span class="sd">        alpha: Alpha parameter value</span>
+<span class="sd">        beta: Beta parameter value</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Array of calibrated magnitudes with same dimensions as ``mag``</span>
@@ -283,18 +300,26 @@
     <span class="k">return</span> <span class="n">mag</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i_x1</span><span class="p">]</span> <span class="o">-</span> <span class="n">beta</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i_c</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="fit_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_mag">[docs]</a><span class="k">def</span> <span class="nf">fit_mag</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">light_curves</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">z_arr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<div class="viewcode-block" id="fit_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_mag">[docs]</a><span class="k">def</span> <span class="nf">fit_mag</span><span class="p">(</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
+        <span class="n">light_curves</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Table</span><span class="p">],</span>
+        <span class="n">vparams</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">bands</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">pwv_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Determine apparent mag by fitting simulated light-curves</span>
 
 <span class="sd">    Returned arrays are shape  (len(pwv_arr), len(z_arr)).</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model        (SNModel): The sncosmo model to use when fitting</span>
-<span class="sd">        light_curves (ndarray): Array of light-curves to fit</span>
-<span class="sd">        vparams         (list): Parameters to vary with the fit</span>
-<span class="sd">        pwv_arr      (ndarray): Array of PWV values</span>
-<span class="sd">        z_arr        (ndarray): Array of redshift values</span>
-<span class="sd">        bands      (list[str]): Name of the bands to tabulate magnitudes for</span>
+<span class="sd">        model: The sncosmo model to use when fitting</span>
+<span class="sd">        light_curves: Array of light-curves to fit</span>
+<span class="sd">        vparams: Parameters to vary with the fit</span>
+<span class="sd">        bands: Name of the bands to tabulate magnitudes for</span>
+<span class="sd">        pwv_arr: Array of PWV values</span>
+<span class="sd">        z_arr: Array of redshift values</span>
 <span class="sd">        Any arguments for ``sncosmo.fit_lc``.</span>
 
 <span class="sd">    Returns:</span>
@@ -332,20 +357,28 @@
     <span class="k">return</span> <span class="n">fitted_mag</span><span class="p">,</span> <span class="n">fitted_params</span></div>
 
 
-<div class="viewcode-block" id="fit_fiducial_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_fiducial_mag">[docs]</a><span class="k">def</span> <span class="nf">fit_fiducial_mag</span><span class="p">(</span><span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">obs</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">fid_pwv_dict</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="fit_fiducial_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_fiducial_mag">[docs]</a><span class="k">def</span> <span class="nf">fit_fiducial_mag</span><span class="p">(</span>
+        <span class="n">sim_model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
+        <span class="n">fit_model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
+        <span class="n">obs</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span>
+        <span class="n">vparams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">],</span>
+        <span class="n">bands</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">fid_pwv_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Get fitted SN magnitudes corresponding to the fiducial atmosphere</span>
 
 <span class="sd">    Returns a dictionary of the form</span>
 <span class="sd">      {&lt;band&gt;: [&lt;slope start mag&gt; , &lt;reference pwv mag&gt;, &lt;slope end mag&gt;]</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        sim_model      (SNModel): The sncosmo model to use when simulating light-curves</span>
-<span class="sd">        fit_model      (SNModel): The sncosmo model to use when fitting</span>
-<span class="sd">        obs              (Table): Array of light-curves to fit</span>
-<span class="sd">        vparams           (list): Parameters to vary with the fit</span>
-<span class="sd">        z_arr          (ndarray): Array of redshift values</span>
-<span class="sd">        bands        (list[str]): Name of band to return mag for</span>
-<span class="sd">        fid_pwv_dict (dict): Config dictionary for fiducial atmosphere</span>
+<span class="sd">        sim_model: The sncosmo model to use when simulating light-curves</span>
+<span class="sd">        fit_model: The sncosmo model to use when fitting</span>
+<span class="sd">        obs: Array of light-curves to fit</span>
+<span class="sd">        vparams: Parameters to vary with the fit</span>
+<span class="sd">        z_arr: Array of redshift values</span>
+<span class="sd">        bands: Name of band to return mag for</span>
+<span class="sd">        fid_pwv_dict: Config dictionary for fiducial atmosphere</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        - A dictionary with 2d array of fitted magnitudes in each band</span>
@@ -378,16 +411,18 @@
 <span class="c1"># Calculating how the values determined above change with PWV</span>
 <span class="c1">###############################################################################</span>
 
-<div class="viewcode-block" id="calc_delta_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_delta_mag">[docs]</a><span class="k">def</span> <span class="nf">calc_delta_mag</span><span class="p">(</span><span class="n">mag</span><span class="p">,</span> <span class="n">fiducial_mag</span><span class="p">,</span> <span class="n">fiducial_pwv</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_delta_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_delta_mag">[docs]</a><span class="k">def</span> <span class="nf">calc_delta_mag</span><span class="p">(</span>
+        <span class="n">mag</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">fiducial_mag</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">fiducial_pwv</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Determine the change in magnitude relative to the fiducial atmosphere</span>
 
 <span class="sd">    This is also equivalent to determining the apparent magnitude of a SN</span>
 <span class="sd">    normalized to the magnitude at the fiducial atmosphere.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        mag          (dict): Dictionary with magnitudes in each band</span>
-<span class="sd">        fiducial_mag (dict): Dictionary for fiducial atmosphere mag vals</span>
-<span class="sd">        fiducial_pwv (dict): Dictionary for fiducial atmosphere pwv vals</span>
+<span class="sd">        mag: Dictionary with magnitudes in each band</span>
+<span class="sd">        fiducial_mag: Dictionary for fiducial atmosphere mag vals</span>
+<span class="sd">        fiducial_pwv: Dictionary for fiducial atmosphere pwv vals</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        - A dictionary with the change in magnitude for each band</span>
@@ -414,12 +449,12 @@
 <span class="c1"># Distance Modulus Calculations</span>
 <span class="c1">###############################################################################</span>
 
-<div class="viewcode-block" id="calc_mu_for_model"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_mu_for_model">[docs]</a><span class="k">def</span> <span class="nf">calc_mu_for_model</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_mu_for_model"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_mu_for_model">[docs]</a><span class="k">def</span> <span class="nf">calc_mu_for_model</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">cosmo</span><span class="p">:</span> <span class="n">Cosmology</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculate the distance modulus of a model</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model   (SNModel): An sncosmo model</span>
-<span class="sd">        cosmo (Cosmology): Cosmology to use in the calculation</span>
+<span class="sd">        model: An sncosmo model</span>
+<span class="sd">        cosmo: Cosmology to use in the calculation</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        mu = m_B - M_B</span>
@@ -436,12 +471,12 @@
     <span class="k">return</span> <span class="n">apparent_mag</span> <span class="o">-</span> <span class="n">absolute_mag</span></div>
 
 
-<div class="viewcode-block" id="calc_mu_for_params"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_mu_for_params">[docs]</a><span class="k">def</span> <span class="nf">calc_mu_for_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_mu_for_params"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_mu_for_params">[docs]</a><span class="k">def</span> <span class="nf">calc_mu_for_params</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculate the distance modulus for an array of fitted params</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model  (SNModel): The sncosmo model to use in the simulations</span>
-<span class="sd">        params (ndarray): n-dimensional array of parameters</span>
+<span class="sd">        model: The sncosmo model to use in the simulations</span>
+<span class="sd">        params: n-dimensional array of parameters</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An array of distance moduli with one dimension less than ``params``</span>
@@ -462,14 +497,14 @@
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">param_shape</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="calc_calibration_factor_for_params"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_calibration_factor_for_params">[docs]</a><span class="k">def</span> <span class="nf">calc_calibration_factor_for_params</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="calc_calibration_factor_for_params"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_calibration_factor_for_params">[docs]</a><span class="k">def</span> <span class="nf">calc_calibration_factor_for_params</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculate the distance modulus for an array of fitted params</span>
 
 <span class="sd">    returns constants.alpha * x_1 - constants.beta * c</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        model  (SNModel): The sncosmo model to use in the simulations</span>
-<span class="sd">        params (ndarray): n-dimensional array of parameters</span>
+<span class="sd">        model: The sncosmo model to use in the simulations</span>
+<span class="sd">        params: n-dimensional array of parameters</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An array of calibration factors with one dimension less than ``params``</span>

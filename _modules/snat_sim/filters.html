@@ -96,14 +96,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils_caching.html">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -146,24 +147,22 @@
 <span class="sd">-----------</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 
-<span class="n">FILTER_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;data&#39;</span> <span class="o">/</span> <span class="s1">&#39;filters&#39;</span>
+<span class="kn">from</span> <span class="nn">._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
 
 
-<div class="viewcode-block" id="register_sncosmo_filter"><a class="viewcode-back" href="../../api/filters.html#snat_sim.filters.register_sncosmo_filter">[docs]</a><span class="k">def</span> <span class="nf">register_sncosmo_filter</span><span class="p">(</span><span class="n">wave</span><span class="p">,</span> <span class="n">trans</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="register_sncosmo_filter"><a class="viewcode-back" href="../../api/filters.html#snat_sim.filters.register_sncosmo_filter">[docs]</a><span class="k">def</span> <span class="nf">register_sncosmo_filter</span><span class="p">(</span><span class="n">wave</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">trans</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Register a filter profile with sncosmo</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        wave  (array): Array of wavelength values in Angstroms</span>
-<span class="sd">        trans (array): Array of transmission values between 0 and 1</span>
-<span class="sd">        name    (str): Name of the filter to register</span>
-<span class="sd">        force  (bool): Whether to overwrite an existing filter with the given name</span>
+<span class="sd">        wave: Array of wavelength values in Angstroms</span>
+<span class="sd">        trans: Array of transmission values between 0 and 1</span>
+<span class="sd">        name: Name of the filter to register</span>
+<span class="sd">        force: Whether to overwrite an existing filter with the given name</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Specifying the name argument in the constructor seems to not work in</span>
@@ -173,7 +172,7 @@
     <span class="n">sncosmo</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">sncosmo_ccd</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="n">force</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="register_decam_filters"><a class="viewcode-back" href="../../api/filters.html#snat_sim.filters.register_decam_filters">[docs]</a><span class="k">def</span> <span class="nf">register_decam_filters</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="register_decam_filters"><a class="viewcode-back" href="../../api/filters.html#snat_sim.filters.register_decam_filters">[docs]</a><span class="k">def</span> <span class="nf">register_decam_filters</span><span class="p">(</span><span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Register DECam filter scripts, CCD response, and fiducial ATM with sncosmo</span>
 
 <span class="sd">    Registered Filters:</span>
@@ -182,11 +181,11 @@
 <span class="sd">        - DECam_ccd: DECam CCD Response curve</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        force (bool): Re-register bands even if they are already registered</span>
+<span class="sd">        force: Re-register bands even if they are already registered</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Register each filter</span>
-    <span class="n">ctio_filter_dir</span> <span class="o">=</span> <span class="n">FILTER_DIR</span> <span class="o">/</span> <span class="s1">&#39;ctio&#39;</span>
+    <span class="n">ctio_filter_dir</span> <span class="o">=</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">get_filters_dir</span><span class="p">(</span><span class="s1">&#39;ctio&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">filter_name</span> <span class="ow">in</span> <span class="s1">&#39;ugrizY&#39;</span><span class="p">:</span>
         <span class="c1"># Iterate over bands with and without the atmosphere</span>
         <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;_filter&#39;</span><span class="p">):</span>
@@ -207,7 +206,7 @@
     <span class="n">register_sncosmo_filter</span><span class="p">(</span><span class="n">throughput</span><span class="p">[</span><span class="s1">&#39;wave&#39;</span><span class="p">],</span> <span class="n">throughput</span><span class="p">[</span><span class="s1">&#39;atm&#39;</span><span class="p">],</span> <span class="s1">&#39;DECam_atm&#39;</span><span class="p">,</span> <span class="n">force</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="register_lsst_filters"><a class="viewcode-back" href="../../api/filters.html#snat_sim.filters.register_lsst_filters">[docs]</a><span class="k">def</span> <span class="nf">register_lsst_filters</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="register_lsst_filters"><a class="viewcode-back" href="../../api/filters.html#snat_sim.filters.register_lsst_filters">[docs]</a><span class="k">def</span> <span class="nf">register_lsst_filters</span><span class="p">(</span><span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Register LSST filter scripts, hardware responses, and fiducial ATM with sncosmo</span>
 
 <span class="sd">    Registered Filters:</span>
@@ -224,10 +223,10 @@
 <span class="sd">        - lsst_&lt;ugrizy&gt;_no_atm: Throughput in each band without a fiducial atmosphere</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        force (bool): Re-register bands even if they are already registered</span>
+<span class="sd">        force: Re-register bands even if they are already registered</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">lsst_filter_dir</span> <span class="o">=</span> <span class="n">FILTER_DIR</span> <span class="o">/</span> <span class="s1">&#39;lsst_baseline&#39;</span>
+    <span class="n">lsst_filter_dir</span> <span class="o">=</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">get_filters_dir</span><span class="p">(</span><span class="s1">&#39;lsst_baseline&#39;</span><span class="p">)</span>
     <span class="n">nm_in_angstrom</span> <span class="o">=</span> <span class="mi">10</span>
 
     <span class="c1"># Define file names for each optical component</span>

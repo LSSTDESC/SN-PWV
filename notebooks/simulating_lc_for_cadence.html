@@ -108,14 +108,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils_caching.html">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -412,25 +413,16 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">filters</span><span class="o">.</span><span class="n">register_lsst_filters</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Simulation data directory:&#39;</span><span class="p">,</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">get_data_dir</span><span class="p">())</span>
 
 </pre></div>
 </div>
-</div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<div class="highlight"><pre>
-Simulation data directory: /mnt/md0/sn-sims
-</pre></div></div>
 </div>
 <div class="section" id="The-PLaSTICC-Data">
 <h2>The PLaSTICC Data<a class="headerlink" href="#The-PLaSTICC-Data" title="Permalink to this headline">¶</a></h2>
@@ -451,7 +443,7 @@ Simulation data directory: /mnt/md0/sn-sims
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&#39;kraken_2044&#39;, &#39;alt_sched_rolling&#39;, &#39;alt_sched&#39;, &#39;kraken_2026&#39;]
+[&#39;kraken_2044&#39;, &#39;joblib&#39;, &#39;alt_sched_rolling&#39;, &#39;alt_sched&#39;, &#39;kraken_2026&#39;]
 </pre></div></div>
 </div>
 <p>Simulated light-curves are written in the SNANA file format and are distributed across multiple files. We load a light-curve from one of these files and demonstrate the data model below. Each cadence includes simulations run with multiple supernova models. In this notebook we only need simulations for normal SNe (Model 11).</p>
@@ -523,7 +515,7 @@ Params:
 </div>
 <div class="output_area rendered_html docutils container">
 <i>Table length=205</i>
-<table id="table140443442250032" class="table-striped table-bordered table-condensed">
+<table id="table139760532764800" class="table-striped table-bordered table-condensed">
 <thead><tr><th>MJD</th><th>FLT</th><th>FIELD</th><th>PHOTFLAG</th><th>PHOTPROB</th><th>FLUXCAL</th><th>FLUXCALERR</th><th>PSF_SIG1</th><th>SKY_SIG</th><th>ZEROPT</th><th>SIM_MAGOBS</th></tr></thead>
 <thead><tr><th>float64</th><th>str2</th><th>str12</th><th>int32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th></tr></thead>
 <tr><td>61387.3365</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>4.7668333</td><td>4.6751437</td><td>2.01</td><td>24.21</td><td>31.49</td><td>98.93107</td></tr>

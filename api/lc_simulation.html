@@ -31,8 +31,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.reference_stars" href="reference_stars.html" />
-    <link rel="prev" title="snat_sim.plasticc" href="plasticc.html" />
+    <link rel="next" title="snat_sim.models" href="models.html" />
+    <link rel="prev" title="snat_sim.fitting_pipeline" href="fitting_pipeline.html" />
   
    
 
@@ -47,10 +47,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="reference_stars.html" title="snat_sim.reference_stars"
+          <a href="models.html" title="snat_sim.models"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="plasticc.html" title="snat_sim.plasticc"
+          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.lc_simulation</a></li> 
@@ -103,14 +103,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="time_series_utils.html">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_caching.html">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -159,39 +160,45 @@ approaches are demonstrated below.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>z</strong> (<em>float</em>) – Redshift to determine x0 for</p></li>
-<li><p><strong>source</strong> (<em>Source</em><em>, </em><em>str</em>) – Spectral template to use when determining x0</p></li>
-<li><p><strong>cosmo</strong> (<em>Cosmology</em>) – Cosmology to use when determining x0</p></li>
-<li><p><strong>abs_mag</strong> (<em>float</em>) – Absolute peak magnitude of the SNe Ia</p></li>
-<li><p><strong>band</strong> (<em>str</em>) – Band to set absolute magnitude in</p></li>
-<li><p><strong>magsys</strong> (<em>str</em>) – Magnitude system to set absolute magnitude in</p></li>
+<li><p><strong>z</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Redshift to determine x0 for</p></li>
+<li><p><strong>source</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Source</span></code>]) – Spectral template to use when determining x0</p></li>
+<li><p><strong>cosmo</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code>) – Cosmology to use when determining x0</p></li>
+<li><p><strong>abs_mag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Absolute peak magnitude of the SNe Ia</p></li>
+<li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to set absolute magnitude in</p></li>
+<li><p><strong>magsys</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Magnitude system to set absolute magnitude in</p></li>
 <li><p><strong>other params to set for the provided source</strong> (<em>Any</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The x0 parameter for the given source and redshift</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The x0 parameter for the given source and redshift</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="snat_sim.lc_simulation.create_observations_table">
-<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">create_observations_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">range(- 20, 51)</span></em>, <em class="sig-param"><span class="n">bands</span><span class="o">=</span><span class="default_value">('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y')</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">zpsys</span><span class="o">=</span><span class="default_value">'ab'</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#create_observations_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.create_observations_table" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">create_observations_table</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">phases</span><span class="o">=</span><span class="default_value">range(- 20, 51)</span></em>, <em class="sig-param"><span class="n">bands</span><span class="o">=</span><span class="default_value">('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y')</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">zpsys</span><span class="o">=</span><span class="default_value">'AB'</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">100</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#create_observations_table"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.create_observations_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an astropy table defining a uniform observation cadence for a single target</p>
 <p>Time values are specified in units of phase by default, but can be chosen
 to reflect any time convention.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>phases</strong> (<em>ndarray</em>) – Array of phase values to include</p></li>
-<li><p><strong>bands</strong> (<em>ndarray</em>) – Array of bands to include</p></li>
-<li><p><strong>zp</strong> (<em>float</em>) – The zero point</p></li>
-<li><p><strong>zpsys</strong> (<em>str</em>) – The zero point system</p></li>
-<li><p><strong>gain</strong> (<em>float</em>) – The simulated gain</p></li>
+<li><p><strong>phases</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Array of phase values to include</p></li>
+<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Array of bands to include</p></li>
+<li><p><strong>zp</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The zero point</p></li>
+<li><p><strong>zpsys</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The zero point system</p></li>
+<li><p><strong>gain</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The simulated gain</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An astropy table</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An astropy table</p>
 </dd>
 </dl>
 </dd></dl>
@@ -203,16 +210,19 @@ to reflect any time convention.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>obs</strong> (<em>Table</em>) – Observation cadence</p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – The sncosmo model to use in the simulations</p></li>
-<li><p><strong>pwv_arr</strong> (<em>ndarray</em>) – Array of PWV values</p></li>
-<li><p><strong>z_arr</strong> (<em>ndarray</em>) – Array of redshift values</p></li>
-<li><p><strong>snr</strong> (<em>float</em>) – Signal to noise ratio</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – Show a progress bar</p></li>
+<li><p><strong>obs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Observation cadence</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
+<li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Array of PWV values</p></li>
+<li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Array of redshift values</p></li>
+<li><p><strong>snr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Signal to noise ratio</p></li>
+<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Show a progress bar</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
 <dd class="field-even"><p>An Astropy table for each PWV and redshift</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -229,35 +239,41 @@ equal to the error of the observation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>observations</strong> (<em>Table</em>) – Table of observations.</p></li>
-<li><p><strong>model</strong> (<em>Model</em>) – The sncosmo model to use in the simulations</p></li>
-<li><p><strong>params</strong> (<em>dict</em>) – parameters to feed to the model for realizing the light-curve</p></li>
-<li><p><strong>scatter</strong> (<em>bool</em>) – Add random noise to the flux values</p></li>
+<li><p><strong>observations</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Table of observations.</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
+<li><p><strong>params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – parameters to feed to the model for realizing the light-curve</p></li>
+<li><p><strong>scatter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Add random noise to the flux values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An astropy table formatted for use with sncosmo</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An astropy table formatted for use with sncosmo</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="snat_sim.lc_simulation.simulate_lc_fixed_snr">
-<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">simulate_lc_fixed_snr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">observations</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">snr</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#simulate_lc_fixed_snr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.simulate_lc_fixed_snr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">snat_sim.lc_simulation.</code><code class="sig-name descname">simulate_lc_fixed_snr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">obs</span></em>, <em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">snr</span><span class="o">=</span><span class="default_value">0.05</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/lc_simulation.html#simulate_lc_fixed_snr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.lc_simulation.simulate_lc_fixed_snr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate a SN light-curve with a fixed SNR given a set of observations</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">obs</span></code> table is expected to have columns for ‘time’, ‘band’, ‘zp’,
 and ‘zpsys’.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>observations</strong> (<em>Table</em>) – Table outlining the observation cadence</p></li>
-<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><em>SNModel</em></a>) – Supernova model to evaluate</p></li>
-<li><p><strong>snr</strong> (<em>float</em>) – Signal to noise ratio</p></li>
+<li><p><strong>obs</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Table outlining the observation cadence</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Supernova model to evaluate</p></li>
+<li><p><strong>snr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Signal to noise ratio</p></li>
 <li><p><strong>**params</strong> – Values for any model parameters</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An astropy table formatted for use with sncosmo</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An astropy table formatted for use with sncosmo</p>
 </dd>
 </dl>
 </dd></dl>
@@ -280,10 +296,10 @@ and ‘zpsys’.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="reference_stars.html" title="snat_sim.reference_stars"
+          <a href="models.html" title="snat_sim.models"
              >next</a> |</li>
         <li class="right" >
-          <a href="plasticc.html" title="snat_sim.plasticc"
+          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.lc_simulation</a></li> 

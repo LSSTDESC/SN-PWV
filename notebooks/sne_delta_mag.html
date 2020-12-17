@@ -111,14 +111,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils_caching.html">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -474,7 +475,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 1155/1155 [00:02&lt;00:00, 417.69it/s]
+Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 625.58it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -542,7 +543,7 @@ Tabulating Mag: 100%|██████████| 1155/1155 [00:02&lt;00:00, 
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 345.62it/s]
+Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 502.75it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -596,30 +597,30 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area rendered_html docutils container">
 <i>Table length=355</i>
-<table id="table139903426348320" class="table-striped table-bordered table-condensed">
+<table id="table139634840885376" class="table-striped table-bordered table-condensed">
 <thead><tr><th>time</th><th>band</th><th>zp</th><th>zpsys</th></tr></thead>
 <thead><tr><th>float64</th><th>str1000</th><th>float64</th><th>str100</th></tr></thead>
-<tr><td>-20.0</td><td>lsst_hardware_g</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-20.0</td><td>lsst_hardware_y</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-20.0</td><td>lsst_hardware_i</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-20.0</td><td>lsst_hardware_z</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-20.0</td><td>lsst_hardware_r</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-19.0</td><td>lsst_hardware_z</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-19.0</td><td>lsst_hardware_r</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-19.0</td><td>lsst_hardware_y</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-19.0</td><td>lsst_hardware_g</td><td>25.0</td><td>ab</td></tr>
-<tr><td>-19.0</td><td>lsst_hardware_i</td><td>25.0</td><td>ab</td></tr>
+<tr><td>-20.0</td><td>lsst_hardware_g</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-20.0</td><td>lsst_hardware_y</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-20.0</td><td>lsst_hardware_i</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-20.0</td><td>lsst_hardware_z</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-20.0</td><td>lsst_hardware_r</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-19.0</td><td>lsst_hardware_z</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-19.0</td><td>lsst_hardware_r</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-19.0</td><td>lsst_hardware_y</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-19.0</td><td>lsst_hardware_g</td><td>25.0</td><td>AB</td></tr>
+<tr><td>-19.0</td><td>lsst_hardware_i</td><td>25.0</td><td>AB</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>49.0</td><td>lsst_hardware_y</td><td>25.0</td><td>ab</td></tr>
-<tr><td>49.0</td><td>lsst_hardware_i</td><td>25.0</td><td>ab</td></tr>
-<tr><td>49.0</td><td>lsst_hardware_r</td><td>25.0</td><td>ab</td></tr>
-<tr><td>49.0</td><td>lsst_hardware_z</td><td>25.0</td><td>ab</td></tr>
-<tr><td>49.0</td><td>lsst_hardware_g</td><td>25.0</td><td>ab</td></tr>
-<tr><td>50.0</td><td>lsst_hardware_i</td><td>25.0</td><td>ab</td></tr>
-<tr><td>50.0</td><td>lsst_hardware_r</td><td>25.0</td><td>ab</td></tr>
-<tr><td>50.0</td><td>lsst_hardware_z</td><td>25.0</td><td>ab</td></tr>
-<tr><td>50.0</td><td>lsst_hardware_g</td><td>25.0</td><td>ab</td></tr>
-<tr><td>50.0</td><td>lsst_hardware_y</td><td>25.0</td><td>ab</td></tr>
+<tr><td>49.0</td><td>lsst_hardware_y</td><td>25.0</td><td>AB</td></tr>
+<tr><td>49.0</td><td>lsst_hardware_i</td><td>25.0</td><td>AB</td></tr>
+<tr><td>49.0</td><td>lsst_hardware_r</td><td>25.0</td><td>AB</td></tr>
+<tr><td>49.0</td><td>lsst_hardware_z</td><td>25.0</td><td>AB</td></tr>
+<tr><td>49.0</td><td>lsst_hardware_g</td><td>25.0</td><td>AB</td></tr>
+<tr><td>50.0</td><td>lsst_hardware_i</td><td>25.0</td><td>AB</td></tr>
+<tr><td>50.0</td><td>lsst_hardware_r</td><td>25.0</td><td>AB</td></tr>
+<tr><td>50.0</td><td>lsst_hardware_z</td><td>25.0</td><td>AB</td></tr>
+<tr><td>50.0</td><td>lsst_hardware_g</td><td>25.0</td><td>AB</td></tr>
+<tr><td>50.0</td><td>lsst_hardware_y</td><td>25.0</td><td>AB</td></tr>
 </table></div>
 </div>
 <div class="nbinput docutils container">
@@ -647,8 +648,8 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 231/231 [01:45&lt;00:00,  2.19it/s]
-Light-Curves: 100%|██████████| 63/63 [00:33&lt;00:00,  1.90it/s]
+Light-Curves: 100%|██████████| 231/231 [00:59&lt;00:00,  3.86it/s]
+Light-Curves: 100%|██████████| 63/63 [00:17&lt;00:00,  3.65it/s]
 </pre></div></div>
 </div>
 <p>Here we visualize the fitted, uncorrected (i.e. without any stretch / color correction) magnitudes.</p>
@@ -799,13 +800,13 @@ Light-Curves: 100%|██████████| 63/63 [00:33&lt;00:00,  1.90i
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">iter_light_curve_iter_with_ref</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">reference_types</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">)):</span>
+<span></span><span class="k">def</span> <span class="nf">iter_light_curve_iter_with_ref</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">)):</span>
 
     <span class="n">observations</span> <span class="o">=</span> <span class="n">lc_simulation</span><span class="o">.</span><span class="n">create_observations_table</span><span class="p">(</span><span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">)</span>
     <span class="n">light_curves</span> <span class="o">=</span> <span class="n">lc_simulation</span><span class="o">.</span><span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">observations</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">light_curves</span><span class="p">:</span>
         <span class="n">pwv</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span>
-        <span class="k">yield</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">divide_ref_from_lc</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">,</span> <span class="n">reference_types</span><span class="o">=</span><span class="n">reference_types</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">divide_ref_from_lc</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="n">spectral_types</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -827,7 +828,7 @@ Light-Curves: 100%|██████████| 63/63 [00:33&lt;00:00,  1.90i
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 231/231 [02:06&lt;00:00,  1.83it/s]
+Light-Curves: 100%|██████████| 231/231 [01:03&lt;00:00,  3.65it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">

@@ -96,14 +96,15 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/time_series_utils.html">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils_caching.html">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -162,70 +163,50 @@
 <span class="sd">-----------</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span> <span class="nn">warnings</span> <span class="kn">import</span> <span class="n">warn</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">astropy.cosmology.core</span> <span class="kn">import</span> <span class="n">Cosmology</span>
 <span class="kn">from</span> <span class="nn">astropy.io</span> <span class="kn">import</span> <span class="n">fits</span>
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span><span class="p">,</span> <span class="n">lc_simulation</span>
+<span class="kn">from</span> <span class="nn">._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">SNModel</span>
 
-<span class="n">DEFAULT_DATA_DIR</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;data&#39;</span> <span class="o">/</span> <span class="s1">&#39;plasticc&#39;</span>
-
-
-<div class="viewcode-block" id="get_data_dir"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.get_data_dir">[docs]</a><span class="k">def</span> <span class="nf">get_data_dir</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Return the directory where the package expects PLaSTICC simulation to be located</span>
-
-<span class="sd">    This value is the same as the environmental ``CADENCE_SIMS`` directory.</span>
-<span class="sd">    If the environmental variable is not set, defaults to the project&#39;s</span>
-<span class="sd">    ``data`` directory.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        A ``Path`` object pointing to the data directory</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">try</span><span class="p">:</span>
-        <span class="n">plasticc_simulations_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CADENCE_SIMS&#39;</span><span class="p">])</span>
-
-    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-        <span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;``CADENCE_SIMS`` is not set in environment. Defaulting to </span><span class="si">{</span><span class="n">DEFAULT_DATA_DIR</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="n">plasticc_simulations_directory</span> <span class="o">=</span> <span class="n">DEFAULT_DATA_DIR</span>
-
-    <span class="k">return</span> <span class="n">plasticc_simulations_directory</span></div>
+<span class="n">Numeric</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="get_available_cadences"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.get_available_cadences">[docs]</a><span class="k">def</span> <span class="nf">get_available_cadences</span><span class="p">():</span>
+<div class="viewcode-block" id="get_available_cadences"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.get_available_cadences">[docs]</a><span class="k">def</span> <span class="nf">get_available_cadences</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Return a list of all available cadences in the PLaSTICC simulation directory&quot;&quot;&quot;</span>
 
-    <span class="k">return</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">get_data_dir</span><span class="p">()</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span></div>
+    <span class="k">return</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">get_plasticc_dir</span><span class="p">()</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span></div>
 
 
-<div class="viewcode-block" id="get_model_headers"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.get_model_headers">[docs]</a><span class="k">def</span> <span class="nf">get_model_headers</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="get_model_headers"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.get_model_headers">[docs]</a><span class="k">def</span> <span class="nf">get_model_headers</span><span class="p">(</span><span class="n">cadence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Path</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Return a list of all header files for a given cadence and model</span>
 
 <span class="sd">    Default is model 11 (Normal SNe)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cadence (str): Name of the cadence to list header files for</span>
-<span class="sd">        model   (int): Model number to retrieve header paths for</span>
+<span class="sd">        cadence: Name of the cadence to list header files for</span>
+<span class="sd">        model: Model number to retrieve header paths for</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        A list of Path objects</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">sim_dir</span> <span class="o">=</span> <span class="n">get_data_dir</span><span class="p">()</span> <span class="o">/</span> <span class="n">cadence</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;LSST_WFD_</span><span class="si">{</span><span class="n">cadence</span><span class="si">}</span><span class="s1">_MODEL</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">&#39;</span>
-    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">sim_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*HEAD.FITS&#39;</span><span class="p">))</span></div>
+    <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">data_paths</span><span class="o">.</span><span class="n">get_plasticc_dir</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*HEAD.FITS&#39;</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="count_light_curves"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.count_light_curves">[docs]</a><span class="k">def</span> <span class="nf">count_light_curves</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+<div class="viewcode-block" id="count_light_curves"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.count_light_curves">[docs]</a><span class="k">def</span> <span class="nf">count_light_curves</span><span class="p">(</span><span class="n">cadence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Return the number of available light-curve simulations for a given cadence and model</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cadence (str): Name of the cadence to list header files for</span>
-<span class="sd">        model   (int): Model number to retrieve header paths for</span>
+<span class="sd">        cadence: Name of the cadence to list header files for</span>
+<span class="sd">        model: Model number to retrieve header paths for</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Number of simulated light-curves available in the working environment</span>
@@ -241,15 +222,15 @@
     <span class="k">return</span> <span class="n">total_lc</span></div>
 
 
-<div class="viewcode-block" id="iter_lc_for_header"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.iter_lc_for_header">[docs]</a><span class="k">def</span> <span class="nf">iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="iter_lc_for_header"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.iter_lc_for_header">[docs]</a><span class="k">def</span> <span class="nf">iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterate over light-curves from a given header file</span>
 
 <span class="sd">    Files are expected in pairs of a header file (`*HEAD.fits`) that stores target</span>
 <span class="sd">    meta data and a photometry file (`*PHOT.fits`) with simulated light-curves.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        header_path     (Path, str): Path of the header file</span>
-<span class="sd">        verbose (bool): Display a progress bar</span>
+<span class="sd">        header_path: Path of the header file</span>
+<span class="sd">        verbose: Display a progress bar</span>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        An Astropy table with the MJD and filter for each observation</span>
@@ -277,18 +258,18 @@
             <span class="n">lc</span> <span class="o">=</span> <span class="n">phot_data</span><span class="p">[</span><span class="n">lc_start</span><span class="p">:</span> <span class="n">lc_end</span><span class="p">]</span>
             <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
 
-            <span class="k">yield</span> <span class="n">lc</span>
-            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-            <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span></div>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+            <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="k">yield</span> <span class="n">lc</span></div>
 
 
-<div class="viewcode-block" id="iter_lc_for_cadence_model"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.iter_lc_for_cadence_model">[docs]</a><span class="k">def</span> <span class="nf">iter_lc_for_cadence_model</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<div class="viewcode-block" id="iter_lc_for_cadence_model"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.iter_lc_for_cadence_model">[docs]</a><span class="k">def</span> <span class="nf">iter_lc_for_cadence_model</span><span class="p">(</span><span class="n">cadence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Table</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Iterate over simulated light-curves  for a given cadence</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cadence  (str): Name of the cadence to summarize</span>
-<span class="sd">        model    (int): Model number to retrieve light-curves for</span>
-<span class="sd">        verbose (bool): Display a progress bar</span>
+<span class="sd">        cadence: Name of the cadence to summarize</span>
+<span class="sd">        model: Model number to retrieve light-curves for</span>
+<span class="sd">        verbose: Display a progress bar</span>
 
 <span class="sd">    Yields:</span>
 <span class="sd">        An Astropy table with the MJD and filter for each observation</span>
@@ -300,16 +281,16 @@
     <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">light_curve_iter</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">header_path</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-                <span class="k">yield</span> <span class="n">lc</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span></div>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+                <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+                <span class="k">yield</span> <span class="n">lc</span></div>
 
 
-<div class="viewcode-block" id="format_plasticc_sncosmo"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.format_plasticc_sncosmo">[docs]</a><span class="k">def</span> <span class="nf">format_plasticc_sncosmo</span><span class="p">(</span><span class="n">light_curve</span><span class="p">):</span>
+<div class="viewcode-block" id="format_plasticc_sncosmo"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.format_plasticc_sncosmo">[docs]</a><span class="k">def</span> <span class="nf">format_plasticc_sncosmo</span><span class="p">(</span><span class="n">light_curve</span><span class="p">:</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Format a PLaSTICC light-curve to be compatible with sncosmo</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        light_curve (Table): Table of PLaSTICC light-curve data</span>
+<span class="sd">        light_curve: Table of PLaSTICC light-curve data</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        An astropy table formatted for use with sncosmo</span>
@@ -329,7 +310,13 @@
     <span class="k">return</span> <span class="n">lc</span></div>
 
 
-<div class="viewcode-block" id="extract_cadence_data"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.extract_cadence_data">[docs]</a><span class="k">def</span> <span class="nf">extract_cadence_data</span><span class="p">(</span><span class="n">light_curve</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skynoise</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">drop_nondetection</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="extract_cadence_data"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.extract_cadence_data">[docs]</a><span class="k">def</span> <span class="nf">extract_cadence_data</span><span class="p">(</span>
+        <span class="n">light_curve</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span>
+        <span class="n">zp</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="mi">25</span><span class="p">,</span>
+        <span class="n">gain</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">skynoise</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">drop_nondetection</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Extract the observational cadence from a PLaSTICC light-curve</span>
 
 <span class="sd">    Returned table is formatted for use with ``sncosmo.realize_lcs``.</span>
@@ -361,17 +348,24 @@
 
 
 <div class="viewcode-block" id="duplicate_plasticc_sncosmo"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.duplicate_plasticc_sncosmo">[docs]</a><span class="k">def</span> <span class="nf">duplicate_plasticc_sncosmo</span><span class="p">(</span>
-        <span class="n">light_curve</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skynoise</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">):</span>
+        <span class="n">light_curve</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
+        <span class="n">zp</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gain</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">skynoise</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">scatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">cosmo</span><span class="p">:</span> <span class="n">Cosmology</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        light_curve  (Table): Astropy table with PLaSTICC light-curve data</span>
-<span class="sd">        model      (SNModel): SNModel to use when simulating light-curve flux</span>
-<span class="sd">        zp    (float, array): Optionally overwrite the PLaSTICC zero-point with this value</span>
-<span class="sd">        gain         (float): Gain to use during simulation</span>
-<span class="sd">        skynoise     (float):  Optionally overwrite the PLaSTICC skynoise with this value</span>
-<span class="sd">        scatter       (bool): Add random noise to the flux values</span>
-<span class="sd">        cosmo    (Cosmology): Rescale the ``x0`` parameter according to the given cosmology</span>
+<span class="sd">        light_curve: Astropy table with PLaSTICC light-curve data</span>
+<span class="sd">        model: SNModel to use when simulating light-curve flux</span>
+<span class="sd">        zp: Optionally overwrite the PLaSTICC zero-point with this value</span>
+<span class="sd">        gain: Gain to use during simulation</span>
+<span class="sd">        skynoise:  Optionally overwrite the PLaSTICC skynoise with this value</span>
+<span class="sd">        scatter: Add random noise to the flux values</span>
+<span class="sd">        cosmo: Rescale the ``x0`` parameter according to the given cosmology</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Astropy table with data for the simulated light-curve</span>

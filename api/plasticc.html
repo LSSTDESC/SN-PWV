@@ -31,7 +31,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.lc_simulation" href="lc_simulation.html" />
+    <link rel="next" title="snat_sim.reference_stars" href="reference_stars.html" />
     <link rel="prev" title="snat_sim.models" href="models.html" />
   
    
@@ -47,7 +47,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="lc_simulation.html" title="snat_sim.lc_simulation"
+          <a href="reference_stars.html" title="snat_sim.reference_stars"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="models.html" title="snat_sim.models"
@@ -103,14 +103,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="time_series_utils.html">snat_sim.time_series_utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_caching.html">snat_sim.utils.caching</a></li>
 </ul>
 
     
@@ -168,12 +169,15 @@ returned tables to the data model used by the <code class="docutils literal notr
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cadence</strong> (<em>str</em>) – Name of the cadence to list header files for</p></li>
-<li><p><strong>model</strong> (<em>int</em>) – Model number to retrieve header paths for</p></li>
+<li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the cadence to list header files for</p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Model number to retrieve header paths for</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Number of simulated light-curves available in the working environment</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Number of simulated light-curves available in the working environment</p>
 </dd>
 </dl>
 </dd></dl>
@@ -185,17 +189,20 @@ returned tables to the data model used by the <code class="docutils literal notr
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>light_curve</strong> (<em>Table</em>) – Astropy table with PLaSTICC light-curve data</p></li>
-<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><em>SNModel</em></a>) – SNModel to use when simulating light-curve flux</p></li>
-<li><p><strong>zp</strong> (<em>float</em><em>, </em><em>array</em>) – Optionally overwrite the PLaSTICC zero-point with this value</p></li>
-<li><p><strong>gain</strong> (<em>float</em>) – Gain to use during simulation</p></li>
-<li><p><strong>skynoise</strong> (<em>float</em>) – Optionally overwrite the PLaSTICC skynoise with this value</p></li>
-<li><p><strong>scatter</strong> (<em>bool</em>) – Add random noise to the flux values</p></li>
-<li><p><strong>cosmo</strong> (<em>Cosmology</em>) – Rescale the <code class="docutils literal notranslate"><span class="pre">x0</span></code> parameter according to the given cosmology</p></li>
+<li><p><strong>light_curve</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Astropy table with PLaSTICC light-curve data</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – SNModel to use when simulating light-curve flux</p></li>
+<li><p><strong>zp</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – Optionally overwrite the PLaSTICC zero-point with this value</p></li>
+<li><p><strong>gain</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Gain to use during simulation</p></li>
+<li><p><strong>skynoise</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – Optionally overwrite the PLaSTICC skynoise with this value</p></li>
+<li><p><strong>scatter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Add random noise to the flux values</p></li>
+<li><p><strong>cosmo</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code>) – Rescale the <code class="docutils literal notranslate"><span class="pre">x0</span></code> parameter according to the given cosmology</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>Astropy table with data for the simulated light-curve</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Astropy table with data for the simulated light-curve</p>
 </dd>
 </dl>
 </dd></dl>
@@ -215,8 +222,11 @@ returned tables to the data model used by the <code class="docutils literal notr
 <li><p><strong>drop_nondetection</strong> (<em>bool</em>) – Drop data with PHOTFLAG == 0</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An astropy table with cadence data for the input light-curve</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An astropy table with cadence data for the input light-curve</p>
 </dd>
 </dl>
 </dd></dl>
@@ -227,10 +237,13 @@ returned tables to the data model used by the <code class="docutils literal notr
 <dd><p>Format a PLaSTICC light-curve to be compatible with sncosmo</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>light_curve</strong> (<em>Table</em>) – Table of PLaSTICC light-curve data</p>
+<dd class="field-odd"><p><strong>light_curve</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Table of PLaSTICC light-curve data</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An astropy table formatted for use with sncosmo</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An astropy table formatted for use with sncosmo</p>
 </dd>
 </dl>
 </dd></dl>
@@ -239,18 +252,9 @@ returned tables to the data model used by the <code class="docutils literal notr
 <dt id="snat_sim.plasticc.get_available_cadences">
 <code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">get_available_cadences</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#get_available_cadences"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.get_available_cadences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of all available cadences in the PLaSTICC simulation directory</p>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.plasticc.get_data_dir">
-<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">get_data_dir</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#get_data_dir"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.get_data_dir" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the directory where the package expects PLaSTICC simulation to be located</p>
-<p>This value is the same as the environmental <code class="docutils literal notranslate"><span class="pre">CADENCE_SIMS</span></code> directory.
-If the environmental variable is not set, defaults to the project’s
-<code class="docutils literal notranslate"><span class="pre">data</span></code> directory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>Path object pointing to the data directory</strong> (<em>A</em>) – </p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -263,12 +267,15 @@ If the environmental variable is not set, defaults to the project’s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cadence</strong> (<em>str</em>) – Name of the cadence to list header files for</p></li>
-<li><p><strong>model</strong> (<em>int</em>) – Model number to retrieve header paths for</p></li>
+<li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the cadence to list header files for</p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Model number to retrieve header paths for</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A list of Path objects</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of Path objects</p>
 </dd>
 </dl>
 </dd></dl>
@@ -280,13 +287,16 @@ If the environmental variable is not set, defaults to the project’s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cadence</strong> (<em>str</em>) – Name of the cadence to summarize</p></li>
-<li><p><strong>model</strong> (<em>int</em>) – Model number to retrieve light-curves for</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – Display a progress bar</p></li>
+<li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the cadence to summarize</p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Model number to retrieve light-curves for</p></li>
+<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Display a progress bar</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
 <dd class="field-even"><p>An Astropy table with the MJD and filter for each observation</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -300,8 +310,8 @@ meta data and a photometry file (<cite>*PHOT.fits</cite>) with simulated light-c
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>header_path</strong> (<em>Path</em><em>, </em><em>str</em>) – Path of the header file</p></li>
-<li><p><strong>verbose</strong> (<em>bool</em>) – Display a progress bar</p></li>
+<li><p><strong>header_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Path of the header file</p></li>
+<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Display a progress bar</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
@@ -328,7 +338,7 @@ meta data and a photometry file (<cite>*PHOT.fits</cite>) with simulated light-c
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="lc_simulation.html" title="snat_sim.lc_simulation"
+          <a href="reference_stars.html" title="snat_sim.reference_stars"
              >next</a> |</li>
         <li class="right" >
           <a href="models.html" title="snat_sim.models"
