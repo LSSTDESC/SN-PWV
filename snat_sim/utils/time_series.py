@@ -1,4 +1,4 @@
-"""The ``time_series_utils.py`` module provides limited functionality
+"""The ``time_series`` module provides limited functionality
 for manipulating time series data. It is intended to supplement existing
 functionality in the ``pandas`` package with support for tasks particular to
 dealing with atmospheric / weather data.
@@ -7,12 +7,23 @@ Module Docs
 -----------
 """
 
-import datetime
 import warnings
+from datetime import date, datetime
+from typing import *
 
 import numpy as np
 import pandas as pd
 from astropy import units as u
+
+
+@overload
+def datetime_to_sec_in_year(date: datetime) -> float:
+    ...
+
+
+@overload
+def datetime_to_sec_in_year(date: Collection[datetime]) -> np.ndarray:
+    ...
 
 
 def datetime_to_sec_in_year(date):
@@ -21,10 +32,10 @@ def datetime_to_sec_in_year(date):
     Accurate to within a microsecond.
 
     Args:
-        date (datetime, array, pd.Datetime): Pandas datetime array
+        date: Date(s) to calculate seconds for
 
     Returns:
-        A single float or a numpy array of integers
+        A single float or a numpy array
     """
 
     # Using ``atleast_1d`` with ``to_datetime`` guarantees a ``DatetimeIndex``
@@ -48,7 +59,7 @@ def datetime_to_sec_in_year(date):
     return seconds
 
 
-def supplemented_data(input_data, year, supp_years=tuple()):
+def supplemented_data(input_data: pd.Series, year: int, supp_years: Collection[int] = tuple()) -> pd.Series:
     """Return the supplemented subset of a dataframe corresponding to a given year
 
     Data for the given year is supplemented with any available data from
@@ -58,9 +69,9 @@ def supplemented_data(input_data, year, supp_years=tuple()):
     specified by the ``supp_years`` argument.
 
     Args:
-        input_data     (pandas.Series): Series of data to use indexed by datetime
-        year                   (float): Year to supplement data for
-        supp_years (collection[float]): Years to supplement data with when missing from ``year``
+        input_data: Series of data to use indexed by datetime
+        year: Year to supplement data for
+        supp_years: Years to supplement data with when missing from ``year``
 
     Returns:
         A pandas Series object
@@ -84,13 +95,13 @@ def supplemented_data(input_data, year, supp_years=tuple()):
     return stacked_pwv[~stacked_pwv.index.duplicated(keep='first')]
 
 
-def periodic_interpolation(series):
+def periodic_interpolation(series: pd.Series) -> pd.Series:
     """Similar to linear interpolation on a pandas array, but missing values
     at the beginning and end of the series are interpolated assuming a periodic
     boundary condition.
 
     Args:
-        series (pandas.Series): A Pandas Series to infill by linear interpolation
+        series: A Pandas Series to infill by linear interpolation
 
     Returns:
         An interpolated copy of the passed series
@@ -115,12 +126,12 @@ def periodic_interpolation(series):
     return series.sort_index().interpolate().truncate(start_idx, end_idx)
 
 
-def resample_data_across_year(series):
+def resample_data_across_year(series: pd.Series) -> pd.Series:
     """Return a copy of a pandas series resampled evenly from the
     beginning of the earliest year through the end of the latest year.
 
     Args:
-        series (pd.Series): A series with a Datetime index
+        series: A series with a Datetime index
 
     Returns:
         A copy of the passed series interpolated for January first through December 31st
@@ -141,7 +152,7 @@ def resample_data_across_year(series):
 
 
 @np.vectorize
-def datetime_to_season(time):
+def datetime_to_season(time: Union[datetime, Collection[datetime]]) -> np.ndarray:
     """Determine the calendar season corresponding to a given datetime
 
     Seasons are labeled as 'winter', 'spring', 'summer', or 'fall'.
@@ -155,12 +166,12 @@ def datetime_to_season(time):
 
     dummy_year = 2000  # dummy leap year to allow input X-02-29 (leap day)
     seasons = [
-        ('winter', (datetime.date(dummy_year, 1, 1), datetime.date(dummy_year, 3, 20))),
-        ('spring', (datetime.date(dummy_year, 3, 20), datetime.date(dummy_year, 6, 20))),
-        ('summer', (datetime.date(dummy_year, 6, 20), datetime.date(dummy_year, 9, 22))),
-        ('fall', (datetime.date(dummy_year, 9, 22), datetime.date(dummy_year, 12, 20))),
-        ('winter', (datetime.date(dummy_year, 12, 20), datetime.date(dummy_year + 1, 1, 1)))
+        ('winter', (date(dummy_year, 1, 1), date(dummy_year, 3, 20))),
+        ('spring', (date(dummy_year, 3, 20), date(dummy_year, 6, 20))),
+        ('summer', (date(dummy_year, 6, 20), date(dummy_year, 9, 22))),
+        ('fall', (date(dummy_year, 9, 22), date(dummy_year, 12, 20))),
+        ('winter', (date(dummy_year, 12, 20), date(dummy_year + 1, 1, 1)))
     ]
 
     time = time.date().replace(year=dummy_year)
-    return next(season for season, (start, end) in seasons if start <= time < end)
+    return cast(np.ndarray, next(season for season, (start, end) in seasons if start <= time < end))

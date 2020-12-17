@@ -177,7 +177,7 @@ class IterLCS(TestCase):
 
         self.pwv_vals = 0.01, 5
         self.z_vals = 0.01, 1
-        self.model = sncosmo.Model('salt2-extended')
+        self.model = models.SNModel('salt2-extended')
         self.model.add_effect(models.StaticPWVTrans(), '', 'obs')
 
         self.observations = lc_simulation.create_observations_table()

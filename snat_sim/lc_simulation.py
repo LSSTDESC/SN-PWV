@@ -33,27 +33,36 @@ Module Docs
 
 import itertools
 from copy import copy
+from typing import *
 
 import numpy as np
 import sncosmo
+from astropy.cosmology.core import Cosmology
 from astropy.table import Table
 from tqdm import tqdm
 
 from . import constants as const
+from .models import SNModel
 
 
 def calc_x0_for_z(
-        z, source, cosmo=const.betoule_cosmo, abs_mag=const.betoule_abs_mb,
-        band='standard::b', magsys='AB', **params):
+        z: float,
+        source: Union[str, sncosmo.Source],
+        cosmo: Cosmology = const.betoule_cosmo,
+        abs_mag: float = const.betoule_abs_mb,
+        band: str = 'standard::b',
+        magsys: str = 'AB',
+        **params
+) -> float:
     """Determine x0 for a given redshift and spectral template
 
     Args:
-         z            (float): Redshift to determine x0 for
-         source (Source, str): Spectral template to use when determining x0
-         cosmo    (Cosmology): Cosmology to use when determining x0
-         abs_mag      (float): Absolute peak magnitude of the SNe Ia
-         band           (str): Band to set absolute magnitude in
-         magsys         (str): Magnitude system to set absolute magnitude in
+         z: Redshift to determine x0 for
+         source: Spectral template to use when determining x0
+         cosmo: Cosmology to use when determining x0
+         abs_mag: Absolute peak magnitude of the SNe Ia
+         band: Band to set absolute magnitude in
+         magsys: Magnitude system to set absolute magnitude in
          Any other params to set for the provided `source`
 
     Returns:
@@ -66,23 +75,25 @@ def calc_x0_for_z(
     return model['x0']
 
 
+# Todo: The default gain value here makes no physical sense
 def create_observations_table(
-        phases=range(-20, 51),
-        bands=('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
-        zp=25,
-        zpsys='ab',
-        gain=100):
+        phases: Collection[float] = range(-20, 51),
+        bands: Collection[str] = ('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
+        zp: Union[int, float] = 25,
+        zpsys: str = 'AB',
+        gain: int = 100
+) -> Table:
     """Create an astropy table defining a uniform observation cadence for a single target
 
     Time values are specified in units of phase by default, but can be chosen
     to reflect any time convention.
 
     Args:
-        phases (ndarray): Array of phase values to include
-        bands  (ndarray): Array of bands to include
-        zp       (float): The zero point
-        zpsys      (str): The zero point system
-        gain     (float): The simulated gain
+        phases: Array of phase values to include
+        bands: Array of bands to include
+        zp: The zero point
+        zpsys: The zero point system
+        gain: The simulated gain
 
     Returns:
         An astropy table
@@ -111,17 +122,18 @@ def create_observations_table(
     return observations
 
 
-def simulate_lc_fixed_snr(observations, model, snr=.05, **params):
+# Todo: The default gain value should match create_observations_table
+def simulate_lc_fixed_snr(obs: Table, model: SNModel, snr: float = .05, **params) -> Table:
     """Simulate a SN light-curve with a fixed SNR given a set of observations
 
     The ``obs`` table is expected to have columns for 'time', 'band', 'zp',
     and 'zpsys'.
 
     Args:
-        observations (Table): Table outlining the observation cadence
-        model    (SNModel): Supernova model to evaluate
-        snr        (float): Signal to noise ratio
-        **params          : Values for any model parameters
+        obs: Table outlining the observation cadence
+        model: Supernova model to evaluate
+        snr: Signal to noise ratio
+        **params: Values for any model parameters
 
     Returns:
         An astropy table formatted for use with sncosmo
@@ -134,24 +146,30 @@ def simulate_lc_fixed_snr(observations, model, snr=.05, **params):
     x0 = params.get('x0', calc_x0_for_z(model['z'], model.source))
     model.set(x0=x0)
 
-    light_curve = observations[['time', 'band', 'zp', 'zpsys']]
-    light_curve['flux'] = model.bandflux(observations['band'], observations['time'], observations['zp'],
-                                         observations['zpsys'])
+    light_curve = obs[['time', 'band', 'zp', 'zpsys']]
+    light_curve['flux'] = model.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
     light_curve['fluxerr'] = light_curve['flux'] / snr
     light_curve.meta = dict(zip(model.param_names, model.parameters))
     return light_curve
 
 
-def iter_lcs_fixed_snr(obs, model, pwv_arr, z_arr, snr=10, verbose=True):
+def iter_lcs_fixed_snr(
+        obs: Table,
+        model: SNModel,
+        pwv_arr: np.array,
+        z_arr: np.array,
+        snr: Union[float, int] = 10,
+        verbose: bool = True
+) -> Iterator[Table]:
     """Iterator over SN light-curves for combination of PWV and z values
 
     Args:
-        obs       (Table): Observation cadence
-        model     (Model): The sncosmo model to use in the simulations
-        pwv_arr (ndarray): Array of PWV values
-        z_arr   (ndarray): Array of redshift values
-        snr       (float): Signal to noise ratio
-        verbose    (bool): Show a progress bar
+        obs: Observation cadence
+        model: The sncosmo model to use in the simulations
+        pwv_arr: Array of PWV values
+        z_arr: Array of redshift values
+        snr: Signal to noise ratio
+        verbose: Show a progress bar
 
     Yields:
         An Astropy table for each PWV and redshift
@@ -165,7 +183,7 @@ def iter_lcs_fixed_snr(obs, model, pwv_arr, z_arr, snr=10, verbose=True):
         yield simulate_lc_fixed_snr(obs, model, snr, **params)
 
 
-def simulate_lc(observations, model, params=None, scatter=True):
+def simulate_lc(observations: Table, model: SNModel, params: Dict[str, float] = None, scatter: bool = True) -> Table:
     """Simulate a SN light-curve given a set of observations
 
     If ``scatter`` is ``True``, then simulated flux values include an added
@@ -176,10 +194,10 @@ def simulate_lc(observations, model, params=None, scatter=True):
     'zp', 'zpsys', 'skynoise', and 'gain'.
 
     Args:
-        observations (Table): Table of observations.
-        model        (Model): The sncosmo model to use in the simulations
-        params        (dict): parameters to feed to the model for realizing the light-curve
-        scatter       (bool): Add random noise to the flux values
+        observations: Table of observations.
+        model: The sncosmo model to use in the simulations
+        params: parameters to feed to the model for realizing the light-curve
+        scatter: Add random noise to the flux values
 
     Returns:
         An astropy table formatted for use with sncosmo

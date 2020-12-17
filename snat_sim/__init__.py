@@ -4,8 +4,6 @@ variability will impact Supernovae observed by the Legacy Survey of Space and
 Time (LSST).
 """
 
-# Explicitly import fitting_pipeline to register pandas accessors
-from snat_sim import fitting_pipeline
 from . import *
 
 __version__ = 'Development'

@@ -36,12 +36,15 @@ Module Docs
 import multiprocessing as mp
 import warnings
 from copy import copy
+from numbers import Number
 from pathlib import Path
+from typing import *
 
 import numpy as np
 import sncosmo
 
 from . import constants as const, plasticc, reference_stars
+from .models import SNModel
 
 
 class KillSignal:
@@ -53,34 +56,34 @@ class KillSignal:
 class ProcessManager:
     """Handles the starting and termination of forked processes"""
 
-    def __init__(self, processes=None):
+    def __init__(self, processes: List[mp.Process] = None) -> None:
         """Manage a collection of forked processes
 
         Args:
-            processes (List[Process]): List of processes to manage
+            processes: List of processes to manage
         """
 
         self._processes = processes or []
 
-    def kill(self):
+    def kill(self) -> None:
         """Kill all running pipeline processes without trying to exit gracefully"""
 
         for p in self._processes:
             p.terminate()
 
-    def wait_for_exit(self):
+    def wait_for_exit(self) -> None:
         """Wait for the pipeline to finish running before continuing execution"""
 
         for p in self._processes:
             p.join()
 
-    def run(self):
+    def run(self) -> None:
         """Similar to ``run_async`` but blocks further execution until finished"""
 
         self.run_async()
         self.wait_for_exit()
 
-    def run_async(self):
+    def run_async(self) -> None:
         """Start all processes asynchronously"""
 
         for p in self._processes:
@@ -90,7 +93,7 @@ class ProcessManager:
 class OutputDataModel:
     """Enforces the data model of pipeline output files"""
 
-    def __init__(self, sim_model, fit_model):
+    def __init__(self, sim_model: SNModel, fit_model: SNModel) -> None:
         """Formats data from a given supernova model into a coherent tabular format
 
         Args:
@@ -100,13 +103,14 @@ class OutputDataModel:
         self.sim_model = copy(sim_model)
         self.fit_model = copy(fit_model)
 
-    def build_table_entry(self, meta, fitted_model, result):
+    def build_table_entry(
+            self, meta: dict, fitted_model: SNModel, result: sncosmo.utils.Result) -> List:
         """Combine light-curve fit results into single row matching the output table file format
 
         Args:
-            meta          (dict): Meta data for the simulated light-curve
-            fitted_model (Model): Supernova model fitted to the data
-            result      (Result): sncosmo fit Result object
+            meta: Meta data for the simulated light-curve
+            fitted_model: Supernova model fitted to the data
+            result: sncosmo fit Result object
 
         Returns:
             A list of strings and floats
@@ -123,12 +127,12 @@ class OutputDataModel:
         out_list.append(result.message)
         return out_list
 
-    def build_masked_entry(self, meta, excep):
+    def build_masked_entry(self, meta: dict, exception: Exception) -> List:
         """Create a masked table entry for a failed light-curve fit
 
         Args:
-            meta       (dict): Meta data for the simulated light-curve
-            excep (Exception): Exception raised by the failed fit
+            meta: Meta data for the simulated light-curve
+            exception: Exception raised by the failed fit
 
         Returns:
             A list of strings and floats with masked values set as -99
@@ -139,11 +143,11 @@ class OutputDataModel:
 
         remaining_columns = len(self.column_names) - len(out_list)
         out_list.extend(np.full(remaining_columns - 1, -99))
-        out_list.append(str(excep))
+        out_list.append(str(exception))
         return out_list
 
     @property
-    def column_names(self):
+    def column_names(self) -> List[str]:
         """Return a list of column names for the data model
 
         Returns:
@@ -165,26 +169,38 @@ class OutputDataModel:
 class FittingPipeline(ProcessManager):
     """Pipeline of parallel processes for simulating and fitting light-curves"""
 
-    def __init__(self, cadence, sim_model, fit_model, vparams, out_path,
-                 fitting_pool=1, simulation_pool=1, bounds=None,
-                 quality_callback=None, max_queue=25, iter_lim=float('inf'),
-                 ref_stars=None, pwv_model=None):
+    def __init__(
+            self,
+            cadence: str,
+            sim_model: SNModel,
+            fit_model: SNModel,
+            vparams: List[str],
+            out_path: Union[str, Path],
+            fitting_pool: int = 1,
+            simulation_pool: int = 1,
+            bounds: Dict[str, Tuple[Number, Number]] = None,
+            quality_callback: callable = None,
+            max_queue: int = 25,
+            iter_lim: int = float('inf'),
+            ref_stars: Collection[str] = None,
+            pwv_model: SNModel = None
+    ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
         Args:
-            cadence               (str): Cadence to use when simulating light-curves
-            sim_model         (SNModel): Model to use when simulating light-curves
-            fit_model         (SNModel): Model to use when fitting light-curves
-            vparams         (list[str]): List of parameter names to vary in the fit
-            bounds    (dict[str, list]): Bounds to impose on ``fit_model`` parameters when fitting light-curves
-            out_path        (str, Path): Path to write results to (.csv extension is enforced)
-            fitting_pool          (int): Number of child processes allocated to simulating light-curves
-            simulation_pool       (int): Number of child processes allocated to fitting light-curves
-            quality_callback (callable): Skip light-curves if this function returns False
-            max_queue             (int): Maximum number of light-curves to store in pipeline at once
-            iter_lim              (int): Limit number of processed light-curves (Useful for profiling)
-            ref_stars       (List[str]): List of reference star types to calibrate simulated supernova with
-            pwv_model        (PWVModel): Model for the PWV concentration the reference stars are observed at
+            cadence: Cadence to use when simulating light-curves
+            sim_model: Model to use when simulating light-curves
+            fit_model: Model to use when fitting light-curves
+            vparams: List of parameter names to vary in the fit
+            bounds: Bounds to impose on ``fit_model`` parameters when fitting light-curves
+            out_path: Path to write results to (.csv extension is enforced)
+            fitting_pool: Number of child processes allocated to simulating light-curves
+            simulation_pool: Number of child processes allocated to fitting light-curves
+            quality_callback: Skip light-curves if this function returns False
+            max_queue: Maximum number of light-curves to store in pipeline at once
+            iter_lim: Limit number of processed light-curves (Useful for profiling)
+            ref_stars: List of reference star types to calibrate simulated supernova with
+            pwv_model: Model for the PWV concentration the reference stars are observed at
         """
 
         if (ref_stars is None) and not (pwv_model is None):
@@ -216,7 +232,7 @@ class FittingPipeline(ProcessManager):
         super(FittingPipeline, self).__init__()
         self._init_processes()
 
-    def _init_processes(self):
+    def _init_processes(self) -> None:
         """Instantiate forked processes but do not run them"""
 
         load_plasticc_process = mp.Process(target=self._load_queue_plasticc_lc)
@@ -233,7 +249,7 @@ class FittingPipeline(ProcessManager):
         unload_results_process = mp.Process(target=self._unload_output_queue)
         self._processes.append(unload_results_process)
 
-    def _load_queue_plasticc_lc(self):
+    def _load_queue_plasticc_lc(self) -> None:
         """Load PLaSTICC light-curves from disk into the pipeline"""
 
         # Load light-curves into the first queue in the pipeline
@@ -249,7 +265,7 @@ class FittingPipeline(ProcessManager):
         for _ in range(self.pool_size):
             self.queue_plasticc_lc.put(KillSignal())
 
-    def _duplicate_light_curves(self):
+    def _duplicate_light_curves(self) -> None:
         """Simulate light-curves with atmospheric effects"""
 
         # Determine the redshift limit of the simulation model
@@ -285,7 +301,7 @@ class FittingPipeline(ProcessManager):
         # Propagate kill signal
         self.queue_duplicated_lc.put(light_curve)
 
-    def _fit_light_curves(self):
+    def _fit_light_curves(self) -> None:
         """Fit light-curves"""
 
         warnings.simplefilter('ignore', category=DeprecationWarning)
@@ -306,7 +322,7 @@ class FittingPipeline(ProcessManager):
         # Propagate kill signal
         self.queue_fit_results.put(light_curve)
 
-    def _unload_output_queue(self):
+    def _unload_output_queue(self) -> None:
         """Retrieve fit results from the output queue and write results to file"""
 
         kill_count = 0  # Count closed upstream processes so this process knows when to exit

@@ -7,6 +7,7 @@ from astropy.table import Table
 from pandas.testing import assert_series_equal
 
 from snat_sim import reference_stars
+from snat_sim._data_paths import data_paths
 
 
 class StellarSpectraParsing(TestCase):
@@ -36,7 +37,7 @@ class StellarSpectraParsing(TestCase):
 
     def runTest(self):
         for stellar_type, fname in zip(self.stellar_types, self.file_names):
-            full_path = reference_stars._STELLAR_SPECTRA_DIR / fname
+            full_path = data_paths.stellar_spectra_dir / fname
             spec_by_path = reference_stars._read_stellar_spectra_path(full_path)
             spec_by_type = reference_stars.get_stellar_spectra(stellar_type)
             assert_series_equal(spec_by_path, spec_by_type)
@@ -86,7 +87,7 @@ class GetReferenceStarDataframe(TestCase):
     def test_known_types_parsed(self):
         """Test all stellar types in ``_stellar_type_paths`` are parsed"""
 
-        for stellar_type in reference_stars.available_types:
+        for stellar_type in reference_stars.get_available_types():
             dataframe = reference_stars.get_ref_star_dataframe(stellar_type)
             self.assertFalse(dataframe.empty)
 
@@ -130,18 +131,18 @@ class AverageNormFlux(TestCase):
         """Test the return matches the average norm flux at a single PWV for two reference types"""
 
         test_pwv = 5
-        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
-        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
-        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
+        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, spectral_types=['G2', 'M5'])
+        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, spectral_type='G2')
+        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, spectral_type='M5')
         self.assertEqual(avg_flux, np.average((g2_flux, m52_flux)))
 
     def test_average_matches_ref_star_for_array(self):
         """Test the return matches the average norm flux at an array of PWV for two reference types"""
 
         test_pwv = [5, 6]
-        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, reference_types=['G2', 'M5'])
-        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='G2')
-        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, reference_type='M5')
+        avg_flux = reference_stars.average_norm_flux(self.test_band, test_pwv, spectral_types=['G2', 'M5'])
+        g2_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, spectral_type='G2')
+        m52_flux = reference_stars.interp_norm_flux(self.test_band, test_pwv, spectral_type='M5')
 
         self.assertIsInstance(avg_flux, np.ndarray, 'Returned average was not an array')
         np.testing.assert_array_equal(avg_flux, np.average((g2_flux, m52_flux), axis=0))
