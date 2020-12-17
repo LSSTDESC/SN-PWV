@@ -42,6 +42,7 @@ from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
 from . import constants as const, lc_simulation
+from .models import SNModel
 
 Numeric = Union[int, float]
 
@@ -242,8 +243,8 @@ def plot_spectral_template(
         wave_arr: np.ndarray,
         z_arr: np.ndarray,
         pwv: np.ndarray,
-        phase: float = Numeric,
-        resolution: float = Numeric,
+        phase: Numeric = 0,
+        resolution: Numeric = 2,
         figsize: Tuple[Numeric, Numeric] = (6, 4)
 ) -> Tuple[plt.Figure, np.array]:
     """Plot of the salt2-extended spectral template with overlaid PWV and bandpass throughput curves.
@@ -266,7 +267,7 @@ def plot_spectral_template(
         gridspec_kw={'height_ratios': [4, 1.75]})
 
     # Plot spectral template at given redshifts
-    model = sncosmo.Model(source)
+    model = SNModel(source)
     flux_scale = 1e-13
     for i, z in enumerate(reversed(z_arr)):
         color = f'C{len(z_arr) - i - 1}'
