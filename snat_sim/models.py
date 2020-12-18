@@ -76,10 +76,10 @@ from pwv_kpno.transmission import calc_pwv_eff
 from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
 
-from . import constants as const
-from .utils import time_series as tsu
 from snat_sim.utils.caching import numpy_cache
+from . import constants as const
 from ._data_paths import data_paths
+from .utils import time_series as tsu
 
 # Todo: These were picked ad-hock and are likely too big.
 #  They should be set to a reasonable number further along in development
@@ -121,10 +121,12 @@ class FixedResTransmission:
 
         self.calc_transmission = numpy_cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
     def calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
         ...
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
     def calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
         ...
@@ -170,12 +172,12 @@ class PWVModel:
             pwv_series: PWV values with a datetime index
         """
 
-        self.pwv_model_data = tsu.periodic_interpolation(tsu.resample_data_across_year(pwv_series))
+        self.pwv_model_data = pwv_series.tsu.resample_data_across_year().tsu.periodic_interpolation()
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
         self.pwv_los = numpy_cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
-        memory = joblib.Memory(str(data_paths.data_dir), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
+        memory = joblib.Memory(str(data_paths.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
         self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod
@@ -198,7 +200,7 @@ class PWVModel:
         receiver.download_available_data(all_years)
 
         weather_data = receiver.weather_data().PWV
-        supp_data = tsu.supplemented_data(weather_data, year, supp_years)
+        supp_data = weather_data.tsu.supplemented_data(year, supp_years)
         return PWVModel(supp_data)
 
     @overload
@@ -248,18 +250,18 @@ class PWVModel:
             return target_coord.transform_to(altaz).secz.value
 
     @overload
-    def pwv_zenith(self, time: float, time_format: str) -> float:
+    def pwv_zenith(self, time: float, time_format: Optional[str]) -> float:
         ...
 
     @overload
-    def pwv_zenith(self, time: List[float], time_format: str) -> np.array:
+    def pwv_zenith(self, time: Collection[float], time_format: Optional[str]) -> np.array:
         ...
 
     def pwv_zenith(self, time, time_format='mjd'):
         """Interpolate the PWV at zenith as a function of time
 
         The ``time_format`` argument can be set to ``None`` when passing datetime
-        objects instead of numerical values for ``time``.
+        objects for ``time`` instead of numerical values.
 
         Args:
             time: The time to interpolate PWV for
@@ -424,7 +426,7 @@ class SNModel(sncosmo.Model):
 
 
 class VariablePropagationEffect(sncosmo.PropagationEffect):
-    """Base class for propogation effects that vary with time
+    """Base class for propagation effects that vary with time
 
     Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
     method accepts a ``time`` argument.

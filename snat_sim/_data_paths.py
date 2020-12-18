@@ -5,7 +5,6 @@ data used by the parent package.
 import os
 from pathlib import Path
 from typing import Optional
-from warnings import warn
 
 
 class DataPaths:
@@ -20,6 +19,18 @@ class DataPaths:
                 Path(__file__).resolve().parent.parent / 'data'
             )
         ).resolve()
+
+        try:
+            self._plasticc_directory = Path(os.environ['CADENCE_SIMS']).resolve()
+
+        except KeyError:
+            self._plasticc_directory = self.data_dir / 'plasticc'
+
+    @property
+    def joblib_path(self) -> Path:
+        """Directory to store cached function calls"""
+
+        return self.data_dir / 'joblib'
 
     @property
     def _config_path(self) -> Path:
@@ -60,15 +71,7 @@ class DataPaths:
             model: Return subdirectory for the given simulation model
         """
 
-        default_dir = self.data_dir / 'plasticc'
-
-        try:
-            plasticc_directory = Path(os.environ['CADENCE_SIMS'])
-
-        except KeyError:
-            warn(f'``CADENCE_SIMS`` is not set in environment. Defaulting to {default_dir}')
-            plasticc_directory = default_dir
-
+        plasticc_directory = self._plasticc_directory
         if cadence:
             plasticc_directory /= cadence
 
@@ -81,4 +84,7 @@ class DataPaths:
         return plasticc_directory
 
 
+# Prebuilt object representing the ``data_dir`` as determined at package init
+# Objects instantiated later on may have a different ``data_dir`` if the variables
+# in the working environment change during runtime
 data_paths = DataPaths()

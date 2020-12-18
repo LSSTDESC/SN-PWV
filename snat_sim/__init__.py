@@ -6,6 +6,9 @@ Time (LSST).
 
 from . import *
 
+# Register pandas accessors
+from .utils.time_series import TSUAccessor
+
 __version__ = 'Development'
 __author__ = 'Dark Energy Science Collaboration'
 __maintainer__ = 'Daniel Perrefort'

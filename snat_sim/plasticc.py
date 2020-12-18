@@ -234,7 +234,7 @@ def duplicate_plasticc_sncosmo(
         gain: Numeric = 1,
         skynoise: Numeric = None,
         scatter: bool = True,
-        cosmo: Cosmology = const.betoule_cosmo
+        cosmo: Optional[Cosmology] = const.betoule_cosmo
 ) -> Table:
     """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
 
@@ -245,7 +245,7 @@ def duplicate_plasticc_sncosmo(
         gain: Gain to use during simulation
         skynoise:  Optionally overwrite the PLaSTICC skynoise with this value
         scatter: Add random noise to the flux values
-        cosmo: Rescale the ``x0`` parameter according to the given cosmology
+        cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology
 
     Returns:
         Astropy table with data for the simulated light-curve
