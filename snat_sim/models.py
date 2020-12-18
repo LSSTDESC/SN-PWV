@@ -175,7 +175,7 @@ class PWVModel:
 
         self.pwv_los = numpy_cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
-        memory = joblib.Memory(str(data_paths.data_dir), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
+        memory = joblib.Memory(str(data_paths.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
         self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod

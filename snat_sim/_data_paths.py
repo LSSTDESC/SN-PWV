@@ -22,6 +22,12 @@ class DataPaths:
         ).resolve()
 
     @property
+    def joblib_path(self) -> Path:
+        """Directory to store cached function calls"""
+
+        return self.data_dir / 'joblib'
+
+    @property
     def _config_path(self) -> Path:
         """The path of the PWV configuration file"""
 
