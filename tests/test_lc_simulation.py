@@ -1,11 +1,9 @@
 """Tests for the ``simulation`` module"""
 
-import types
 from unittest import TestCase
 
 import numpy as np
 import sncosmo
-from astropy.table import Table
 
 from snat_sim.lc_simulation import LCSimulator, ObservedCadence
 from snat_sim.models import SNModel
@@ -111,3 +109,35 @@ class SimulateFixedSNR(SetupTasks):
 
         with self.assertRaises(ValueError):
             self.simulator.simulate_lc_fixed_snr(params={'z': 0})
+
+
+class DuplicatePlasticcSncosmo(TestCase):
+    """Tests for the ``duplicate_plasticc_sncosmo`` function"""
+
+    def setUp(self) -> None:
+        self.model = models.SNModel('salt2-extended')
+        self.plasticc_lc = create_mock_plasticc_light_curve()
+        self.param_mapping = {  # Maps sncosmo param names to plasticc names
+            't0': 'SIM_PEAKMJD',
+            'x1': 'SIM_SALT2x1',
+            'c': 'SIM_SALT2c',
+            'z': 'SIM_REDSHIFT_CMB',
+            'x0': 'SIM_SALT2x0'
+        }
+
+    def test_lc_meta_matches_params(self) -> None:
+        """Test parameters in returned meta data match the input light_curve"""
+
+        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, model=self.model, cosmo=None)
+        for sncosmo_param, plasticc_param in self.param_mapping.items():
+            self.assertEqual(
+                duplicated_lc.meta[sncosmo_param], self.plasticc_lc.meta[plasticc_param],
+                f'Incorrect {sncosmo_param} ({plasticc_param}) parameter'
+            )
+
+    def test_x0_overwritten_by_cosmo_arg(self) -> None:
+        """Test the x0 parameter is overwritten according to the given cosmology"""
+
+        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, model=self.model)
+        expected_x0 = calc_x0_for_z(duplicated_lc.meta['z'], source=self.model.source)
+        np.testing.assert_allclose(expected_x0, duplicated_lc.meta['x0'])

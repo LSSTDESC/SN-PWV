@@ -7,7 +7,6 @@ from numpy.testing import assert_equal
 
 from snat_sim import models, plasticc
 from snat_sim.filters import register_lsst_filters
-from snat_sim.lc_simulation import calc_x0_for_z
 from tests.mock import create_mock_plasticc_light_curve
 
 register_lsst_filters(force=True)
@@ -91,71 +90,3 @@ class FormatPlasticcSncosmo(TestCase):
         """Test the formatted data table has the same metadata as the input table"""
 
         self.assertDictEqual(self.formatted_lc.meta, self.plasticc_lc.meta)
-
-
-class ExtractCadenceData(TestCase):
-    """Tests for the ``extract_cadence_data`` function"""
-
-    def setUp(self) -> None:
-        self.plasticc_lc = create_mock_plasticc_light_curve()
-        self.extracted_cadence = plasticc.extract_cadence_data(self.plasticc_lc)
-
-    def test_correct_column_names(self) -> None:
-        """Test the formatted data table has the correct columns"""
-
-        expected_names = ['time', 'band', 'zp', 'zpsys', 'gain', 'skynoise']
-        self.assertSequenceEqual(self.extracted_cadence.colnames, expected_names)
-
-    def test_zp_is_overwritten(self) -> None:
-        """Test the zero_point in the returned table is overwritten with a constant"""
-        expected_zp = 25
-        assert_equal(expected_zp, self.extracted_cadence['zp'])
-
-    def test_filter_names_are_formatted(self) -> None:
-        """Test filter names are formatted for use with sncosmo"""
-
-        is_lower = all(f.islower() for f in self.extracted_cadence['band'])
-        self.assertTrue(is_lower, 'Filter names include uppercase letters')
-
-        is_prefixed = all(f.startswith('lsst_hardware_') for f in self.extracted_cadence['band'])
-        self.assertTrue(is_prefixed, 'Filter names do not start with ``lsst_hardware_``')
-
-    def test_drop_nondetection(self) -> None:
-        """Test ``drop_nondetection=True`` removes non detections"""
-
-        extracted_cadence = plasticc.extract_cadence_data(self.plasticc_lc, drop_nondetection=True)
-        returned_dates = extracted_cadence['time']
-        expected_dates = self.plasticc_lc[self.plasticc_lc['PHOTFLAG'] != 0]['MJD']
-        assert_equal(returned_dates, expected_dates)
-
-
-class DuplicatePlasticcSncosmo(TestCase):
-    """Tests for the ``duplicate_plasticc_sncosmo`` function"""
-
-    def setUp(self) -> None:
-        self.model = models.SNModel('salt2-extended')
-        self.plasticc_lc = create_mock_plasticc_light_curve()
-        self.param_mapping = {  # Maps sncosmo param names to plasticc names
-            't0': 'SIM_PEAKMJD',
-            'x1': 'SIM_SALT2x1',
-            'c': 'SIM_SALT2c',
-            'z': 'SIM_REDSHIFT_CMB',
-            'x0': 'SIM_SALT2x0'
-        }
-
-    def test_lc_meta_matches_params(self) -> None:
-        """Test parameters in returned meta data match the input light_curve"""
-
-        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, model=self.model, cosmo=None)
-        for sncosmo_param, plasticc_param in self.param_mapping.items():
-            self.assertEqual(
-                duplicated_lc.meta[sncosmo_param], self.plasticc_lc.meta[plasticc_param],
-                f'Incorrect {sncosmo_param} ({plasticc_param}) parameter'
-            )
-
-    def test_x0_overwritten_by_cosmo_arg(self) -> None:
-        """Test the x0 parameter is overwritten according to the given cosmology"""
-
-        duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, model=self.model)
-        expected_x0 = calc_x0_for_z(duplicated_lc.meta['z'], source=self.model.source)
-        np.testing.assert_allclose(expected_x0, duplicated_lc.meta['x0'])

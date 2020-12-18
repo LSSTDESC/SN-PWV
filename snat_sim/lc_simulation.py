@@ -110,10 +110,10 @@ class ObservedCadence:
         return ObservedCadence(
             obs_times=light_curve['MJD'],
             bands=['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
-            zp=zp or light_curve['ZP'],
+            zp=zp or light_curve['ZEROPT'],
             zpsys=zpsys,
             gain=gain,
-            skynoise=light_curve['SKYNOISE']
+            skynoise=light_curve['SKY_SIG']
         )
 
     def to_sncosmo(self) -> Table:
@@ -213,9 +213,6 @@ class LCSimulator:
 
         Args:
             light_curve: Astropy table with PLaSTICC light-curve data
-            zp: Optionally overwrite the PLaSTICC zero-point with this value
-            gain: Gain to use during simulation
-            skynoise:  Optionally overwrite the PLaSTICC skynoise with this value
             scatter: Add random noise to the flux values
             cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology
 
