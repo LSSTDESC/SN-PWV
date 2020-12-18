@@ -47,16 +47,11 @@ from pathlib import Path
 from typing import *
 
 import pandas as pd
-from astropy.cosmology.core import Cosmology
 from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
-from . import constants as const, lc_simulation
 from ._data_paths import data_paths
-from .models import SNModel
-
-Numeric = Union[float, int]
 
 
 def get_available_cadences() -> List[str]:
@@ -188,90 +183,3 @@ def format_plasticc_sncosmo(light_curve: Table) -> Table:
     lc['zpsys'] = 'AB'
     lc.meta = light_curve.meta
     return lc
-
-
-def extract_cadence_data(
-        light_curve: Table,
-        zp: Numeric = 25,
-        gain: Numeric = 1,
-        skynoise: Numeric = 0,
-        drop_nondetection: bool = False
-) -> Table:
-    """Extract the observational cadence from a PLaSTICC light-curve
-
-    Returned table is formatted for use with ``sncosmo.realize_lcs``.
-
-    Args:
-        light_curve      (Table): Astropy table with PLaSTICC light-curve data
-        zp        (float, array): Overwrite the PLaSTICC zero-point with this value
-        gain             (float): Gain to use during simulation
-        skynoise    (int, array): Simulated skynoise in counts
-        drop_nondetection (bool): Drop data with PHOTFLAG == 0
-
-    Returns:
-        An astropy table with cadence data for the input light-curve
-    """
-
-    if drop_nondetection:
-        light_curve = light_curve[light_curve['PHOTFLAG'] != 0]
-
-    observations = Table({
-        'time': light_curve['MJD'],
-        'band': ['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
-    })
-
-    observations['zp'] = zp
-    observations['zpsys'] = 'ab'
-    observations['gain'] = gain
-    observations['skynoise'] = skynoise
-    return observations
-
-
-def duplicate_plasticc_sncosmo(
-        light_curve: Table,
-        model: SNModel,
-        zp: Numeric = None,
-        gain: Numeric = 1,
-        skynoise: Numeric = None,
-        scatter: bool = True,
-        cosmo: Optional[Cosmology] = const.betoule_cosmo
-) -> Table:
-    """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
-
-    Args:
-        light_curve: Astropy table with PLaSTICC light-curve data
-        model: SNModel to use when simulating light-curve flux
-        zp: Optionally overwrite the PLaSTICC zero-point with this value
-        gain: Gain to use during simulation
-        skynoise:  Optionally overwrite the PLaSTICC skynoise with this value
-        scatter: Add random noise to the flux values
-        cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology
-
-    Returns:
-        Astropy table with data for the simulated light-curve
-    """
-
-    use_redshift = 'SIM_REDSHIFT_CMB'
-    if cosmo is None:
-        x0 = light_curve.meta['SIM_SALT2x0']
-
-    else:
-        x0 = lc_simulation.calc_x0_for_z(light_curve.meta[use_redshift], 'salt2', cosmo=cosmo)
-
-    # Params double as simulation parameters and meta-data
-    params = {
-        'SNID': light_curve.meta['SNID'],
-        'ra': light_curve.meta['RA'],
-        'dec': light_curve.meta['DECL'],
-        't0': light_curve.meta['SIM_PEAKMJD'],
-        'x1': light_curve.meta['SIM_SALT2x1'],
-        'c': light_curve.meta['SIM_SALT2c'],
-        'z': light_curve.meta[use_redshift],
-        'x0': x0
-    }
-
-    # Simulate the light-curve
-    zp = zp if zp is not None else light_curve['ZEROPT']
-    skynoise = skynoise if skynoise is not None else light_curve['SKY_SIG']
-    observations = extract_cadence_data(light_curve, zp=zp, gain=gain, skynoise=skynoise)
-    return lc_simulation.simulate_lc(observations, model, params, scatter=scatter)
