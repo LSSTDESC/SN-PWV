@@ -31,7 +31,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="snat_sim.utils.time_series" href="utils_time_series.html" />
+    <link rel="next" title="snat_sim.utils.time_series" href="utils_time_series.html" />
+    <link rel="prev" title="snat_sim.plotting" href="plotting.html" />
   
    
 
@@ -47,6 +48,9 @@
              >modules</a> |</li>
         <li class="right" >
           <a href="utils_time_series.html" title="snat_sim.utils.time_series"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="plotting.html" title="snat_sim.plotting"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.utils.caching</a></li> 
@@ -106,8 +110,8 @@
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.utils.caching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
 </ul>
 
     
@@ -124,6 +128,47 @@
 <span id="snat-sim-utils-caching"></span><h1>snat_sim.utils.caching<a class="headerlink" href="#module-snat_sim.utils.caching" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">caching</span></code> module defines numpy compatible function wrappers
 for implementing memoization.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>The builtin Python memoization routines (<code class="docutils literal notranslate"><span class="pre">lru_cache</span></code>) is not compatible with
+<code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays because array objects are not hashable. The <code class="docutils literal notranslate"><span class="pre">numpy_cache</span></code>
+decorator provides an alternative memoization solution that supports
+numpy arguments. Arguments that are numpy arguments must be specified by
+name when constructing the decorator:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.utils.caching</span> <span class="kn">import</span> <span class="n">numpy_cache</span>
+
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@numpy_cache</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">... </span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The function has been called!&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">x_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">y_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">))</span>
+<span class="go">The function has been called!</span>
+<span class="go">[ 6  8 10 12]</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">))</span>
+<span class="go">[ 6  8 10 12]</span>
+</pre></div>
+</div>
+<p>Class methods can also be decorated, but should be decorated at instantiation
+as follows:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="n">numpy_cache</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+<span class="gp">...</span>
+<span class="gp">... </span>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="gp">...</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="module-api">
 <h2>Module API<a class="headerlink" href="#module-api" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
@@ -133,7 +178,7 @@ for implementing memoization.</p>
 <dl class="py method">
 <dt id="snat_sim.utils.caching.MemoryCache.__init__">
 <code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#MemoryCache.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.MemoryCache.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Ordered dictionary with an imposed size limit im memory</p>
+<dd><p>Ordered dictionary with an imposed size limit im memory.</p>
 <p>When memory usage exceeds the predefined amount, remove the oldest
 entry from the cache.</p>
 <dl class="field-list simple">
@@ -148,7 +193,7 @@ entry from the cache.</p>
 <dl class="py function">
 <dt id="snat_sim.utils.caching.numpy_cache">
 <code class="sig-prename descclassname">snat_sim.utils.caching.</code><code class="sig-name descname">numpy_cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">numpy_args</span></em>, <em class="sig-param"><span class="n">cache_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#numpy_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.numpy_cache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Memoization decorator supporting <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays</p>
+<dd><p>Memoization decorator supporting <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -184,6 +229,9 @@ entry from the cache.</p>
              >modules</a> |</li>
         <li class="right" >
           <a href="utils_time_series.html" title="snat_sim.utils.time_series"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="plotting.html" title="snat_sim.plotting"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.utils.caching</a></li> 

@@ -103,8 +103,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/utils_caching.html">snat_sim.utils.caching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
 </ul>
 
     
@@ -120,6 +120,52 @@
   <h1>Source code for snat_sim.utils.caching</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;The ``caching`` module defines numpy compatible function wrappers</span>
 <span class="sd">for implementing memoization.</span>
+
+<span class="sd">Usage Example</span>
+<span class="sd">-------------</span>
+
+<span class="sd">The builtin Python memoization routines (``lru_cache``) is not compatible with</span>
+<span class="sd">``numpy`` arrays because array objects are not hashable. The ``numpy_cache``</span>
+<span class="sd">decorator provides an alternative memoization solution that supports</span>
+<span class="sd">numpy arguments. Arguments that are numpy arguments must be specified by</span>
+<span class="sd">name when constructing the decorator:</span>
+
+<span class="sd">.. doctest:: python</span>
+
+<span class="sd">   &gt;&gt;&gt; import numpy as np</span>
+
+<span class="sd">   &gt;&gt;&gt; from snat_sim.utils.caching import numpy_cache</span>
+
+
+<span class="sd">   &gt;&gt;&gt; @numpy_cache(&#39;x&#39;, &#39;y&#39;, cache_size=1000)</span>
+<span class="sd">   ... def add(x, y):</span>
+<span class="sd">   ...     print(&#39;The function has been called!&#39;)</span>
+<span class="sd">   ...     return x + y</span>
+
+<span class="sd">   &gt;&gt;&gt; x_arr = np.arange(1, 5)</span>
+<span class="sd">   &gt;&gt;&gt; y_arr = np.arange(5, 9)</span>
+
+<span class="sd">   &gt;&gt;&gt; print(add(x_arr, y_arr))</span>
+<span class="sd">   The function has been called!</span>
+<span class="sd">   [ 6  8 10 12]</span>
+
+<span class="sd">   &gt;&gt;&gt; print(add(x_arr, y_arr))</span>
+<span class="sd">   [ 6  8 10 12]</span>
+
+<span class="sd">Class methods can also be decorated, but should be decorated at instantiation</span>
+<span class="sd">as follows:</span>
+
+<span class="sd">.. doctest:: python</span>
+
+<span class="sd">   &gt;&gt;&gt; class Foo:</span>
+<span class="sd">   ...</span>
+<span class="sd">   ...     def __init__(self):</span>
+<span class="sd">   ...         self.add = numpy_cache(&#39;x&#39;, &#39;y&#39;, cache_size=1000)(self.add)</span>
+<span class="sd">   ...</span>
+<span class="sd">   ...     def add(self, x, y):</span>
+<span class="sd">   ...         return x + y</span>
+<span class="sd">   ...</span>
+
 
 <span class="sd">Module API</span>
 <span class="sd">----------</span>
@@ -138,7 +184,7 @@
     <span class="sd">&quot;&quot;&quot;Ordered dictionary with an imposed limit on overall memory usage&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="MemoryCache.__init__"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.MemoryCache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Ordered dictionary with an imposed size limit im memory</span>
+        <span class="sd">&quot;&quot;&quot;Ordered dictionary with an imposed size limit im memory.</span>
 
 <span class="sd">        When memory usage exceeds the predefined amount, remove the oldest</span>
 <span class="sd">        entry from the cache.</span>
@@ -151,21 +197,25 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">=</span> <span class="n">max_size</span>
         <span class="n">size_when_empty</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">&lt;=</span> <span class="n">size_when_empty</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Dictionary size limit must exceed </span><span class="si">{</span><span class="n">size_when_empty</span><span class="si">}</span><span class="s1"> bytes&#39;</span><span class="p">)</span></div>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="o">&lt;=</span> <span class="n">size_when_empty</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;MemoryCache size limit must exceed </span><span class="si">{</span><span class="n">size_when_empty</span><span class="si">}</span><span class="s1"> bytes&#39;</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="n">Hashable</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Update an entry in the hash table.&quot;&quot;&quot;</span>
+
         <span class="n">OrderedDict</span><span class="o">.</span><span class="fm">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_check_size_limit</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">_check_size_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Pop items from memory until instance size is &lt;= the size limit.&quot;&quot;&quot;</span>
+
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">while</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_size</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="numpy_cache"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.numpy_cache">[docs]</a><span class="k">def</span> <span class="nf">numpy_cache</span><span class="p">(</span><span class="o">*</span><span class="n">numpy_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Memoization decorator supporting ``numpy`` arrays</span>
+    <span class="sd">&quot;&quot;&quot;Memoization decorator supporting ``numpy`` arrays.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        *numpy_args: Function arguments to treat as numpy arrays</span>
@@ -177,11 +227,11 @@
 
     <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="k">class</span> <span class="nc">Memoization</span><span class="p">(</span><span class="n">MemoryCache</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;Dictionary like object that stores recent function calls in memory&quot;&quot;&quot;</span>
+            <span class="sd">&quot;&quot;&quot;Dictionary like object that stores recent function calls in memory.&quot;&quot;&quot;</span>
 
             <span class="nd">@wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
             <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-                <span class="sd">&quot;&quot;&quot;Wrapped version of the given function</span>
+                <span class="sd">&quot;&quot;&quot;Wrapped version of the given function.</span>
 
 <span class="sd">                Arguments and returns are the same as ``function``</span>
 <span class="sd">                &quot;&quot;&quot;</span>

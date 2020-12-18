@@ -84,5 +84,5 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    api/reference_stars.rst
    api/sn_magnitudes.rst
    api/plotting.rst
-   api/utils_time_series.rst
    api/utils_caching.rst
+   api/utils_time_series.rst

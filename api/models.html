@@ -110,8 +110,8 @@
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils_caching.html">snat_sim.utils.caching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
 </ul>
 
     
@@ -326,7 +326,7 @@ objects instead of numerical values for <code class="docutils literal notranslat
 <code class="sig-name descname">pwv_zenith</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#PWVModel.pwv_zenith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.PWVModel.pwv_zenith" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate the PWV at zenith as a function of time</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">time_format</span></code> argument can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> when passing datetime
-objects instead of numerical values for <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p>
+objects for <code class="docutils literal notranslate"><span class="pre">time</span></code> instead of numerical values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -533,7 +533,7 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 <dl class="py class">
 <dt id="snat_sim.models.VariablePropagationEffect">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">VariablePropagationEffect</code><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePropagationEffect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePropagationEffect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base class for propogation effects that vary with time</p>
+<dd><p>Base class for propagation effects that vary with time</p>
 <p>Similar to <code class="docutils literal notranslate"><span class="pre">sncosmo.PropagationEffect</span></code> class, but the <code class="docutils literal notranslate"><span class="pre">propagate</span></code>
 method accepts a <code class="docutils literal notranslate"><span class="pre">time</span></code> argument.</p>
 <dl class="py method">

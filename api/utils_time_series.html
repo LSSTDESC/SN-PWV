@@ -31,8 +31,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.utils.caching" href="utils_caching.html" />
-    <link rel="prev" title="snat_sim.plotting" href="plotting.html" />
+    <link rel="prev" title="snat_sim.utils.caching" href="utils_caching.html" />
   
    
 
@@ -48,9 +47,6 @@
              >modules</a> |</li>
         <li class="right" >
           <a href="utils_caching.html" title="snat_sim.utils.caching"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="plotting.html" title="snat_sim.plotting"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.utils.time_series</a></li> 
@@ -110,8 +106,8 @@
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.utils.time_series</a></li>
 <li class="toctree-l1"><a class="reference internal" href="utils_caching.html">snat_sim.utils.caching</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.utils.time_series</a></li>
 </ul>
 
     
@@ -130,64 +126,104 @@
 for manipulating time series data. It is intended to supplement existing
 functionality in the <code class="docutils literal notranslate"><span class="pre">pandas</span></code> package with support for tasks particular to
 dealing with atmospheric / weather data.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>The importing the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package will automatically register methods of
+the <code class="docutils literal notranslate"><span class="pre">TSUAccessor</span></code> class with the <code class="docutils literal notranslate"><span class="pre">pandas</span></code> package. This means the methods
+can be called directly on <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code> objects using the <code class="docutils literal notranslate"><span class="pre">tsu</span></code> accessor
+attribute.</p>
+<p>As an example, we create a <code class="docutils literal notranslate"><span class="pre">Series</span></code> object with missing data and fill in the
+missing data using the <code class="docutils literal notranslate"><span class="pre">TSUAccessor.periodic_interpolation</span></code> method.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a Series with missing data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">demo_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">demo_series</span><span class="o">.</span><span class="n">iloc</span><span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">demo_series</span><span class="p">)</span>
+<span class="go">0      NaN</span>
+<span class="go">1     11.0</span>
+<span class="go">2     12.0</span>
+<span class="go">3     13.0</span>
+<span class="go">4     14.0</span>
+<span class="go">5     15.0</span>
+<span class="go">6     16.0</span>
+<span class="go">7     17.0</span>
+<span class="go">8     18.0</span>
+<span class="go">9     19.0</span>
+<span class="go">10     NaN</span>
+<span class="go">dtype: float64</span>
+
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Interpolate for the missing data using periodic boundary conditions</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">demo_series</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">periodic_interpolation</span><span class="p">())</span>
+<span class="go">0     13.666667</span>
+<span class="go">1     11.000000</span>
+<span class="go">2     12.000000</span>
+<span class="go">3     13.000000</span>
+<span class="go">4     14.000000</span>
+<span class="go">5     15.000000</span>
+<span class="go">6     16.000000</span>
+<span class="go">7     17.000000</span>
+<span class="go">8     18.000000</span>
+<span class="go">9     19.000000</span>
+<span class="go">10    16.333333</span>
+<span class="go">dtype: float64</span>
+</pre></div>
+</div>
+<p>For information on what other methods are incorporated under the <code class="docutils literal notranslate"><span class="pre">tsu</span></code>
+accessor attribut, see the <code class="docutils literal notranslate"><span class="pre">TSUAccessor</span></code> class.</p>
+</div>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="snat_sim.utils.time_series.datetime_to_sec_in_year">
-<code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">datetime_to_sec_in_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#datetime_to_sec_in_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.datetime_to_sec_in_year" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate number of seconds elapsed modulo 1 year</p>
-<p>Accurate to within a microsecond.</p>
+<dl class="py class">
+<dt id="snat_sim.utils.time_series.TSUAccessor">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">TSUAccessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pandas_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#TSUAccessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pandas Series accessor for time series utilities</p>
+<dl class="py method">
+<dt id="snat_sim.utils.time_series.TSUAccessor.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pandas_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#TSUAccessor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends <code class="docutils literal notranslate"><span class="pre">pandas</span></code> support for time series data</p>
+<p>DO NOT USE THIS CLASS DIRECTLY! This class is registered as a pandas accessor.
+See the module level usage example for more information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.utils.time_series.TSUAccessor.periodic_interpolation">
+<code class="sig-name descname">periodic_interpolation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#TSUAccessor.periodic_interpolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.periodic_interpolation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Linearly interpolate the series using periodic boundary conditions</p>
+<p>Similar to the default linear interpolation used by pandas, but
+missing values at the beginning and end of the series are
+interpolated assuming a periodic boundary condition.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>date</strong> – Date(s) to calculate seconds for</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A single float or a numpy array</p>
+<dd class="field-even"><p>An interpolated copy of the passed series</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="snat_sim.utils.time_series.periodic_interpolation">
-<code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">periodic_interpolation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#periodic_interpolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.periodic_interpolation" title="Permalink to this definition">¶</a></dt>
-<dd><p>Similar to linear interpolation on a pandas array, but missing values
-at the beginning and end of the series are interpolated assuming a periodic
-boundary condition.</p>
+<dl class="py method">
+<dt id="snat_sim.utils.time_series.TSUAccessor.resample_data_across_year">
+<code class="sig-name descname">resample_data_across_year</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#TSUAccessor.resample_data_across_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.resample_data_across_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resample the series evenly from the beginning of the
+earliest year through the end of the latest year.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>series</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – A Pandas Series to infill by linear interpolation</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An interpolated copy of the passed series</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A copy of the passed series interpolated for January first through December 31st</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="snat_sim.utils.time_series.resample_data_across_year">
-<code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">resample_data_across_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#resample_data_across_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.resample_data_across_year" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a copy of a pandas series resampled evenly from the
-beginning of the earliest year through the end of the latest year.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>series</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – A series with a Datetime index</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A copy of the passed series interpolated for January first through December 31st</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.utils.time_series.supplemented_data">
-<code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">supplemented_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_data</span></em>, <em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">supp_years</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#supplemented_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.supplemented_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the supplemented subset of a dataframe corresponding to a given year</p>
+<dl class="py method">
+<dt id="snat_sim.utils.time_series.TSUAccessor.supplemented_data">
+<code class="sig-name descname">supplemented_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">supp_years</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#TSUAccessor.supplemented_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.supplemented_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the supplemented subset of the series corresponding to a given year</p>
 <p>Data for the given year is supplemented with any available data from
 supplementary years by asserting that the measured values from
 supplementary years are exactly the same as they would be if taken during
@@ -196,7 +232,6 @@ specified by the <code class="docutils literal notranslate"><span class="pre">su
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – Series of data to use indexed by datetime</p></li>
 <li><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Year to supplement data for</p></li>
 <li><p><strong>supp_years</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
 </ul>
@@ -206,6 +241,26 @@ specified by the <code class="docutils literal notranslate"><span class="pre">su
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A pandas Series object</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.utils.time_series.datetime_to_sec_in_year">
+<code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">datetime_to_sec_in_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/time_series.html#datetime_to_sec_in_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.datetime_to_sec_in_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate number of seconds elapsed modulo 1 year.</p>
+<p>Accurate to within a microsecond.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>date</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>]]) – Date(s) to calculate seconds for</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A single float if the input is a single datetime, or a numpy array if the input is a collection.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -229,9 +284,6 @@ specified by the <code class="docutils literal notranslate"><span class="pre">su
              >modules</a> |</li>
         <li class="right" >
           <a href="utils_caching.html" title="snat_sim.utils.caching"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="plotting.html" title="snat_sim.plotting"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.utils.time_series</a></li> 

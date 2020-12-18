@@ -115,8 +115,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/utils_caching.html">snat_sim.utils.caching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
 </ul>
 
     
@@ -585,7 +585,7 @@ Fall Average:   4.46 +\-  2.10 mm
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">supplemented_pwv</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">supplemented_data</span><span class="p">(</span><span class="n">ctio_weather</span><span class="o">.</span><span class="n">PWV</span><span class="p">,</span> <span class="mi">2016</span><span class="p">,</span> <span class="p">[</span><span class="mi">2017</span><span class="p">])</span>
+<span></span><span class="n">supplemented_pwv</span> <span class="o">=</span> <span class="n">ctio_weather</span><span class="o">.</span><span class="n">PWV</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">supplemented_data</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="p">[</span><span class="mi">2017</span><span class="p">])</span>
 <span class="n">plotting</span><span class="o">.</span><span class="n">plot_year_pwv_vs_time</span><span class="p">(</span><span class="n">supplemented_pwv</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;PWV from 2016 Supplemented with 2017&#39;</span><span class="p">);</span>
 
@@ -621,8 +621,8 @@ Fall Average:   4.88 +\-  2.20 mm
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">resampled_pwv</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">resample_data_across_year</span><span class="p">(</span><span class="n">supplemented_pwv</span><span class="p">)</span>
-<span class="n">interpolated_pwv</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">periodic_interpolation</span><span class="p">(</span><span class="n">resampled_pwv</span><span class="p">)</span>
+<span></span><span class="n">resampled_pwv</span> <span class="o">=</span> <span class="n">supplemented_pwv</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">resample_data_across_year</span><span class="p">()</span>
+<span class="n">interpolated_pwv</span> <span class="o">=</span> <span class="n">resampled_pwv</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">periodic_interpolation</span><span class="p">()</span>
 <span class="n">plotting</span><span class="o">.</span><span class="n">plot_year_pwv_vs_time</span><span class="p">(</span><span class="n">interpolated_pwv</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Resampled PWv&#39;</span><span class="p">);</span>
 

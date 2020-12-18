@@ -103,8 +103,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/utils_caching.html">snat_sim.utils.caching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
 </ul>
 
     
@@ -196,10 +196,10 @@
 <span class="kn">from</span> <span class="nn">pytz</span> <span class="kn">import</span> <span class="n">utc</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">RegularGridInterpolator</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
-<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">time_series</span> <span class="k">as</span> <span class="n">tsu</span>
 <span class="kn">from</span> <span class="nn">snat_sim.utils.caching</span> <span class="kn">import</span> <span class="n">numpy_cache</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
+<span class="kn">from</span> <span class="nn">.utils</span> <span class="kn">import</span> <span class="n">time_series</span> <span class="k">as</span> <span class="n">tsu</span>
 
 <span class="c1"># Todo: These were picked ad-hock and are likely too big.</span>
 <span class="c1">#  They should be set to a reasonable number further along in development</span>
@@ -241,10 +241,12 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">calc_transmission</span> <span class="o">=</span> <span class="n">numpy_cache</span><span class="p">(</span><span class="s1">&#39;pwv&#39;</span><span class="p">,</span> <span class="s1">&#39;wave&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="n">TRANSMISSION_CACHE_SIZE</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">calc_transmission</span><span class="p">)</span></div>
 
+    <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
         <span class="o">...</span>
 
+    <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">wave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="o">...</span>
@@ -290,12 +292,12 @@
 <span class="sd">            pwv_series: PWV values with a datetime index</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">periodic_interpolation</span><span class="p">(</span><span class="n">tsu</span><span class="o">.</span><span class="n">resample_data_across_year</span><span class="p">(</span><span class="n">pwv_series</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span> <span class="o">=</span> <span class="n">pwv_series</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">resample_data_across_year</span><span class="p">()</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">periodic_interpolation</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">pwv_los</span> <span class="o">=</span> <span class="n">numpy_cache</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="n">PWV_CACHE_SIZE</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_los</span><span class="p">)</span>
 
-        <span class="n">memory</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">Memory</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data_paths</span><span class="o">.</span><span class="n">data_dir</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bytes_limit</span><span class="o">=</span><span class="n">AIRMASS_CACHE_SIZE</span><span class="p">)</span>
+        <span class="n">memory</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">Memory</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">data_paths</span><span class="o">.</span><span class="n">joblib_path</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bytes_limit</span><span class="o">=</span><span class="n">AIRMASS_CACHE_SIZE</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PWVModel.from_suominet_receiver"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.PWVModel.from_suominet_receiver">[docs]</a>    <span class="nd">@staticmethod</span>
@@ -318,7 +320,7 @@
         <span class="n">receiver</span><span class="o">.</span><span class="n">download_available_data</span><span class="p">(</span><span class="n">all_years</span><span class="p">)</span>
 
         <span class="n">weather_data</span> <span class="o">=</span> <span class="n">receiver</span><span class="o">.</span><span class="n">weather_data</span><span class="p">()</span><span class="o">.</span><span class="n">PWV</span>
-        <span class="n">supp_data</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">supplemented_data</span><span class="p">(</span><span class="n">weather_data</span><span class="p">,</span> <span class="n">year</span><span class="p">,</span> <span class="n">supp_years</span><span class="p">)</span>
+        <span class="n">supp_data</span> <span class="o">=</span> <span class="n">weather_data</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">supplemented_data</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">supp_years</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">PWVModel</span><span class="p">(</span><span class="n">supp_data</span><span class="p">)</span></div>
 
     <span class="nd">@overload</span>
@@ -368,18 +370,18 @@
             <span class="k">return</span> <span class="n">target_coord</span><span class="o">.</span><span class="n">transform_to</span><span class="p">(</span><span class="n">altaz</span><span class="p">)</span><span class="o">.</span><span class="n">secz</span><span class="o">.</span><span class="n">value</span></div>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">pwv_zenith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">pwv_zenith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">time_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="o">...</span>
 
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">pwv_zenith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">pwv_zenith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">time_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
         <span class="o">...</span>
 
 <div class="viewcode-block" id="PWVModel.pwv_zenith"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.PWVModel.pwv_zenith">[docs]</a>    <span class="k">def</span> <span class="nf">pwv_zenith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;mjd&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Interpolate the PWV at zenith as a function of time</span>
 
 <span class="sd">        The ``time_format`` argument can be set to ``None`` when passing datetime</span>
-<span class="sd">        objects instead of numerical values for ``time``.</span>
+<span class="sd">        objects for ``time`` instead of numerical values.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            time: The time to interpolate PWV for</span>
@@ -544,7 +546,7 @@
 
 
 <div class="viewcode-block" id="VariablePropagationEffect"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePropagationEffect">[docs]</a><span class="k">class</span> <span class="nc">VariablePropagationEffect</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">PropagationEffect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Base class for propogation effects that vary with time</span>
+    <span class="sd">&quot;&quot;&quot;Base class for propagation effects that vary with time</span>
 
 <span class="sd">    Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``</span>
 <span class="sd">    method accepts a ``time`` argument.</span>

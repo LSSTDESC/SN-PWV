@@ -103,8 +103,8 @@
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/utils_caching.html">snat_sim.utils.caching</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
 </ul>
 
     
@@ -354,7 +354,7 @@
         <span class="n">gain</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">skynoise</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">scatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
-        <span class="n">cosmo</span><span class="p">:</span> <span class="n">Cosmology</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span>
+        <span class="n">cosmo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Cosmology</span><span class="p">]</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve</span>
 
@@ -365,7 +365,7 @@
 <span class="sd">        gain: Gain to use during simulation</span>
 <span class="sd">        skynoise:  Optionally overwrite the PLaSTICC skynoise with this value</span>
 <span class="sd">        scatter: Add random noise to the flux values</span>
-<span class="sd">        cosmo: Rescale the ``x0`` parameter according to the given cosmology</span>
+<span class="sd">        cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        Astropy table with data for the simulated light-curve</span>
