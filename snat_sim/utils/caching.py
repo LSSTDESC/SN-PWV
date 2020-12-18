@@ -13,18 +13,18 @@ name when constructing the decorator:
 .. doctest:: python
 
    >>> import numpy as np
-   >>>
+
    >>> from snat_sim.utils.caching import numpy_cache
-   >>>
-   >>>
+
+
    >>> @numpy_cache('x', 'y', cache_size=1000)
    ... def add(x, y):
    ...     print('The function has been called!')
    ...     return x + y
-   ...
+
    >>> x_arr = np.arange(1, 5)
    >>> y_arr = np.arange(5, 9)
-   >>>
+
    >>> print(add(x_arr, y_arr))
    The function has been called!
    [ 6  8 10 12]
@@ -64,7 +64,7 @@ class MemoryCache(OrderedDict):
     """Ordered dictionary with an imposed limit on overall memory usage"""
 
     def __init__(self, max_size: int = None):
-        """Ordered dictionary with an imposed size limit im memory
+        """Ordered dictionary with an imposed size limit im memory.
 
         When memory usage exceeds the predefined amount, remove the oldest
         entry from the cache.
@@ -81,13 +81,13 @@ class MemoryCache(OrderedDict):
             raise RuntimeError(f'Dictionary size limit must exceed {size_when_empty} bytes')
 
     def __setitem__(self, key: Hashable, value: Any):
-        """Update an entry in the hash table"""
+        """Update an entry in the hash table."""
 
         OrderedDict.__setitem__(self, key, value)
         self._check_size_limit()
 
     def _check_size_limit(self) -> None:
-        """Pop items from memory until instance size is <= the size limit"""
+        """Pop items from memory until instance size is <= the size limit."""
 
         if self.max_size is not None:
             while sys.getsizeof(self) > self.max_size:
@@ -95,7 +95,7 @@ class MemoryCache(OrderedDict):
 
 
 def numpy_cache(*numpy_args: str, cache_size: int = None) -> Callable:
-    """Memoization decorator supporting ``numpy`` arrays
+    """Memoization decorator supporting ``numpy`` arrays.
 
     Args:
         *numpy_args: Function arguments to treat as numpy arrays
@@ -107,11 +107,11 @@ def numpy_cache(*numpy_args: str, cache_size: int = None) -> Callable:
 
     def decorator(function: Callable) -> Callable:
         class Memoization(MemoryCache):
-            """Dictionary like object that stores recent function calls in memory"""
+            """Dictionary like object that stores recent function calls in memory."""
 
             @wraps(function)
             def wrapped(self, *args: Any, **kwargs: Any) -> Any:
-                """Wrapped version of the given function
+                """Wrapped version of the given function.
 
                 Arguments and returns are the same as ``function``
                 """

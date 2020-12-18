@@ -27,7 +27,7 @@ def datetime_to_sec_in_year(date: Collection[datetime]) -> np.ndarray:
 
 
 def datetime_to_sec_in_year(date):
-    """Calculate number of seconds elapsed modulo 1 year
+    """Calculate number of seconds elapsed modulo 1 year.
 
     Accurate to within a microsecond.
 
