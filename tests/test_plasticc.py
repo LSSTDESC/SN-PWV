@@ -15,7 +15,7 @@ from snat_sim.lc_simulation import calc_x0_for_z
 from tests.mock import create_mock_plasticc_light_curve
 
 register_lsst_filters(force=True)
-test_data_dir = Path(__file__).parent / 'test_plasticc_data'
+test_data_dir = Path(__file__).parent / 'plasticc_data'
 
 # Used to store environmental variables on module setup / teardown
 _OLD_ENV_VALUE = None
