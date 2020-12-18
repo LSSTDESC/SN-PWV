@@ -200,7 +200,7 @@ class PWVModel:
         receiver.download_available_data(all_years)
 
         weather_data = receiver.weather_data().PWV
-        supp_data = tsu.supplemented_data(weather_data, year, supp_years)
+        supp_data = weather_data.tsu.supplemented_data(year, supp_years)
         return PWVModel(supp_data)
 
     @overload

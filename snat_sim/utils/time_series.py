@@ -24,32 +24,35 @@ missing data using the ``TSUAccessor.periodic_interpolation`` method.
    >>> demo_series.iloc[[0, -1]] = np.nan
    >>> print(demo_series)
    0      NaN
-   2     11.0
-   3     12.0
-   4     13.0
-   5     14.0
-   6     15.0
-   7     16.0
-   8     17.0
-   9     18.0
-   10    19.0
-   11     NaN
+   1     11.0
+   2     12.0
+   3     13.0
+   4     14.0
+   5     15.0
+   6     16.0
+   7     17.0
+   8     18.0
+   9     19.0
+   10     NaN
    dtype: float64
+
 
    >>> # Interpolate for the missing data using periodic boundary conditions
    >>> print(demo_series.tsu.periodic_interpolation())
-    0     13.666667
-    1     11.000000
-    2     12.000000
-    3     13.000000
-    4     14.000000
-    5     15.000000
-    6     16.000000
-    7     17.000000
-    8     18.000000
-    9     19.000000
-    10    16.333333
-    dtype: float64
+   0     13.666667
+   1     11.000000
+   2     12.000000
+   3     13.000000
+   4     14.000000
+   5     15.000000
+   6     16.000000
+   7     17.000000
+   8     18.000000
+   9     19.000000
+   10    16.333333
+   dtype: float64
+
+
 
 
 For information on what other methods are incorporated under the ``tsu``
