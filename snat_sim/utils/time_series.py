@@ -3,6 +3,15 @@ for manipulating time series data. It is intended to supplement existing
 functionality in the ``pandas`` package with support for tasks particular to
 dealing with atmospheric / weather data.
 
+Usage Example
+-------------
+
+The importing the ``snat_sim`` package will automatically register methods of
+the ``TSUAccessor`` class with the ``pandas`` package. This means the methods
+can be called directly on ``pandas.Series`` objects.
+
+
+
 Module Docs
 -----------
 """
@@ -75,12 +84,17 @@ def datetime_to_season(date: Union[dt.datetime, Collection[dt.datetime]]) -> np.
     return cast(np.ndarray, next(season for season, (start, end) in seasons if start <= date < end))
 
 
-@pd.api.extensions.register_series_accessor('snat_sim.tsu')
+@pd.api.extensions.register_series_accessor('tsu')
 class TSUAccessor:
     """Pandas Series accessor for time series utilities"""
 
     def __init__(self, pandas_obj: pd.Series) -> None:
-        self._validate(pandas_obj)
+        """Extends ``pandas`` support for time series data
+
+        DO NOT USE THIS CLASS DIRECTLY! This class is registered as a pandas accessor.
+        See the module level usage example for more information.
+        """
+
         self._obj = pandas_obj
 
     def supplemented_data(self, year: int, supp_years: Collection[int] = tuple()) -> pd.Series:

@@ -77,8 +77,8 @@ class MemoryCache(OrderedDict):
 
         self.max_size = max_size
         size_when_empty = sys.getsizeof(self)
-        if self.max_size and self.max_size <= size_when_empty:
-            raise RuntimeError(f'Dictionary size limit must exceed {size_when_empty} bytes')
+        if (self.max_size is not None) and (self.max_size <= size_when_empty):
+            raise ValueError(f'MemoryCache size limit must exceed {size_when_empty} bytes')
 
     def __setitem__(self, key: Hashable, value: Any):
         """Update an entry in the hash table."""
