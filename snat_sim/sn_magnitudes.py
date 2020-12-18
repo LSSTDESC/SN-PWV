@@ -92,7 +92,8 @@ def tabulate_mag(
 
         mag_arr = []
         for pwv, z in itertools.product(pwv_arr, z_arr):
-            model.set(pwv=pwv, z=z, x0=lc_simulation.calc_x0_for_z(z, model.source))
+            model.set(pwv=pwv, z=z)
+            model.set_source_peakabsmag(const.betoule_abs_mb, 'standard::b', 'AB', cosmo=const.betoule_cosmo)
             mag = model.bandmag(band, 'ab', 0)
             mag_arr.append(mag)
 
@@ -183,7 +184,7 @@ def correct_mag(
 def fit_mag(
         model: SNModel,
         light_curves: Collection[Table],
-        vparams: Collection[str],
+        vparams: List[str],
         bands: Collection[str],
         pwv_arr: Collection[Numeric] = None,
         z_arr: Collection[Numeric] = None,

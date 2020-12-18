@@ -33,10 +33,10 @@ Module Docs
 from __future__ import annotations
 
 from copy import copy
+from dataclasses import dataclass
 from typing import *
 
 import numpy as np
-import sncosmo
 from astropy.cosmology.core import Cosmology
 from astropy.table import Table
 
@@ -46,169 +46,94 @@ from .models import SNModel
 Numeric = Union[float, int]
 
 
-def calc_x0_for_z(
-        z: float,
-        source: Union[str, sncosmo.Source],
-        cosmo: Cosmology = const.betoule_cosmo,
-        abs_mag: float = const.betoule_abs_mb,
-        band: str = 'standard::b',
-        magsys: str = 'AB',
-        **params
-) -> float:
-    """Determine x0 for a given redshift and spectral template
-
-    Args:
-         z: Redshift to determine x0 for
-         source: Spectral template to use when determining x0
-         cosmo: Cosmology to use when determining x0
-         abs_mag: Absolute peak magnitude of the SNe Ia
-         band: Band to set absolute magnitude in
-         magsys: Magnitude system to set absolute magnitude in
-         Any other params to set for the provided `source`
-
-    Returns:
-        The x0 parameter for the given source and redshift
-    """
-
-    model = sncosmo.Model(source)
-    model.set(z=z, **params)
-    model.set_source_peakabsmag(abs_mag, band, magsys, cosmo=cosmo)
-    return model['x0']
-
-
-def duplicate_plasticc_sncosmo(
-        light_curve: Table,
-        model: SNModel,
-        zp: Numeric = None,
-        gain: Numeric = 1,
-        skynoise: Numeric = None,
-        scatter: bool = True,
-        cosmo: Optional[Cosmology] = const.betoule_cosmo
-) -> Table:
-    """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
-
-    Args:
-        light_curve: Astropy table with PLaSTICC light-curve data
-        model: SNModel to use when simulating light-curve flux
-        zp: Optionally overwrite the PLaSTICC zero-point with this value
-        gain: Gain to use during simulation
-        skynoise:  Optionally overwrite the PLaSTICC skynoise with this value
-        scatter: Add random noise to the flux values
-        cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology
-
-    Returns:
-        Astropy table with data for the simulated light-curve
-    """
-
-    use_redshift = 'SIM_REDSHIFT_CMB'
-    if cosmo is None:
-        x0 = light_curve.meta['SIM_SALT2x0']
-
-    else:
-        x0 = calc_x0_for_z(light_curve.meta[use_redshift], 'salt2', cosmo=cosmo)
-
-    # Params double as simulation parameters and meta-data
-    params = {
-        'SNID': light_curve.meta['SNID'],
-        'ra': light_curve.meta['RA'],
-        'dec': light_curve.meta['DECL'],
-        't0': light_curve.meta['SIM_PEAKMJD'],
-        'x1': light_curve.meta['SIM_SALT2x1'],
-        'c': light_curve.meta['SIM_SALT2c'],
-        'z': light_curve.meta[use_redshift],
-        'x0': x0
-    }
-
-    # Simulate the light-curve
-    zp = zp if zp is not None else light_curve['ZEROPT']
-    skynoise = skynoise if skynoise is not None else light_curve['SKY_SIG']
-    observations = ObservedCadence.from_plasticc(light_curve, zp=zp, gain=gain, skynoise=skynoise)
-    return observations.simulate_lc(model, params, scatter=scatter)
-
-
 class ObservedCadence:
     """Represents the temporal sampling of an observed supernova light-curve"""
 
     def __init__(
             self,
-            phases: Collection[float] = range(-20, 51),
-            bands: Collection[str] = ('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
-            zp: Union[int, float] = 25,
-            zpsys: str = 'AB',
-            gain: int = 100
+            obs_times: Collection[float],
+            bands: Collection[str],
+            skynoise: Union[Numeric, Collection[Numeric]],
+            zp: Union[Numeric, Collection[Numeric]],
+            zpsys: Union[str, Collection[str]],
+            gain: Union[Numeric, Collection[Numeric]]
     ) -> None:
-        """
+        """The observational sampling of an astronomical light-curve
 
-        ``phases`` are specified in units of phase by default, but can be chosen
-        to reflect any time convention.
+        The zero-point, zero point system, and gain arguments can be a
+        collection of values (one per phase value), or a single value to 
+        apply at all phases. 
 
         Args:
-            phases: Array of phase values to include
-            bands: Array of bands to include
-            zp: The zero point
-            zpsys: The zero point system
-            gain: The simulated gain
+            obs_times: Array of observation times for the light-curve
+            bands: Array of bands for each observation
+            zp: The zero-point or an array of zero-points for each observation
+            zpsys: The zero-point system or an array of zero-point systems
+            gain: The simulated gain or an array of gain values
         """
 
-        self.phase_arr = np.concatenate([phases for _ in bands])
-        self.band_arr = np.concatenate([np.full_like(phases, b, dtype='U1000') for b in bands])
-        self.gain_arr = np.full_like(self.phase_arr, gain)
-        self.skynoise_arr = np.zeros_like(self.phase_arr)
-        self.zp_arr = np.full_like(self.phase_arr, zp, dtype=float)
-        self.zp_sys_arr = np.full_like(self.phase_arr, zpsys, dtype='U10')
+        self.obs_times = obs_times
+        self.bands = bands
+        self.skynoise = np.full_like(self.obs_times, skynoise)
+        self.zp = np.full_like(self.obs_times, zp, dtype=float)
+        self.zpsys = np.full_like(self.obs_times, zpsys, dtype='U10')
+        self.gain = np.full_like(self.obs_times, gain)
 
     @staticmethod
     def from_plasticc(
             light_curve: Table,
-            zp: Numeric = 25,
-            gain: Numeric = 1,
-            skynoise: Numeric = 0,
+            zp: Union[Numeric, Collection[Numeric]] = None,
+            zpsys: Union[str, Collection[str]] = 'AB',
+            gain: Union[Numeric, Collection[Numeric]] = 1,
             drop_nondetection: bool = False
     ) -> ObservedCadence:
         """Extract the observational cadence from a PLaSTICC light-curve
-
-        Returned table is formatted for use with ``sncosmo.realize_lcs``.
+        
+        The zero-point, zero point system, and gain arguments can be a
+        collection of values (one per phase value), or a single value to 
+        apply at all obs_times.
 
         Args:
-            light_curve      (Table): Astropy table with PLaSTICC light-curve data
-            zp        (float, array): Overwrite the PLaSTICC zero-point with this value
-            gain             (float): Gain to use during simulation
-            skynoise    (int, array): Simulated skynoise in counts
-            drop_nondetection (bool): Drop data with PHOTFLAG == 0
+            light_curve: Astropy table with PLaSTICC light-curve data
+            zp: Optionally overwrite the PLaSTICC zero-point with this value
+            zpsys: The zero point system
+            gain: The gain value of each observation
+            drop_nondetection: Drop data with PHOTFLAG == 0
 
         Returns:
-            An astropy table with cadence data for the input light-curve
+            An ``ObservedCadence`` instance
         """
 
         if drop_nondetection:
             light_curve = light_curve[light_curve['PHOTFLAG'] != 0]
 
-        observations = Table({
-            'time': light_curve['MJD'],
-            'band': ['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
-        })
-
-        observations['zp'] = zp
-        observations['zpsys'] = 'ab'
-        observations['gain'] = gain
-        observations['skynoise'] = skynoise
-        return observations  Todo: Fix return type
+        return ObservedCadence(
+            obs_times=light_curve['MJD'],
+            bands=['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
+            zp=zp or light_curve['ZP'],
+            zpsys=zpsys,
+            gain=gain,
+            skynoise=light_curve['SKYNOISE']
+        )
 
     def to_sncosmo(self) -> Table:
-        """Return the observational cadence as an ``astropy.Table`` formatted for use with ``sncosmo``
+        """Return the observational cadence as an ``astropy.Table``
+
+        The returned table of observations is formatted for use with with
+        the ``sncosmo`` package.
 
         Returns:
-            An astropy table
+            An astropy table representing the observational cadence in ``sncosmo`` format
         """
 
         observations = Table(
             {
-                'time': self.phase_arr,
-                'band': self.band_arr,
-                'gain': self.gain_arr,
-                'skynoise': self.skynoise_arr,
-                'zp': self.zp_arr,
-                'zpsys': self.zp_sys_arr
+                'time': self.obs_times,
+                'band': self.bands,
+                'gain': self.gain,
+                'skynoise': self.skynoise,
+                'zp': self.zp,
+                'zpsys': self.zpsys
             },
             dtype=[float, 'U1000', float, float, float, 'U100']
         )
@@ -216,65 +141,139 @@ class ObservedCadence:
         observations.sort('time')
         return observations
 
-    # Todo: The default gain value should match create_observations_table
-    def simulate_lc_fixed_snr(self, model: SNModel, snr: float = .05, **params) -> Table:
-        """Simulate a SN light-curve with a fixed SNR given a set of observations
 
-        The ``obs`` table is expected to have columns for 'time', 'band', 'zp',
-        and 'zpsys'.
+@dataclass
+class LCSimulator:
+    """Handles the simulation of SNe light-curves according to an observational cadence and supernova model"""
+
+    model: SNModel
+    cadence: ObservedCadence
+
+    def calc_x0_for_z(
+            self,
+            z: float,
+            cosmo: Cosmology = const.betoule_cosmo,
+            abs_mag: float = const.betoule_abs_mb,
+            band: str = 'standard::b',
+            magsys: str = 'AB',
+            **params
+    ) -> float:
+        """Determine x0 for a given redshift using the current simulation model
 
         Args:
-            model: Supernova model to evaluate
-            snr: Signal to noise ratio
-            **params: Values for any model parameters
+             z: Redshift to determine x0 for
+             cosmo: Cosmology to use when determining x0
+             abs_mag: Absolute peak magnitude of the SNe Ia
+             band: Band to set absolute magnitude in
+             magsys: Magnitude system to set absolute magnitude in
+             Any other params to set for the provided `source`
 
         Returns:
-            An astropy table formatted for use with ``sncosmo``
+            The x0 parameter for the given source and redshift
         """
 
-        model = copy(model)
+        model = copy(self.model)
+        model.set(z=z, **params)
+        model.set_source_peakabsmag(abs_mag, band, magsys, cosmo=cosmo)
+        return model['x0']
+
+    def simulate_lc_fixed_snr(self, params: Dict[str, float] = None, snr: float = .05) -> Table:
+        """Simulate a SN light-curve with a fixed SNR
+
+        Unless otherwise specified, the scale factor parameter ``x0`` is
+        automatically set according to the redshift.
+
+        Args:
+            params: Values for any model parameters
+            snr: Signal to noise ratio
+
+        Returns:
+            An astropy table representing a light-curve in the ``sncosmo`` format
+        """
+
+        model = copy(self.model)
         model.update(params)
+        if 'x0' not in params:
+            model['x0'] = self.calc_x0_for_z(model['z'])
 
-        # Set default x0 value according to assumed cosmology and the model redshift
-        x0 = params.get('x0', calc_x0_for_z(model['z'], model.source))
-        model.set(x0=x0)
-
-        obs_table = self.to_sncosmo()
+        obs_table = self.cadence.to_sncosmo()
         light_curve = obs_table[['time', 'band', 'zp', 'zpsys']]
         light_curve['flux'] = model.bandflux(obs_table['band'], obs_table['time'], obs_table['zp'], obs_table['zpsys'])
         light_curve['fluxerr'] = light_curve['flux'] / snr
         light_curve.meta = dict(zip(model.param_names, model.parameters))
         return light_curve
 
+    def duplicate_plasticc_sncosmo(
+            self,
+            light_curve: Table,
+            scatter: bool = True,
+            cosmo: Optional[Cosmology] = const.betoule_cosmo
+    ) -> Table:
+        """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
+
+        Args:
+            light_curve: Astropy table with PLaSTICC light-curve data
+            zp: Optionally overwrite the PLaSTICC zero-point with this value
+            gain: Gain to use during simulation
+            skynoise:  Optionally overwrite the PLaSTICC skynoise with this value
+            scatter: Add random noise to the flux values
+            cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology
+
+        Returns:
+            Astropy table with data for the simulated light-curve
+        """
+
+        use_redshift = 'SIM_REDSHIFT_CMB'
+        if cosmo is None:
+            x0 = light_curve.meta['SIM_SALT2x0']
+
+        else:
+            x0 = self.calc_x0_for_z(light_curve.meta[use_redshift], cosmo=cosmo)
+
+        # Params double as simulation parameters and meta-data
+        params = {
+            'SNID': light_curve.meta['SNID'],
+            'ra': light_curve.meta['RA'],
+            'dec': light_curve.meta['DECL'],
+            't0': light_curve.meta['SIM_PEAKMJD'],
+            'x1': light_curve.meta['SIM_SALT2x1'],
+            'c': light_curve.meta['SIM_SALT2c'],
+            'z': light_curve.meta[use_redshift],
+            'x0': x0
+        }
+
+        # Simulate the light-curve
+        return self.simulate_lc(self.model, params, scatter=scatter)
+
     def simulate_lc(self, model: SNModel, params: Dict[str, float] = None, scatter: bool = True) -> Table:
-        """Simulate a SN light-curve given a set of observations
+        """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
-        random number drawn from a Normal Distribution with a standard deviation
+        random component drawn from a normal distribution with a standard deviation
         equal to the error of the observation.
 
         Args:
             model: The model to use in the simulations
-            params: parameters to feed to the model for realizing the light-curve
-            scatter: Add random noise to the flux values
+            params: Parameters to feed to the model for realizing the light-curve
+            scatter: Whether to add random noise to the flux values
 
         Returns:
-            An astropy table formatted for use with ``sncosmo``
+            An astropy table representing a light-curve in the ``sncosmo`` format
         """
 
-        if params is None:
-            params = dict()
-
+        # Update simulation model with params
+        params = params or dict()
         model = copy(model)
-        for p in model.param_names:
-            model[p] = params.get(p, model[p])
+        model.update(params)
 
-        flux = model.bandflux(self.band_arr, self.phase_arr, zp=self.zp_arr, zpsys=self.zp_sys_arr)
-        fluxerr = np.sqrt(self.skynoise_arr ** 2 + np.abs(flux) / self.gain_arr)
+        flux = model.bandflux(
+            self.cadence.bands, self.cadence.obs_times, zp=self.cadence.zp, zpsys=self.cadence.zpsys)
+
+        fluxerr = np.sqrt(self.cadence.skynoise ** 2 + np.abs(flux) / self.cadence.gain)
 
         if scatter:
             flux = np.atleast_1d(np.random.normal(flux, fluxerr))
 
         return Table(
-            data=[self.phase_arr, self.band_arr, flux, fluxerr, self.zp_arr, self.zp_sys_arr],
+            data=[self.cadence.obs_times, self.cadence.bands, flux, fluxerr, self.cadence.zp, self.cadence.zpsys],
             names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'), meta=params)

@@ -52,9 +52,6 @@ missing data using the ``TSUAccessor.periodic_interpolation`` method.
    10    16.333333
    dtype: float64
 
-
-
-
 For information on what other methods are incorporated under the ``tsu``
 accessor attribut, see the ``TSUAccessor`` class.
 
