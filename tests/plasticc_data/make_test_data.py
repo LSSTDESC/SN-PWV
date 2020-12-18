@@ -9,8 +9,9 @@ Example:
    python make_test_data.py /mnt/md0/sn-sims/ alt_sched 11
 """
 
-from pathlib import Path
 import sys
+from pathlib import Path
+
 from astropy.io import fits
 
 use_cadence = sys.argv[2]

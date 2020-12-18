@@ -9,7 +9,6 @@ import sncosmo
 from numpy.testing import assert_equal
 
 from snat_sim import plasticc
-from snat_sim._data_paths import data_paths
 from snat_sim.filters import register_lsst_filters
 from snat_sim.lc_simulation import calc_x0_for_z
 from tests.mock import create_mock_plasticc_light_curve
