@@ -1,56 +1,35 @@
 """Tests for the ``plasticc`` module"""
 
-import os
-from pathlib import Path
 from unittest import TestCase
 
 import numpy as np
-import sncosmo
 from numpy.testing import assert_equal
 
-from snat_sim import plasticc
+from snat_sim import models, plasticc
 from snat_sim.filters import register_lsst_filters
 from snat_sim.lc_simulation import calc_x0_for_z
 from tests.mock import create_mock_plasticc_light_curve
 
 register_lsst_filters(force=True)
-test_data_dir = Path(__file__).parent / 'plasticc_data'
 
 # Used to store environmental variables on module setup / teardown
 _OLD_ENV_VALUE = None
 _ENVIRON_VAR_NAME = 'CADENCE_SIMS'
 
 
-def setUpModule():
-    """Set the ``CADENCE_SIMS`` variable in the environment"""
-
-    global _OLD_ENV_VALUE
-    _OLD_ENV_VALUE = os.environ.get(_ENVIRON_VAR_NAME, None)
-    os.environ[_ENVIRON_VAR_NAME] = str(test_data_dir)
-
-
-def tearDownModule():
-    """Restore the ``CADENCE_SIMS`` variable to it's value before testing"""
-
-    del os.environ[_ENVIRON_VAR_NAME]
-    if _OLD_ENV_VALUE:
-        os.environ[_ENVIRON_VAR_NAME] = _OLD_ENV_VALUE
-
-
 class GetAvailableCadences(TestCase):
     """Tests for the ``get_available_cadences`` function"""
 
-    def test_cadences_match_test_data(self):
+    def test_cadences_match_test_data(self) -> None:
         """Test returned cadences match those available in the test data"""
 
-        test_data_cadences = [d.name for d in test_data_dir.glob('*') if d.is_dir()]
-        self.assertEqual(plasticc.get_available_cadences(), test_data_cadences)
+        self.assertEqual(plasticc.get_available_cadences(), ['alt_sched'])
 
 
 class GetModelHeaders(TestCase):
     """Tests for the ``get_model_headers`` function"""
 
-    def test_correct_headers_for_test_data(self):
+    def test_correct_headers_for_test_data(self) -> None:
         """Test the returned list is empty for a cadence with no available data"""
 
         header_paths = plasticc.get_model_headers('alt_sched', model=11)
@@ -66,7 +45,7 @@ class CountLightCurves(TestCase):
     test_model = 11
     lc_num_for_cadence = 8
 
-    def test_lc_count_matches_test_data(self):
+    def test_lc_count_matches_test_data(self) -> None:
         """Test the number of counted light curves matches those in the test data"""
 
         counted_light_curves = plasticc.count_light_curves(self.test_cadence, self.test_model)
@@ -76,7 +55,7 @@ class CountLightCurves(TestCase):
 class IterLCForHeader(TestCase):
     """Tests for the ``iter_lc_for_header`` function"""
 
-    def test_lc_has_meta_data(self):
+    def test_lc_has_meta_data(self) -> None:
         """Test returned light curves have meta data"""
 
         test_header = plasticc.get_model_headers('alt_sched', 11)[0]
@@ -87,7 +66,7 @@ class IterLCForHeader(TestCase):
 class IterLcForCadenceModel(TestCase):
     """Tests for the ``iter_lc_for_cadence_model`` function"""
 
-    def test_lc_count_matches_count_light_curves_func(self):
+    def test_lc_count_matches_count_light_curves_func(self) -> None:
         """Test returned light curve count matches the values returned by ``count_light_curves``"""
 
         total_lc_count = sum(1 for _ in plasticc.iter_lc_for_cadence_model('alt_sched', 11))
@@ -98,17 +77,17 @@ class IterLcForCadenceModel(TestCase):
 class FormatPlasticcSncosmo(TestCase):
     """Tests for the ``format_plasticc_sncosmo`` function"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.plasticc_lc = create_mock_plasticc_light_curve()
         self.formatted_lc = plasticc.format_plasticc_sncosmo(self.plasticc_lc)
 
-    def test_correct_column_names(self):
+    def test_correct_column_names(self) -> None:
         """Test the formatted data table has the correct columns"""
 
         expected_names = ['time', 'band', 'flux', 'fluxerr', 'zp', 'photflag', 'zpsys']
         self.assertSequenceEqual(self.formatted_lc.colnames, expected_names)
 
-    def test_preserves_meta_data(self):
+    def test_preserves_meta_data(self) -> None:
         """Test the formatted data table has the same metadata as the input table"""
 
         self.assertDictEqual(self.formatted_lc.meta, self.plasticc_lc.meta)
@@ -117,22 +96,22 @@ class FormatPlasticcSncosmo(TestCase):
 class ExtractCadenceData(TestCase):
     """Tests for the ``extract_cadence_data`` function"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.plasticc_lc = create_mock_plasticc_light_curve()
         self.extracted_cadence = plasticc.extract_cadence_data(self.plasticc_lc)
 
-    def test_correct_column_names(self):
+    def test_correct_column_names(self) -> None:
         """Test the formatted data table has the correct columns"""
 
         expected_names = ['time', 'band', 'zp', 'zpsys', 'gain', 'skynoise']
         self.assertSequenceEqual(self.extracted_cadence.colnames, expected_names)
 
-    def test_zp_is_overwritten(self):
+    def test_zp_is_overwritten(self) -> None:
         """Test the zero_point in the returned table is overwritten with a constant"""
         expected_zp = 25
         assert_equal(expected_zp, self.extracted_cadence['zp'])
 
-    def test_filter_names_are_formatted(self):
+    def test_filter_names_are_formatted(self) -> None:
         """Test filter names are formatted for use with sncosmo"""
 
         is_lower = all(f.islower() for f in self.extracted_cadence['band'])
@@ -141,7 +120,7 @@ class ExtractCadenceData(TestCase):
         is_prefixed = all(f.startswith('lsst_hardware_') for f in self.extracted_cadence['band'])
         self.assertTrue(is_prefixed, 'Filter names do not start with ``lsst_hardware_``')
 
-    def test_drop_nondetection(self):
+    def test_drop_nondetection(self) -> None:
         """Test ``drop_nondetection=True`` removes non detections"""
 
         extracted_cadence = plasticc.extract_cadence_data(self.plasticc_lc, drop_nondetection=True)
@@ -153,8 +132,8 @@ class ExtractCadenceData(TestCase):
 class DuplicatePlasticcSncosmo(TestCase):
     """Tests for the ``duplicate_plasticc_sncosmo`` function"""
 
-    def setUp(self):
-        self.model = sncosmo.Model('salt2-extended')
+    def setUp(self) -> None:
+        self.model = models.SNModel('salt2-extended')
         self.plasticc_lc = create_mock_plasticc_light_curve()
         self.param_mapping = {  # Maps sncosmo param names to plasticc names
             't0': 'SIM_PEAKMJD',
@@ -164,7 +143,7 @@ class DuplicatePlasticcSncosmo(TestCase):
             'x0': 'SIM_SALT2x0'
         }
 
-    def test_lc_meta_matches_params(self):
+    def test_lc_meta_matches_params(self) -> None:
         """Test parameters in returned meta data match the input light_curve"""
 
         duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, model=self.model, cosmo=None)
@@ -174,7 +153,7 @@ class DuplicatePlasticcSncosmo(TestCase):
                 f'Incorrect {sncosmo_param} ({plasticc_param}) parameter'
             )
 
-    def test_x0_overwritten_by_cosmo_arg(self):
+    def test_x0_overwritten_by_cosmo_arg(self) -> None:
         """Test the x0 parameter is overwritten according to the given cosmology"""
 
         duplicated_lc = plasticc.duplicate_plasticc_sncosmo(self.plasticc_lc, model=self.model)
