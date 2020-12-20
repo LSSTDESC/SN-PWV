@@ -5,7 +5,7 @@ Usage Example
 -------------
 
 The builtin Python memoization routines (``lru_cache``) is not compatible with
-``numpy`` arrays because array objects are not hashable. The ``numpy_cache``
+``numpy`` arrays because array objects are not hashable. The ``Cache``
 decorator provides an alternative memoization solution that supports
 numpy arguments. Arguments that are numpy arguments must be specified by
 name when constructing the decorator:
@@ -14,10 +14,10 @@ name when constructing the decorator:
 
    >>> import numpy as np
 
-   >>> from snat_sim.utils.caching import numpy_cache
+   >>> from snat_sim.utils.caching import Cache
 
 
-   >>> @numpy_cache('x', 'y', cache_size=1000)
+   >>> @Cache('x', 'y', cache_size=1000)
    ... def add(x, y):
    ...     print('The function has been called!')
    ...     return x + y
@@ -40,7 +40,7 @@ as follows:
    >>> class Foo:
    ...
    ...     def __init__(self):
-   ...         self.add = numpy_cache('x', 'y', cache_size=1000)(self.add)
+   ...         self.add = Cache('x', 'y', cache_size=1000)(self.add)
    ...
    ...     def add(self, x, y):
    ...         return x + y
@@ -94,41 +94,51 @@ class MemoryCache(OrderedDict):
                 self.popitem(last=False)
 
 
-def numpy_cache(*numpy_args: str, cache_size: int = None) -> Callable:
-    """Memoization decorator supporting ``numpy`` arrays.
+class Cache(MemoryCache):
+    """Memoization function wrapper"""
 
-    Args:
-        *numpy_args: Function arguments to treat as numpy arrays
-        cache_size: Maximum memory to allocate to cached data in bytes
+    def __init__(self, *numpy_args: str, cache_size: int = None) -> None:
+        """Memoization decorator supporting ``numpy`` arrays.
 
-    Returns:
-        A callable function decorator
-    """
+        Args:
+            *numpy_args: Function arguments to treat as numpy arrays
+            cache_size: Maximum memory to allocate to cached data in bytes
 
-    def decorator(function: Callable) -> Callable:
-        class Memoization(MemoryCache):
-            """Dictionary like object that stores recent function calls in memory."""
+        Returns:
+            A callable function decorator
+        """
 
-            @wraps(function)
-            def wrapped(self, *args: Any, **kwargs: Any) -> Any:
-                """Wrapped version of the given function.
+        self.numpy_args = numpy_args
+        super(Cache, self).__init__(max_size=cache_size)
 
-                Arguments and returns are the same as ``function``
-                """
+    def __call__(self, function: Callable) -> Callable:
+        """Cache return values of the given function
 
-                kwargs_for_key = inspect.getcallargs(function, *args, **kwargs)
-                for arg_to_cast in numpy_args:
-                    kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tostring()
+        Args:
+            function: The function to cache returns of
 
-                key = tuple(kwargs_for_key.items())
-                try:
-                    out = self[key]
+        Returns:
+            The wrapped function
+        """
 
-                except KeyError:
-                    out = self[key] = function(*args, **kwargs)
+        @wraps(function)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            """Wrapped version of the given function.
 
-                return out
+            Arguments and returns are the same as ``function``
+            """
 
-        return Memoization(max_size=cache_size).wrapped
+            kwargs_for_key = inspect.getcallargs(function, *args, **kwargs)
+            for arg_to_cast in self.numpy_args:
+                kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tostring()
 
-    return decorator
+            key = tuple(kwargs_for_key.items())
+            try:
+                out = self[key]
+
+            except KeyError:
+                out = self[key] = function(*args, **kwargs)
+
+            return out
+
+        return wrapped
