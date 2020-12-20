@@ -177,6 +177,18 @@ class LCSimulator:
         model.set_source_peakabsmag(abs_mag, band, magsys, cosmo=cosmo)
         return model['x0']
 
+    def reduce_model_params(self, params:Dict[str:float]) -> Dict[str, float]:
+        """Return the subset of model parameters belonging to the simulation model
+
+        Args:
+            params: Parameter values representing a superset of the simulation model parameters
+
+        Returns:
+            Just the parameters belonging to the simulation model
+        """
+
+        return {p: v for p, v in params.items() if p in self.model.param_names}
+
     def simulate_lc_fixed_snr(self, params: Dict[str, float] = None, snr: float = .05) -> Table:
         """Simulate a SN light-curve with a fixed SNR
 
@@ -192,7 +204,7 @@ class LCSimulator:
         """
 
         model = copy(self.model)
-        model.update(params)
+        model.update(self.reduce_model_params(params))
         if 'x0' not in params:
             model['x0'] = self.calc_x0_for_z(model['z'])
 
@@ -203,46 +215,7 @@ class LCSimulator:
         light_curve.meta = dict(zip(model.param_names, model.parameters))
         return light_curve
 
-    def duplicate_plasticc_sncosmo(
-            self,
-            light_curve: Table,
-            scatter: bool = True,
-            cosmo: Optional[Cosmology] = const.betoule_cosmo
-    ) -> Table:
-        """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
-
-        Args:
-            light_curve: Astropy table with PLaSTICC light-curve data
-            scatter: Add random noise to the flux values
-            cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology
-
-        Returns:
-            Astropy table with data for the simulated light-curve
-        """
-
-        use_redshift = 'SIM_REDSHIFT_CMB'
-        if cosmo is None:
-            x0 = light_curve.meta['SIM_SALT2x0']
-
-        else:
-            x0 = self.calc_x0_for_z(light_curve.meta[use_redshift], cosmo=cosmo)
-
-        # Params double as simulation parameters and meta-data
-        params = {
-            'SNID': light_curve.meta['SNID'],
-            'ra': light_curve.meta['RA'],
-            'dec': light_curve.meta['DECL'],
-            't0': light_curve.meta['SIM_PEAKMJD'],
-            'x1': light_curve.meta['SIM_SALT2x1'],
-            'c': light_curve.meta['SIM_SALT2c'],
-            'z': light_curve.meta[use_redshift],
-            'x0': x0
-        }
-
-        # Simulate the light-curve
-        return self.simulate_lc(self.model, params, scatter=scatter)
-
-    def simulate_lc(self, model: SNModel, params: Dict[str, float] = None, scatter: bool = True) -> Table:
+    def simulate_lc(self, params: Dict[str, float] = None, scatter: bool = True) -> Table:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -250,7 +223,6 @@ class LCSimulator:
         equal to the error of the observation.
 
         Args:
-            model: The model to use in the simulations
             params: Parameters to feed to the model for realizing the light-curve
             scatter: Whether to add random noise to the flux values
 
@@ -260,8 +232,8 @@ class LCSimulator:
 
         # Update simulation model with params
         params = params or dict()
-        model = copy(model)
-        model.update(params)
+        model = copy(self.model)
+        model.update(self.reduce_model_params(params))
 
         flux = model.bandflux(
             self.cadence.bands, self.cadence.obs_times, zp=self.cadence.zp, zpsys=self.cadence.zpsys)
@@ -274,3 +246,46 @@ class LCSimulator:
         return Table(
             data=[self.cadence.obs_times, self.cadence.bands, flux, fluxerr, self.cadence.zp, self.cadence.zpsys],
             names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'), meta=params)
+
+
+def duplicate_plasticc_lc(
+        light_curve: Table,
+        model: SNModel,
+        scatter: bool = True,
+        cosmo: Optional[Cosmology] = const.betoule_cosmo
+) -> Table:
+    """Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve
+
+    Args:
+        light_curve: Astropy table with PLaSTICC light-curve data
+        scatter: Add random noise to the flux values
+        cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology
+
+    Returns:
+        Astropy table with data for the simulated light-curve
+    """
+
+    cadence = ObservedCadence.from_plasticc(light_curve)
+    simulator = LCSimulator(model, cadence)
+
+    use_redshift = 'SIM_REDSHIFT_CMB'
+    if cosmo is None:
+        x0 = light_curve.meta['SIM_SALT2x0']
+
+    else:
+        x0 = simulator.calc_x0_for_z(light_curve.meta[use_redshift], cosmo=cosmo)
+
+    # Params double as simulation parameters and meta-data
+    params = {
+        'SNID': light_curve.meta['SNID'],
+        'ra': light_curve.meta['RA'],
+        'dec': light_curve.meta['DECL'],
+        't0': light_curve.meta['SIM_PEAKMJD'],
+        'x1': light_curve.meta['SIM_SALT2x1'],
+        'c': light_curve.meta['SIM_SALT2c'],
+        'z': light_curve.meta[use_redshift],
+        'x0': x0
+    }
+
+    # Simulate the light-curve
+    return simulator.simulate_lc(params, scatter=scatter)

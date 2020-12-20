@@ -2,10 +2,7 @@
 
 from unittest import TestCase
 
-import numpy as np
-from numpy.testing import assert_equal
-
-from snat_sim import models, plasticc
+from snat_sim import plasticc
 from snat_sim.filters import register_lsst_filters
 from tests.mock import create_mock_plasticc_light_curve
 

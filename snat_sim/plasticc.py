@@ -47,10 +47,12 @@ from pathlib import Path
 from typing import *
 
 import pandas as pd
+from astropy.cosmology.core import Cosmology
 from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
+from snat_sim import constants as const
 from ._data_paths import data_paths
 
 
