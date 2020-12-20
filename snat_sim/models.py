@@ -373,15 +373,17 @@ class PWVModel:
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
+    @staticmethod
     def calc_airmass(
-            self, time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
+            time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
     ) -> float:
         ...
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
+    @staticmethod
     def calc_airmass(
-            self, time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
+            time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
     ) -> np.array:
         ...
 

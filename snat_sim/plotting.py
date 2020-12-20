@@ -424,7 +424,7 @@ def plot_delta_colors(
 
 # noinspection PyUnusedLocal
 def plot_delta_mu(
-        mu: np.ndarray, pwv_arr: np.nditer, z_arr: np.ndarray, cosmo: Cosmology = const.betoule_cosmo) -> None:
+        mu: np.ndarray, pwv_arr: np.ndarray, z_arr: np.ndarray, cosmo: Cosmology = const.betoule_cosmo) -> None:
     """Plot the variation in fitted distance modulus as a function of redshift and PWV.
 
     Args:
@@ -599,8 +599,7 @@ def plot_cosmology_fit(
     measured_mu = data.snat_sim.calc_distmod(abs_mag) + alpha * data.x1 - beta * data.c
     residuals = measured_mu - fitted_mu
 
-    fig, (top_ax, bottom_ax) = plt.subplots(
-        2, 1, sharex='col', gridspec_kw={'height_ratios': [2, 1]})
+    fig, (top_ax, bottom_ax) = plt.subplots(2, sharex='col', gridspec_kw={'height_ratios': [2, 1]})
 
     top_ax.errorbar(data.z, measured_mu, yerr=data.mb_err, linestyle='')
     top_ax.scatter(data.z, measured_mu, s=1)
