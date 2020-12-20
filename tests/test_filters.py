@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from snat_sim import filters
+from snat_sim.utils import filters
 
 
 class RegisterSncosmoFilter(TestCase):
@@ -44,12 +44,6 @@ class RegisterSncosmoFilter(TestCase):
 class RegisterDECAMFilters(TestCase):
     """Tests for the ``register_decam_filters`` function"""
 
-    @classmethod
-    def setUpClass(cls):
-        """Register the DECam filters"""
-
-        filters.register_decam_filters(force=True)
-
     @staticmethod
     def assert_bands_are_registered(*bands):
         """Fail if given bands are not registered with sncosmo"""
@@ -82,12 +76,6 @@ class RegisterDECAMFilters(TestCase):
 
 class RegisterLSSTFilters(TestCase):
     """Tests for the ``register_lsst_filters``"""
-
-    @classmethod
-    def setUpClass(cls):
-        """Register the LSST filters"""
-
-        filters.register_lsst_filters(force=True)
 
     # noinspection PyMethodMayBeStatic
     def assert_bands_are_registered(self, *bands):

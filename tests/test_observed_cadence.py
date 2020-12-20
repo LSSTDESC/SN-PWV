@@ -4,11 +4,8 @@ from unittest import TestCase
 
 import numpy as np
 
-from .mock import create_mock_plasticc_light_curve
-from snat_sim.filters import register_decam_filters
 from snat_sim.models import ObservedCadence
-
-register_decam_filters(force=True)
+from .mock import create_mock_plasticc_light_curve
 
 
 class SncosmoFormatting(TestCase):
@@ -30,7 +27,8 @@ class SncosmoFormatting(TestCase):
     def test_correct_table_values(self) -> None:
         """Test the correct zero point and zero-point system were used"""
 
-        np.testing.assert_array_equal(self.sncosmo_cadence['time'], self.cadence.obs_times, 'Incorrect observation times')
+        np.testing.assert_array_equal(self.sncosmo_cadence['time'], self.cadence.obs_times,
+                                      'Incorrect observation times')
         np.testing.assert_array_equal(self.sncosmo_cadence['band'], self.cadence.bands, 'Incorrect band names')
         np.testing.assert_array_equal(self.sncosmo_cadence['zp'], self.cadence.zp, 'Incorrect zero point')
         np.testing.assert_array_equal(self.sncosmo_cadence['zpsys'], self.cadence.zpsys, 'Incorrect zero point system')

@@ -7,9 +7,6 @@ import sncosmo
 
 from snat_sim import constants as const
 from snat_sim import models, sn_magnitudes
-from snat_sim.filters import register_decam_filters
-
-register_decam_filters(force=True)
 
 
 class GetConfigPWVValues(TestCase):

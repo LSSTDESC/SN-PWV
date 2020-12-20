@@ -4,15 +4,12 @@ from pathlib import Path
 from pwv_kpno.defaults import ctio
 
 from snat_sim import models
-from snat_sim.filters import register_lsst_filters
 from snat_sim.fitting_pipeline import FittingPipeline
 
 os.environ['CADENCE_SIMS'] = str(Path(__file__).resolve().parent / 'data')
 
 
 def setup_pipeline():
-    register_lsst_filters(force=True)
-
     pwv_model = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
     propagation_effect = models.VariablePWVTrans(pwv_model)
 

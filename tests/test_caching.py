@@ -5,8 +5,8 @@ from unittest import TestCase
 
 import numpy as np
 
-from snat_sim.utils.caching import MemoryCache
 from snat_sim.utils.caching import Cache
+from snat_sim.utils.caching import MemoryCache
 
 
 class MemoryManagement(TestCase):

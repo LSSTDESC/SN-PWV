@@ -3,10 +3,7 @@
 from unittest import TestCase
 
 from snat_sim import plasticc
-from snat_sim.filters import register_lsst_filters
 from tests.mock import create_mock_plasticc_light_curve
-
-register_lsst_filters(force=True)
 
 # Used to store environmental variables on module setup / teardown
 _OLD_ENV_VALUE = None

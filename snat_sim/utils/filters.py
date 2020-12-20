@@ -15,12 +15,6 @@ Space and Time (LSST) are registered with and then retrieved from the
 .. doctest:: python
 
    >>> import sncosmo
-   >>> from snat_sim.filters import register_lsst_filters
-
-   >>> # Check the names of new filters that will be registered
-   >>> print(help(register_lsst_filters))  #doctest:+SKIP
-
-   >>> register_lsst_filters(force=True)
    >>> lsst_u_band = sncosmo.get_bandpass('lsst_total_u')
 
 Module Docs
@@ -32,7 +26,7 @@ import pandas as pd
 import sncosmo
 from astropy.table import Table
 
-from ._data_paths import data_paths
+from snat_sim._data_paths import data_paths
 
 
 def register_sncosmo_filter(wave: np.array, trans: np.array, name: str, force: bool = False) -> None:
