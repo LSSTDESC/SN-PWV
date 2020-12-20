@@ -133,7 +133,7 @@ class ObservedCadence:
 
         The zero-point, zero point system, and gain arguments can be a
         collection of values (one per phase value), or a single value to
-        apply at all phases.
+        apply at all obs_time.
 
         Args:
             obs_times: Array of observation times for the light-curve
@@ -250,6 +250,12 @@ class ObservedCadence:
 
         observations.sort('time')
         return observations
+
+    def __repr__(self) -> str:
+        repr_list = self.to_sncosmo().__repr__().split('\n')
+        repr_list[0] = super(ObservedCadence, self).__repr__()
+        repr_list.pop(2)
+        return '\n'.join(repr_list)
 
 
 ###############################################################################
@@ -585,7 +591,7 @@ class SNModel(sncosmo.Model):
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
 
-    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True, autoscale: bool = True) -> Table:
+    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True) -> Table:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -593,6 +599,7 @@ class SNModel(sncosmo.Model):
         equal to the error of the observation.
 
         Args:
+            cadence: Observational cadence to evaluate the light-curve with
             scatter: Whether to add random noise to the flux values
 
         Returns:
@@ -609,6 +616,24 @@ class SNModel(sncosmo.Model):
             data=[cadence.obs_times, cadence.bands, flux, fluxerr, cadence.zp, cadence.zpsys],
             names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'),
             meta=dict(zip(self.param_names, self.parameters)))
+
+    def simulate_lc_fixed_snr(self, cadence: ObservedCadence, snr: float = .05) -> Table:
+        """Simulate a SN light-curve with a fixed SNR for the given cadence
+
+        Args:
+            cadence: Observational cadence to evaluate the light-curve with
+            snr: Signal to noise ratio
+
+        Returns:
+            An astropy table formatted for use with sncosmo
+        """
+
+        obs = cadence.to_sncosmo()
+        light_curve = obs[['time', 'band', 'zp', 'zpsys']]
+        light_curve['flux'] = self.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
+        light_curve['fluxerr'] = light_curve['flux'] / snr
+        light_curve.meta = dict(zip(self.param_names, self.parameters))
+        return light_curve
 
 
 ###############################################################################
