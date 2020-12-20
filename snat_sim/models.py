@@ -101,7 +101,7 @@ from pwv_kpno.transmission import calc_pwv_eff
 from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
 
-from snat_sim.utils.caching import numpy_cache
+from snat_sim.utils.caching import Cache
 from . import constants as const
 from ._data_paths import data_paths
 from .utils import time_series as tsu
@@ -277,7 +277,7 @@ class FixedResTransmission:
         self._interpolator = RegularGridInterpolator(
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
-        self.calc_transmission = numpy_cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
+        self.calc_transmission = Cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
@@ -333,7 +333,7 @@ class PWVModel:
         self.pwv_model_data = pwv_series.tsu.resample_data_across_year().tsu.periodic_interpolation()
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        self.pwv_los = numpy_cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
+        self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
         memory = joblib.Memory(str(data_paths.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
         self.calc_airmass = memory.cache(self.calc_airmass)
