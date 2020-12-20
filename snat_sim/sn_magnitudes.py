@@ -20,14 +20,14 @@ from astropy.cosmology.core import Cosmology
 from astropy.table import Table
 from tqdm import tqdm
 
-from . import constants as const, lc_simulation
+from . import constants as const
 from ._data_paths import data_paths
 from .models import SNModel
 
 Numeric = Union[int, float]
 
 
-# Todo: Add dictionary keys to docs - consider named tuple?
+# Todo: Add dictionary keys to docs? - consider named tuple?
 @lru_cache()  # Cache I/O
 def get_config_pwv_vals(config_path: Union[str, Path] = data_paths._config_path) -> Dict[str, float]:
     """Retrieve PWV values to use as reference values
@@ -92,7 +92,8 @@ def tabulate_mag(
 
         mag_arr = []
         for pwv, z in itertools.product(pwv_arr, z_arr):
-            model.set(pwv=pwv, z=z, x0=lc_simulation.calc_x0_for_z(z, model.source))
+            model.set(pwv=pwv, z=z)
+            model.set_source_peakabsmag(const.betoule_abs_mb, 'standard::b', 'AB', cosmo=const.betoule_cosmo)
             mag = model.bandmag(band, 'ab', 0)
             mag_arr.append(mag)
 
@@ -183,7 +184,7 @@ def correct_mag(
 def fit_mag(
         model: SNModel,
         light_curves: Collection[Table],
-        vparams: Collection[str],
+        vparams: List[str],
         bands: Collection[str],
         pwv_arr: Collection[Numeric] = None,
         z_arr: Collection[Numeric] = None,
@@ -233,56 +234,6 @@ def fit_mag(
         for band in bands:
             fitted_mag[band] = np.reshape(fitted_mag[band], shape)
             fitted_params[band] = np.reshape(fitted_params[band], (*shape, num_params))
-
-    return fitted_mag, fitted_params
-
-
-def fit_fiducial_mag(
-        sim_model: SNModel,
-        fit_model: SNModel,
-        obs: Table,
-        vparams: List[str],
-        z_arr: Collection[Numeric],
-        bands: Collection[str],
-        fid_pwv_dict: Dict[str, float] = None
-) -> Tuple[Dict[str, np.ndarray], ...]:
-    """Get fitted SN magnitudes corresponding to the fiducial atmosphere
-
-    Returns a dictionary of the form
-      {<band>: [<slope start mag> , <reference pwv mag>, <slope end mag>]
-
-    Args:
-        sim_model: The sncosmo model to use when simulating light-curves
-        fit_model: The sncosmo model to use when fitting
-        obs: Array of light-curves to fit
-        vparams: Parameters to vary with the fit
-        z_arr: Array of redshift values
-        bands: Name of band to return mag for
-        fid_pwv_dict: Config dictionary for fiducial atmosphere
-
-    Returns:
-        - A dictionary with 2d array of fitted magnitudes in each band
-        - A dictionary with 3d array of fitted parameters in each band
-    """
-
-    if fid_pwv_dict is None:
-        fid_pwv_dict = get_config_pwv_vals()
-
-    # Parse reference pwv values
-    pwv_fiducial = fid_pwv_dict['reference_pwv']
-    pwv_slope_start = fid_pwv_dict['slope_start']
-    pwv_slope_end = fid_pwv_dict['slope_end']
-
-    # Get mag at reference pwv values
-    pwv_vals = [pwv_slope_start, pwv_fiducial, pwv_slope_end]
-    light_curves = lc_simulation.iter_lcs_fixed_snr(obs, sim_model, pwv_vals, z_arr)
-    fitted_mag, fitted_params = fit_mag(
-        model=fit_model,
-        light_curves=light_curves,
-        vparams=vparams,
-        pwv_arr=pwv_vals,
-        z_arr=z_arr,
-        bands=bands)
 
     return fitted_mag, fitted_params
 

@@ -1,14 +1,14 @@
 """The ``caching`` module defines numpy compatible function wrappers
-for implementing memoization.
+for implementing function level memoization.
 
 Usage Example
 -------------
 
-The builtin Python memoization routines (``lru_cache``) is not compatible with
-``numpy`` arrays because array objects are not hashable. The ``Cache``
-decorator provides an alternative memoization solution that supports
-numpy arguments. Arguments that are numpy arguments must be specified by
-name when constructing the decorator:
+The builtin Python memoization routines (e.g., ``lru_cache``) are not
+compatible with ``numpy`` arrays because array objects are not hashable.
+The ``Cache`` decorator provides an alternative memoization solution
+that supports numpy arguments. Arguments that are numpy arguments must be
+specified by name when constructing the decorator:
 
 .. doctest:: python
 
