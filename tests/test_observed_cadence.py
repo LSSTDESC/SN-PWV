@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from mock import create_mock_plasticc_light_curve
+from .mock import create_mock_plasticc_light_curve
 from snat_sim.filters import register_decam_filters
 from snat_sim.lc_simulation import ObservedCadence
 

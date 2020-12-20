@@ -5,10 +5,10 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from mock import create_mock_plasticc_light_curve
 from snat_sim import filters, lc_simulation
 from snat_sim.lc_simulation import LCSimulator, ObservedCadence
 from snat_sim.models import SNModel
+from .mock import create_mock_plasticc_light_curve
 
 filters.register_lsst_filters()
 
