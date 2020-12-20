@@ -11,7 +11,6 @@ Plotting Function Summaries
    plot_delta_mag_vs_pwv
    plot_delta_mag_vs_z
    plot_delta_mu
-   plot_delta_x0
    plot_derivative_mag_vs_z
    plot_fitted_params
    plot_magnitude
@@ -41,7 +40,7 @@ from matplotlib.ticker import MultipleLocator
 from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
-from . import constants as const, lc_simulation
+from . import constants as const
 from .models import SNModel
 
 Numeric = Union[int, float]
@@ -389,42 +388,6 @@ def plot_fitted_params(
     plt.tight_layout()
 
     return fig, axes
-
-
-def plot_delta_x0(
-        source: Union[str, sncosmo.Source], pwv_arr: np.ndarray, z_arr: np.ndarray, params_dict: Dict[str, np.ndarray]
-) -> None:
-    """Plot the variation in x0 as a function of redshift and PWV.
-
-    Args:
-        source: Source corresponding to the provided parameters
-        pwv_arr: Array of PWV values
-        z_arr: Array of redshift values
-        params_dict: Dictionary with fitted parameters for each pwv and z
-    """
-
-    x0_cosmo = np.array([lc_simulation.calc_x0_for_z(z, source) for z in z_arr])
-    delta_x0 = -2.5 * np.log10(params_dict['x0'] / x0_cosmo)
-
-    fig, (left_ax, right_ax) = plt.subplots(ncols=2, sharey='col', figsize=(8, 4))
-    _multi_line_plot(z_arr, delta_x0, pwv_arr, left_ax, label='{} mm')
-    _multi_line_plot(pwv_arr, delta_x0.T, z_arr, right_ax, label='z = {:.2f}')
-
-    left_ax.set_ylabel(r'-2.5 * $\log$($\frac{x_0}{x_{0,sim}}$)', fontsize=16)
-    left_ax.set_xlabel('Redshift')
-    right_ax.set_xlabel('PWV')
-
-    handles, labels = left_ax.get_legend_handles_labels()
-    labels = labels[::2]
-    handles = handles[::2]
-    left_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
-
-    handles, labels = right_ax.get_legend_handles_labels()
-    labels = labels[::2]
-    handles = handles[::2]
-    right_ax.legend(handles, labels, bbox_to_anchor=(1, 1.1))
-
-    plt.tight_layout()
 
 
 def plot_delta_colors(
