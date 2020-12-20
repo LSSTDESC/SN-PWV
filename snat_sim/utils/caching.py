@@ -113,10 +113,10 @@ class Cache(MemoryCache):
 
     def __call__(self, function: Callable) -> Callable:
         """Cache return values of the given function
-        
+
         Args:
             function: The function to cache returns of
-            
+
         Returns:
             The wrapped function
         """
