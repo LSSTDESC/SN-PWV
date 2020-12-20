@@ -51,6 +51,29 @@ vapor are added to a Salt2 supernova model.
    >>> atm_transmission.set(pwv=4)
    >>> supernova_model.add_effect(effect=atm_transmission, name='Atmosphere', frame='obs')
 
+
+To simulate a light-curve, you must first establish the desired light-curve
+cadence (i.e., how the light-curve should be sampled in time).
+
+.. doctest:: python
+
+    >>> from snat_sim import models
+
+    >>> # We start by defining the observational cadence
+    >>> cadence = models.ObservedCadence(
+    ...     obs_times=[-1, 0, 1],
+    ...     bands=['sdssr', 'sdssr', 'sdssr'],
+    ...     zp=25, zpsys='AB', skynoise=0, gain=1
+    ... )
+
+    >>> # Next we choose the supernova model and desired model parameters
+    >>> sn_model = models.SNModel('salt2')
+    >>> sn_model.set(z=.01, x1=.5, c=-.1)
+
+    >>> # Finally, we simulate a light-curve
+    >>> light_curve = sn_model.simulate_lc(cadence)
+
+
 Module Docs
 -----------
 """
@@ -69,6 +92,7 @@ import pandas as pd
 import sncosmo
 from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
+from astropy.table import Table
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
 from pwv_kpno.gps_pwv import GPSReceiver
@@ -81,13 +105,151 @@ from . import constants as const
 from ._data_paths import data_paths
 from .utils import time_series as tsu
 
+NumpyVar = TypeVar('NumpyVar', float, np.ndarray)
+Numeric = Union[float, int]
+ModelParams = Dict[str, Numeric]
+FloatOrArray = Union[Numeric, Collection[Numeric], np.ndarray]
+
 # Todo: These were picked ad-hock and are likely too big.
 #  They should be set to a reasonable number further along in development
 PWV_CACHE_SIZE = 500_000
 TRANSMISSION_CACHE_SIZE = 500_00
 AIRMASS_CACHE_SIZE = 250_000
 
-NumpyVar = TypeVar('NumpyVar', float, np.ndarray)
+
+class ObservedCadence:
+    """Represents the temporal sampling of an observed supernova light-curve"""
+
+    def __init__(
+            self,
+            obs_times: Collection[float],
+            bands: Collection[str],
+            skynoise: FloatOrArray,
+            zp: FloatOrArray,
+            zpsys: Union[str, Collection[str]],
+            gain: FloatOrArray
+    ) -> None:
+        """The observational sampling of an astronomical light-curve
+
+        The zero-point, zero point system, and gain arguments can be a
+        collection of values (one per phase value), or a single value to
+        apply at all phases.
+
+        Args:
+            obs_times: Array of observation times for the light-curve
+            bands: Array of bands for each observation
+            zp: The zero-point or an array of zero-points for each observation
+            zpsys: The zero-point system or an array of zero-point systems
+            gain: The simulated gain or an array of gain values
+        """
+
+        self.obs_times = obs_times
+        self.bands = bands
+        self.skynoise = skynoise
+        self.zp = zp
+        self.zpsys = zpsys
+        self.gain = gain
+
+    @property
+    def skynoise(self) -> np.array:
+        return self._skynoise.copy()
+
+    @skynoise.setter
+    def skynoise(self, skynoise: FloatOrArray):
+        self._skynoise = np.full_like(self.obs_times, skynoise)
+
+    @property
+    def zp(self) -> np.array:
+        return self._zp.copy()
+
+    @zp.setter
+    def zp(self, zp: FloatOrArray):
+        self._zp = np.full_like(self.obs_times, zp)
+
+    @property
+    def zpsys(self) -> np.array:
+        return self._zpsys.copy()
+
+    @zpsys.setter
+    def zpsys(self, zpsys: FloatOrArray):
+        self._zpsys = np.full_like(self.obs_times, zpsys, dtype='U8')
+
+    @property
+    def gain(self) -> np.array:
+        return self._gain.copy()
+
+    @gain.setter
+    def gain(self, gain: FloatOrArray):
+        self._gain = np.full_like(self.obs_times, gain)
+
+    @staticmethod
+    def from_plasticc(
+            light_curve: Table,
+            zp: FloatOrArray = None,
+            drop_nondetection: bool = False
+    ) -> Tuple[ModelParams, ObservedCadence]:
+        """Extract the observational cadence from a PLaSTICC light-curve
+
+        The zero-point, zero point system, and gain arguments can be a
+        collection of values (one per phase value), or a single value to
+        apply at all obs_times.
+
+        Args:
+            light_curve: Astropy table with PLaSTICC light-curve data
+            zp: Optionally overwrite the PLaSTICC zero-point with this value(s)
+            drop_nondetection: Drop data with PHOTFLAG == 0
+
+        Returns:
+            An ``ObservedCadence`` instance
+        """
+
+        if drop_nondetection:
+            light_curve = light_curve[light_curve['PHOTFLAG'] != 0]
+
+        params = {
+            'SNID': light_curve.meta['SNID'],
+            'ra': light_curve.meta['RA'],
+            'dec': light_curve.meta['DECL'],
+            't0': light_curve.meta['SIM_PEAKMJD'],
+            'x1': light_curve.meta['SIM_SALT2x1'],
+            'c': light_curve.meta['SIM_SALT2c'],
+            'z': light_curve.meta['SIM_REDSHIFT_CMB'],
+            'x0': light_curve.meta['SIM_SALT2x0']
+        }
+
+        return params, ObservedCadence(
+            obs_times=light_curve['MJD'],
+            bands=['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
+            zp=zp or light_curve['ZEROPT'],
+            zpsys='AB',
+            gain=1,
+            skynoise=light_curve['SKY_SIG']
+        )
+
+    def to_sncosmo(self) -> Table:
+        """Return the observational cadence as an ``astropy.Table``
+
+        The returned table of observations is formatted for use with with
+        the ``sncosmo`` package.
+
+        Returns:
+            An astropy table representing the observational cadence in ``sncosmo`` format
+        """
+
+        observations = Table(
+            {
+                'time': self.obs_times,
+                'band': self.bands,
+                'gain': self.gain,
+                'skynoise': self.skynoise,
+                'zp': self.zp,
+                'zpsys': self.zpsys
+            },
+            dtype=[float, 'U1000', float, float, float, 'U100']
+        )
+
+        observations.sort('time')
+        return observations
 
 
 ###############################################################################
@@ -203,12 +365,14 @@ class PWVModel:
         supp_data = weather_data.tsu.supplemented_data(year, supp_years)
         return PWVModel(supp_data)
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
     def calc_airmass(
             self, time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
     ) -> float:
         ...
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
     def calc_airmass(
             self, time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
@@ -249,10 +413,12 @@ class PWVModel:
             altaz = AltAz(obstime=obs_time, location=observer_location)
             return target_coord.transform_to(altaz).secz.value
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
     def pwv_zenith(self, time: float, time_format: Optional[str]) -> float:
         ...
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
     def pwv_zenith(self, time: Collection[float], time_format: Optional[str]) -> np.array:
         ...
@@ -419,6 +585,31 @@ class SNModel(sncosmo.Model):
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
 
+    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True, autoscale: bool = True) -> Table:
+        """Simulate a SN light-curve
+
+        If ``scatter`` is ``True``, then simulated flux values include an added
+        random component drawn from a normal distribution with a standard deviation
+        equal to the error of the observation.
+
+        Args:
+            scatter: Whether to add random noise to the flux values
+
+        Returns:
+            An astropy table representing a light-curve in the ``sncosmo`` format
+        """
+
+        flux = self.bandflux(cadence.bands, cadence.obs_times, zp=cadence.zp, zpsys=cadence.zpsys)
+        fluxerr = np.sqrt(cadence.skynoise ** 2 + np.abs(flux) / cadence.gain)
+
+        if scatter:
+            flux = np.atleast_1d(np.random.normal(flux, fluxerr))
+
+        return Table(
+            data=[cadence.obs_times, cadence.bands, flux, fluxerr, cadence.zp, cadence.zpsys],
+            names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'),
+            meta=dict(zip(self.param_names, self.parameters)))
+
 
 ###############################################################################
 # Propagation effects
@@ -564,7 +755,7 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
-            time (float, array): Time to get the PWV concentration for
+            time): Time to get the PWV concentration for
 
         Returns:
             An array of PWV values in units of mm
@@ -603,7 +794,7 @@ class SeasonalPWVTrans(VariablePWVTrans):
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
-            time (float, array): Time to get the PWV concentration for
+            time: Time to get the PWV concentration for
 
         Returns:
             An array of PWV values in units of mm
@@ -621,9 +812,9 @@ class SeasonalPWVTrans(VariablePWVTrans):
         """Propagate the flux through the atmosphere
 
         Args:
-            wave (ndarray): An array of wavelength values
-            flux (ndarray): An array of flux values
-            time (ndarray): Array of time values to determine PWV for
+            wave: An array of wavelength values
+            flux: An array of flux values
+            time: Array of time values to determine PWV for
 
         Returns:
             An array of flux values after suffering from PWV absorption

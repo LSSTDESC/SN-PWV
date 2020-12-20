@@ -6,7 +6,7 @@ import numpy as np
 
 from .mock import create_mock_plasticc_light_curve
 from snat_sim.filters import register_decam_filters
-from snat_sim.lc_simulation import ObservedCadence
+from snat_sim.models import ObservedCadence
 
 register_decam_filters(force=True)
 
@@ -30,8 +30,7 @@ class SncosmoFormatting(TestCase):
     def test_correct_table_values(self) -> None:
         """Test the correct zero point and zero-point system were used"""
 
-        np.testing.assert_array_equal(self.sncosmo_cadence['time'], self.cadence.obs_times,
-                                      'Incorrect observation times')
+        np.testing.assert_array_equal(self.sncosmo_cadence['time'], self.cadence.obs_times, 'Incorrect observation times')
         np.testing.assert_array_equal(self.sncosmo_cadence['band'], self.cadence.bands, 'Incorrect band names')
         np.testing.assert_array_equal(self.sncosmo_cadence['zp'], self.cadence.zp, 'Incorrect zero point')
         np.testing.assert_array_equal(self.sncosmo_cadence['zpsys'], self.cadence.zpsys, 'Incorrect zero point system')
@@ -57,7 +56,7 @@ class ExtractCadenceData(TestCase):
 
     def setUp(self) -> None:
         self.plasticc_lc = create_mock_plasticc_light_curve()
-        self.extracted_cadence = ObservedCadence.from_plasticc(self.plasticc_lc)
+        _, self.extracted_cadence = ObservedCadence.from_plasticc(self.plasticc_lc)
 
     def test_zp_is_overwritten(self) -> None:
         """Test the zero_point in the returned table is overwritten with a constant"""
@@ -76,7 +75,7 @@ class ExtractCadenceData(TestCase):
     def test_drop_nondetection(self) -> None:
         """Test ``drop_nondetection=True`` removes non detections"""
 
-        extracted_cadence = ObservedCadence.from_plasticc(self.plasticc_lc, drop_nondetection=True)
+        params, extracted_cadence = ObservedCadence.from_plasticc(self.plasticc_lc, drop_nondetection=True)
         returned_dates = extracted_cadence.obs_times
         expected_dates = self.plasticc_lc[self.plasticc_lc['PHOTFLAG'] != 0]['MJD']
         np.testing.assert_array_equal(returned_dates, expected_dates)
