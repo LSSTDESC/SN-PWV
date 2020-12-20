@@ -1,18 +1,18 @@
 """The ``time_series`` module provides limited functionality
-for manipulating time series data. It is intended to supplement existing
+for manipulating time series data. It is intended to extend existing
 functionality in the ``pandas`` package with support for tasks particular to
 dealing with atmospheric / weather data.
 
 Usage Example
 -------------
 
-The importing the ``snat_sim`` package will automatically register methods of
+Importing the ``snat_sim`` package will automatically register methods of
 the ``TSUAccessor`` class with the ``pandas`` package. This means the methods
 can be called directly on ``pandas.Series`` objects using the ``tsu`` accessor
 attribute.
 
-As an example, we create a ``Series`` object with missing data and fill in the
-missing data using the ``TSUAccessor.periodic_interpolation`` method.
+As an example, we create a ``pandas.Series`` object with missing data and
+fill in the missing data using the ``periodic_interpolation`` method.
 
 .. doctest:: python
 

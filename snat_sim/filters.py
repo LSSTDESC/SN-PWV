@@ -1,5 +1,5 @@
 """The ``filters`` module is responsible for registering custom filter
-profiles with the ``sncosmo`` package (A core ``snat_sim`` dependancy).  When
+profiles with the ``sncosmo`` package (a core ``snat_sim`` dependancy).  When
 registering filters for a given survey, please check the documentation of the
 corresponding function to determine the names of the newly registered filters.
 Filters only need to be registered once within a given runtime to be

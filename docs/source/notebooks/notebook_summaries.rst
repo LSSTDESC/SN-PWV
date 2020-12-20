@@ -7,26 +7,26 @@ analysis. The notebooks also act as in depth usage examples for the ``snat_sim``
 the more interesting notebooks are made available with this online documentation. A summary of those selected notebooks
 is provided below.
 
-+------------------------------------------------+------------------------------------------------------------------------------+
-| Notebook Name                                  | Description                                                                  |
-+================================================+==============================================================================+
-|  `LSST Filters`_                               | Demonstrates the LSST filter set and the fiducial LSST atmosphere.           |
-+------------------------------------------------+------------------------------------------------------------------------------+
-| `Effective PWV on a Black Body`_               | Demonstrates how atmospheric water vapor fundamentally impacts astronomical  |
-|                                                | observations of a theoretical Black Body.                                    |
-+------------------------------------------------+------------------------------------------------------------------------------+
-| `PWV effects on SN Magnitude`_                 | Demonstrates how atmospheric water vapor fundamentally impacts astronomical  |
-|                                                | observations of a Type Ia Supernova.                                         |
-+------------------------------------------------+------------------------------------------------------------------------------+
-| `PWV Modeling`_                                | Outlines an approach for modeling time variable precipitable water vapor     |
-|                                                | using real world, GPS weather data taken by the SuomiNet project.            |
-+------------------------------------------------+------------------------------------------------------------------------------+
-| `Simulating Light-Curves for a Given Cadence`_ | Simulates Type Ia Supernova observations using realistic cadences and        |
-|                                                | atmospheric variability expected from LSST.                                  |
-+------------------------------------------------+------------------------------------------------------------------------------+
++-------------------------------------------+--------------------------------------------------------------------------+
+| Notebook Name                             | Description                                                              |
++===========================================+==========================================================================+
+|  `LSST Filters`_                          | Demonstrates the LSST filter set and the fiducial LSST atmosphere.       |
++-------------------------------------------+--------------------------------------------------------------------------+
+| `Effective PWV on a Black Body`_          | Demonstrates how atmospheric water vapor fundamentally impacts           |
+|                                           | astronomical observations of a theoretical Black Body.                   |
++-------------------------------------------+--------------------------------------------------------------------------+
+| `PWV effects on SN Magnitude`_            | Demonstrates how atmospheric water vapor fundamentally impacts           |
+|                                           | astronomical observations of a Type Ia Supernova.                        |
++-------------------------------------------+--------------------------------------------------------------------------+
+| `PWV Modeling`_                           | Outlines an approach for modeling time variable precipitable water vapor |
+|                                           | using real world, GPS weather data taken by the SuomiNet project.        |
++-------------------------------------------+--------------------------------------------------------------------------+
+| `Simulating Light-Curves with a Cadence`_ | Simulates Type Ia Supernova observations using realistic cadences and    |
+|                                           | atmospheric variability expected from LSST.                              |
++-------------------------------------------+--------------------------------------------------------------------------+
 
 .. _LSST Filters: lsst_filters.html
 .. _Effective PWV on a Black Body: pwv_eff_on_black_body.html
 .. _PWV effects on SN Magnitude: sne_delta_mag.html
 .. _PWV Modeling: pwv_modeling.html
-.. _Simulating Light-Curves for a Given Cadence: simulating_lc_for_cadence.html
+.. _Simulating Light-Curves with a Cadence: simulating_lc_for_cadence.html

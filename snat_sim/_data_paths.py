@@ -8,7 +8,7 @@ from typing import Optional
 
 
 class DataPaths:
-    """Points to the location on disk of data used by the parent package"""
+    """Points to the location of on disk data used by the parent package"""
 
     def __init__(self) -> None:
         """Establish the location of package data on the local machine"""
@@ -28,7 +28,7 @@ class DataPaths:
 
     @property
     def joblib_path(self) -> Path:
-        """Directory to store cached function calls"""
+        """Directory to store function calls cached by joblib"""
 
         return self.data_dir / 'joblib'
 

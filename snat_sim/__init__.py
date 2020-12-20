@@ -1,7 +1,7 @@
-"""The ``snat_sim`` package was built to support simulation and research
+"""The ``snat_sim`` package was built to support scientific research
 efforts by the  Dark Energy Science Collaboration (DESC) into how atmospheric
-variability will impact Supernovae observed by the Legacy Survey of Space and
-Time (LSST).
+variability will impact Type Ia Supernovae observed by the Legacy Survey of
+Space and Time (LSST).
 """
 
 from . import *

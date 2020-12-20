@@ -12,9 +12,6 @@ the current working environment:
 
    >>> from snat_sim import plasticc
 
-   >>> # Check where the `snat_sim` package is expecting to find data
-   >>> print(plasticc.get_data_dir())  #doctest:+SKIP
-
    >>> # Get a list of cadences available in the directory printed above
    >>> print(plasticc.get_available_cadences())  #doctest:+SKIP
 

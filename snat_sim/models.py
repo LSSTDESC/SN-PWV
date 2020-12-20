@@ -1,7 +1,7 @@
-"""The ``models`` module defines classes that act as models for different
+"""The ``models`` module defines classes for modeling different
 physical phenomena. This includes SNe Ia light-curves, the propagation of
 light through atmospheric water vapor (with and without variation in time),
-and the seasonal variation of water vapor vs time.
+and the seasonal variation of precipitable water vapor over time.
 
 Model Summaries
 ---------------
@@ -57,21 +57,21 @@ cadence (i.e., how the light-curve should be sampled in time).
 
 .. doctest:: python
 
-    >>> from snat_sim import models
-
-    >>> # We start by defining the observational cadence
     >>> cadence = models.ObservedCadence(
     ...     obs_times=[-1, 0, 1],
     ...     bands=['sdssr', 'sdssr', 'sdssr'],
     ...     zp=25, zpsys='AB', skynoise=0, gain=1
     ... )
 
-    >>> # Next we choose the supernova model and desired model parameters
-    >>> sn_model = models.SNModel('salt2')
-    >>> sn_model.set(z=.01, x1=.5, c=-.1)
+Light-curves can then be simulated directly from the model
 
-    >>> # Finally, we simulate a light-curve
-    >>> light_curve = sn_model.simulate_lc(cadence)
+.. doctest:: python
+
+    >>> # Here we simulate a light-curve with statistical noise
+    >>> light_curve = supernova_model.simulate_lc(cadence)
+
+    >>> # Here we simulate a light-curve with a fixed signal to noise ratio
+    >>> light_curve_fixed_snr = supernova_model.simulate_lc_fixed_snr(cadence, snr=5)
 
 
 Module Docs
@@ -83,6 +83,7 @@ from __future__ import annotations
 import abc
 import warnings
 from copy import copy
+from dataclasses import dataclass
 from datetime import datetime
 from typing import *
 
@@ -105,10 +106,9 @@ from . import constants as const
 from ._data_paths import data_paths
 from .utils import time_series as tsu
 
-NumpyVar = TypeVar('NumpyVar', float, np.ndarray)
 Numeric = Union[float, int]
 ModelParams = Dict[str, Numeric]
-FloatOrArray = Union[Numeric, Collection[Numeric], np.ndarray]
+FloatOrArray = TypeVar('FloatOrArray', Numeric, Collection[Numeric], np.ndarray)
 
 # Todo: These were picked ad-hock and are likely too big.
 #  They should be set to a reasonable number further along in development
@@ -117,38 +117,28 @@ TRANSMISSION_CACHE_SIZE = 500_00
 AIRMASS_CACHE_SIZE = 250_000
 
 
+@dataclass
 class ObservedCadence:
-    """Represents the temporal sampling of an observed supernova light-curve"""
+    """The observational sampling of an astronomical light-curve
 
-    def __init__(
-            self,
-            obs_times: Collection[float],
-            bands: Collection[str],
-            skynoise: FloatOrArray,
-            zp: FloatOrArray,
-            zpsys: Union[str, Collection[str]],
-            gain: FloatOrArray
-    ) -> None:
-        """The observational sampling of an astronomical light-curve
+    The zero-point, zero point system, and gain arguments can be a
+    collection of values (one per ``obs_time`` value), or a single value
+    to apply at all observation times.
 
-        The zero-point, zero point system, and gain arguments can be a
-        collection of values (one per phase value), or a single value to
-        apply at all obs_time.
+    Args:
+        obs_times: Array of observation times for the light-curve
+        bands: Array of bands for each observation
+        zp: The zero-point or an array of zero-points for each observation
+        zpsys: The zero-point system or an array of zero-point systems
+        gain: The simulated gain or an array of gain values
+    """
 
-        Args:
-            obs_times: Array of observation times for the light-curve
-            bands: Array of bands for each observation
-            zp: The zero-point or an array of zero-points for each observation
-            zpsys: The zero-point system or an array of zero-point systems
-            gain: The simulated gain or an array of gain values
-        """
-
-        self.obs_times = obs_times
-        self.bands = bands
-        self.skynoise = skynoise
-        self.zp = zp
-        self.zpsys = zpsys
-        self.gain = gain
+    obs_times: Collection[float]
+    bands: Collection[str]
+    skynoise: FloatOrArray
+    zp: FloatOrArray
+    zpsys: Union[str, Collection[str]]
+    gain: FloatOrArray
 
     @property
     def skynoise(self) -> np.array:
@@ -375,7 +365,13 @@ class PWVModel:
     @overload
     @staticmethod
     def calc_airmass(
-            time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
+            time: float,
+            ra: float,
+            dec: float,
+            lat: float = const.vro_latitude,
+            lon: float = const.vro_longitude,
+            alt: float = const.vro_altitude,
+            time_format: str = 'mjd'
     ) -> float:
         ...
 
@@ -383,7 +379,13 @@ class PWVModel:
     @overload
     @staticmethod
     def calc_airmass(
-            time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str
+            time: Union[np.ndarray, Collection],
+            ra: float,
+            dec: float,
+            lat: float = const.vro_latitude,
+            lon: float = const.vro_longitude,
+            alt: float = const.vro_altitude,
+            time_format: str = 'mjd'
     ) -> np.array:
         ...
 
@@ -456,25 +458,39 @@ class PWVModel:
             fp=self.pwv_model_data.values
         )
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
-    def pwv_los(
-            self, time: float, ra: float, dec: float, lat: float, lon: float, alt: float, time_format: str) -> float:
-        ...
-
-    @overload
-    def pwv_los(
-            self, time: List[float], ra: float, dec: float, lat: float, lon: float, alt: float,
-            time_format: str) -> np.array:
-        ...
-
     def pwv_los(
             self,
-            time: Union[float, List[float]],
+            time: float,
             ra: float,
             dec: float,
             lat: float = const.vro_latitude,
-            lon: float = const.vro_longitude, alt=const.vro_altitude,
+            lon: float = const.vro_longitude,
+            alt: float = const.vro_altitude,
             time_format: str = 'mjd'
+    ) -> float:
+        ...
+
+    # noinspection PyMissingOrEmptyDocstring
+    @overload
+    def pwv_los(
+            self, time: Union[np.ndarray, Collection],
+            ra: float,
+            dec: float,
+            lat: float = const.vro_latitude,
+            lon: float = const.vro_longitude,
+            alt: float = const.vro_altitude,
+            time_format: str = 'mjd'
+    ) -> np.array:
+        ...
+
+    def pwv_los(
+            self, time, ra, dec,
+            lat=const.vro_latitude,
+            lon=const.vro_longitude,
+            alt=const.vro_altitude,
+            time_format='mjd'
     ) -> Union[float, np.array]:
         """Interpolate the PWV along the line of sight as a function of time
 
@@ -605,7 +621,7 @@ class SNModel(sncosmo.Model):
             scatter: Whether to add random noise to the flux values
 
         Returns:
-            An astropy table representing a light-curve in the ``sncosmo`` format
+            The simulated light-curve as an astropy table in the ``sncosmo`` format
         """
 
         flux = self.bandflux(cadence.bands, cadence.obs_times, zp=cadence.zp, zpsys=cadence.zpsys)
@@ -627,7 +643,7 @@ class SNModel(sncosmo.Model):
             snr: Signal to noise ratio
 
         Returns:
-            An astropy table formatted for use with sncosmo
+            The simulated light-curve as an astropy table in the ``sncosmo`` format
         """
 
         obs = cadence.to_sncosmo()
@@ -756,29 +772,27 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 
         self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
-    def _apply_propagation(self, time: Union[float, np.ndarray], flux: np.ndarray,
-                           transmission: np.ndarray) -> np.ndarray:
+    def _apply_propagation(self, flux: np.ndarray, transmission: Union[pd.Series, pd.DataFrame]) -> np.ndarray:
         """Apply an atmospheric transmission to flux values
 
         Args:
-            time: Time values for the sampled flux and transmission values
             flux: Array of flux values
             transmission: Array of sampled transmission values
         """
 
-        if np.ndim(time) == 0:  # PWV will be scalar and transmission will be a Series
+        if isinstance(transmission, pd.DataFrame):  # PWV is a vector and transmission is a DataFrame
+            return flux * transmission.values.T
+
+        else:  # Assume PWV is scalar and transmission is Series-like
             if np.ndim(flux) == 1:
                 return flux * transmission
 
             if np.ndim(flux) == 2:
                 return flux * np.atleast_2d(transmission)
 
-        if np.ndim(time) == 1 and np.ndim(flux) == 2:  # PWV will be a vector and transmission will be a DataFrame
-            return flux * transmission.values.T
-
         raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
 
-    def assumed_pwv(self, time: NumpyVar) -> NumpyVar:
+    def assumed_pwv(self, time: FloatOrArray) -> FloatOrArray:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
@@ -811,13 +825,13 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 
         pwv = self.assumed_pwv(time)
         transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
-        return self._apply_propagation(time, flux, transmission)
+        return self._apply_propagation(flux, transmission)
 
 
 class SeasonalPWVTrans(VariablePWVTrans):
     """Atmospheric propagation effect for a fixed PWV concentration per-season"""
 
-    def assumed_pwv(self, time: NumpyVar) -> NumpyVar:
+    def assumed_pwv(self, time: FloatOrArray) -> FloatOrArray:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
@@ -849,4 +863,4 @@ class SeasonalPWVTrans(VariablePWVTrans):
 
         pwv = self.assumed_pwv(time)
         transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
-        return self._apply_propagation(time, flux, transmission)
+        return self._apply_propagation(flux, transmission)
