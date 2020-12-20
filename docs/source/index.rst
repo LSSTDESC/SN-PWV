@@ -55,6 +55,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    Introduction<self>
    overview/install.rst
    overview/data_provenance.rst
+   overview/integrations.rst
    overview/command_line.rst
 
 .. toctree::
@@ -76,12 +77,10 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    :titlesonly:
 
    api/constants.rst
-   api/filters.rst
    api/models.rst
-   api/fitting_pipeline.rst
    api/plasticc.rst
    api/reference_stars.rst
+   api/fitting_pipeline.rst
    api/sn_magnitudes.rst
    api/plotting.rst
-   api/utils_caching.rst
-   api/utils_time_series.rst
+   api/utils/utils.rst

@@ -1,3 +1,5 @@
+:orphan:
+
 snat_sim.utils.time_series
 ==========================
 
