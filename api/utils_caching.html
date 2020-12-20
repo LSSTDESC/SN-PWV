@@ -23,7 +23,6 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -131,16 +130,16 @@ for implementing memoization.</p>
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
 <p>The builtin Python memoization routines (<code class="docutils literal notranslate"><span class="pre">lru_cache</span></code>) is not compatible with
-<code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays because array objects are not hashable. The <code class="docutils literal notranslate"><span class="pre">numpy_cache</span></code>
+<code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays because array objects are not hashable. The <code class="docutils literal notranslate"><span class="pre">Cache</span></code>
 decorator provides an alternative memoization solution that supports
 numpy arguments. Arguments that are numpy arguments must be specified by
 name when constructing the decorator:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.utils.caching</span> <span class="kn">import</span> <span class="n">numpy_cache</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.utils.caching</span> <span class="kn">import</span> <span class="n">Cache</span>
 
 
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@numpy_cache</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nd">@Cache</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
 <span class="gp">... </span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The function has been called!&#39;</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
@@ -161,7 +160,7 @@ as follows:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="n">numpy_cache</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
 <span class="gp">...</span>
 <span class="gp">... </span>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
 <span class="gp">... </span>        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
@@ -171,6 +170,29 @@ as follows:</p>
 </div>
 <div class="section" id="module-api">
 <h2>Module API<a class="headerlink" href="#module-api" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="snat_sim.utils.caching.Cache">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.utils.caching.</code><code class="sig-name descname">Cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">numpy_args</span></em>, <em class="sig-param"><span class="n">cache_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#Cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Memoization function wrapper</p>
+<dl class="py method">
+<dt id="snat_sim.utils.caching.Cache.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">numpy_args</span></em>, <em class="sig-param"><span class="n">cache_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#Cache.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Memoization decorator supporting <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*numpy_args</strong> – Function arguments to treat as numpy arrays</p></li>
+<li><p><strong>cache_size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Maximum memory to allocate to cached data in bytes</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A callable function decorator</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py class">
 <dt id="snat_sim.utils.caching.MemoryCache">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.utils.caching.</code><code class="sig-name descname">MemoryCache</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">max_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#MemoryCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.MemoryCache" title="Permalink to this definition">¶</a></dt>
@@ -188,26 +210,6 @@ entry from the cache.</p>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.utils.caching.numpy_cache">
-<code class="sig-prename descclassname">snat_sim.utils.caching.</code><code class="sig-name descname">numpy_cache</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">numpy_args</span></em>, <em class="sig-param"><span class="n">cache_size</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/utils/caching.html#numpy_cache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.caching.numpy_cache" title="Permalink to this definition">¶</a></dt>
-<dd><p>Memoization decorator supporting <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>*numpy_args</strong> – Function arguments to treat as numpy arrays</p></li>
-<li><p><strong>cache_size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Maximum memory to allocate to cached data in bytes</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A callable function decorator</p>
-</dd>
-</dl>
 </dd></dl>
 
 </div>

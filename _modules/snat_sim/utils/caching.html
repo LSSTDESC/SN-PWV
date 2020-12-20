@@ -23,7 +23,6 @@
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
-    <script src="../../../_static/language_data.js"></script>
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
@@ -125,7 +124,7 @@
 <span class="sd">-------------</span>
 
 <span class="sd">The builtin Python memoization routines (``lru_cache``) is not compatible with</span>
-<span class="sd">``numpy`` arrays because array objects are not hashable. The ``numpy_cache``</span>
+<span class="sd">``numpy`` arrays because array objects are not hashable. The ``Cache``</span>
 <span class="sd">decorator provides an alternative memoization solution that supports</span>
 <span class="sd">numpy arguments. Arguments that are numpy arguments must be specified by</span>
 <span class="sd">name when constructing the decorator:</span>
@@ -134,10 +133,10 @@
 
 <span class="sd">   &gt;&gt;&gt; import numpy as np</span>
 
-<span class="sd">   &gt;&gt;&gt; from snat_sim.utils.caching import numpy_cache</span>
+<span class="sd">   &gt;&gt;&gt; from snat_sim.utils.caching import Cache</span>
 
 
-<span class="sd">   &gt;&gt;&gt; @numpy_cache(&#39;x&#39;, &#39;y&#39;, cache_size=1000)</span>
+<span class="sd">   &gt;&gt;&gt; @Cache(&#39;x&#39;, &#39;y&#39;, cache_size=1000)</span>
 <span class="sd">   ... def add(x, y):</span>
 <span class="sd">   ...     print(&#39;The function has been called!&#39;)</span>
 <span class="sd">   ...     return x + y</span>
@@ -160,7 +159,7 @@
 <span class="sd">   &gt;&gt;&gt; class Foo:</span>
 <span class="sd">   ...</span>
 <span class="sd">   ...     def __init__(self):</span>
-<span class="sd">   ...         self.add = numpy_cache(&#39;x&#39;, &#39;y&#39;, cache_size=1000)(self.add)</span>
+<span class="sd">   ...         self.add = Cache(&#39;x&#39;, &#39;y&#39;, cache_size=1000)(self.add)</span>
 <span class="sd">   ...</span>
 <span class="sd">   ...     def add(self, x, y):</span>
 <span class="sd">   ...         return x + y</span>
@@ -214,44 +213,54 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="numpy_cache"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.numpy_cache">[docs]</a><span class="k">def</span> <span class="nf">numpy_cache</span><span class="p">(</span><span class="o">*</span><span class="n">numpy_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Memoization decorator supporting ``numpy`` arrays.</span>
+<div class="viewcode-block" id="Cache"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.Cache">[docs]</a><span class="k">class</span> <span class="nc">Cache</span><span class="p">(</span><span class="n">MemoryCache</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Memoization function wrapper&quot;&quot;&quot;</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        *numpy_args: Function arguments to treat as numpy arrays</span>
-<span class="sd">        cache_size: Maximum memory to allocate to cached data in bytes</span>
+<div class="viewcode-block" id="Cache.__init__"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.Cache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">numpy_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Memoization decorator supporting ``numpy`` arrays.</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        A callable function decorator</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            *numpy_args: Function arguments to treat as numpy arrays</span>
+<span class="sd">            cache_size: Maximum memory to allocate to cached data in bytes</span>
 
-    <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-        <span class="k">class</span> <span class="nc">Memoization</span><span class="p">(</span><span class="n">MemoryCache</span><span class="p">):</span>
-            <span class="sd">&quot;&quot;&quot;Dictionary like object that stores recent function calls in memory.&quot;&quot;&quot;</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A callable function decorator</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-            <span class="nd">@wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
-            <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-                <span class="sd">&quot;&quot;&quot;Wrapped version of the given function.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numpy_args</span> <span class="o">=</span> <span class="n">numpy_args</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Cache</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">max_size</span><span class="o">=</span><span class="n">cache_size</span><span class="p">)</span></div>
 
-<span class="sd">                Arguments and returns are the same as ``function``</span>
-<span class="sd">                &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Cache return values of the given function</span>
 
-                <span class="n">kwargs_for_key</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getcallargs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-                <span class="k">for</span> <span class="n">arg_to_cast</span> <span class="ow">in</span> <span class="n">numpy_args</span><span class="p">:</span>
-                    <span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">])</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
+<span class="sd">        Args:</span>
+<span class="sd">            function: The function to cache returns of</span>
 
-                <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The wrapped function</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-                <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                    <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="nd">@wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;Wrapped version of the given function.</span>
 
-                <span class="k">return</span> <span class="n">out</span>
+<span class="sd">            Arguments and returns are the same as ``function``</span>
+<span class="sd">            &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="n">Memoization</span><span class="p">(</span><span class="n">max_size</span><span class="o">=</span><span class="n">cache_size</span><span class="p">)</span><span class="o">.</span><span class="n">wrapped</span>
+            <span class="n">kwargs_for_key</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getcallargs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">arg_to_cast</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">numpy_args</span><span class="p">:</span>
+                <span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">])</span><span class="o">.</span><span class="n">tostring</span><span class="p">()</span>
 
-    <span class="k">return</span> <span class="n">decorator</span></div>
+            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">out</span>
+
+        <span class="k">return</span> <span class="n">wrapped</span></div>
 </pre></div>
 
           </div>
