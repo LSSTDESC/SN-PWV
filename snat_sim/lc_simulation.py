@@ -4,27 +4,46 @@
 Usage Example
 -------------
 
-Light-curves can be simulated with and without statistical noise. Both
-approaches are demonstrated below.
+To simulate a light-curve, you must first establish the desired light-curve
+cadence (i.e., how the light-curve should be sampled in time). Using your
+supernova model of choice, light-curves can then be simulated with and
+without statistical noise. Both approaches are demonstrated below using the
+``salt2`` supernova model.
 
 .. doctest:: python
 
     >>> from snat_sim import lc_simulation, models
 
+    >>> # We start by defining the observational cadence
+    >>> cadence = ObservedCadence(
+    ...     obs_times=[-1, 0, 1],
+    ...     bands=['sdssr', 'sdssr', 'sdssr'],
+    ...     zp=25, zpsys='AB', skynoise=0, gain=1
+    ... )
+
+    >>> # Next we choose the supernova model and desired model parameters
+    >>> sn_model = models.SNModel('salt2')
+    >>> sn_parameters = dict(z=.01, x1=.5, c=-.1)
+
+
+    >>> # Finally, we simulate a light-curve
+    >>> simulator = LCSimulator(sn_model, cadence)
+    >>> with_noise = simulator.simulate_lc(sn_parameters)
+    >>> without_noise = simulator.simulate_lc_fixed_snr(sn_parameters, snr=6)
+
+Instances of the ``LCSimulator`` class will default to using parameter values
+set in the suypernova model at instantiation. These can be changed as follows:
+
+.. doctest:: python
+
     >>> sn_model = models.SNModel('salt2')
     >>> sn_model.set(z=.01, x1=.5, c=-.1)
+    >>> simulator = LCSimulator(sn_model, cadence)
+    >>> print(simulator.default_parameters)
 
-    >>> # Create a table of dates, bandpasses, gain, and skynoise values to evaluate
-    >>> # the model with. Here we use the SDSS bands which come prebuilt with ``sncosmo``
-    >>> band_passes = ['sdssu', 'sdssg', 'sdssr', 'sdssi']
-    >>> cadence = lc_simulation.ObservedCadence(bands=band_passes)
-
-    >>> # Evaluate the model at a fixed SNR
-    >>> light_curve = cadence.simulate_lc_fixed_snr(sn_model, snr=5)
-
-    >>> # Or, evaluate using statistical uncertainties determined from the gain / skynoise
-    >>> light_curve = cadence.simulate_lc(sn_model)
-
+    >>> # Finally, we simulate a light-curve
+    >>> simulator.model.set(c=.5)
+    >>> print(simulator.default_parameters)
 
 Module Docs
 -----------
@@ -177,7 +196,13 @@ class LCSimulator:
         model.set_source_peakabsmag(abs_mag, band, magsys, cosmo=cosmo)
         return model['x0']
 
-    def reduce_model_params(self, params:Dict[str:float]) -> Dict[str, float]:
+    @property
+    def default_parameters(self) -> Dict[str, Numeric]:
+        """Default model parameters used when simulating light-curves"""
+
+        return dict(zip(self.model.param_names, self.model.parameters))
+
+    def reduce_model_params(self, params: Dict[str:Numeric]) -> Dict[str, Numeric]:
         """Return the subset of model parameters belonging to the simulation model
 
         Args:
@@ -189,7 +214,7 @@ class LCSimulator:
 
         return {p: v for p, v in params.items() if p in self.model.param_names}
 
-    def simulate_lc_fixed_snr(self, params: Dict[str, float] = None, snr: float = .05) -> Table:
+    def simulate_lc_fixed_snr(self, params: Dict[str, Numeric] = None, snr: float = .05) -> Table:
         """Simulate a SN light-curve with a fixed SNR
 
         Unless otherwise specified, the scale factor parameter ``x0`` is
@@ -215,7 +240,7 @@ class LCSimulator:
         light_curve.meta = dict(zip(model.param_names, model.parameters))
         return light_curve
 
-    def simulate_lc(self, params: Dict[str, float] = None, scatter: bool = True) -> Table:
+    def simulate_lc(self, params: Dict[str, Numeric] = None, scatter: bool = True) -> Table:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -258,6 +283,7 @@ def duplicate_plasticc_lc(
 
     Args:
         light_curve: Astropy table with PLaSTICC light-curve data
+        model: The supernova model to use in the simulation
         scatter: Add random noise to the flux values
         cosmo: Optionally rescale the ``x0`` parameter according to the given cosmology
 
