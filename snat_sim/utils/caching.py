@@ -94,41 +94,50 @@ class MemoryCache(OrderedDict):
                 self.popitem(last=False)
 
 
-def numpy_cache(*numpy_args: str, cache_size: int = None) -> Callable:
-    """Memoization decorator supporting ``numpy`` arrays.
+class numpy_cache(MemoryCache):
 
-    Args:
-        *numpy_args: Function arguments to treat as numpy arrays
-        cache_size: Maximum memory to allocate to cached data in bytes
+    def __init__(self, *numpy_args: str, cache_size: int = None) -> Callable:
+        """Memoization decorator supporting ``numpy`` arrays.
 
-    Returns:
-        A callable function decorator
-    """
+        Args:
+            *numpy_args: Function arguments to treat as numpy arrays
+            cache_size: Maximum memory to allocate to cached data in bytes
 
-    def decorator(function: Callable) -> Callable:
-        class Memoization(MemoryCache):
-            """Dictionary like object that stores recent function calls in memory."""
+        Returns:
+            A callable function decorator
+        """
 
-            @wraps(function)
-            def wrapped(self, *args: Any, **kwargs: Any) -> Any:
-                """Wrapped version of the given function.
+        self.numpy_args = numpy_args
+        super(numpy_cache, self).__init__(max_size=cache_size)
 
-                Arguments and returns are the same as ``function``
-                """
+    def __call__(self, function: Callable) -> Callable:
+        """Cache return values of the given function
+        
+        Args:
+            function: The function to cache returns of
+            
+        Returns:
+            The wrapped function
+        """
 
-                kwargs_for_key = inspect.getcallargs(function, *args, **kwargs)
-                for arg_to_cast in numpy_args:
-                    kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tostring()
+        @wraps(function)
+        def wrapped(*args: Any, **kwargs: Any) -> Any:
+            """Wrapped version of the given function.
 
-                key = tuple(kwargs_for_key.items())
-                try:
-                    out = self[key]
+            Arguments and returns are the same as ``function``
+            """
 
-                except KeyError:
-                    out = self[key] = function(*args, **kwargs)
+            kwargs_for_key = inspect.getcallargs(function, *args, **kwargs)
+            for arg_to_cast in self.numpy_args:
+                kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tostring()
 
-                return out
+            key = tuple(kwargs_for_key.items())
+            try:
+                out = self[key]
 
-        return Memoization(max_size=cache_size).wrapped
+            except KeyError:
+                out = self[key] = function(*args, **kwargs)
 
-    return decorator
+            return out
+
+        return wrapped
