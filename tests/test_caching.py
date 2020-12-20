@@ -40,7 +40,9 @@ class MemoryManagement(TestCase):
 class NumpyCache(TestCase):
     """Tests for the ``Cache`` function"""
 
-    def test_return_values_are_cached(self) -> None:
+    def test_number_function_evaluations(self) -> None:
+        """Test the function is only evaluated once to store cache values"""
+
         call_count = 0
 
         @Cache()
@@ -55,7 +57,9 @@ class NumpyCache(TestCase):
         foo()
         self.assertEqual(call_count, 1)
 
-    def test_supports_numoy_args(self) -> None:
+    def test_supports_numpy_args(self) -> None:
+        """Test the caching implimentation can handle numpy array arguments"""
+
         @Cache('x', 'y', cache_size=1000)
         def add(x: np.array, y: np.array) -> np.array:
             """Add two numpy arrays"""
