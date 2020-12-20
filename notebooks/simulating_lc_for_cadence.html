@@ -14,7 +14,7 @@
   <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-    <title>Simulating Light-Curves for a Given Cadence &#8212; Supernova Atmospheric Simulation</title>
+    <title>Simulating Light-Curves with a Cadence &#8212; Supernova Atmospheric Simulation</title>
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
@@ -52,7 +52,7 @@
           <a href="pwv_modeling.html" title="PWV Modeling"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Simulating Light-Curves for a Given Cadence</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Simulating Light-Curves with a Cadence</a></li> 
       </ul>
     </div>
     <div class="container-wrapper">
@@ -96,7 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulating Light-Curves for a Given Cadence</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Simulating Light-Curves with a Cadence</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#The-PLaSTICC-Data">The PLaSTICC Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Simulating-Light-Curves">Simulating Light-Curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Adding-Atmospheric-Effects">Adding Atmospheric Effects</a></li>
@@ -107,9 +107,8 @@
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -376,9 +375,9 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Simulating-Light-Curves-for-a-Given-Cadence">
-<h1>Simulating Light-Curves for a Given Cadence<a class="headerlink" href="#Simulating-Light-Curves-for-a-Given-Cadence" title="Permalink to this headline">¶</a></h1>
-<p>This notebook demonstrates the simulation of normal Type Ia Supernova (SN Ia) light-curves using realistic cadences and atmospheric variability expected from LSST. To achieve this we use data from the PLaSTICC simulations to establish the cadence, light-curve parameters, and location of SNe observed by LSST. Light-curves with time-variable PWV transmission effects are then simulated using these parameters.</p>
+<div class="section" id="Simulating-Light-Curves-with-a-Cadence">
+<h1>Simulating Light-Curves with a Cadence<a class="headerlink" href="#Simulating-Light-Curves-with-a-Cadence" title="Permalink to this headline">¶</a></h1>
+<p>This notebook demonstrates the simulation of normal Type Ia Supernova (SN Ia) light-curves using realistic cadences and atmospheric variability expected from LSST. To achieve this we use data from the PLaSTICC simulations to establish the cadence, light-curve parameters, and location of SNe observed by LSST. Light-curves with customized time-variable PWV transmission effects are then simulated using these parameters.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -387,6 +386,7 @@ div.rendered_html tbody tr:hover {
 <span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 
+<span class="c1"># Point to the PLaSTICC data on disk</span>
 <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CADENCE_SIMS&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;/mnt/md0/sn-sims/&#39;</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span>
 
@@ -407,7 +407,8 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">pwv_kpno.gps_pwv</span> <span class="kn">import</span> <span class="n">GPSReceiver</span>
 
-<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">filters</span><span class="p">,</span> <span class="n">plasticc</span><span class="p">,</span>  <span class="n">models</span><span class="p">,</span> <span class="n">constants</span>
+<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">filters</span><span class="p">,</span> <span class="n">plasticc</span><span class="p">,</span>  <span class="n">models</span>
 
 </pre></div>
 </div>
@@ -473,7 +474,8 @@ Available Light-curves:  4737479
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">demo_header_path</span> <span class="o">=</span> <span class="n">demo_cadence_header_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span></span><span class="c1"># Data is loaded into memory in chunks. This cell may take a second.</span>
+<span class="n">demo_header_path</span> <span class="o">=</span> <span class="n">demo_cadence_header_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 <span class="n">plastic_iter</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">iter_lc_for_header</span><span class="p">(</span><span class="n">demo_header_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">plasticc_lc</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">plastic_iter</span><span class="p">)</span>
 
@@ -514,7 +516,7 @@ Params:
 </div>
 <div class="output_area rendered_html docutils container">
 <i>Table length=205</i>
-<table id="table140404044556800" class="table-striped table-bordered table-condensed">
+<table id="table140063704945568" class="table-striped table-bordered table-condensed">
 <thead><tr><th>MJD</th><th>FLT</th><th>FIELD</th><th>PHOTFLAG</th><th>PHOTPROB</th><th>FLUXCAL</th><th>FLUXCALERR</th><th>PSF_SIG1</th><th>SKY_SIG</th><th>ZEROPT</th><th>SIM_MAGOBS</th></tr></thead>
 <thead><tr><th>float64</th><th>str2</th><th>str12</th><th>int32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th></tr></thead>
 <tr><td>61387.3365</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>4.7668333</td><td>4.6751437</td><td>2.01</td><td>24.21</td><td>31.49</td><td>98.93107</td></tr>
@@ -541,22 +543,13 @@ Params:
 </table></div>
 </div>
 <p>Here we reformat the data to be compatible with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> so we can easily visualize the light-curve.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">formatted_lc</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">format_plasticc_sncosmo</span><span class="p">(</span><span class="n">plasticc_lc</span><span class="p">)</span>
-
-</pre></div>
-</div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sncosmo</span><span class="o">.</span><span class="n">plot_lc</span><span class="p">(</span><span class="n">formatted_lc</span><span class="p">);</span>
+<span class="n">sncosmo</span><span class="o">.</span><span class="n">plot_lc</span><span class="p">(</span><span class="n">formatted_lc</span><span class="p">);</span>
 
 </pre></div>
 </div>
@@ -565,7 +558,7 @@ Params:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_simulating_lc_for_cadence_12_0.png" src="../_images/notebooks_simulating_lc_for_cadence_12_0.png" />
+<img alt="../_images/notebooks_simulating_lc_for_cadence_11_0.png" src="../_images/notebooks_simulating_lc_for_cadence_11_0.png" />
 </div>
 </div>
 </div>
@@ -573,15 +566,60 @@ Params:
 <h2>Simulating Light-Curves<a class="headerlink" href="#Simulating-Light-Curves" title="Permalink to this headline">¶</a></h2>
 <p>Since we need to add in our own atmospheric variability, the pre-tabulated flux values above are of limited use. Instead, we use the PLaSTICC meta-data to establish the cadence and model parameters for each simulated SN. This information is then used to simulate our own light-curves with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
 <div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">params</span><span class="p">,</span> <span class="n">plasticc_cadence</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ObservedCadence</span><span class="o">.</span><span class="n">from_plasticc</span><span class="p">(</span><span class="n">plasticc_lc</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+<span class="n">model_for_sim</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
+<span class="n">model_for_sim</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
+<span class="n">model_for_sim</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span>
+<span class="n">duplicated_lc</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">plasticc_cadence</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">model_for_sim</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
-<span class="n">duplicated_lc</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">duplicate_plasticc_sncosmo</span><span class="p">(</span><span class="n">plasticc_lc</span><span class="p">,</span> <span class="n">model_for_sim</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-
+<span></span><span class="n">duplicated_lc</span>
 </pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<i>Table length=205</i>
+<table id="table140064929475360" class="table-striped table-bordered table-condensed">
+<thead><tr><th>time</th><th>band</th><th>flux</th><th>fluxerr</th><th>zp</th><th>zpsys</th></tr></thead>
+<thead><tr><th>float64</th><th>str15</th><th>float64</th><th>float64</th><th>float64</th><th>str8</th></tr></thead>
+<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>-25.559960402597426</td><td>24.209999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>-73.92062705412239</td><td>43.790000915527344</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>56.769071645472046</td><td>70.9000015258789</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>6.495948161096292</td><td>2.940000057220459</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>3.278296669025305</td><td>64.44000244140625</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>8.300897470717429</td><td>34.279998779296875</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61394.3293</td><td>lsst_hardware_r</td><td>-10.830216593240515</td><td>23.790000915527344</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61394.3507</td><td>lsst_hardware_y</td><td>10.948754522791624</td><td>56.709999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61405.2879</td><td>lsst_hardware_r</td><td>22.730470150195814</td><td>31.700000762939453</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61405.3097</td><td>lsst_hardware_i</td><td>-27.99932495878377</td><td>35.720001220703125</td><td>30.0</td><td>AB</td></tr>
+<tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
+<tr><td>61875.0115</td><td>lsst_hardware_u</td><td>1.7843678281257898</td><td>2.859999895095825</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61875.0305</td><td>lsst_hardware_g</td><td>9.510042879279343</td><td>14.949999809265137</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61878.978</td><td>lsst_hardware_y</td><td>45.556444016425786</td><td>51.81999969482422</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61878.9958</td><td>lsst_hardware_z</td><td>-18.876890801224317</td><td>42.95000076293945</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>94.55361323773897</td><td>55.72999954223633</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>18.414867330165574</td><td>24.3700008392334</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>13.70224660066851</td><td>51.529998779296875</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61883.992</td><td>lsst_hardware_r</td><td>-7.8018932770380145</td><td>23.979999542236328</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>22.437254612671598</td><td>50.459999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>4.835999317469032</td><td>14.979999542236328</td><td>30.0</td><td>AB</td></tr>
+</table></div>
 </div>
 <p>When comparing our own “duplicated” light-curves with the original PLaSTICC simulations, we care about three things: 1. Do the light-curves have the same time sampling? 2. Do the light-curves have the same parameters (except for x0 which depends on the spectral template and cosmology)? 3. Do the light-curves have a similar SNR?</p>
 <p>The time sampling is easily verified by looking at the plotted data:</p>
@@ -619,14 +657,11 @@ Params:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;SNID&#39;: &#39;28750507        &#39;,
- &#39;ra&#39;: 137.109375,
- &#39;dec&#39;: -0.447628,
+{&#39;z&#39;: 0.7469527125358582,
  &#39;t0&#39;: 61480.12109375,
+ &#39;x0&#39;: 3.089103659315635e-06,
  &#39;x1&#39;: -0.6282458305358887,
- &#39;c&#39;: -0.02218671888113022,
- &#39;z&#39;: 0.7469527125358582,
- &#39;x0&#39;: 3.089334056006399e-06}
+ &#39;c&#39;: -0.02218671888113022}
 </pre></div></div>
 </div>
 <p>For the SNR it is more informative to look at a distribution over many light-curves:</p>
@@ -635,15 +670,12 @@ Params:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">plot_snr_distributions</span><span class="p">(</span><span class="n">lc_list</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span> <span class="n">zp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">skynoise</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">plot_snr_distributions</span><span class="p">(</span><span class="n">lc_list</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">)):</span>
     <span class="sd">&quot;&quot;&quot;Plot the SNR distribution in each band for PLaSTICC light-curves and their duplicates</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        lc_list (List[Table]): List of light-curves in the PLaSTICC data model</span>
 <span class="sd">        bins          (array): Bins to use when generating the histogram</span>
-<span class="sd">        zp     (float, array): Optionally overwrite the PLaSTICC zero-point with this value</span>
-<span class="sd">        gain            (int): Gain to use during simulation</span>
-<span class="sd">        skynoise        (int):  Optionally overwrite the PLaSTICC skynoise with this value</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Simulate and accumulate duplicate light-curves</span>
@@ -651,12 +683,12 @@ Params:
     <span class="n">sncosmo_lcs</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">plasticc_lc</span> <span class="ow">in</span> <span class="n">lc_list</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">duplicated_lc</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">duplicate_plasticc_sncosmo</span><span class="p">(</span>
-                <span class="n">plasticc_lc</span><span class="p">,</span>
-                <span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">),</span>
-                <span class="n">zp</span><span class="o">=</span><span class="n">zp</span><span class="p">,</span>
-                <span class="n">gain</span><span class="o">=</span><span class="n">gain</span>
-            <span class="p">)</span>
+            <span class="n">params</span><span class="p">,</span> <span class="n">plasticc_cadence</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ObservedCadence</span><span class="o">.</span><span class="n">from_plasticc</span><span class="p">(</span><span class="n">plasticc_lc</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+
+            <span class="n">model_for_sim</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
+            <span class="n">model_for_sim</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
+            <span class="n">model_for_sim</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span>
+            <span class="n">duplicated_lc</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">plasticc_cadence</span><span class="p">)</span>
 
         <span class="k">except</span><span class="p">:</span>
             <span class="k">continue</span>
@@ -711,8 +743,8 @@ Params:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># This line may take a moment</span>
-<span class="n">plot_snr_distributions</span><span class="p">(</span><span class="n">light_curves_for_snr_plot</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+<span></span><span class="c1"># This line may take a moment while the image renders</span>
+<span class="n">plot_snr_distributions</span><span class="p">(</span><span class="n">light_curves_for_snr_plot</span><span class="p">)</span>
 
 </pre></div>
 </div>
@@ -740,7 +772,7 @@ Params:
 </pre></div>
 </div>
 </div>
-<p>Next we need a SN Model that incorporates the PWV concentration along line of sight (i.e. the PWV scaled for the airmass at the time of observation). The <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package doesn’t have a clearly defined approach to adding time variable propagation effects. We use custom classes from the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package instead, which mimick <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but include time variable propagation effects.</p>
+<p>Next we need a SN Model that incorporates the PWV concentration along line of sight (i.e. the PWV scaled for the airmass at the time of observation). The <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package doesn’t have a clearly defined approach to adding time variable propagation effects. We use custom classes from the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package instead, which mimic <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but include time variable propagation effects.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
@@ -763,8 +795,8 @@ Params:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">plot_variable_pwv_sn_model</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="nb">dict</span><span class="p">()):</span>
-    <span class="sd">&quot;&quot;&quot;Overplot a sncosmo model with and without temporally variable PWV</span>
+<span></span><span class="k">def</span> <span class="nf">plot_variable_pwv_sn_model</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Over plot a sncosmo model with and without temporally variable PWV</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        model_with_pwv (snat_sim.SNModel): sncosmo source to plot</span>
@@ -772,6 +804,7 @@ Params:
 <span class="sd">        params                     (dict): Non-PWV related parameters for the model</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
+    <span class="n">params</span> <span class="o">=</span> <span class="n">params</span> <span class="ow">or</span> <span class="nb">dict</span><span class="p">()</span>
     <span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">12000</span><span class="p">)</span>
     <span class="n">time</span> <span class="o">=</span> <span class="n">phase</span> <span class="o">+</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;t0&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
@@ -827,20 +860,20 @@ Params:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">plot_airmass_validation</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">plot_airmass_validation</span><span class="p">(</span><span class="n">cadence_name</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot the airmass of simulated PLaSTICC SNe locations as observed from LSST</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cadence (str): Simulated PLaSTICC cadence to plot SNe for</span>
-<span class="sd">        model   (int): Model number used in the PLaSTICC simulation</span>
-<span class="sd">        mjd   (float): Date to plot airmasses for</span>
+<span class="sd">        cadence_name (str): Simulated PLaSTICC cadence to plot SNe for</span>
+<span class="sd">        model        (int): Model number used in the PLaSTICC simulation</span>
+<span class="sd">        mjd        (float): Date to plot airmasses for</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">ra</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">dec</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">peak</span> <span class="o">=</span> <span class="p">[]</span>
 
-    <span class="n">header_path</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">get_model_headers</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="mi">11</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">header_path</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">get_model_headers</span><span class="p">(</span><span class="n">cadence_name</span><span class="p">,</span> <span class="n">model</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">header_data</span> <span class="o">=</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">header_path</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
     <span class="n">ra</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">header_data</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">])</span>
     <span class="n">dec</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">header_data</span><span class="p">[</span><span class="s1">&#39;DECL&#39;</span><span class="p">])</span>
@@ -920,7 +953,7 @@ Params:
           <a href="pwv_modeling.html" title="PWV Modeling"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
-        <li class="nav-item nav-item-this"><a href="">Simulating Light-Curves for a Given Cadence</a></li> 
+        <li class="nav-item nav-item-this"><a href="">Simulating Light-Curves with a Cadence</a></li> 
       </ul>
     </div>
 <script type="text/javascript">

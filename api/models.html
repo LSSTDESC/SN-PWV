@@ -30,8 +30,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.plasticc" href="plasticc.html" />
-    <link rel="prev" title="snat_sim.lc_simulation" href="lc_simulation.html" />
+    <link rel="next" title="snat_sim.fitting_pipeline" href="fitting_pipeline.html" />
+    <link rel="prev" title="snat_sim.filters" href="filters.html" />
   
    
 
@@ -46,10 +46,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plasticc.html" title="snat_sim.plasticc"
+          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="lc_simulation.html" title="snat_sim.lc_simulation"
+          <a href="filters.html" title="snat_sim.filters"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.models</a></li> 
@@ -96,15 +96,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -125,10 +124,10 @@
             
   <div class="section" id="module-snat_sim.models">
 <span id="snat-sim-models"></span><h1>snat_sim.models<a class="headerlink" href="#module-snat_sim.models" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">models</span></code> module defines classes that act as models for different
+<p>The <code class="docutils literal notranslate"><span class="pre">models</span></code> module defines classes for modeling different
 physical phenomena. This includes SNe Ia light-curves, the propagation of
 light through atmospheric water vapor (with and without variation in time),
-and the seasonal variation of water vapor vs time.</p>
+and the seasonal variation of precipitable water vapor over time.</p>
 <div class="section" id="model-summaries">
 <h2>Model Summaries<a class="headerlink" href="#model-summaries" title="Permalink to this headline">¶</a></h2>
 <p>A summary of the available models is provided below:</p>
@@ -192,6 +191,23 @@ vapor are added to a Salt2 supernova model.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">supernova_model</span><span class="o">.</span><span class="n">add_effect</span><span class="p">(</span><span class="n">effect</span><span class="o">=</span><span class="n">atm_transmission</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Atmosphere&#39;</span><span class="p">,</span> <span class="n">frame</span><span class="o">=</span><span class="s1">&#39;obs&#39;</span><span class="p">)</span>
 </pre></div>
 </div>
+<p>To simulate a light-curve, you must first establish the desired light-curve
+cadence (i.e., how the light-curve should be sampled in time).</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cadence</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ObservedCadence</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">obs_times</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">bands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sdssr&#39;</span><span class="p">,</span> <span class="s1">&#39;sdssr&#39;</span><span class="p">,</span> <span class="s1">&#39;sdssr&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">zp</span><span class="o">=</span><span class="mi">25</span><span class="p">,</span> <span class="n">zpsys</span><span class="o">=</span><span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">skynoise</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">gain</span><span class="o">=</span><span class="mi">1</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Light-curves can then be simulated directly from the model</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here we simulate a light-curve with statistical noise</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here we simulate a light-curve with a fixed signal to noise ratio</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve_fixed_snr</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
@@ -227,6 +243,72 @@ object if <code class="docutils literal notranslate"><span class="pre">pwv</span
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The interpolated transmission at the given wavelengths / resolution</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.models.ObservedCadence">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">ObservedCadence</code><span class="sig-paren">(</span><em class="sig-param">obs_times</em>, <em class="sig-param">bands</em>, <em class="sig-param">skynoise=&lt;property object&gt;</em>, <em class="sig-param">zp=&lt;property object&gt;</em>, <em class="sig-param">zpsys=&lt;property object&gt;</em>, <em class="sig-param">gain=&lt;property object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#ObservedCadence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.ObservedCadence" title="Permalink to this definition">¶</a></dt>
+<dd><p>The observational sampling of an astronomical light-curve</p>
+<p>The zero-point, zero point system, and gain arguments can be a
+collection of values (one per <code class="docutils literal notranslate"><span class="pre">obs_time</span></code> value), or a single value
+to apply at all observation times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_times</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Array of observation times for the light-curve</p></li>
+<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Array of bands for each observation</p></li>
+<li><p><strong>zp</strong> (<em>~FloatOrArray</em>) – The zero-point or an array of zero-points for each observation</p></li>
+<li><p><strong>zpsys</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – The zero-point system or an array of zero-point systems</p></li>
+<li><p><strong>gain</strong> (<em>~FloatOrArray</em>) – The simulated gain or an array of gain values</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="snat_sim.models.ObservedCadence.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">obs_times</em>, <em class="sig-param">bands</em>, <em class="sig-param">skynoise=&lt;property object&gt;</em>, <em class="sig-param">zp=&lt;property object&gt;</em>, <em class="sig-param">zpsys=&lt;property object&gt;</em>, <em class="sig-param">gain=&lt;property object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.models.ObservedCadence.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.ObservedCadence.from_plasticc">
+<em class="property">static </em><code class="sig-name descname">from_plasticc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">light_curve</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">drop_nondetection</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#ObservedCadence.from_plasticc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.ObservedCadence.from_plasticc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the observational cadence from a PLaSTICC light-curve</p>
+<p>The zero-point, zero point system, and gain arguments can be a
+collection of values (one per phase value), or a single value to
+apply at all obs_times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>light_curve</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Astropy table with PLaSTICC light-curve data</p></li>
+<li><p><strong>zp</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[~FloatOrArray]) – Optionally overwrite the PLaSTICC zero-point with this value(s)</p></li>
+<li><p><strong>drop_nondetection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Drop data with PHOTFLAG == 0</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]], <a class="reference internal" href="#snat_sim.models.ObservedCadence" title="snat_sim.models.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An <code class="docutils literal notranslate"><span class="pre">ObservedCadence</span></code> instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.ObservedCadence.to_sncosmo">
+<code class="sig-name descname">to_sncosmo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#ObservedCadence.to_sncosmo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.ObservedCadence.to_sncosmo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the observational cadence as an <code class="docutils literal notranslate"><span class="pre">astropy.Table</span></code></p>
+<p>The returned table of observations is formatted for use with with
+the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An astropy table representing the observational cadence in <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> format</p>
 </dd>
 </dl>
 </dd></dl>
@@ -302,13 +384,13 @@ objects instead of numerical values for <code class="docutils literal notranslat
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Time at which the target is observed</p></li>
-<li><p><strong>ra</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Right Ascension of the target (Deg)</p></li>
-<li><p><strong>dec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Declination of the target (Deg)</p></li>
-<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Latitude of the observer (Deg)</p></li>
-<li><p><strong>lon</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Longitude of the observer (Deg)</p></li>
+<li><p><strong>time</strong> – Time at which the target is observed</p></li>
+<li><p><strong>ra</strong> – Right Ascension of the target (Deg)</p></li>
+<li><p><strong>dec</strong> – Declination of the target (Deg)</p></li>
+<li><p><strong>lat</strong> – Latitude of the observer (Deg)</p></li>
+<li><p><strong>lon</strong> – Longitude of the observer (Deg)</p></li>
 <li><p><strong>alt</strong> – Altitude of the observer (m)</p></li>
-<li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
+<li><p><strong>time_format</strong> – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -360,6 +442,49 @@ objects for <code class="docutils literal notranslate"><span class="pre">time</s
 <dt id="snat_sim.models.SNModel">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">SNModel</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">effects</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">effect_names</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">effect_frames</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SNModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SNModel" title="Permalink to this definition">¶</a></dt>
 <dd><p>An observer-frame supernova model composed of a Source and zero or more effects</p>
+<dl class="py method">
+<dt id="snat_sim.models.SNModel.simulate_lc">
+<code class="sig-name descname">simulate_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">scatter</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SNModel.simulate_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SNModel.simulate_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a SN light-curve</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">scatter</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then simulated flux values include an added
+random component drawn from a normal distribution with a standard deviation
+equal to the error of the observation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<a class="reference internal" href="#snat_sim.models.ObservedCadence" title="snat_sim.models.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>) – Observational cadence to evaluate the light-curve with</p></li>
+<li><p><strong>scatter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to add random noise to the flux values</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The simulated light-curve as an astropy table in the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.SNModel.simulate_lc_fixed_snr">
+<code class="sig-name descname">simulate_lc_fixed_snr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">snr</span><span class="o">=</span><span class="default_value">0.05</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SNModel.simulate_lc_fixed_snr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SNModel.simulate_lc_fixed_snr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a SN light-curve with a fixed SNR for the given cadence</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<a class="reference internal" href="#snat_sim.models.ObservedCadence" title="snat_sim.models.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>) – Observational cadence to evaluate the light-curve with</p></li>
+<li><p><strong>snr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Signal to noise ratio</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The simulated light-curve as an astropy table in the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> format</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -372,10 +497,10 @@ objects for <code class="docutils literal notranslate"><span class="pre">time</s
 <dd><p>The PWV concentration used by the propagation effect at a given time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time</strong> (<em>float</em><em>, </em><em>array</em>) – Time to get the PWV concentration for</p>
+<dd class="field-odd"><p><strong>time</strong> (<em>~FloatOrArray</em>) – Time to get the PWV concentration for</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>~NumpyVar</p>
+<dd class="field-even"><p>~FloatOrArray</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>An array of PWV values in units of mm</p>
@@ -390,9 +515,9 @@ objects for <code class="docutils literal notranslate"><span class="pre">time</s
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wave</strong> (<em>ndarray</em>) – An array of wavelength values</p></li>
-<li><p><strong>flux</strong> (<em>ndarray</em>) – An array of flux values</p></li>
-<li><p><strong>time</strong> (<em>ndarray</em>) – Array of time values to determine PWV for</p></li>
+<li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of wavelength values</p></li>
+<li><p><strong>flux</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of flux values</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Array of time values to determine PWV for</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -495,10 +620,10 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 <dd><p>The PWV concentration used by the propagation effect at a given time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time</strong> (<em>float</em><em>, </em><em>array</em>) – Time to get the PWV concentration for</p>
+<dd class="field-odd"><p><strong>time</strong><strong>)</strong> – Time to get the PWV concentration for</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>~NumpyVar</p>
+<dd class="field-even"><p>~FloatOrArray</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>An array of PWV values in units of mm</p>
@@ -576,10 +701,10 @@ method accepts a <code class="docutils literal notranslate"><span class="pre">ti
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plasticc.html" title="snat_sim.plasticc"
+          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
              >next</a> |</li>
         <li class="right" >
-          <a href="lc_simulation.html" title="snat_sim.lc_simulation"
+          <a href="filters.html" title="snat_sim.filters"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.models</a></li> 

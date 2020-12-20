@@ -96,15 +96,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -150,28 +149,25 @@ analysis results that are visually consistent and easily reproducible.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_delta_mu" title="snat_sim.plotting.plot_delta_mu"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_delta_mu</span></code></a></p></td>
 <td><p>Plot the variation in fitted distance modulus as a function of redshift and PWV.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_delta_x0" title="snat_sim.plotting.plot_delta_x0"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_delta_x0</span></code></a></p></td>
-<td><p>Plot the variation in x0 as a function of redshift and PWV.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_derivative_mag_vs_z" title="snat_sim.plotting.plot_derivative_mag_vs_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_derivative_mag_vs_z</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_derivative_mag_vs_z" title="snat_sim.plotting.plot_derivative_mag_vs_z"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_derivative_mag_vs_z</span></code></a></p></td>
 <td><p>Single panel, multi-line plot of slope in delta magnitude vs z.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_fitted_params" title="snat_sim.plotting.plot_fitted_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_fitted_params</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_fitted_params" title="snat_sim.plotting.plot_fitted_params"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_fitted_params</span></code></a></p></td>
 <td><p>Multi-panel plot showing subplots for each salt2 parameter vs redshift.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_magnitude" title="snat_sim.plotting.plot_magnitude"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_magnitude</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_magnitude" title="snat_sim.plotting.plot_magnitude"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_magnitude</span></code></a></p></td>
 <td><p>Multi-panel plot showing magnitudes in different columns vs PWV and redshift in different rows.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_pwv_mag_effects" title="snat_sim.plotting.plot_pwv_mag_effects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_pwv_mag_effects</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_pwv_mag_effects" title="snat_sim.plotting.plot_pwv_mag_effects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_pwv_mag_effects</span></code></a></p></td>
 <td><p>Multi panel plot with a column for each band and rows for the change in magnitude vs pwv and redshift parameters.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_residuals_on_sky" title="snat_sim.plotting.plot_residuals_on_sky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_residuals_on_sky</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_residuals_on_sky" title="snat_sim.plotting.plot_residuals_on_sky"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_residuals_on_sky</span></code></a></p></td>
 <td><p>Plot hubble residuals as a function of supernova coordinates.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_spectral_template" title="snat_sim.plotting.plot_spectral_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_spectral_template</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_spectral_template" title="snat_sim.plotting.plot_spectral_template"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_spectral_template</span></code></a></p></td>
 <td><p>Plot of the salt2-extended spectral template with overlaid PWV and bandpass throughput curves.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_year_pwv_vs_time" title="snat_sim.plotting.plot_year_pwv_vs_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_year_pwv_vs_time</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_year_pwv_vs_time" title="snat_sim.plotting.plot_year_pwv_vs_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_year_pwv_vs_time</span></code></a></p></td>
 <td><p>Plot PWV measurements taken over a single year as a function of time.</p></td>
 </tr>
 </tbody>
@@ -272,28 +268,9 @@ analysis results that are visually consistent and easily reproducible.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mu</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of distance moduli</p></li>
-<li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">nditer</span></code>) – Array of PWV values</p></li>
-<li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
-<li><p><strong>cosmo</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code>) – Astropy cosmology to compare results against</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.plotting.plot_delta_x0">
-<code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_delta_x0</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">source</span></em>, <em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">params_dict</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_x0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_x0" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot the variation in x0 as a function of redshift and PWV.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>source</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Source</span></code>]) – Source corresponding to the provided parameters</p></li>
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of PWV values</p></li>
 <li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
-<li><p><strong>params_dict</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Dictionary with fitted parameters for each pwv and z</p></li>
+<li><p><strong>cosmo</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code>) – Astropy cosmology to compare results against</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>

@@ -101,15 +101,14 @@
 <li class="toctree-l1"><a class="reference internal" href="pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -415,14 +414,14 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="Baseline-Filter-Set">
 <h2>Baseline Filter Set<a class="headerlink" href="#Baseline-Filter-Set" title="Permalink to this headline">¶</a></h2>
-<p>The LSST filter set is provided in enough detail that we can separate the hardware and atmospheric contributions. This allows us to add out own customized atmospheric component.</p>
+<p>The LSST filter set is provided in enough detail that we can separate the hardware and atmospheric contributions. This allows us to add our own customized atmospheric component(s).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">def</span> <span class="nf">plot_lsst_filters</span><span class="p">():</span>
-    <span class="sd">&quot;&quot;&quot;Plot the response curves for the LLST hardware and filters&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Plot the response curves for the LSST hardware and filters&quot;&quot;&quot;</span>
 
     <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">left_ax</span><span class="p">,</span> <span class="n">right_ax</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
 
@@ -488,7 +487,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="section" id="The-Fiducial-ATM">
 <h2>The Fiducial ATM<a class="headerlink" href="#The-Fiducial-ATM" title="Permalink to this headline">¶</a></h2>
-<p>We compare the reddest (largest) PWV absorption feature of the LSST standard atmosphere against our own atmospheric model (<code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code>). We compare the LSST atmosphere against PWV absorption for 4mm PWV binned at a 5 angstrom resolution.</p>
+<p>We compare the reddest (largest) PWV absorption feature of the LSST standard atmosphere against the atmospheric model from <code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code>. We compare the LSST atmosphere against PWV absorption for 4mm PWV binned at a 5 angstrom resolution.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -708,7 +707,7 @@ Best fit Resolution: 4.999999802004232
         <span class="n">band_data</span> <span class="o">=</span> <span class="n">ref_df</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;lsst_hardware_</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s1">_norm&#39;</span><span class="p">]</span>
         <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ref_df</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">band_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s1"> Band&#39;</span><span class="p">)</span>
 
-    <span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Scale Factor&#39;</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Flux Ratio&#39;</span><span class="p">)</span>
     <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;PWV (mm)&#39;</span><span class="p">)</span>
     <span class="n">axis</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
     <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>

@@ -88,15 +88,14 @@
 <li class="toctree-l1"><a class="reference internal" href="notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="notebooks/pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -124,7 +123,6 @@
  | <a href="#B"><strong>B</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
- | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
@@ -150,6 +148,8 @@
         <li><a href="api/fitting_pipeline.html#snat_sim.fitting_pipeline.ProcessManager.__init__">(snat_sim.fitting_pipeline.ProcessManager method)</a>
 </li>
         <li><a href="api/models.html#snat_sim.models.FixedResTransmission.__init__">(snat_sim.models.FixedResTransmission method)</a>
+</li>
+        <li><a href="api/models.html#snat_sim.models.ObservedCadence.__init__">(snat_sim.models.ObservedCadence method)</a>
 </li>
         <li><a href="api/models.html#snat_sim.models.PWVModel.__init__">(snat_sim.models.PWVModel method)</a>
 </li>
@@ -208,21 +208,17 @@
 </li>
       <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_mu_for_model">calc_mu_for_model() (in module snat_sim.sn_magnitudes)</a>
 </li>
-      <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_mu_for_params">calc_mu_for_params() (in module snat_sim.sn_magnitudes)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/models.html#snat_sim.models.FixedResTransmission.calc_transmission">calc_transmission() (snat_sim.models.FixedResTransmission method)</a>
+      <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_mu_for_params">calc_mu_for_params() (in module snat_sim.sn_magnitudes)</a>
 </li>
-      <li><a href="api/lc_simulation.html#snat_sim.lc_simulation.calc_x0_for_z">calc_x0_for_z() (in module snat_sim.lc_simulation)</a>
+      <li><a href="api/models.html#snat_sim.models.FixedResTransmission.calc_transmission">calc_transmission() (snat_sim.models.FixedResTransmission method)</a>
 </li>
       <li><a href="api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel.column_names">column_names() (snat_sim.fitting_pipeline.OutputDataModel property)</a>
 </li>
       <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.correct_mag">correct_mag() (in module snat_sim.sn_magnitudes)</a>
 </li>
       <li><a href="api/plasticc.html#snat_sim.plasticc.count_light_curves">count_light_curves() (in module snat_sim.plasticc)</a>
-</li>
-      <li><a href="api/lc_simulation.html#snat_sim.lc_simulation.create_observations_table">create_observations_table() (in module snat_sim.lc_simulation)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -236,33 +232,23 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/reference_stars.html#snat_sim.reference_stars.divide_ref_from_lc">divide_ref_from_lc() (in module snat_sim.reference_stars)</a>
 </li>
-      <li><a href="api/plasticc.html#snat_sim.plasticc.duplicate_plasticc_sncosmo">duplicate_plasticc_sncosmo() (in module snat_sim.plasticc)</a>
-</li>
-  </ul></td>
-</tr></table>
-
-<h2 id="E">E</h2>
-<table style="width: 100%" class="indextable genindextable"><tr>
-  <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/plasticc.html#snat_sim.plasticc.extract_cadence_data">extract_cadence_data() (in module snat_sim.plasticc)</a>
-</li>
   </ul></td>
 </tr></table>
 
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_fiducial_mag">fit_fiducial_mag() (in module snat_sim.sn_magnitudes)</a>
-</li>
       <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_mag">fit_mag() (in module snat_sim.sn_magnitudes)</a>
 </li>
       <li><a href="api/fitting_pipeline.html#snat_sim.fitting_pipeline.FittingPipeline">FittingPipeline (class in snat_sim.fitting_pipeline)</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/models.html#snat_sim.models.FixedResTransmission">FixedResTransmission (class in snat_sim.models)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/plasticc.html#snat_sim.plasticc.format_plasticc_sncosmo">format_plasticc_sncosmo() (in module snat_sim.plasticc)</a>
+</li>
+      <li><a href="api/models.html#snat_sim.models.ObservedCadence.from_plasticc">from_plasticc() (snat_sim.models.ObservedCadence static method)</a>
 </li>
       <li><a href="api/models.html#snat_sim.models.PWVModel.from_suominet_receiver">from_suominet_receiver() (snat_sim.models.PWVModel static method)</a>
 </li>
@@ -294,13 +280,11 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/reference_stars.html#snat_sim.reference_stars.interp_norm_flux">interp_norm_flux() (in module snat_sim.reference_stars)</a>
 </li>
-      <li><a href="api/plasticc.html#snat_sim.plasticc.iter_lc_for_cadence_model">iter_lc_for_cadence_model() (in module snat_sim.plasticc)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/plasticc.html#snat_sim.plasticc.iter_lc_for_header">iter_lc_for_header() (in module snat_sim.plasticc)</a>
+      <li><a href="api/plasticc.html#snat_sim.plasticc.iter_lc_for_cadence_model">iter_lc_for_cadence_model() (in module snat_sim.plasticc)</a>
 </li>
-      <li><a href="api/lc_simulation.html#snat_sim.lc_simulation.iter_lcs_fixed_snr">iter_lcs_fixed_snr() (in module snat_sim.lc_simulation)</a>
+      <li><a href="api/plasticc.html#snat_sim.plasticc.iter_lc_for_header">iter_lc_for_header() (in module snat_sim.plasticc)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -332,8 +316,6 @@
 </li>
         <li><a href="api/fitting_pipeline.html#module-snat_sim.fitting_pipeline">snat_sim.fitting_pipeline</a>
 </li>
-        <li><a href="api/lc_simulation.html#module-snat_sim.lc_simulation">snat_sim.lc_simulation</a>
-</li>
         <li><a href="api/models.html#module-snat_sim.models">snat_sim.models</a>
 </li>
         <li><a href="api/plasticc.html#module-snat_sim.plasticc">snat_sim.plasticc</a>
@@ -355,6 +337,10 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/models.html#snat_sim.models.ObservedCadence">ObservedCadence (class in snat_sim.models)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/fitting_pipeline.html#snat_sim.fitting_pipeline.OutputDataModel">OutputDataModel (class in snat_sim.fitting_pipeline)</a>
 </li>
   </ul></td>
@@ -374,8 +360,6 @@
       <li><a href="api/plotting.html#snat_sim.plotting.plot_delta_mag_vs_z">plot_delta_mag_vs_z() (in module snat_sim.plotting)</a>
 </li>
       <li><a href="api/plotting.html#snat_sim.plotting.plot_delta_mu">plot_delta_mu() (in module snat_sim.plotting)</a>
-</li>
-      <li><a href="api/plotting.html#snat_sim.plotting.plot_delta_x0">plot_delta_x0() (in module snat_sim.plotting)</a>
 </li>
       <li><a href="api/plotting.html#snat_sim.plotting.plot_derivative_mag_vs_z">plot_derivative_mag_vs_z() (in module snat_sim.plotting)</a>
 </li>
@@ -443,9 +427,9 @@
 </li>
       <li><a href="api/models.html#snat_sim.models.SeasonalPWVTrans">SeasonalPWVTrans (class in snat_sim.models)</a>
 </li>
-      <li><a href="api/lc_simulation.html#snat_sim.lc_simulation.simulate_lc">simulate_lc() (in module snat_sim.lc_simulation)</a>
+      <li><a href="api/models.html#snat_sim.models.SNModel.simulate_lc">simulate_lc() (snat_sim.models.SNModel method)</a>
 </li>
-      <li><a href="api/lc_simulation.html#snat_sim.lc_simulation.simulate_lc_fixed_snr">simulate_lc_fixed_snr() (in module snat_sim.lc_simulation)</a>
+      <li><a href="api/models.html#snat_sim.models.SNModel.simulate_lc_fixed_snr">simulate_lc_fixed_snr() (snat_sim.models.SNModel method)</a>
 </li>
       <li>
     snat_sim.constants
@@ -469,21 +453,12 @@
 </li>
       </ul></li>
       <li>
-    snat_sim.lc_simulation
-
-      <ul>
-        <li><a href="api/lc_simulation.html#module-snat_sim.lc_simulation">module</a>
-</li>
-      </ul></li>
-      <li>
     snat_sim.models
 
       <ul>
         <li><a href="api/models.html#module-snat_sim.models">module</a>
 </li>
       </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     snat_sim.plasticc
 
@@ -491,6 +466,8 @@
         <li><a href="api/plasticc.html#module-snat_sim.plasticc">module</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li>
     snat_sim.plotting
 
@@ -544,6 +521,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/models.html#snat_sim.models.ObservedCadence.to_sncosmo">to_sncosmo() (snat_sim.models.ObservedCadence method)</a>
+</li>
       <li><a href="api/models.html#snat_sim.models.StaticPWVTrans.transmission_res">transmission_res() (snat_sim.models.StaticPWVTrans property)</a>
 </li>
       <li><a href="api/utils_time_series.html#snat_sim.utils.time_series.TSUAccessor">TSUAccessor (class in snat_sim.utils.time_series)</a>

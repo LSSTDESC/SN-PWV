@@ -89,15 +89,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -139,14 +138,14 @@
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span><span class="p">,</span> <span class="n">lc_simulation</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">SNModel</span>
 
 <span class="n">Numeric</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
 
 
-<span class="c1"># Todo: Add dictionary keys to docs - consider named tuple?</span>
+<span class="c1"># Todo: Add dictionary keys to docs? - consider named tuple?</span>
 <div class="viewcode-block" id="get_config_pwv_vals"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.get_config_pwv_vals">[docs]</a><span class="nd">@lru_cache</span><span class="p">()</span>  <span class="c1"># Cache I/O</span>
 <span class="k">def</span> <span class="nf">get_config_pwv_vals</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">_config_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve PWV values to use as reference values</span>
@@ -211,7 +210,8 @@
 
         <span class="n">mag_arr</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">):</span>
-            <span class="n">model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">x0</span><span class="o">=</span><span class="n">lc_simulation</span><span class="o">.</span><span class="n">calc_x0_for_z</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">source</span><span class="p">))</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span>
             <span class="n">mag</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
             <span class="n">mag_arr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mag</span><span class="p">)</span>
 
@@ -302,7 +302,7 @@
 <div class="viewcode-block" id="fit_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_mag">[docs]</a><span class="k">def</span> <span class="nf">fit_mag</span><span class="p">(</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
         <span class="n">light_curves</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Table</span><span class="p">],</span>
-        <span class="n">vparams</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+        <span class="n">vparams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">bands</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">pwv_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -352,56 +352,6 @@
         <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
             <span class="n">fitted_mag</span><span class="p">[</span><span class="n">band</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">fitted_mag</span><span class="p">[</span><span class="n">band</span><span class="p">],</span> <span class="n">shape</span><span class="p">)</span>
             <span class="n">fitted_params</span><span class="p">[</span><span class="n">band</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">fitted_params</span><span class="p">[</span><span class="n">band</span><span class="p">],</span> <span class="p">(</span><span class="o">*</span><span class="n">shape</span><span class="p">,</span> <span class="n">num_params</span><span class="p">))</span>
-
-    <span class="k">return</span> <span class="n">fitted_mag</span><span class="p">,</span> <span class="n">fitted_params</span></div>
-
-
-<div class="viewcode-block" id="fit_fiducial_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_fiducial_mag">[docs]</a><span class="k">def</span> <span class="nf">fit_fiducial_mag</span><span class="p">(</span>
-        <span class="n">sim_model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
-        <span class="n">fit_model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
-        <span class="n">obs</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span>
-        <span class="n">vparams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">],</span>
-        <span class="n">bands</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">fid_pwv_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Get fitted SN magnitudes corresponding to the fiducial atmosphere</span>
-
-<span class="sd">    Returns a dictionary of the form</span>
-<span class="sd">      {&lt;band&gt;: [&lt;slope start mag&gt; , &lt;reference pwv mag&gt;, &lt;slope end mag&gt;]</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        sim_model: The sncosmo model to use when simulating light-curves</span>
-<span class="sd">        fit_model: The sncosmo model to use when fitting</span>
-<span class="sd">        obs: Array of light-curves to fit</span>
-<span class="sd">        vparams: Parameters to vary with the fit</span>
-<span class="sd">        z_arr: Array of redshift values</span>
-<span class="sd">        bands: Name of band to return mag for</span>
-<span class="sd">        fid_pwv_dict: Config dictionary for fiducial atmosphere</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        - A dictionary with 2d array of fitted magnitudes in each band</span>
-<span class="sd">        - A dictionary with 3d array of fitted parameters in each band</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="n">fid_pwv_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">fid_pwv_dict</span> <span class="o">=</span> <span class="n">get_config_pwv_vals</span><span class="p">()</span>
-
-    <span class="c1"># Parse reference pwv values</span>
-    <span class="n">pwv_fiducial</span> <span class="o">=</span> <span class="n">fid_pwv_dict</span><span class="p">[</span><span class="s1">&#39;reference_pwv&#39;</span><span class="p">]</span>
-    <span class="n">pwv_slope_start</span> <span class="o">=</span> <span class="n">fid_pwv_dict</span><span class="p">[</span><span class="s1">&#39;slope_start&#39;</span><span class="p">]</span>
-    <span class="n">pwv_slope_end</span> <span class="o">=</span> <span class="n">fid_pwv_dict</span><span class="p">[</span><span class="s1">&#39;slope_end&#39;</span><span class="p">]</span>
-
-    <span class="c1"># Get mag at reference pwv values</span>
-    <span class="n">pwv_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">pwv_slope_start</span><span class="p">,</span> <span class="n">pwv_fiducial</span><span class="p">,</span> <span class="n">pwv_slope_end</span><span class="p">]</span>
-    <span class="n">light_curves</span> <span class="o">=</span> <span class="n">lc_simulation</span><span class="o">.</span><span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">obs</span><span class="p">,</span> <span class="n">sim_model</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">)</span>
-    <span class="n">fitted_mag</span><span class="p">,</span> <span class="n">fitted_params</span> <span class="o">=</span> <span class="n">fit_mag</span><span class="p">(</span>
-        <span class="n">model</span><span class="o">=</span><span class="n">fit_model</span><span class="p">,</span>
-        <span class="n">light_curves</span><span class="o">=</span><span class="n">light_curves</span><span class="p">,</span>
-        <span class="n">vparams</span><span class="o">=</span><span class="n">vparams</span><span class="p">,</span>
-        <span class="n">pwv_arr</span><span class="o">=</span><span class="n">pwv_vals</span><span class="p">,</span>
-        <span class="n">z_arr</span><span class="o">=</span><span class="n">z_arr</span><span class="p">,</span>
-        <span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">fitted_mag</span><span class="p">,</span> <span class="n">fitted_params</span></div>
 

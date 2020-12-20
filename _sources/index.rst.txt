@@ -77,9 +77,8 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
 
    api/constants.rst
    api/filters.rst
-   api/fitting_pipeline.rst
-   api/lc_simulation.rst
    api/models.rst
+   api/fitting_pipeline.rst
    api/plasticc.rst
    api/reference_stars.rst
    api/sn_magnitudes.rst

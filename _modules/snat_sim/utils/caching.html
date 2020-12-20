@@ -89,15 +89,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -118,16 +117,16 @@
             
   <h1>Source code for snat_sim.utils.caching</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;The ``caching`` module defines numpy compatible function wrappers</span>
-<span class="sd">for implementing memoization.</span>
+<span class="sd">for implementing function level memoization.</span>
 
 <span class="sd">Usage Example</span>
 <span class="sd">-------------</span>
 
-<span class="sd">The builtin Python memoization routines (``lru_cache``) is not compatible with</span>
-<span class="sd">``numpy`` arrays because array objects are not hashable. The ``Cache``</span>
-<span class="sd">decorator provides an alternative memoization solution that supports</span>
-<span class="sd">numpy arguments. Arguments that are numpy arguments must be specified by</span>
-<span class="sd">name when constructing the decorator:</span>
+<span class="sd">The builtin Python memoization routines (e.g., ``lru_cache``) are not</span>
+<span class="sd">compatible with ``numpy`` arrays because array objects are not hashable.</span>
+<span class="sd">The ``Cache`` decorator provides an alternative memoization solution</span>
+<span class="sd">that supports numpy arguments. Arguments that are numpy arguments must be</span>
+<span class="sd">specified by name when constructing the decorator:</span>
 
 <span class="sd">.. doctest:: python</span>
 

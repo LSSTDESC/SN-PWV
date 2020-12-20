@@ -96,15 +96,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -126,14 +125,14 @@
   <div class="section" id="module-snat_sim.utils.caching">
 <span id="snat-sim-utils-caching"></span><h1>snat_sim.utils.caching<a class="headerlink" href="#module-snat_sim.utils.caching" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">caching</span></code> module defines numpy compatible function wrappers
-for implementing memoization.</p>
+for implementing function level memoization.</p>
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
-<p>The builtin Python memoization routines (<code class="docutils literal notranslate"><span class="pre">lru_cache</span></code>) is not compatible with
-<code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays because array objects are not hashable. The <code class="docutils literal notranslate"><span class="pre">Cache</span></code>
-decorator provides an alternative memoization solution that supports
-numpy arguments. Arguments that are numpy arguments must be specified by
-name when constructing the decorator:</p>
+<p>The builtin Python memoization routines (e.g., <code class="docutils literal notranslate"><span class="pre">lru_cache</span></code>) are not
+compatible with <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays because array objects are not hashable.
+The <code class="docutils literal notranslate"><span class="pre">Cache</span></code> decorator provides an alternative memoization solution
+that supports numpy arguments. Arguments that are numpy arguments must be
+specified by name when constructing the decorator:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.utils.caching</span> <span class="kn">import</span> <span class="n">Cache</span>

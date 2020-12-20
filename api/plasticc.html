@@ -31,7 +31,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="snat_sim.reference_stars" href="reference_stars.html" />
-    <link rel="prev" title="snat_sim.models" href="models.html" />
+    <link rel="prev" title="snat_sim.fitting_pipeline" href="fitting_pipeline.html" />
   
    
 
@@ -49,7 +49,7 @@
           <a href="reference_stars.html" title="snat_sim.reference_stars"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="models.html" title="snat_sim.models"
+          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.plasticc</a></li> 
@@ -96,15 +96,14 @@
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves for a Given Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lc_simulation.html">snat_sim.lc_simulation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
@@ -133,9 +132,6 @@ model used in a given simulation.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">plasticc</span></code> module makes it easy to check what data is available in
 the current working environment:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">plasticc</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Check where the `snat_sim` package is expecting to find data</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">plasticc</span><span class="o">.</span><span class="n">get_data_dir</span><span class="p">())</span>  
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get a list of cadences available in the directory printed above</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">plasticc</span><span class="o">.</span><span class="n">get_available_cadences</span><span class="p">())</span>  
@@ -177,55 +173,6 @@ returned tables to the data model used by the <code class="docutils literal notr
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Number of simulated light-curves available in the working environment</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.plasticc.duplicate_plasticc_sncosmo">
-<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">duplicate_plasticc_sncosmo</code><span class="sig-paren">(</span><em class="sig-param">light_curve</em>, <em class="sig-param">model</em>, <em class="sig-param">zp=None</em>, <em class="sig-param">gain=1</em>, <em class="sig-param">skynoise=None</em>, <em class="sig-param">scatter=True</em>, <em class="sig-param">cosmo=FlatLambdaCDM(H0=70 km / (Mpc s)</em>, <em class="sig-param">Om0=0.295</em>, <em class="sig-param">Tcmb0=0 K</em>, <em class="sig-param">Neff=3.04</em>, <em class="sig-param">m_nu=None</em>, <em class="sig-param">Ob0=None)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#duplicate_plasticc_sncosmo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.duplicate_plasticc_sncosmo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulate a light-curve with sncosmo that matches the cadence of a PLaSTICC light-curve</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>light_curve</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Astropy table with PLaSTICC light-curve data</p></li>
-<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – SNModel to use when simulating light-curve flux</p></li>
-<li><p><strong>zp</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – Optionally overwrite the PLaSTICC zero-point with this value</p></li>
-<li><p><strong>gain</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Gain to use during simulation</p></li>
-<li><p><strong>skynoise</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – Optionally overwrite the PLaSTICC skynoise with this value</p></li>
-<li><p><strong>scatter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Add random noise to the flux values</p></li>
-<li><p><strong>cosmo</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code>]) – Optionally rescale the <code class="docutils literal notranslate"><span class="pre">x0</span></code> parameter according to the given cosmology</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Astropy table with data for the simulated light-curve</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.plasticc.extract_cadence_data">
-<code class="sig-prename descclassname">snat_sim.plasticc.</code><code class="sig-name descname">extract_cadence_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">light_curve</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">25</span></em>, <em class="sig-param"><span class="n">gain</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">skynoise</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">drop_nondetection</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#extract_cadence_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plasticc.extract_cadence_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract the observational cadence from a PLaSTICC light-curve</p>
-<p>Returned table is formatted for use with <code class="docutils literal notranslate"><span class="pre">sncosmo.realize_lcs</span></code>.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>light_curve</strong> (<em>Table</em>) – Astropy table with PLaSTICC light-curve data</p></li>
-<li><p><strong>zp</strong> (<em>float</em><em>, </em><em>array</em>) – Overwrite the PLaSTICC zero-point with this value</p></li>
-<li><p><strong>gain</strong> (<em>float</em>) – Gain to use during simulation</p></li>
-<li><p><strong>skynoise</strong> (<em>int</em><em>, </em><em>array</em>) – Simulated skynoise in counts</p></li>
-<li><p><strong>drop_nondetection</strong> (<em>bool</em>) – Drop data with PHOTFLAG == 0</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An astropy table with cadence data for the input light-curve</p>
 </dd>
 </dl>
 </dd></dl>
@@ -340,7 +287,7 @@ meta data and a photometry file (<cite>*PHOT.fits</cite>) with simulated light-c
           <a href="reference_stars.html" title="snat_sim.reference_stars"
              >next</a> |</li>
         <li class="right" >
-          <a href="models.html" title="snat_sim.models"
+          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.plasticc</a></li> 
