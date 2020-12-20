@@ -5,7 +5,7 @@ Usage Example
 -------------
 
 The builtin Python memoization routines (``lru_cache``) is not compatible with
-``numpy`` arrays because array objects are not hashable. The ``numpy_cache``
+``numpy`` arrays because array objects are not hashable. The ``Cache``
 decorator provides an alternative memoization solution that supports
 numpy arguments. Arguments that are numpy arguments must be specified by
 name when constructing the decorator:
@@ -14,10 +14,10 @@ name when constructing the decorator:
 
    >>> import numpy as np
 
-   >>> from snat_sim.utils.caching import numpy_cache
+   >>> from snat_sim.utils.caching import Cache
 
 
-   >>> @numpy_cache('x', 'y', cache_size=1000)
+   >>> @Cache('x', 'y', cache_size=1000)
    ... def add(x, y):
    ...     print('The function has been called!')
    ...     return x + y
@@ -40,7 +40,7 @@ as follows:
    >>> class Foo:
    ...
    ...     def __init__(self):
-   ...         self.add = numpy_cache('x', 'y', cache_size=1000)(self.add)
+   ...         self.add = Cache('x', 'y', cache_size=1000)(self.add)
    ...
    ...     def add(self, x, y):
    ...         return x + y
@@ -94,9 +94,10 @@ class MemoryCache(OrderedDict):
                 self.popitem(last=False)
 
 
-class numpy_cache(MemoryCache):
+class Cache(MemoryCache):
+    """Memoization function wrapper"""
 
-    def __init__(self, *numpy_args: str, cache_size: int = None) -> Callable:
+    def __init__(self, *numpy_args: str, cache_size: int = None) -> None:
         """Memoization decorator supporting ``numpy`` arrays.
 
         Args:
@@ -108,7 +109,7 @@ class numpy_cache(MemoryCache):
         """
 
         self.numpy_args = numpy_args
-        super(numpy_cache, self).__init__(max_size=cache_size)
+        super(Cache, self).__init__(max_size=cache_size)
 
     def __call__(self, function: Callable) -> Callable:
         """Cache return values of the given function
