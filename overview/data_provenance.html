@@ -30,7 +30,7 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Command Line Interface" href="command_line.html" />
+    <link rel="next" title="Package Integrations" href="integrations.html" />
     <link rel="prev" title="Installation and Setup" href="install.html" />
   
    
@@ -46,7 +46,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="command_line.html" title="Command Line Interface"
+          <a href="integrations.html" title="Package Integrations"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installation and Setup"
@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Setup</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="integrations.html">Package Integrations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
@@ -101,15 +102,13 @@
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils_caching.html">snat_sim.utils.caching</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils/utils.html">snat_sim.utils</a></li>
 </ul>
 
     
@@ -129,14 +128,14 @@ efforts. Listed below is a summary of
 data sets used by this project and their origins.</p>
 <div class="section" id="atmospheric-measurements">
 <h2>Atmospheric Measurements<a class="headerlink" href="#atmospheric-measurements" title="Permalink to this headline">¶</a></h2>
-<p><strong>Repository Path:</strong> Data access provided by the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code> <a class="reference external" href="https://mwvgroup.github.io/pwv_kpno/">API</a>.</p>
+<p><strong>Repository Path:</strong> Data access provided by the <a class="reference external" href="https://mwvgroup.github.io/pwv_kpno/">pwv_kpno package</a>.</p>
 <p><strong>Data Source:</strong> <a class="reference external" href="https://www.suominet.ucar.edu/">The SuomiNet Project</a></p>
 <dl class="simple">
 <dt><strong>Description:</strong></dt><dd><p>Meteorological measurements taken at various global positions are used to
 characterize atmospheric variability over time. This data is taken by
 the SuomiNet project and it’s affiliated teams / projects. Published values
 include the pressure, temperature, relative humidity, and precipitable water
-vapor concentration (at zenith) sample at 30 minute intervals.</p>
+vapor concentration (at zenith) sampled at 30 minute intervals.</p>
 </dd>
 </dl>
 </div>
@@ -148,7 +147,7 @@ vapor concentration (at zenith) sample at 30 minute intervals.</p>
 <dt><strong>Description:</strong></dt><dd><p>Filter response curves corresponding to the Dark Energy Camera (DECam) used
 by the Cerro Telolo International Observatory (CTIO). These filter profiles
 were used primarily as a validation step during early development, and were
-later replaced in the analysis by the LSST filter set.</p>
+later replaced by the LSST filter set.</p>
 </dd>
 </dl>
 </div>
@@ -157,7 +156,8 @@ later replaced in the analysis by the LSST filter set.</p>
 <p><strong>Repository Path:</strong> <em>data/filters/lsst/*</em></p>
 <p><strong>Data Source:</strong> Cloned from <a class="reference external" href="https://github.com/lsst/throughputs">https://github.com/lsst/throughputs</a></p>
 <dl class="simple">
-<dt><strong>Description:</strong></dt><dd><p>Filter response curves curves considered as the ‘baseline’ performance of LSST.
+<dt><strong>Description:</strong></dt><dd><p>Filter response curves curves considered as the ‘baseline’ performance of
+the Legacy Survey of Space and Time (LSST).
 Throughput curves for other surveys are also available from the parent website,
 but only the LSST related data is used for this project. The filter profiles
 are generally identical to the profiles considered in the LSST Science
@@ -180,7 +180,7 @@ Developers can reference the assumed data model <a class="reference external" hr
 <p><strong>Repository Path:</strong> <em>data/stellar_spectra/*</em></p>
 <p><strong>Data Source:</strong> Sourced from the <a class="reference external" href="http://phoenix.astro.physik.uni-goettingen.de/?page_id=15">Goettingen Spectral Library</a>.</p>
 <dl class="simple">
-<dt><strong>Description:</strong></dt><dd><p>The Goettingen Spectral Library provides high resolution stellar spectra representing
+<dt><strong>Description:</strong></dt><dd><p>The Goettingen Spectral Library provides high-resolution, synthetic stellar spectra representing
 a variety of stellar types. Spectra were downloaded for a handful of spectral types, with
 additional spectra being downloaded on an “as needed” basis.</p>
 </dd>
@@ -203,7 +203,7 @@ additional spectra being downloaded on an “as needed” basis.</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="command_line.html" title="Command Line Interface"
+          <a href="integrations.html" title="Package Integrations"
              >next</a> |</li>
         <li class="right" >
           <a href="install.html" title="Installation and Setup"

@@ -1,0 +1,288 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>Package Integrations &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/clipboard.min.js"></script>
+    <script src="../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Command Line Interface" href="command_line.html" />
+    <link rel="prev" title="Data Provenance" href="data_provenance.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="command_line.html" title="Command Line Interface"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="data_provenance.html" title="Data Provenance"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Package Integrations</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Package Integrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line.html">Command Line Interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils/utils.html">snat_sim.utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="package-integrations">
+<span id="integration-docs"></span><h1>Package Integrations<a class="headerlink" href="#package-integrations" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is designed to automatically integrate with other Python
+packages commonly used in scientific research. This integration extends the
+functionality of various external packages and is performed automatically on
+import. A description of how <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> integrates with different packages
+is provided below. For a technical overview on the implementation of each
+integration, see the <a class="reference external" href="../api/utils/utils.html">utils module documentation</a>
+or follow one of the links below.</p>
+<div class="section" id="pandas">
+<h2>Pandas<a class="headerlink" href="#pandas" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">pandas</span></code> package is designed to support the manipulation of tabular data.
+In addition to providing an impressive collection of built-in data-analysis tools,
+the package also supports the implementation of
+<a class="reference external" href="https://pandas.pydata.org/pandas-docs/stable/development/extending.html">custom accessors</a>
+that can extend the capability of <code class="docutils literal notranslate"><span class="pre">pandas</span></code> objects.
+Importing the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package will automatically register custom accessors
+with the <code class="docutils literal notranslate"><span class="pre">pandas</span></code> package.</p>
+<p>A summary of different groups of accessors is provided below, including
+links to detailed documentation of the accessible functions.</p>
+<div class="section" id="time-series-utilities">
+<h3>Time Series Utilities<a class="headerlink" href="#time-series-utilities" title="Permalink to this headline">¶</a></h3>
+<p>Time series utilities are available for <cite>pandas.Series</cite> objects and are accessible via the
+<code class="docutils literal notranslate"><span class="pre">tsu</span></code> accessor name.</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/utils/time_series.html#snat_sim.utils.time_series.TSUAccessor.periodic_interpolation" title="snat_sim.utils.time_series.TSUAccessor.periodic_interpolation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">periodic_interpolation</span></code></a></p></td>
+<td><p>Linearly interpolate the series using periodic boundary conditions</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../api/utils/time_series.html#snat_sim.utils.time_series.TSUAccessor.resample_data_across_year" title="snat_sim.utils.time_series.TSUAccessor.resample_data_across_year"><code class="xref py py-obj docutils literal notranslate"><span class="pre">resample_data_across_year</span></code></a></p></td>
+<td><p>Resample the series evenly from the beginning of the earliest year through the end of the latest year.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../api/utils/time_series.html#snat_sim.utils.time_series.TSUAccessor.supplemented_data" title="snat_sim.utils.time_series.TSUAccessor.supplemented_data"><code class="xref py py-obj docutils literal notranslate"><span class="pre">supplemented_data</span></code></a></p></td>
+<td><p>Return the supplemented subset of the series corresponding to a given year</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="sncosmo">
+<h2>SNCosmo<a class="headerlink" href="#sncosmo" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package is used to analyze spectra-photometric observations of supernovae.
+The package includes a <a class="reference external" href="https://sncosmo.readthedocs.io/en/latest/registry.html">registry system</a>
+that allows users to retrieve supernova models, filter profiles, and other information by name.</p>
+<p>By default, the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package comes pre-packaged with a number of filter response
+curves from different astronomical surveys. The <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package extends the number of
+available filter profiles by registering additional filters for the Dark Energy Camera (DECam)
+and the Legacy Survey of Space and Time (LSST). A summary of the registered filters is
+provided below:</p>
+<div class="section" id="dark-energy-camera-decam">
+<h3>Dark Energy Camera (DECam)<a class="headerlink" href="#dark-energy-camera-decam" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Registered Filter Name</p></th>
+<th class="head"><p>Filter Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>DECam_&lt;ugrizY&gt;_filter</p></td>
+<td><p>DECam optical response curves</p></td>
+</tr>
+<tr class="row-odd"><td><p>DECam_atm</p></td>
+<td><p>Fiducial atmosphere assumed for the optical response curves</p></td>
+</tr>
+<tr class="row-even"><td><p>DECam_ccd</p></td>
+<td><p>DECam CCD Response curve</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="legacy-survey-of-space-and-time-lsst">
+<h3>Legacy Survey of Space and Time (LSST)<a class="headerlink" href="#legacy-survey-of-space-and-time-lsst" title="Permalink to this headline">¶</a></h3>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 75%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Registered Filter Name</p></th>
+<th class="head"><p>Filter Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>lsst_detector</p></td>
+<td><p>Detector sensitivity defined in the LSST Science Requirements Document.</p></td>
+</tr>
+<tr class="row-odd"><td><p>lsst_atmos_10</p></td>
+<td><p>Fiducial atmosphere over a 10 year baseline.</p></td>
+</tr>
+<tr class="row-even"><td><p>lsst_atmos_std</p></td>
+<td><p>Fiducial atmosphere likely for LSST at 1.2 airmasses.</p></td>
+</tr>
+<tr class="row-odd"><td><p>lsst_filter_&lt;ugrizy&gt;</p></td>
+<td><p>Throughput of the &lt;ugrizy&gt; glass filters only.</p></td>
+</tr>
+<tr class="row-even"><td><p>lsst_hardware_&lt;ugrizy&gt;</p></td>
+<td><p>Hardware contribution response curve in each band.</p></td>
+</tr>
+<tr class="row-odd"><td><p>lsst_total_&lt;ugrizy&gt;</p></td>
+<td><p>Total response curve in each band.</p></td>
+</tr>
+<tr class="row-even"><td><p>lsst_m&lt;123&gt;</p></td>
+<td><p>Response curve contribution from each mirror.</p></td>
+</tr>
+<tr class="row-odd"><td><p>lsst_lens&lt;123&gt;</p></td>
+<td><p>Response curve contribution from each lens.</p></td>
+</tr>
+<tr class="row-even"><td><p>lsst_mirrors</p></td>
+<td><p>Combined result from all mirrors.</p></td>
+</tr>
+<tr class="row-odd"><td><p>lsst_lenses</p></td>
+<td><p>Combined response from all lenses.</p></td>
+</tr>
+<tr class="row-even"><td><p>lsst_&lt;ugrizy&gt;_no_atm</p></td>
+<td><p>Throughput in each band without a fiducial atmosphere.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="command_line.html" title="Command Line Interface"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="data_provenance.html" title="Data Provenance"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Package Integrations</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

@@ -30,8 +30,8 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.fitting_pipeline" href="fitting_pipeline.html" />
-    <link rel="prev" title="snat_sim.filters" href="filters.html" />
+    <link rel="next" title="snat_sim.plasticc" href="plasticc.html" />
+    <link rel="prev" title="snat_sim.constants" href="constants.html" />
   
    
 
@@ -46,10 +46,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
+          <a href="plasticc.html" title="snat_sim.plasticc"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="filters.html" title="snat_sim.filters"
+          <a href="constants.html" title="snat_sim.constants"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.models</a></li> 
@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/integrations.html">Package Integrations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
@@ -101,15 +102,13 @@
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="filters.html">snat_sim.filters</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils_caching.html">snat_sim.utils.caching</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/utils.html">snat_sim.utils</a></li>
 </ul>
 
     
@@ -192,7 +191,7 @@ vapor are added to a Salt2 supernova model.</p>
 </pre></div>
 </div>
 <p>To simulate a light-curve, you must first establish the desired light-curve
-cadence (i.e., how the light-curve should be sampled in time).</p>
+cadence (i.e., how the light-curve should be sampled in time):</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cadence</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ObservedCadence</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">obs_times</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
 <span class="gp">... </span>    <span class="n">bands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;sdssr&#39;</span><span class="p">,</span> <span class="s1">&#39;sdssr&#39;</span><span class="p">,</span> <span class="s1">&#39;sdssr&#39;</span><span class="p">],</span>
@@ -200,7 +199,7 @@ cadence (i.e., how the light-curve should be sampled in time).</p>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Light-curves can then be simulated directly from the model</p>
+<p>Light-curves can then be simulated directly from the model:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here we simulate a light-curve with statistical noise</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">)</span>
 
@@ -701,10 +700,10 @@ method accepts a <code class="docutils literal notranslate"><span class="pre">ti
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="fitting_pipeline.html" title="snat_sim.fitting_pipeline"
+          <a href="plasticc.html" title="snat_sim.plasticc"
              >next</a> |</li>
         <li class="right" >
-          <a href="filters.html" title="snat_sim.filters"
+          <a href="constants.html" title="snat_sim.constants"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.models</a></li> 

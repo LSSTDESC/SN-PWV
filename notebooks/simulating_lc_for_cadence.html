@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/integrations.html">Package Integrations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
@@ -106,15 +107,13 @@
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils_caching.html">snat_sim.utils.caching</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils/utils.html">snat_sim.utils</a></li>
 </ul>
 
     
@@ -408,7 +407,7 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">pwv_kpno.gps_pwv</span> <span class="kn">import</span> <span class="n">GPSReceiver</span>
 
 <span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
-<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">filters</span><span class="p">,</span> <span class="n">plasticc</span><span class="p">,</span>  <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">plasticc</span><span class="p">,</span>  <span class="n">models</span>
 
 </pre></div>
 </div>
@@ -418,8 +417,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">filters</span><span class="o">.</span><span class="n">register_lsst_filters</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+<span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
 
 </pre></div>
 </div>
@@ -516,7 +514,7 @@ Params:
 </div>
 <div class="output_area rendered_html docutils container">
 <i>Table length=205</i>
-<table id="table140063704945568" class="table-striped table-bordered table-condensed">
+<table id="table139836901923952" class="table-striped table-bordered table-condensed">
 <thead><tr><th>MJD</th><th>FLT</th><th>FIELD</th><th>PHOTFLAG</th><th>PHOTPROB</th><th>FLUXCAL</th><th>FLUXCALERR</th><th>PSF_SIG1</th><th>SKY_SIG</th><th>ZEROPT</th><th>SIM_MAGOBS</th></tr></thead>
 <thead><tr><th>float64</th><th>str2</th><th>str12</th><th>int32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th></tr></thead>
 <tr><td>61387.3365</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>4.7668333</td><td>4.6751437</td><td>2.01</td><td>24.21</td><td>31.49</td><td>98.93107</td></tr>
@@ -543,7 +541,7 @@ Params:
 </table></div>
 </div>
 <p>Here we reformat the data to be compatible with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> so we can easily visualize the light-curve.</p>
-<div class="nbinput docutils container">
+<div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
@@ -554,19 +552,12 @@ Params:
 </pre></div>
 </div>
 </div>
-<div class="nboutput nblast docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area docutils container">
-<img alt="../_images/notebooks_simulating_lc_for_cadence_11_0.png" src="../_images/notebooks_simulating_lc_for_cadence_11_0.png" />
-</div>
-</div>
 </div>
 <div class="section" id="Simulating-Light-Curves">
 <h2>Simulating Light-Curves<a class="headerlink" href="#Simulating-Light-Curves" title="Permalink to this headline">¶</a></h2>
 <p>Since we need to add in our own atmospheric variability, the pre-tabulated flux values above are of limited use. Instead, we use the PLaSTICC meta-data to establish the cadence and model parameters for each simulated SN. This information is then used to simulate our own light-curves with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -581,7 +572,7 @@ Params:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -590,41 +581,41 @@ Params:
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
 <i>Table length=205</i>
-<table id="table140064929475360" class="table-striped table-bordered table-condensed">
+<table id="table139836431040176" class="table-striped table-bordered table-condensed">
 <thead><tr><th>time</th><th>band</th><th>flux</th><th>fluxerr</th><th>zp</th><th>zpsys</th></tr></thead>
 <thead><tr><th>float64</th><th>str15</th><th>float64</th><th>float64</th><th>float64</th><th>str8</th></tr></thead>
-<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>-25.559960402597426</td><td>24.209999084472656</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>-73.92062705412239</td><td>43.790000915527344</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>56.769071645472046</td><td>70.9000015258789</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>6.495948161096292</td><td>2.940000057220459</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>3.278296669025305</td><td>64.44000244140625</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>8.300897470717429</td><td>34.279998779296875</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61394.3293</td><td>lsst_hardware_r</td><td>-10.830216593240515</td><td>23.790000915527344</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61394.3507</td><td>lsst_hardware_y</td><td>10.948754522791624</td><td>56.709999084472656</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61405.2879</td><td>lsst_hardware_r</td><td>22.730470150195814</td><td>31.700000762939453</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61405.3097</td><td>lsst_hardware_i</td><td>-27.99932495878377</td><td>35.720001220703125</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>-18.26921852097997</td><td>24.209999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>72.95433597548734</td><td>43.790000915527344</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>0.586440640724211</td><td>70.9000015258789</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>-0.977720908877964</td><td>2.940000057220459</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>-125.72728535284051</td><td>64.44000244140625</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>-11.129213924548601</td><td>34.279998779296875</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61394.3293</td><td>lsst_hardware_r</td><td>5.39374901916953</td><td>23.790000915527344</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61394.3507</td><td>lsst_hardware_y</td><td>41.161687752341756</td><td>56.709999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61405.2879</td><td>lsst_hardware_r</td><td>28.6791403845355</td><td>31.700000762939453</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61405.3097</td><td>lsst_hardware_i</td><td>10.842687630595734</td><td>35.720001220703125</td><td>30.0</td><td>AB</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>61875.0115</td><td>lsst_hardware_u</td><td>1.7843678281257898</td><td>2.859999895095825</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61875.0305</td><td>lsst_hardware_g</td><td>9.510042879279343</td><td>14.949999809265137</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61878.978</td><td>lsst_hardware_y</td><td>45.556444016425786</td><td>51.81999969482422</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61878.9958</td><td>lsst_hardware_z</td><td>-18.876890801224317</td><td>42.95000076293945</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>94.55361323773897</td><td>55.72999954223633</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>18.414867330165574</td><td>24.3700008392334</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>13.70224660066851</td><td>51.529998779296875</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61883.992</td><td>lsst_hardware_r</td><td>-7.8018932770380145</td><td>23.979999542236328</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>22.437254612671598</td><td>50.459999084472656</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>4.835999317469032</td><td>14.979999542236328</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61875.0115</td><td>lsst_hardware_u</td><td>0.19371180406844746</td><td>2.859999895095825</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61875.0305</td><td>lsst_hardware_g</td><td>-23.8542440761787</td><td>14.949999809265137</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61878.978</td><td>lsst_hardware_y</td><td>-107.70814190818614</td><td>51.81999969482422</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61878.9958</td><td>lsst_hardware_z</td><td>13.800944986593775</td><td>42.95000076293945</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>31.992725695469762</td><td>55.72999954223633</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>5.164583828668077</td><td>24.3700008392334</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>34.248367850802275</td><td>51.529998779296875</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61883.992</td><td>lsst_hardware_r</td><td>18.683493798025594</td><td>23.979999542236328</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>51.47700382421368</td><td>50.459999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>-10.678216124809891</td><td>14.979999542236328</td><td>30.0</td><td>AB</td></tr>
 </table></div>
 </div>
 <p>When comparing our own “duplicated” light-curves with the original PLaSTICC simulations, we care about three things: 1. Do the light-curves have the same time sampling? 2. Do the light-curves have the same parameters (except for x0 which depends on the spectral template and cosmology)? 3. Do the light-curves have a similar SNR?</p>
 <p>The time sampling is easily verified by looking at the plotted data:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -642,7 +633,7 @@ Params:
 </div>
 <p>Similarly we can check the light-curve parameters:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -652,7 +643,7 @@ Params:
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
@@ -666,7 +657,7 @@ Params:
 </div>
 <p>For the SNR it is more informative to look at a distribution over many light-curves:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -729,7 +720,7 @@ Params:
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -739,7 +730,7 @@ Params:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -761,7 +752,7 @@ Params:
 <h2>Adding Atmospheric Effects<a class="headerlink" href="#Adding-Atmospheric-Effects" title="Permalink to this headline">¶</a></h2>
 <p>To simulate light-curves with PWV effects, we need a model for the PWV over time. This is easily defined as follows:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -774,7 +765,7 @@ Params:
 </div>
 <p>Next we need a SN Model that incorporates the PWV concentration along line of sight (i.e. the PWV scaled for the airmass at the time of observation). The <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package doesn’t have a clearly defined approach to adding time variable propagation effects. We use custom classes from the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package instead, which mimic <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but include time variable propagation effects.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -791,7 +782,7 @@ Params:
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -830,7 +821,7 @@ Params:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -856,7 +847,7 @@ Params:
 </div>
 <p>The PWV along line of sight is equivalent to the PWV at zenith times the airmass of the observation. We quickly validate the airmass calculation of the <code class="docutils literal notranslate"><span class="pre">VariablePWVTrans</span></code> class.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -904,7 +895,7 @@ Params:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>

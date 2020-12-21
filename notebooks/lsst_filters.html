@@ -87,6 +87,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/integrations.html">Package Integrations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
@@ -106,15 +107,13 @@
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/filters.html">snat_sim.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils_caching.html">snat_sim.utils.caching</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils/utils.html">snat_sim.utils</a></li>
 </ul>
 
     
@@ -392,7 +391,6 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">pwv_kpno.defaults</span> <span class="kn">import</span> <span class="n">v1_transmission</span>
 
-<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">filters</span>
 <span class="kn">from</span> <span class="nn">snat_sim.reference_stars</span> <span class="kn">import</span> <span class="n">get_ref_star_dataframe</span><span class="p">,</span> <span class="n">get_stellar_spectra</span>
 
 </pre></div>
@@ -405,9 +403,6 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">fig_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;figs&#39;</span> <span class="o">/</span> <span class="s1">&#39;lsst_filters&#39;</span>
 <span class="n">fig_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-<span class="c1"># Make sncosmo aware of the LSST filter set</span>
-<span class="n">filters</span><span class="o">.</span><span class="n">register_lsst_filters</span><span class="p">(</span><span class="n">force</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 </pre></div>
 </div>

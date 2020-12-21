@@ -80,6 +80,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../overview/install.html">Installation and Setup</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/integrations.html">Package Integrations</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../overview/command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
@@ -94,15 +95,13 @@
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/filters.html">snat_sim.filters</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils_caching.html">snat_sim.utils.caching</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils_time_series.html">snat_sim.utils.time_series</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
 </ul>
 
     
@@ -178,10 +177,10 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
 
-<div class="viewcode-block" id="MemoryCache"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.MemoryCache">[docs]</a><span class="k">class</span> <span class="nc">MemoryCache</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
+<div class="viewcode-block" id="MemoryCache"><a class="viewcode-back" href="../../../api/utils/caching.html#snat_sim.utils.caching.MemoryCache">[docs]</a><span class="k">class</span> <span class="nc">MemoryCache</span><span class="p">(</span><span class="n">OrderedDict</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Ordered dictionary with an imposed limit on overall memory usage&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="MemoryCache.__init__"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.MemoryCache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="MemoryCache.__init__"><a class="viewcode-back" href="../../../api/utils/caching.html#snat_sim.utils.caching.MemoryCache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Ordered dictionary with an imposed size limit im memory.</span>
 
 <span class="sd">        When memory usage exceeds the predefined amount, remove the oldest</span>
@@ -212,10 +211,10 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">popitem</span><span class="p">(</span><span class="n">last</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Cache"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.Cache">[docs]</a><span class="k">class</span> <span class="nc">Cache</span><span class="p">(</span><span class="n">MemoryCache</span><span class="p">):</span>
+<div class="viewcode-block" id="Cache"><a class="viewcode-back" href="../../../api/utils/caching.html#snat_sim.utils.caching.Cache">[docs]</a><span class="k">class</span> <span class="nc">Cache</span><span class="p">(</span><span class="n">MemoryCache</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Memoization function wrapper&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Cache.__init__"><a class="viewcode-back" href="../../../api/utils_caching.html#snat_sim.utils.caching.Cache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">numpy_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Cache.__init__"><a class="viewcode-back" href="../../../api/utils/caching.html#snat_sim.utils.caching.Cache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">numpy_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Memoization decorator supporting ``numpy`` arrays.</span>
 
 <span class="sd">        Args:</span>

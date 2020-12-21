@@ -17,7 +17,7 @@ div.sidebar-block p {
     color: #606060;
 }
 
-/* -- Rendered Notebooks ---------------------------------------------------- */
+/* -- Generic Elements ---------------------------------------------------- */
 
 .body {
     top: 25px
@@ -29,12 +29,13 @@ div.sidebar-block p {
 }
 
 table {
-    margin: 30px auto 50px;
+    margin: 30px 0 50px;
     border-top: 1px;
     border-top-style: solid;
     border-bottom: 1px;
     border-bottom-style: solid;
     border-color: lightgray;
+    width: 100%;
 }
 
 table.field-list {
@@ -74,6 +75,10 @@ a.copybtn {
 
 div.stderr a.copybtn, div.nboutput a.copybtn {
     display: none;
+}
+
+h3 {
+    font-size: 24px;
 }
 
 /* -- Code and API ---------------------------------------------------------- */
