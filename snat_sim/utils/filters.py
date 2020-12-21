@@ -15,6 +15,11 @@ Space and Time (LSST) are registered with and then retrieved from the
 .. doctest:: python
 
    >>> import sncosmo
+
+   >>> # Check the names of new filters that will be registered
+   >>> print(help(register_lsst_filters))
+
+   >>> register_lsst_filters(force=True)
    >>> lsst_u_band = sncosmo.get_bandpass('lsst_total_u')
 
 Module Docs

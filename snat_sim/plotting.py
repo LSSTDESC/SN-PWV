@@ -3,6 +3,7 @@ analysis results that are visually consistent and easily reproducible.
 
 Plotting Function Summaries
 ---------------------------
+
 .. autosummary::
    :nosignatures:
 
