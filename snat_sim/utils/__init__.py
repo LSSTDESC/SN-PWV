@@ -23,6 +23,8 @@ from . import *
 
 
 def setup_environment() -> None:
+    """Register package integrations with third party dependencies"""
+      
     from . import time_series
     from .filters import register_lsst_filters, register_decam_filters
 
