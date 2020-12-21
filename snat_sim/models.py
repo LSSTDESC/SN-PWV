@@ -53,7 +53,7 @@ vapor are added to a Salt2 supernova model.
 
 
 To simulate a light-curve, you must first establish the desired light-curve
-cadence (i.e., how the light-curve should be sampled in time).
+cadence (i.e., how the light-curve should be sampled in time):
 
 .. doctest:: python
 
@@ -63,7 +63,7 @@ cadence (i.e., how the light-curve should be sampled in time).
     ...     zp=25, zpsys='AB', skynoise=0, gain=1
     ... )
 
-Light-curves can then be simulated directly from the model
+Light-curves can then be simulated directly from the model:
 
 .. doctest:: python
 

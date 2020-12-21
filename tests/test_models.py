@@ -11,10 +11,7 @@ from sncosmo.tests import test_models as sncosmo_test_models
 
 from snat_sim import constants as const
 from snat_sim import models
-from snat_sim.filters import register_decam_filters
 from tests.mock import create_constant_pwv_model
-
-register_decam_filters(force=True)
 
 
 class TestFixedResTransmission(TestCase):

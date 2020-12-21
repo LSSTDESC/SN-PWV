@@ -14,13 +14,11 @@ from bokeh.plotting import figure
 _file_dir = Path(__file__).resolve().parent
 sys.path.insert(0, str(_file_dir.parent))
 
-from snat_sim.filters import register_lsst_filters
 from snat_sim import models, reference_stars
 
 # SNCosmo source to use when plotting
 SOURCE = 'salt2-extended'
 BANDS = tuple(f'lsst_hardware_{b}' for b in 'ugriz')
-register_lsst_filters(force=True)
 
 
 class SimulatedParamWidgets:

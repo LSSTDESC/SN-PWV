@@ -6,10 +6,11 @@ Space and Time (LSST).
 
 from . import *
 
-# Register pandas accessors
-from .utils.time_series import TSUAccessor
+from .utils import setup_environment as _setup_environment
 
 __version__ = 'Development'
 __author__ = 'Dark Energy Science Collaboration'
 __maintainer__ = 'Daniel Perrefort'
 __license__ = 'GPL 3.0'
+
+_setup_environment()

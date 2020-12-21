@@ -10,14 +10,11 @@ from pathlib import Path
 
 import numpy as np
 import sncosmo
+from pwv_kpno.defaults import v1_transmission
 from scipy.integrate import trapz
 from tqdm import tqdm
 
-from snat_sim import filters
 from snat_sim.reference_stars import get_stellar_spectra
-from pwv_kpno.defaults import v1_transmission
-
-filters.register_lsst_filters()
 
 # Define spectral types this script will consider
 SPEC_TYPES = ('G2', 'M4', 'M9', 'M0', 'M1', 'M2', 'M3', 'M5', 'K2', 'K9', 'K5', 'F5')
