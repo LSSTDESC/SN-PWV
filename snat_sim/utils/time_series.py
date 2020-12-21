@@ -1,6 +1,5 @@
-"""The ``time_series`` module provides limited functionality
-for manipulating time series data. It is intended to extend existing
-functionality in the ``pandas`` package with support for tasks particular to
+"""The ``time_series`` module extends ``pandas`` functionality
+for manipulating time series data. It is intended support tasks particular to
 dealing with atmospheric / weather data.
 
 Usage Example

@@ -1,5 +1,5 @@
 """The ``filters`` module is responsible for registering custom filter
-profiles with the ``sncosmo`` package (a core ``snat_sim`` dependancy).  When
+profiles with the ``sncosmo`` package.  When
 registering filters for a given survey, please check the documentation of the
 corresponding function to determine the names of the newly registered filters.
 Filters only need to be registered once within a given runtime to be
@@ -15,9 +15,28 @@ Space and Time (LSST) are registered with and then retrieved from the
 .. doctest:: python
 
    >>> import sncosmo
+   >>> from snat_sim.utils.filters import register_lsst_filters
 
    >>> # Check the names of new filters that will be registered
-   >>> print(help(register_lsst_filters))
+   >>> help(register_lsst_filters)
+   Help on function register_lsst_filters in module snat_sim.utils.filters:
+   <BLANKLINE>
+   register_lsst_filters(force: bool = False) -> None
+       Register LSST filter scripts, hardware responses, and fiducial ATM with sncosmo
+   <BLANKLINE>
+       Registered Filters:
+           - lsst_detector: Detector sensitivity defined in the LSST SRD
+           - lsst_atmos_10: Fiducial atmosphere over a 10 year baseline
+           - lsst_atmos_std: Fiducial atmosphere likely for LSST at 1.2 airmasses
+           - lsst_filter_<ugrizy>: Throughput of the glass filters only
+           - lsst_hardware_<ugrizy>: Hardware contribution response curve in each band
+           - lsst_total_<ugrizy>: Total response curve in each band
+           - lsst_m<123>: Response curve contribution from each mirror
+           - lsst_lens<123>: Response curve contribution from each lens
+           - lsst_mirrors: Combined result from all mirrors
+           - lsst_lenses: Combined response from all lenses
+           - lsst_<ugrizy>_no_atm: Throughput in each band without a fiducial atmosphere
+   ...
 
    >>> register_lsst_filters(force=True)
    >>> lsst_u_band = sncosmo.get_bandpass('lsst_total_u')
