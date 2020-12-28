@@ -3,16 +3,18 @@ analysis pipeline.
 """
 
 import warnings
+from copy import copy
 from pathlib import Path
 from typing import *
 
 import sncosmo
+from astropy.table import Table
 from egon.connectors import Output, Input
 from egon.nodes import Source, Node, Target
 
 from .data_model import DataModel
-from .. import plasticc, reference_stars
-from ..models import SNModel, PWVModel
+from .. import plasticc, reference_stars, constants as const
+from ..models import SNModel, PWVModel, ObservedCadence
 
 
 class LoadPlasticcSims(Source):
@@ -58,14 +60,18 @@ class SimulateLightCurves(Node):
 
     plasticc_data_input = Input()
     simulation_output = Output()
+    masked_failure_output = Output()
 
     def __init__(
             self,
+            data_model: DataModel,
             sn_model: SNModel,
             ref_stars: Collection[str],
             pwv_model: PWVModel,
             quality_callback: callable = None,
-            num_processes: int = 1
+            num_processes: int = 1,
+            abs_mb: float = const.betoule_abs_mb,
+            cosmo=const.betoule_cosmo
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -75,13 +81,33 @@ class SimulateLightCurves(Node):
             pwv_model: Model for the PWV concentration the reference stars are observed at
             quality_callback: Skip light-curves if this function returns False
             num_processes: Number of processes to allocate to the node
+            abs_mb: The absolute B-band magnitude of the simulated SNe
+            cosmo: Cosmology to assume in the simulation
         """
 
         super().__init__(num_processes)
+        self.data_model = data_model
         self.sim_model = sn_model
         self.ref_stars = ref_stars
         self.pwv_model = pwv_model
         self.quality_callback = quality_callback
+        self.abs_mb = abs_mb
+        self.cosmo = cosmo
+
+    def duplicate_plasticc_lc(self, plasticc_lc: Table, zp: float = 30) -> Table:
+        """Duplicate a plastic light-curve using the simulation model
+
+        Args:
+            plasticc_lc: The light-curve to duplicate
+            zp: Zero-point of the duplicated light-curve
+        """
+
+        params, plasticc_cadence = ObservedCadence.from_plasticc(plasticc_lc, zp=zp)
+
+        model_for_sim = copy(self.sim_model)
+        model_for_sim.update({p: v for p, v in params.items() if p in model_for_sim.param_names})
+        model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
+        return model_for_sim.simulate_lc(plasticc_cadence)
 
     def action(self) -> None:
         """Simulate light-curves with atmospheric effects"""
@@ -101,7 +127,7 @@ class SimulateLightCurves(Node):
                 continue
 
             # Simulate a duplicate light-curve with atmospheric effects
-            duplicated_lc = plasticc.duplicate_plasticc_sncosmo(light_curve, self.sim_model, zp=30)
+            duplicated_lc = self.duplicate_plasticc_lc(light_curve, zp=30)
 
             if self.ref_stars is not None:
                 pwv_los = self.pwv_model.pwv_los(duplicated_lc['time'], ra, dec, time_format='mjd')
@@ -109,7 +135,7 @@ class SimulateLightCurves(Node):
 
             # Skip if duplicated light-curve is not up to quality standards
             if self.quality_callback and not self.quality_callback(duplicated_lc):
-                self.queue_fit_results.put(
+                self.masked_failure_output.put(
                     self.data_model.build_masked_entry(duplicated_lc.meta, ValueError('Failed quality check'))
                 )
                 continue

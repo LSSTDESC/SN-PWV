@@ -81,16 +81,18 @@ class FittingPipeline(Pipeline):
         if (ref_stars is None) and not (pwv_model is None):
             raise ValueError('Cannot perform reference star subtraction without ``pwv_model`` argument')
 
+        data_model = DataModel(sim_model, fit_model)
+
         # Define the nodes of the analysis pipeline
         self.load_plastic = LoadPlasticcSims(cadence=cadence, iter_lim=iter_lim)
         self.simulate_light_curves = SimulateLightCurves(
+            data_model=data_model,
             sn_model=sim_model,
             ref_stars=ref_stars,
             pwv_model=pwv_model,
             quality_callback=quality_callback,
             num_processes=simulation_pool)
 
-        data_model = DataModel(sim_model, fit_model)
         self.fit_light_curves = FitLightCurves(
             data_model=data_model, sn_model=fit_model, vparams=vparams, bounds=bounds, num_processes=fitting_pool)
 
@@ -99,6 +101,7 @@ class FittingPipeline(Pipeline):
         # Connect pipeline nodes together
         self.load_plastic.lc_output.connect(self.simulate_light_curves.plasticc_data_input, maxsize=max_queue)
         self.simulate_light_curves.simulation_output.connect(self.fit_light_curves.light_curves_input)
+        self.simulate_light_curves.masked_failure_output.connect(self.write_to_disk.fit_results_input)
         self.fit_light_curves.fit_results_output.connect(self.write_to_disk.fit_results_input)
 
         super(FittingPipeline, self).__init__()
