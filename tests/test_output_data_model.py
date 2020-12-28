@@ -6,7 +6,7 @@ import numpy as np
 import sncosmo
 
 from snat_sim import constants as const
-from snat_sim.fitting_pipeline import OutputDataModel
+from snat_sim.pipeline import DataModel
 
 
 class OutputValueFormatting(TestCase):
@@ -24,7 +24,7 @@ class OutputValueFormatting(TestCase):
             ['z', 't0', 'x0', 'x1', 'c'],  # parameters of model to vary
             bounds={'z': (0.3, 0.7)})  # bounds on parameters (if any)
 
-        cls.data_model = OutputDataModel(model, model)
+        cls.data_model = DataModel(model, model)
         cls.formatted_results = cls.data_model.build_table_entry(cls.meta, cls.fitted_model, cls.result)
 
     def test_object_id_position(self):
@@ -99,7 +99,7 @@ class MaskedRowCreation(TestCase):
         cls.meta = {'SNID': '123'}
         cls.fit_failure_exception = ValueError('This fit failed to converge.')
 
-        cls.data_model = OutputDataModel(model, model)
+        cls.data_model = DataModel(model, model)
         cls.masked_row = cls.data_model.build_masked_entry(cls.meta, cls.fit_failure_exception)
 
     def test_mask_value_is_neg_99(self):
