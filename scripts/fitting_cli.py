@@ -13,8 +13,7 @@ from pwv_kpno.gps_pwv import GPSReceiver
 
 sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
 from snat_sim import models
-from snat_sim.utils import filters
-from snat_sim.fitting_pipeline import FittingPipeline
+from snat_sim.pipeline import FittingPipeline
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 SUOMINET_VALUES = ('press', 'temp', 'rh', 'zenith_delay')
