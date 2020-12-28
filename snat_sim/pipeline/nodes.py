@@ -1,3 +1,7 @@
+"""The ``nodes`` module defines the individual data processing nodes for the
+analysis pipeline.
+"""
+
 import warnings
 from pathlib import Path
 from typing import *
@@ -12,12 +16,19 @@ from ..models import SNModel, PWVModel
 
 
 class LoadPlasticcSims(Source):
-    lc_out = Output()
+    """Pipeline node for loading PLaSTICC data from disk
+
+    Connectors:
+        lc_output: The loaded PLaSTICC light-curves as ``astropy.Table`` objects
+    """
+
+    lc_output = Output()
 
     def __init__(self, cadence: str, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
         """Source node for loading PLaSTICC light-curves from disk
 
         Args:
+            cadence: Cadence to use when simulating light-curves
             iter_lim: Exit after loading the given number of light-curves
             num_processes: Number of processes to allocate to the node
         """
@@ -34,24 +45,40 @@ class LoadPlasticcSims(Source):
             if i >= self.iter_lim:
                 break
 
-            self.lc_out.put(light_curve)
+            self.lc_output.put(light_curve)
 
 
 class SimulateLightCurves(Node):
+    """Pipeline node for simulating light-curves based on PLaSTICC cadences
+
+    Connectors:
+        plasticc_data_input: PLaSTICC light-curves as ``astropy.Table`` objects
+        simulation_output: Simulated light-curves as  ``astropy.Table`` objects
+    """
+
     plasticc_data_input = Input()
     simulation_output = Output()
 
     def __init__(
             self,
-            sim_model: SNModel,
+            sn_model: SNModel,
             ref_stars: Collection[str],
             pwv_model: PWVModel,
             quality_callback: callable = None,
             num_processes: int = 1
     ) -> None:
+        """Fit light-curves using multiple processes and combine results into an output file
+
+        Args:
+            sn_model: Model to use when simulating light-curves
+            ref_stars: List of reference star types to calibrate simulated supernova with
+            pwv_model: Model for the PWV concentration the reference stars are observed at
+            quality_callback: Skip light-curves if this function returns False
+            num_processes: Number of processes to allocate to the node
+        """
 
         super().__init__(num_processes)
-        self.sim_model = sim_model
+        self.sim_model = sn_model
         self.ref_stars = ref_stars
         self.pwv_model = pwv_model
         self.quality_callback = quality_callback
@@ -91,8 +118,15 @@ class SimulateLightCurves(Node):
 
 
 class FitLightCurves(Node):
-    light_curves_in = Input()
-    fit_results_out = Output()
+    """Pipeline node for fitting simulated light-curves
+
+    Connectors:
+        light_curves_input: Light-curves to fit
+        fit_results_output: Fit results as a list
+    """
+
+    light_curves_input = Input()
+    fit_results_output = Output()
 
     def __init__(
             self,
@@ -102,6 +136,16 @@ class FitLightCurves(Node):
             bounds: Dict = None,
             num_processes: int = 1
     ) -> None:
+        """Fit light-curves using multiple processes and combine results into an output file
+
+        Args:
+            data_model: Data model for formatting output data
+            sn_model: Model to use when fitting light-curves
+            vparams: List of parameter names to vary in the fit
+            bounds: Bounds to impose on ``fit_model`` parameters when fitting light-curves
+            num_processes: Number of processes to allocate to the node
+        """
+
         super(FitLightCurves, self).__init__(num_processes)
         self.data_model = data_model
         self.fit_model = sn_model
@@ -112,7 +156,7 @@ class FitLightCurves(Node):
         """Fit light-curves"""
 
         warnings.simplefilter('ignore', category=DeprecationWarning)
-        for light_curve in self.light_curves_in.iter_get():
+        for light_curve in self.light_curves_input.iter_get():
             # Use the true light-curve parameters as the initial guess
             self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
 
@@ -121,21 +165,36 @@ class FitLightCurves(Node):
                     light_curve, self.fit_model, self.vparams, bounds=self.bounds,
                     guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
-                self.fit_results_out.put(self.data_model.build_table_entry(light_curve.meta, fitted_model, result))
+                self.fit_results_output.put(self.data_model.build_table_entry(light_curve.meta, fitted_model, result))
 
             except Exception as excep:
-                self.fit_results_out.put(self.data_model.build_masked_entry(light_curve.meta, excep))
+                self.fit_results_output.put(self.data_model.build_masked_entry(light_curve.meta, excep))
 
 
 class FitResultsToDisk(Target):
-    fit_results_in = Input()
+    """Pipeline node for writing fit results to disk
+
+    Connectors:
+        fit_results_input: List of values to write as single line in CSV format
+    """
+
+    fit_results_input = Input()
 
     def __init__(self, data_model: DataModel, out_path: Union[str, Path], num_processes: int = 1) -> None:
+        """Fit light-curves using multiple processes and combine results into an output file
+
+        Args:
+            data_model: Data model for formatting output data
+            out_path: Path to write results to (.csv extension is enforced)
+        """
+
         super(FitResultsToDisk, self).__init__(num_processes)
         self.data_model = data_model
         self.out_path = out_path
 
     def setup(self) -> None:
+        """Ensure the parent directory of the destination file exists"""
+
         self.out_path.parent.mkdir(exist_ok=True, parents=True)
 
     def action(self) -> None:
@@ -143,7 +202,6 @@ class FitResultsToDisk(Target):
 
         with self.out_path.open('w') as outfile:
             outfile.write(','.join(self.data_model.column_names))
-
-            for results in self.fit_results_in.iter_get():
+            for results in self.fit_results_input.iter_get():
                 new_line = ','.join(map(str, results)) + '\n'
                 outfile.write(new_line)

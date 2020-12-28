@@ -1,3 +1,7 @@
+"""The ``data_model`` module defines how pipeline output data is formatted
+on disk.
+"""
+
 from copy import copy
 from typing import List
 
