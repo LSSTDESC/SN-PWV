@@ -282,12 +282,12 @@ class FixedResTransmission:
     # noinspection PyMissingOrEmptyDocstring
     @overload
     def calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
-        ...
+        ...  # pragma: no cover
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
     def calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
-        ...
+        ...  # pragma: no cover
 
     def calc_transmission(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
@@ -373,7 +373,7 @@ class PWVModel:
             alt: float = const.vro_altitude,
             time_format: str = 'mjd'
     ) -> float:
-        ...
+        ...  # pragma: no cover
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
@@ -387,7 +387,7 @@ class PWVModel:
             alt: float = const.vro_altitude,
             time_format: str = 'mjd'
     ) -> np.array:
-        ...
+        ...  # pragma: no cover
 
     @staticmethod
     def calc_airmass(
@@ -426,12 +426,12 @@ class PWVModel:
     # noinspection PyMissingOrEmptyDocstring
     @overload
     def pwv_zenith(self, time: float, time_format: Optional[str]) -> float:
-        ...
+        ...  # pragma: no cover
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
     def pwv_zenith(self, time: Collection[float], time_format: Optional[str]) -> np.array:
-        ...
+        ...  # pragma: no cover
 
     def pwv_zenith(self, time, time_format='mjd'):
         """Interpolate the PWV at zenith as a function of time
@@ -470,7 +470,7 @@ class PWVModel:
             alt: float = const.vro_altitude,
             time_format: str = 'mjd'
     ) -> float:
-        ...
+        ...  # pragma: no cover
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
@@ -483,7 +483,7 @@ class PWVModel:
             alt: float = const.vro_altitude,
             time_format: str = 'mjd'
     ) -> np.array:
-        ...
+        ...  # pragma: no cover
 
     def pwv_los(
             self, time, ra, dec,
