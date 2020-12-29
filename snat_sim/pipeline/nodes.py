@@ -58,7 +58,7 @@ class SimulateLightCurves(Node):
         simulation_output: Simulated light-curves as  ``astropy.Table`` objects
     """
 
-    plasticc_data_input = Input()
+    plasticc_data_input = Input(maxsize=100)
     simulation_output = Output()
     masked_failure_output = Output()
 
@@ -107,7 +107,9 @@ class SimulateLightCurves(Node):
         model_for_sim = copy(self.sim_model)
         model_for_sim.update({p: v for p, v in params.items() if p in model_for_sim.param_names})
         model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
-        return model_for_sim.simulate_lc(plasticc_cadence)
+        duplicated = model_for_sim.simulate_lc(plasticc_cadence)
+        duplicated.meta = params
+        return duplicated
 
     def action(self) -> None:
         """Simulate light-curves with atmospheric effects"""

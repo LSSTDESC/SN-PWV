@@ -37,8 +37,8 @@ from numbers import Number
 
 from egon.pipeline import Pipeline
 
-from nodes import *
-from snat_sim.models import SNModel
+from .nodes import *
+from ..models import SNModel
 
 
 class FittingPipeline(Pipeline):
@@ -99,7 +99,7 @@ class FittingPipeline(Pipeline):
         self.write_to_disk = FitResultsToDisk(data_model=data_model, out_path=out_path)
 
         # Connect pipeline nodes together
-        self.load_plastic.lc_output.connect(self.simulate_light_curves.plasticc_data_input, maxsize=max_queue)
+        self.load_plastic.lc_output.connect(self.simulate_light_curves.plasticc_data_input)
         self.simulate_light_curves.simulation_output.connect(self.fit_light_curves.light_curves_input)
         self.simulate_light_curves.masked_failure_output.connect(self.write_to_disk.fit_results_input)
         self.fit_light_curves.fit_results_output.connect(self.write_to_disk.fit_results_input)
