@@ -24,25 +24,30 @@ class LoadPlasticcSims(Source):
         lc_output: The loaded PLaSTICC light-curves as ``astropy.Table`` objects
     """
 
-    lc_output = Output()
 
-    def __init__(self, cadence: str, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
+
+    def __init__(self, cadence: str, model: int = 11, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
         """Source node for loading PLaSTICC light-curves from disk
 
         Args:
             cadence: Cadence to use when simulating light-curves
+            model: The PLaSTICC supernova model to load simulation for (Default is model 11 - Normal SNe)
             iter_lim: Exit after loading the given number of light-curves
             num_processes: Number of processes to allocate to the node
         """
 
         super(LoadPlasticcSims, self).__init__(num_processes)
         self.cadence = cadence
+        self.model = model
         self.iter_lim = iter_lim
+
+        # Node connectors
+        self.lc_output = Output()
 
     def action(self) -> None:
         """Load PLaSTICC light-curves from disk"""
 
-        light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=11)
+        light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=self.model)
         for i, light_curve in enumerate(light_curve_iter):
             if i >= self.iter_lim:
                 break

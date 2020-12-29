@@ -10,24 +10,18 @@ Instances of the ``FittingPipeline`` class can be run synchronously
 ``FittingPipeline.run_async``). Here we demonstrate running a pipeline
 synchronously.
 
-.. code-block:: python
+.. code-block:: doctest
 
    >>> from snat_sim.pipeline import FittingPipeline
 
-   >>> print('Instantiating pipeline...')
    >>> pipeline = FittingPipeline(
    >>>     cadence='alt_sched',
-   >>>     sim_model=sn_model_sim,
-   >>>     fit_model=sn_model_fit,
+   >>>     sim_model=SNModel('salt2'),
+   >>>     fit_model=SNModel('salt2'),
    >>>     vparams=['x0', 'x1', 'c'],
    >>>     out_path='./demo_out_path.csv',
    >>>     pool_size=6
    >>> )
-
-   >>> print('I/O Processes: 2')
-   >>> print('Simulation Processes:', pipeline.simulation_pool)
-   >>> print('Fitting Processes:', pipeline.fitting_pool)
-   >>> pipeline.run()
 
 Module Docs
 -----------
@@ -55,7 +49,7 @@ class FittingPipeline(Pipeline):
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
             quality_callback: callable = None,
-            max_queue: int = 50,
+            max_queue: int = 100,
             iter_lim: int = float('inf'),
             ref_stars: Collection[str] = None,
             pwv_model: SNModel = None
@@ -103,5 +97,8 @@ class FittingPipeline(Pipeline):
         self.simulate_light_curves.simulation_output.connect(self.fit_light_curves.light_curves_input)
         self.simulate_light_curves.masked_failure_output.connect(self.write_to_disk.fit_results_input)
         self.fit_light_curves.fit_results_output.connect(self.write_to_disk.fit_results_input)
+
+        if max_queue:  # Limit the number of light-curves fed into the pipeline
+            self.simulate_light_curves.plasticc_data_input.maxsize = max_queue
 
         super(FittingPipeline, self).__init__()
