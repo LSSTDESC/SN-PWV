@@ -5,10 +5,6 @@ from unittest import TestCase
 from snat_sim import plasticc
 from tests.mock import create_mock_plasticc_light_curve
 
-# Used to store environmental variables on module setup / teardown
-_OLD_ENV_VALUE = None
-_ENVIRON_VAR_NAME = 'CADENCE_SIMS'
-
 
 class GetAvailableCadences(TestCase):
     """Tests for the ``get_available_cadences`` function"""
