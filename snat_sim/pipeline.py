@@ -170,9 +170,8 @@ class SimulateLightCurves(Node):
     def __init__(
             self,
             sn_model: SNModel,
-            ref_stars: Collection[str],
-            pwv_model: PWVModel,
-            quality_callback: callable = None,
+            ref_stars: Collection[str] = None,
+            pwv_model: PWVModel = None,
             num_processes: int = 1,
             abs_mb: float = const.betoule_abs_mb,
             cosmo=const.betoule_cosmo
@@ -183,7 +182,6 @@ class SimulateLightCurves(Node):
             sn_model: Model to use when simulating light-curves
             ref_stars: List of reference star types to calibrate simulated supernova with
             pwv_model: Model for the PWV concentration the reference stars are observed at
-            quality_callback: Skip light-curves if this function returns False
             num_processes: Number of processes to allocate to the node
             abs_mb: The absolute B-band magnitude of the simulated SNe
             cosmo: Cosmology to assume in the simulation
@@ -192,7 +190,6 @@ class SimulateLightCurves(Node):
         self.sim_model = sn_model
         self.ref_stars = ref_stars
         self.pwv_model = pwv_model
-        self.quality_callback = quality_callback
         self.abs_mb = abs_mb
         self.cosmo = cosmo
 
