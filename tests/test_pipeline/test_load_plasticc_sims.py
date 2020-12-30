@@ -8,7 +8,7 @@ from snat_sim.pipeline import LoadPlasticcSims
 
 
 class LoadsPlasticcTable(TestCase):
-    """Test the loading of PLaSTICC data into the pipeline"""
+    """Test the loading of PLaSTICC data into the test_pipeline"""
 
     def setUp(self) -> None:
         self.cadence = 'alt_sched'

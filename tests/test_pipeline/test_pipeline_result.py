@@ -5,116 +5,130 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from snat_sim import constants as const
-from snat_sim.pipeline import DataModel
+from snat_sim.models import SNModel
+from snat_sim.pipeline import PipelineResult
 
 
-class OutputValueFormatting(TestCase):
+class ListFormatting(TestCase):
     """Test values are added to the output list in the order matching the output header"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """Run a light-curve fit and format results as a table entry"""
 
-        data = sncosmo.load_example_data()
-        model = sncosmo.Model('salt2')
-        cls.meta = {'SNID': '123'}
-        cls.result, cls.fitted_model = sncosmo.fit_lc(
-            data, model,
-            ['z', 't0', 'x0', 'x1', 'c'],  # parameters of model to vary
-            bounds={'z': (0.3, 0.7)})  # bounds on parameters (if any)
+        # Build dictionaries of mock s parameter values
+        # Ensure the values are all a little different
+        demo_params = sncosmo.load_example_data().meta
+        fit_params = {k: v * 1.1 for k, v in demo_params.items()}
+        fit_errors = {k: v * .1 for k, v in fit_params.items()}
+        cls.result = PipelineResult(
+            'snid_value', demo_params, fit_params, fit_errors,
+            chisq=1.5, ndof=6, mb=6, abs_mag=-19.5, message='Exit Message')
 
-        cls.data_model = DataModel(model, model)
-        cls.formatted_results = cls.data_model.build_table_entry(cls.meta, cls.fitted_model, cls.result)
+        cls.param_names = list(demo_params.keys())
+        cls.result_list = cls.result.to_list(cls.param_names, cls.param_names)
+        cls.column_names = cls.result.column_names(cls.param_names, cls.param_names)
 
-    def test_object_id_position(self):
+    def test_object_id_position(self) -> None:
         """Test position of SNID in output list"""
 
-        position = self.data_model.column_names.index('SNID')
-        self.assertEqual(self.formatted_results[position], self.meta['SNID'])
+        position = self.column_names.index('snid')
+        self.assertEqual(self.result.snid, self.result_list[position])
 
-    def test_param_value_positions(self):
-        """Test position of parameter values in output list"""
+    def test_simulated_param_positions(self) -> None:
+        """Test position of simulated parameter values in output list"""
 
         # Get expected index of first parameter from the column names
         # Assume parameter values are contiguous in the array
-        first_param = self.fitted_model.param_names[0]
-        param_values_start = self.data_model.column_names.index(first_param)
-        num_parameters = len(self.fitted_model.parameters)
+        first_param = self.param_names[0]
+        param_values_start = self.column_names.index('sim_' + first_param)
+        num_parameters = len(self.param_names)
 
         np.testing.assert_array_equal(
-            self.formatted_results[param_values_start: num_parameters + param_values_start],
-            self.fitted_model.parameters)
+            list(self.result.sim_params.values()),
+            self.result_list[param_values_start: num_parameters + param_values_start]
+        )
 
-    def test_error_value_positions(self):
+    def test_fitted_param_positions(self) -> None:
+        """Test position of fitted parameter values in output list"""
+
+        first_param = self.param_names[0]
+        param_values_start = self.column_names.index('fit_' + first_param)
+        num_parameters = len(self.param_names)
+
+        np.testing.assert_array_equal(
+            list(self.result.fit_params.values()),
+            self.result_list[param_values_start: num_parameters + param_values_start]
+        )
+
+    def test_error_value_positions(self) -> None:
         """Test position of parameter errors in output list"""
 
-        # Get expected index of first parameter from the column names
-        # Assume parameter error values are contiguous in the array
-        first_param = self.fitted_model.param_names[0]
-        errors_start = self.data_model.column_names.index(first_param + '_err')
-        num_parameters = len(self.fitted_model.parameters)
+        first_param = self.param_names[0]
+        param_values_start = self.column_names.index('err_' + first_param)
+        num_parameters = len(self.param_names)
 
         np.testing.assert_array_equal(
-            self.formatted_results[errors_start: num_parameters + errors_start],
-            list(self.result.errors.values()))
+            list(self.result.fit_err.values()),
+            self.result_list[param_values_start: num_parameters + param_values_start]
+        )
 
-    def test_chisq_position(self):
+    def test_chisq_position(self) -> None:
         """Test position of chi-squared and degrees of freedom in output list"""
 
-        chisq_index = self.data_model.column_names.index('chisq')
-        self.assertEqual(self.formatted_results[chisq_index], self.result.chisq)
+        chisq_index = self.column_names.index('chisq')
+        self.assertEqual(self.result.chisq, self.result_list[chisq_index])
 
-        dof_index = self.data_model.column_names.index('ndof')
-        self.assertEqual(self.formatted_results[dof_index], self.result.ndof)
+        dof_index = self.column_names.index('ndof')
+        self.assertEqual(self.result.ndof, self.result_list[dof_index])
 
-    def test_magnitude_position(self):
+    def test_magnitude_position(self) -> None:
         """Test position of magnitude values in output list"""
 
-        mb_index = self.data_model.column_names.index('mb')
-        mb = self.fitted_model.bandmag('bessellb', 'ab', time=self.fitted_model['t0'])
-        self.assertEqual(self.formatted_results[mb_index], mb)
+        mb_index = self.column_names.index('mb')
+        self.assertEqual(self.result.mb, self.result_list[mb_index])
 
-        abs_mag_index = self.data_model.column_names.index('abs_mag')
-        abs_mag = self.fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo)
-        self.assertEqual(self.formatted_results[abs_mag_index], abs_mag)
+        abs_mag_index = self.column_names.index('abs_mag')
+        self.assertEqual(self.result.abs_mag, self.result_list[abs_mag_index])
 
-    def test_output_length_matches_column_names(self):
+    def test_output_length_matches_column_names(self) -> None:
         """Test the number of output values match the number of columns names"""
 
-        self.assertEqual(
-            len(self.formatted_results),
-            len(self.data_model.column_names)
-        )
+        self.assertEqual(len(self.column_names), len(self.result_list))
 
 
 class MaskedRowCreation(TestCase):
     """Tests for the creation of masked table entries"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """Create a masked table entry"""
 
-        model = sncosmo.Model('salt2')
-        cls.meta = {'SNID': '123'}
-        cls.fit_failure_exception = ValueError('This fit failed to converge.')
+        cls.param_names = SNModel('salt2').param_names
+        cls.result = PipelineResult('snid_value', message='A status message')
+        cls.result_list = cls.result.to_list(cls.param_names, cls.param_names)
 
-        cls.data_model = DataModel(model, model)
-        cls.masked_row = cls.data_model.mask_failed_lc_fit(cls.meta, cls.fit_failure_exception)
+    def test_mask_value_is_neg_99(self) -> None:
+        """Test -99.99 is used to represent masked values"""
 
-    def test_mask_value_is_neg_99(self):
-        """Test -99 is used to represent masked values"""
+        np.testing.assert_array_equal(self.result_list[1:-2], -99.99)
 
-        np.testing.assert_array_equal(self.masked_row[1:-2], -99)
+    def test_unmasked_snid(self) -> None:
+        """Test the SNID value is not masked"""
 
-    def test_object_id_position(self):
-        """Test position of SNID in output list"""
+        self.assertEqual(self.result.snid, self.result_list[0])
 
-        snid_index = self.data_model.column_names.index('SNID')
-        self.assertEqual(self.masked_row[snid_index], self.meta['SNID'])
+    def test_unmasked_message(self) -> None:
+        """Test the failure message is not masked"""
 
-    def test_failure_message_position(self):
-        """Test position of failure message in output list"""
+        self.assertEqual(self.result.message, self.result_list[-1])
 
-        message_index = self.data_model.column_names.index('message')
-        self.assertEqual(self.masked_row[message_index], str(self.fit_failure_exception))
+
+class ToCsv(TestCase):
+    """Test the conversion of ``PipelineResult`` instances to a CSV string"""
+
+    def test_ends_with_new_line(self) -> None:
+        """Test the returned string ends with a newline character"""
+
+        string = PipelineResult('snid_value', message='A status message').to_csv([], [])
+        self.assertEqual('\n', string[-1])

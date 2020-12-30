@@ -61,7 +61,7 @@ class PipelineResult:
     ndof: int = -99.99
     mb: float = -99.99
     abs_mag: float = -99.99
-    message: str = -99.99
+    message: str = ''
 
     def to_csv(self, sim_params: Iterable[str], fit_params: Iterable[str]) -> str:
         """Combine light-curve fit results into single row matching the output table file format
@@ -74,10 +74,10 @@ class PipelineResult:
             A list of strings and floats
         """
 
-        out_list = self._to_list(fit_params, sim_params)
-        return ','.join(out_list) + '\n'
+        out_list = self.to_list(fit_params, sim_params)
+        return ','.join(map(str, out_list)) + '\n'
 
-    def _to_list(self, fit_params, sim_params) -> List[str, float]:
+    def to_list(self, fit_params, sim_params) -> List[str, float]:
         """Return class data as a list with missing values masked as -99.99
 
         Args:
@@ -329,7 +329,7 @@ class FitResultsToDisk(Target):
         super(FitResultsToDisk, self).__init__(num_processes)
         self.sim_model = sim_model
         self.fit_model = fit_model
-        self.out_path = out_path
+        self.out_path = Path(out_path)
 
         # Node connectors
         self.fit_results_input = Input()
@@ -342,11 +342,12 @@ class FitResultsToDisk(Target):
         column_names = PipelineResult.column_names(self.sim_model.param_names, self.fit_model.param_names)
         with self.out_path.open('w') as outfile:
             outfile.write(','.join(column_names))
+            outfile.write('\n')
 
     def action(self) -> None:
         """Retrieve fit results from the output queue and write results to file"""
 
-        with self.out_path.open('w') as outfile:
+        with self.out_path.open('a') as outfile:
             for result in self.fit_results_input.iter_get():
                 outfile.write(result.to_csv())
 
@@ -388,7 +389,7 @@ class FittingPipeline(Pipeline):
             pwv_model: Model for the PWV concentration the reference stars are observed at
         """
 
-        if (ref_stars is None) and not (pwv_model is None):
+        if ref_stars and (pwv_model is None):
             raise ValueError('Cannot perform reference star subtraction without ``pwv_model`` argument')
 
         # Define the nodes of the analysis pipeline
