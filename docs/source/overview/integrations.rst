@@ -43,7 +43,7 @@ Time series utilities are available for `pandas.Series` objects and are accessib
 SNCosmo
 -------
 
-The ``sncosmo`` package is used to analyze spectra-photometric observations of supernovae.
+The ``sncosmo`` package is used to analyze spectrophotometric observations of supernovae.
 The package includes a `registry system <https://sncosmo.readthedocs.io/en/latest/registry.html>`_
 that allows users to retrieve supernova models, filter profiles, and other information by name.
 
