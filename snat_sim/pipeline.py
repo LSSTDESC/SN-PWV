@@ -140,13 +140,13 @@ class LoadPlasticcSims(Source):
             num_processes: Number of processes to allocate to the node
         """
 
-        super().__init__(num_processes)
         self.cadence = cadence
         self.model = model
         self.iter_lim = iter_lim
 
         # Node connectors
         self.lc_output = Output()
+        super().__init__(num_processes)
 
     def action(self) -> None:
         """Load PLaSTICC light-curves from disk"""
@@ -189,7 +189,6 @@ class SimulateLightCurves(Node):
             cosmo: Cosmology to assume in the simulation
         """
 
-        super().__init__(num_processes)
         self.sim_model = sn_model
         self.ref_stars = ref_stars
         self.pwv_model = pwv_model
@@ -201,6 +200,7 @@ class SimulateLightCurves(Node):
         self.plasticc_data_input = Input()
         self.simulation_output = Output()
         self.failure_result_output = Output()
+        super().__init__(num_processes)
 
     def duplicate_plasticc_lc(self, plasticc_lc: Table, zp: float = 30) -> Table:
         """Duplicate a plastic light-curve using the simulation model
@@ -268,7 +268,6 @@ class FitLightCurves(Node):
             num_processes: Number of processes to allocate to the node
         """
 
-        super(FitLightCurves, self).__init__(num_processes)
         self.fit_model = sn_model
         self.vparams = vparams
         self.bounds = bounds
@@ -276,6 +275,7 @@ class FitLightCurves(Node):
         # Node Connectors
         self.light_curves_input = Input()
         self.fit_results_output = Output()
+        super(FitLightCurves, self).__init__(num_processes)
 
     def action(self) -> None:
         """Fit light-curves"""
@@ -326,13 +326,13 @@ class FitResultsToDisk(Target):
             out_path: Path to write results to (.csv extension is enforced)
         """
 
-        super(FitResultsToDisk, self).__init__(num_processes)
         self.sim_model = sim_model
         self.fit_model = fit_model
         self.out_path = Path(out_path)
 
         # Node connectors
         self.fit_results_input = Input()
+        super(FitResultsToDisk, self).__init__(num_processes)
 
     def setup(self) -> None:
         """Ensure the parent directory of the destination file exists"""
@@ -349,7 +349,7 @@ class FitResultsToDisk(Target):
 
         with self.out_path.open('a') as outfile:
             for result in self.fit_results_input.iter_get():
-                outfile.write(result.to_csv())
+                outfile.write(result.to_csv(self.sim_model.param_names, self.fit_model.param_names))
 
 
 class FittingPipeline(Pipeline):
