@@ -30,7 +30,6 @@
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="prev" title="snat_sim.plotting" href="../plotting.html" />
   
    
 
@@ -44,10 +43,8 @@
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="../plotting.html" title="snat_sim.plotting"
-             accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.utils</a></li> 
       </ul>
     </div>
@@ -96,15 +93,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="../constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.utils</a></li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/fitting_pipeline.html">snat_sim.fitting_pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/utils.html">snat_sim.utils</a></li>
 </ul>
 
     
@@ -117,52 +114,40 @@
 
           <div class="document clearer body">
             
-  <div class="section" id="module-snat_sim.utils">
-<span id="snat-sim-utils"></span><h1>snat_sim.utils<a class="headerlink" href="#module-snat_sim.utils" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">utils</span></code> module is responsible for handling the integration
-of external packages with <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code>. It is also responsible for
-automatically configuring the host python environment during package
-import.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Unless you are looking to extend the underlying functionality or
-behavior of how <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> integrates with third party packages, you
-most likely aren’t interested in importing directly from this module.
-See the <a class="reference internal" href="../../overview/integrations.html#integration-docs"><span class="std std-ref">Package Integrations</span></a> section of the docs for more information.</p>
-</div>
-<div class="section" id="submodules">
-<h2>SubModules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="caching.html#module-snat_sim.utils.caching" title="snat_sim.utils.caching"><code class="xref py py-obj docutils literal notranslate"><span class="pre">caching</span></code></a></p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">caching</span></code> module defines numpy compatible function wrappers for implementing function level memoization.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="filters.html#module-snat_sim.utils.filters" title="snat_sim.utils.filters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">filters</span></code></a></p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">filters</span></code> module is responsible for registering custom filter profiles with the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="time_series.html#module-snat_sim.utils.time_series" title="snat_sim.utils.time_series"><code class="xref py py-obj docutils literal notranslate"><span class="pre">time_series</span></code></a></p></td>
-<td><p>The <code class="docutils literal notranslate"><span class="pre">time_series</span></code> module extends <code class="docutils literal notranslate"><span class="pre">pandas</span></code> functionality for manipulating time series data.</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="py function">
-<dt id="snat_sim.utils.setup_environment">
-<code class="sig-prename descclassname">snat_sim.utils.</code><code class="sig-name descname">setup_environment</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils.html#setup_environment"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.setup_environment" title="Permalink to this definition">¶</a></dt>
-<dd><p>Register package integrations with third party dependencies</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
+  <h1>Source code for snat_sim.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The ``utils`` module is responsible for handling the integration</span>
+<span class="sd">of external packages with ``snat_sim``. It is also responsible for</span>
+<span class="sd">automatically configuring the host python environment during package</span>
+<span class="sd">import.</span>
 
-</div>
-</div>
+<span class="sd">.. important:: Unless you are looking to extend the underlying functionality or</span>
+<span class="sd">   behavior of how ``snat_sim`` integrates with third party packages, you</span>
+<span class="sd">   most likely aren&#39;t interested in importing directly from this module.</span>
+<span class="sd">   See the :ref:`integration_docs` section of the docs for more information.</span>
 
+<span class="sd">SubModules</span>
+<span class="sd">----------</span>
+
+<span class="sd">.. autosummary::</span>
+<span class="sd">   :nosignatures:</span>
+
+<span class="sd">   caching</span>
+<span class="sd">   filters</span>
+<span class="sd">   time_series</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="setup_environment"><a class="viewcode-back" href="../../api/utils/utils.html#snat_sim.utils.setup_environment">[docs]</a><span class="k">def</span> <span class="nf">setup_environment</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Register package integrations with third party dependencies&quot;&quot;&quot;</span>
+
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">time_series</span>
+    <span class="kn">from</span> <span class="nn">.filters</span> <span class="kn">import</span> <span class="n">register_lsst_filters</span><span class="p">,</span> <span class="n">register_decam_filters</span>
+
+    <span class="n">register_lsst_filters</span><span class="p">()</span>
+    <span class="n">register_decam_filters</span><span class="p">()</span></div>
+</pre></div>
 
           </div>
         </div>
@@ -177,10 +162,8 @@ See the <a class="reference internal" href="../../overview/integrations.html#int
         <li class="right" >
           <a href="../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li class="right" >
-          <a href="../plotting.html" title="snat_sim.plotting"
-             >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.utils</a></li> 
       </ul>
     </div>
