@@ -27,7 +27,7 @@ class InitErrors(TestCase):
     def test_error_on_missing_pwv_model(self) -> None:
         """``ValueError`` should be raised if reference stars are specified without a PWV model."""
 
-        with self.assertRaises(ValueError):
+        with self.assertRaisesRegex(ValueError, 'Cannot perform reference star subtraction without ``pwv_model`` argument'):
             FittingPipeline(
                 cadence='alt_sched',
                 sim_model=SNModel('salt2'),
@@ -36,4 +36,4 @@ class InitErrors(TestCase):
                 ref_stars=('G2', 'M5', 'K2'),
                 pwv_model=None,
                 out_path='foo.csv',
-            ).validate()
+            )

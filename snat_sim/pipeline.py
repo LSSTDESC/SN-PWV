@@ -395,7 +395,6 @@ class FittingPipeline(Pipeline):
             sn_model=sim_model,
             ref_stars=ref_stars,
             pwv_model=pwv_model,
-            quality_callback=quality_callback,
             num_processes=simulation_pool)
 
         self.fit_light_curves = FitLightCurves(sn_model=fit_model, vparams=vparams, bounds=bounds, num_processes=fitting_pool)
