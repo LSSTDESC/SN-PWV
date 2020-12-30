@@ -653,6 +653,12 @@ class SNModel(sncosmo.Model):
         light_curve.meta = dict(zip(self.param_names, self.parameters))
         return light_curve
 
+    def mB(self):
+        return self.bandmag('bessellb', 'ab', time=self['t0'])
+
+    def MB(self, cosmo=const.betoule_cosmo):
+        return self.source_peakabsmag('bessellb', 'ab', cosmo=cosmo)
+
 
 ###############################################################################
 # Propagation effects

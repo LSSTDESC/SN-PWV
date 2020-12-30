@@ -100,7 +100,7 @@ class MaskedRowCreation(TestCase):
         cls.fit_failure_exception = ValueError('This fit failed to converge.')
 
         cls.data_model = DataModel(model, model)
-        cls.masked_row = cls.data_model.build_masked_entry(cls.meta, cls.fit_failure_exception)
+        cls.masked_row = cls.data_model.mask_failed_lc_fit(cls.meta, cls.fit_failure_exception)
 
     def test_mask_value_is_neg_99(self):
         """Test -99 is used to represent masked values"""
