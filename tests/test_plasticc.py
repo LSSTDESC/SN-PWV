@@ -32,13 +32,13 @@ class CountLightCurves(TestCase):
 
     test_cadence = 'alt_sched'
     test_model = 11
-    lc_num_for_cadence = 8
 
     def test_lc_count_matches_test_data(self) -> None:
         """Test the number of counted light curves matches those in the test data"""
 
         counted_light_curves = plasticc.count_light_curves(self.test_cadence, self.test_model)
-        self.assertEqual(counted_light_curves, self.lc_num_for_cadence)
+        returned_light_curves = len(list(plasticc.iter_lc_for_cadence_model(self.test_cadence, self.test_model)))
+        self.assertEqual(returned_light_curves, counted_light_curves)
 
 
 class IterLCForHeader(TestCase):
