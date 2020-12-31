@@ -211,44 +211,6 @@ cadence (i.e., how the light-curve should be sampled in time):</p>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="snat_sim.models.FixedResTransmission">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">FixedResTransmission</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resolution</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#FixedResTransmission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.FixedResTransmission" title="Permalink to this definition">¶</a></dt>
-<dd><p>Models atmospheric transmission due to PWV at a fixed resolution</p>
-<dl class="py method">
-<dt id="snat_sim.models.FixedResTransmission.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resolution</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#FixedResTransmission.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.FixedResTransmission.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Instantiate a PWV transmission model at the given resolution</p>
-<p>Transmission values are determined using the <code class="docutils literal notranslate"><span class="pre">v1_transmission</span></code> model
-from the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code> package.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>resolution</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Resolution to bin the atmospheric model to</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.models.FixedResTransmission.calc_transmission">
-<code class="sig-name descname">calc_transmission</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv</span></em>, <em class="sig-param"><span class="n">wave</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#FixedResTransmission.calc_transmission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.FixedResTransmission.calc_transmission" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate transmission model at given wavelengths</p>
-<p>Returns a <code class="docutils literal notranslate"><span class="pre">Series</span></code> object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is a scalar, and a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>
-object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is an array. Wavelengths are expected in angstroms.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pwv</strong> – Line of sight PWV to interpolate for</p></li>
-<li><p><strong>wave</strong> – Wavelengths to evaluate transmission (Defaults to <code class="docutils literal notranslate"><span class="pre">samp_wave</span></code> attribute)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The interpolated transmission at the given wavelengths / resolution</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
 <dt id="snat_sim.models.ObservedCadence">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">ObservedCadence</code><span class="sig-paren">(</span><em class="sig-param">obs_times</em>, <em class="sig-param">bands</em>, <em class="sig-param">skynoise=&lt;property object&gt;</em>, <em class="sig-param">zp=&lt;property object&gt;</em>, <em class="sig-param">zpsys=&lt;property object&gt;</em>, <em class="sig-param">gain=&lt;property object&gt;</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#ObservedCadence"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.ObservedCadence" title="Permalink to this definition">¶</a></dt>
 <dd><p>The observational sampling of an astronomical light-curve</p>
@@ -266,12 +228,6 @@ to apply at all observation times.</p>
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt id="snat_sim.models.ObservedCadence.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">obs_times</em>, <em class="sig-param">bands</em>, <em class="sig-param">skynoise=&lt;property object&gt;</em>, <em class="sig-param">zp=&lt;property object&gt;</em>, <em class="sig-param">zpsys=&lt;property object&gt;</em>, <em class="sig-param">gain=&lt;property object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.models.ObservedCadence.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
 <dl class="py method">
 <dt id="snat_sim.models.ObservedCadence.from_plasticc">
 <em class="property">static </em><code class="sig-name descname">from_plasticc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">light_curve</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">drop_nondetection</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#ObservedCadence.from_plasticc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.ObservedCadence.from_plasticc" title="Permalink to this definition">¶</a></dt>
@@ -312,6 +268,50 @@ the <code class="docutils literal notranslate"><span class="pre">sncosmo</span><
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="snat_sim.models.ObservedCadence.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">obs_times</em>, <em class="sig-param">bands</em>, <em class="sig-param">skynoise=&lt;property object&gt;</em>, <em class="sig-param">zp=&lt;property object&gt;</em>, <em class="sig-param">zpsys=&lt;property object&gt;</em>, <em class="sig-param">gain=&lt;property object&gt;</em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.models.ObservedCadence.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.models.FixedResTransmission">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">FixedResTransmission</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resolution</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#FixedResTransmission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.FixedResTransmission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Models atmospheric transmission due to PWV at a fixed resolution</p>
+<dl class="py method">
+<dt id="snat_sim.models.FixedResTransmission.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">resolution</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#FixedResTransmission.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.FixedResTransmission.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiate a PWV transmission model at the given resolution</p>
+<p>Transmission values are determined using the <code class="docutils literal notranslate"><span class="pre">v1_transmission</span></code> model
+from the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code> package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>resolution</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Resolution to bin the atmospheric model to</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.FixedResTransmission.calc_transmission">
+<code class="sig-name descname">calc_transmission</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv</span></em>, <em class="sig-param"><span class="n">wave</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#FixedResTransmission.calc_transmission"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.FixedResTransmission.calc_transmission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate transmission model at given wavelengths</p>
+<p>Returns a <code class="docutils literal notranslate"><span class="pre">Series</span></code> object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is a scalar, and a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>
+object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is an array. Wavelengths are expected in angstroms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pwv</strong> – Line of sight PWV to interpolate for</p></li>
+<li><p><strong>wave</strong> – Wavelengths to evaluate transmission (Defaults to <code class="docutils literal notranslate"><span class="pre">samp_wave</span></code> attribute)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The interpolated transmission at the given wavelengths / resolution</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -325,6 +325,27 @@ the <code class="docutils literal notranslate"><span class="pre">sncosmo</span><
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>pwv_series</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – PWV values with a datetime index</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.PWVModel.from_suominet_receiver">
+<em class="property">static </em><code class="sig-name descname">from_suominet_receiver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">receiver</span></em>, <em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">supp_years</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#PWVModel.from_suominet_receiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.PWVModel.from_suominet_receiver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct a <code class="docutils literal notranslate"><span class="pre">PWVModel</span></code> instance using data from a SuomiNet receiver</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>receiver</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">GPSReceiver</span></code>) – GPS receiver to access data from</p></li>
+<li><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Year to use data from when building the model</p></li>
+<li><p><strong>supp_years</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.PWVModel" title="snat_sim.models.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An interpolation function that accepts <code class="docutils literal notranslate"><span class="pre">time</span></code> and <code class="docutils literal notranslate"><span class="pre">format</span></code> arguments</p>
 </dd>
 </dl>
 </dd></dl>
@@ -354,22 +375,20 @@ Observatory.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.models.PWVModel.from_suominet_receiver">
-<em class="property">static </em><code class="sig-name descname">from_suominet_receiver</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">receiver</span></em>, <em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">supp_years</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#PWVModel.from_suominet_receiver"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.PWVModel.from_suominet_receiver" title="Permalink to this definition">¶</a></dt>
-<dd><p>Construct a <code class="docutils literal notranslate"><span class="pre">PWVModel</span></code> instance using data from a SuomiNet receiver</p>
+<dt id="snat_sim.models.PWVModel.pwv_zenith">
+<code class="sig-name descname">pwv_zenith</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#PWVModel.pwv_zenith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.PWVModel.pwv_zenith" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolate the PWV at zenith as a function of time</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">time_format</span></code> argument can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> when passing datetime
+objects for <code class="docutils literal notranslate"><span class="pre">time</span></code> instead of numerical values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>receiver</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">GPSReceiver</span></code>) – GPS receiver to access data from</p></li>
-<li><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Year to use data from when building the model</p></li>
-<li><p><strong>supp_years</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
+<li><p><strong>time</strong> – The time to interpolate PWV for</p></li>
+<li><p><strong>time_format</strong> – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.PWVModel" title="snat_sim.models.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An interpolation function that accepts <code class="docutils literal notranslate"><span class="pre">time</span></code> and <code class="docutils literal notranslate"><span class="pre">format</span></code> arguments</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The PWV at zenith for the given time(s)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -397,25 +416,6 @@ objects instead of numerical values for <code class="docutils literal notranslat
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The PWV concentration along the line of sight to the target</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.models.PWVModel.pwv_zenith">
-<code class="sig-name descname">pwv_zenith</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#PWVModel.pwv_zenith"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.PWVModel.pwv_zenith" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolate the PWV at zenith as a function of time</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">time_format</span></code> argument can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> when passing datetime
-objects for <code class="docutils literal notranslate"><span class="pre">time</span></code> instead of numerical values.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>time</strong> – The time to interpolate PWV for</p></li>
-<li><p><strong>time_format</strong> – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The PWV at zenith for the given time(s)</p>
 </dd>
 </dl>
 </dd></dl>
@@ -487,43 +487,28 @@ equal to the error of the observation.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="snat_sim.models.SeasonalPWVTrans">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">SeasonalPWVTrans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_model</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em>, <em class="sig-param"><span class="n">transmission_res</span><span class="o">=</span><span class="default_value">5.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans" title="Permalink to this definition">¶</a></dt>
-<dd><p>Atmospheric propagation effect for a fixed PWV concentration per-season</p>
+<dt id="snat_sim.models.VariablePropagationEffect">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">VariablePropagationEffect</code><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePropagationEffect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePropagationEffect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Base class for propagation effects that vary with time</p>
+<p>Similar to <code class="docutils literal notranslate"><span class="pre">sncosmo.PropagationEffect</span></code> class, but the <code class="docutils literal notranslate"><span class="pre">propagate</span></code>
+method accepts a <code class="docutils literal notranslate"><span class="pre">time</span></code> argument.</p>
 <dl class="py method">
-<dt id="snat_sim.models.SeasonalPWVTrans.assumed_pwv">
-<code class="sig-name descname">assumed_pwv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans.assumed_pwv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans.assumed_pwv" title="Permalink to this definition">¶</a></dt>
-<dd><p>The PWV concentration used by the propagation effect at a given time</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time</strong> (<em>~FloatOrArray</em>) – Time to get the PWV concentration for</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>~FloatOrArray</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An array of PWV values in units of mm</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.models.SeasonalPWVTrans.propagate">
-<code class="sig-name descname">propagate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans.propagate" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.models.VariablePropagationEffect.propagate">
+<em class="property">abstract </em><code class="sig-name descname">propagate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePropagationEffect.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePropagationEffect.propagate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propagate the flux through the atmosphere</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of wavelength values</p></li>
 <li><p><strong>flux</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of flux values</p></li>
-<li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Array of time values to determine PWV for</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of time values</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An array of flux values after suffering from PWV absorption</p>
+<dd class="field-odd"><p>An array of flux values after suffering propagation effects</p>
 </dd>
 </dl>
 </dd></dl>
@@ -552,6 +537,17 @@ highest available transmission model available.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="snat_sim.models.StaticPWVTrans.transmission_res">
+<em class="property">property </em><code class="sig-name descname">transmission_res</code><a class="headerlink" href="#snat_sim.models.StaticPWVTrans.transmission_res" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resolution used when binning the underlying atmospheric transmission model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="snat_sim.models.StaticPWVTrans.propagate">
 <code class="sig-name descname">propagate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#StaticPWVTrans.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.StaticPWVTrans.propagate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propagate the flux through the atmosphere</p>
@@ -567,17 +563,6 @@ highest available transmission model available.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>An array of flux values after suffering from PWV absorption</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.models.StaticPWVTrans.transmission_res">
-<em class="property">property </em><code class="sig-name descname">transmission_res</code><a class="headerlink" href="#snat_sim.models.StaticPWVTrans.transmission_res" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resolution used when binning the underlying atmospheric transmission model</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -654,28 +639,43 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="snat_sim.models.VariablePropagationEffect">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">VariablePropagationEffect</code><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePropagationEffect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePropagationEffect" title="Permalink to this definition">¶</a></dt>
-<dd><p>Base class for propagation effects that vary with time</p>
-<p>Similar to <code class="docutils literal notranslate"><span class="pre">sncosmo.PropagationEffect</span></code> class, but the <code class="docutils literal notranslate"><span class="pre">propagate</span></code>
-method accepts a <code class="docutils literal notranslate"><span class="pre">time</span></code> argument.</p>
+<dt id="snat_sim.models.SeasonalPWVTrans">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.models.</code><code class="sig-name descname">SeasonalPWVTrans</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_model</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em>, <em class="sig-param"><span class="n">transmission_res</span><span class="o">=</span><span class="default_value">5.0</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans" title="Permalink to this definition">¶</a></dt>
+<dd><p>Atmospheric propagation effect for a fixed PWV concentration per-season</p>
 <dl class="py method">
-<dt id="snat_sim.models.VariablePropagationEffect.propagate">
-<em class="property">abstract </em><code class="sig-name descname">propagate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#VariablePropagationEffect.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.VariablePropagationEffect.propagate" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.models.SeasonalPWVTrans.assumed_pwv">
+<code class="sig-name descname">assumed_pwv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans.assumed_pwv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans.assumed_pwv" title="Permalink to this definition">¶</a></dt>
+<dd><p>The PWV concentration used by the propagation effect at a given time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time</strong> (<em>~FloatOrArray</em>) – Time to get the PWV concentration for</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>~FloatOrArray</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An array of PWV values in units of mm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.SeasonalPWVTrans.propagate">
+<code class="sig-name descname">propagate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">flux</span></em>, <em class="sig-param"><span class="n">time</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SeasonalPWVTrans.propagate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.SeasonalPWVTrans.propagate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propagate the flux through the atmosphere</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of wavelength values</p></li>
 <li><p><strong>flux</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of flux values</p></li>
-<li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of time values</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Array of time values to determine PWV for</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An array of flux values after suffering propagation effects</p>
+<dd class="field-odd"><p>An array of flux values after suffering from PWV absorption</p>
 </dd>
 </dl>
 </dd></dl>

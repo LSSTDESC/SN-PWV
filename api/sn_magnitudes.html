@@ -129,22 +129,128 @@ determine magnitudes directly from a SN model and via a light-curve fit.</p>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.calc_calibration_factor_for_params">
-<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">calc_calibration_factor_for_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_calibration_factor_for_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_calibration_factor_for_params" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the distance modulus for an array of fitted params</p>
-<p>returns constants.alpha * x_1 - constants.beta * c</p>
+<dt id="snat_sim.sn_magnitudes.get_config_pwv_vals">
+<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">get_config_pwv_vals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">PosixPath('/home/runner/work/SN-PWV/SN-PWV/snat_sim/defaults/ref_pwv.yaml')</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#get_config_pwv_vals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.get_config_pwv_vals" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve PWV values to use as reference values</p>
+<dl class="simple">
+<dt>Returned values include:</dt><dd><ul class="simple">
+<li><p>Lower pwv bound for calculating slope</p></li>
+<li><p>Reference PWV value for normalizing delta m</p></li>
+<li><p>Upper pwv bound for calculating slope</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>config_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path of config file if not default</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary with PWV values in mm</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.sn_magnitudes.tabulate_mag">
+<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">tabulate_mag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">bands</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#tabulate_mag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.tabulate_mag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate apparent magnitude due to presence of PWV</p>
+<p>Magnitude is calculated for the model by adding PWV effects
+to a model and leaving all other parameters unchanged.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
-<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – n-dimensional array of parameters</p></li>
+<li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Array of PWV values</p></li>
+<li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Array of redshift values</p></li>
+<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Name of the bands to tabulate magnitudes for</p></li>
+<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Show a progress bar</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary with 2d arrays for the magnitude at each PWV and redshift</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.sn_magnitudes.tabulate_fiducial_mag">
+<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">tabulate_fiducial_mag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">bands</span></em>, <em class="sig-param"><span class="n">fid_pwv_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#tabulate_fiducial_mag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.tabulate_fiducial_mag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get SN magnitudes corresponding to the fiducial atmosphere</p>
+<dl class="simple">
+<dt>Returns a dictionary of the form</dt><dd><p>{&lt;band&gt;: [&lt;slope start mag&gt; , &lt;reference pwv mag&gt;, &lt;slope end mag&gt;]</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
+<li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
+<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Name of the bands to tabulate magnitudes for</p></li>
+<li><p><strong>fid_pwv_dict</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Config dictionary for fiducial atmosphere</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dictionary with fiducial magnitudes in each band</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.sn_magnitudes.correct_mag">
+<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">correct_mag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">mag</span></em>, <em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.141</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">3.101</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#correct_mag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.correct_mag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Correct fitted supernova magnitude for stretch and color</p>
+<p>calibrated mag = mag + α * x1 - β * c</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Model used to fit the given magnitudes</p></li>
+<li><p><strong>mag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – (n)d array of magnitudes for pwv and redshift</p></li>
+<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – (n+1)d array with dimensions for pwv, redshift, parameter</p></li>
+<li><p><strong>alpha</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Alpha parameter value</p></li>
+<li><p><strong>beta</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Beta parameter value</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An array of calibration factors with one dimension less than <code class="docutils literal notranslate"><span class="pre">params</span></code></p>
+<dd class="field-odd"><p>Array of calibrated magnitudes with same dimensions as <code class="docutils literal notranslate"><span class="pre">mag</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.sn_magnitudes.fit_mag">
+<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">fit_mag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">light_curves</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">bands</span></em>, <em class="sig-param"><span class="n">pwv_arr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">z_arr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#fit_mag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.fit_mag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine apparent mag by fitting simulated light-curves</p>
+<p>Returned arrays are shape  (len(pwv_arr), len(z_arr)).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use when fitting</p></li>
+<li><p><strong>light_curves</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>]) – Array of light-curves to fit</p></li>
+<li><p><strong>vparams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Parameters to vary with the fit</p></li>
+<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Name of the bands to tabulate magnitudes for</p></li>
+<li><p><strong>pwv_arr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]) – Array of PWV values</p></li>
+<li><p><strong>z_arr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]) – Array of redshift values</p></li>
+<li><p><strong>arguments for sncosmo.fit_lc.</strong> (<em>Any</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], …]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>Dictionary with arrays for fitted magnitude at each PWV and redshift
+Dictionary with arrays for fitted parameters at each PWV and redshift</p>
 </dd>
 </dl>
 </dd></dl>
@@ -217,128 +323,22 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.correct_mag">
-<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">correct_mag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">mag</span></em>, <em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">0.141</span></em>, <em class="sig-param"><span class="n">beta</span><span class="o">=</span><span class="default_value">3.101</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#correct_mag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.correct_mag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Correct fitted supernova magnitude for stretch and color</p>
-<p>calibrated mag = mag + α * x1 - β * c</p>
+<dt id="snat_sim.sn_magnitudes.calc_calibration_factor_for_params">
+<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">calc_calibration_factor_for_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_calibration_factor_for_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_calibration_factor_for_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the distance modulus for an array of fitted params</p>
+<p>returns constants.alpha * x_1 - constants.beta * c</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Model used to fit the given magnitudes</p></li>
-<li><p><strong>mag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – (n)d array of magnitudes for pwv and redshift</p></li>
-<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – (n+1)d array with dimensions for pwv, redshift, parameter</p></li>
-<li><p><strong>alpha</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Alpha parameter value</p></li>
-<li><p><strong>beta</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Beta parameter value</p></li>
+<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
+<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – n-dimensional array of parameters</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Array of calibrated magnitudes with same dimensions as <code class="docutils literal notranslate"><span class="pre">mag</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.sn_magnitudes.fit_mag">
-<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">fit_mag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">light_curves</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">bands</span></em>, <em class="sig-param"><span class="n">pwv_arr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">z_arr</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#fit_mag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.fit_mag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Determine apparent mag by fitting simulated light-curves</p>
-<p>Returned arrays are shape  (len(pwv_arr), len(z_arr)).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use when fitting</p></li>
-<li><p><strong>light_curves</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>]) – Array of light-curves to fit</p></li>
-<li><p><strong>vparams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Parameters to vary with the fit</p></li>
-<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Name of the bands to tabulate magnitudes for</p></li>
-<li><p><strong>pwv_arr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]) – Array of PWV values</p></li>
-<li><p><strong>z_arr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]]) – Array of redshift values</p></li>
-<li><p><strong>arguments for sncosmo.fit_lc.</strong> (<em>Any</em>) – </p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], …]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Dictionary with arrays for fitted magnitude at each PWV and redshift
-Dictionary with arrays for fitted parameters at each PWV and redshift</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.sn_magnitudes.get_config_pwv_vals">
-<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">get_config_pwv_vals</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">config_path</span><span class="o">=</span><span class="default_value">PosixPath('/home/runner/work/SN-PWV/SN-PWV/snat_sim/defaults/ref_pwv.yaml')</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#get_config_pwv_vals"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.get_config_pwv_vals" title="Permalink to this definition">¶</a></dt>
-<dd><p>Retrieve PWV values to use as reference values</p>
-<dl class="simple">
-<dt>Returned values include:</dt><dd><ul class="simple">
-<li><p>Lower pwv bound for calculating slope</p></li>
-<li><p>Reference PWV value for normalizing delta m</p></li>
-<li><p>Upper pwv bound for calculating slope</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>config_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path of config file if not default</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Dictionary with PWV values in mm</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.sn_magnitudes.tabulate_fiducial_mag">
-<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">tabulate_fiducial_mag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">bands</span></em>, <em class="sig-param"><span class="n">fid_pwv_dict</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#tabulate_fiducial_mag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.tabulate_fiducial_mag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Get SN magnitudes corresponding to the fiducial atmosphere</p>
-<dl class="simple">
-<dt>Returns a dictionary of the form</dt><dd><p>{&lt;band&gt;: [&lt;slope start mag&gt; , &lt;reference pwv mag&gt;, &lt;slope end mag&gt;]</p>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
-<li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
-<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Name of the bands to tabulate magnitudes for</p></li>
-<li><p><strong>fid_pwv_dict</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Config dictionary for fiducial atmosphere</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A dictionary with fiducial magnitudes in each band</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.sn_magnitudes.tabulate_mag">
-<code class="sig-prename descclassname">snat_sim.sn_magnitudes.</code><code class="sig-name descname">tabulate_mag</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">pwv_arr</span></em>, <em class="sig-param"><span class="n">z_arr</span></em>, <em class="sig-param"><span class="n">bands</span></em>, <em class="sig-param"><span class="n">verbose</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#tabulate_mag"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.tabulate_mag" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate apparent magnitude due to presence of PWV</p>
-<p>Magnitude is calculated for the model by adding PWV effects
-to a model and leaving all other parameters unchanged.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
-<li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Array of PWV values</p></li>
-<li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Array of redshift values</p></li>
-<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Name of the bands to tabulate magnitudes for</p></li>
-<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Show a progress bar</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A dictionary with 2d arrays for the magnitude at each PWV and redshift</p>
+<dd class="field-odd"><p>An array of calibration factors with one dimension less than <code class="docutils literal notranslate"><span class="pre">params</span></code></p>
 </dd>
 </dl>
 </dd></dl>

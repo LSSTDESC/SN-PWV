@@ -168,6 +168,24 @@ accessor attribut, see the <code class="docutils literal notranslate"><span clas
 </div>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="snat_sim.utils.time_series.datetime_to_sec_in_year">
+<code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">datetime_to_sec_in_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#datetime_to_sec_in_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.datetime_to_sec_in_year" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate number of seconds elapsed modulo 1 year.</p>
+<p>Accurate to within a microsecond.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>date</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>]]) – Date(s) to calculate seconds for</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A single float if the input is a single datetime, or a numpy array if the input is a collection.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py class">
 <dt id="snat_sim.utils.time_series.TSUAccessor">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">TSUAccessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pandas_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor" title="Permalink to this definition">¶</a></dt>
@@ -178,6 +196,31 @@ accessor attribut, see the <code class="docutils literal notranslate"><span clas
 <dd><p>Extends <code class="docutils literal notranslate"><span class="pre">pandas</span></code> support for time series data</p>
 <p>DO NOT USE THIS CLASS DIRECTLY! This class is registered as a pandas accessor.
 See the module level usage example for more information.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.utils.time_series.TSUAccessor.supplemented_data">
+<code class="sig-name descname">supplemented_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">supp_years</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.supplemented_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.supplemented_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the supplemented subset of the series corresponding to a given year</p>
+<p>Data for the given year is supplemented with any available data from
+supplementary years by asserting that the measured values from
+supplementary years are exactly the same as they would be if taken during
+the primary year. Priority is given to supplementary years in the order
+specified by the <code class="docutils literal notranslate"><span class="pre">supp_years</span></code> argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Year to supplement data for</p></li>
+<li><p><strong>supp_years</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A pandas Series object</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -212,49 +255,6 @@ earliest year through the end of the latest year.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="snat_sim.utils.time_series.TSUAccessor.supplemented_data">
-<code class="sig-name descname">supplemented_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">supp_years</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.supplemented_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.supplemented_data" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the supplemented subset of the series corresponding to a given year</p>
-<p>Data for the given year is supplemented with any available data from
-supplementary years by asserting that the measured values from
-supplementary years are exactly the same as they would be if taken during
-the primary year. Priority is given to supplementary years in the order
-specified by the <code class="docutils literal notranslate"><span class="pre">supp_years</span></code> argument.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Year to supplement data for</p></li>
-<li><p><strong>supp_years</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A pandas Series object</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.utils.time_series.datetime_to_sec_in_year">
-<code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">datetime_to_sec_in_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#datetime_to_sec_in_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.datetime_to_sec_in_year" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate number of seconds elapsed modulo 1 year.</p>
-<p>Accurate to within a microsecond.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>date</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>]]) – Date(s) to calculate seconds for</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A single float if the input is a single datetime, or a numpy array if the input is a collection.</p>
-</dd>
-</dl>
 </dd></dl>
 
 </div>

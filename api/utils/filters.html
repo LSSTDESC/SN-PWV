@@ -158,6 +158,25 @@ Space and Time (LSST) are registered with and then retrieved from the
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
+<dt id="snat_sim.utils.filters.register_sncosmo_filter">
+<code class="sig-prename descclassname">snat_sim.utils.filters.</code><code class="sig-name descname">register_sncosmo_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">trans</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_sncosmo_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.filters.register_sncosmo_filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register a filter profile with sncosmo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Array of wavelength values in Angstroms</p></li>
+<li><p><strong>trans</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Array of transmission values between 0 and 1</p></li>
+<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the filter to register</p></li>
+<li><p><strong>force</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to overwrite an existing filter with the given name</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt id="snat_sim.utils.filters.register_decam_filters">
 <code class="sig-prename descclassname">snat_sim.utils.filters.</code><code class="sig-name descname">register_decam_filters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_decam_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.filters.register_decam_filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register DECam filter scripts, CCD response, and fiducial ATM with sncosmo</p>
@@ -202,25 +221,6 @@ Space and Time (LSST) are registered with and then retrieved from the
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>force</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Re-register bands even if they are already registered</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.utils.filters.register_sncosmo_filter">
-<code class="sig-prename descclassname">snat_sim.utils.filters.</code><code class="sig-name descname">register_sncosmo_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">trans</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_sncosmo_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.filters.register_sncosmo_filter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Register a filter profile with sncosmo</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Array of wavelength values in Angstroms</p></li>
-<li><p><strong>trans</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Array of transmission values between 0 and 1</p></li>
-<li><p><strong>name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Name of the filter to register</p></li>
-<li><p><strong>force</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to overwrite an existing filter with the given name</p></li>
-</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
