@@ -215,7 +215,7 @@ class SimulateLightCurves(Node):
         model_for_sim.update({p: v for p, v in params.items() if p in model_for_sim.param_names})
         model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
 
-        # SImulate the light-curve. Make sure to include model parameters as meta data
+        # Simulate the light-curve. Make sure to include model parameters as meta data
         duplicated = model_for_sim.simulate_lc(plasticc_cadence)
         duplicated.meta = params
         duplicated.meta['x0'] = model_for_sim['x0']
@@ -240,8 +240,8 @@ class SimulateLightCurves(Node):
                 duplicated_lc = self.duplicate_plasticc_lc(light_curve, zp=30)
 
             except Exception as e:
-                raise
-                result = PipelineResult(light_curve.meta['SNID'], sim_params=light_curve.meta, message=str(e))
+                params, _ = ObservedCadence.from_plasticc(light_curve)  # Format params to match the simulation model
+                result = PipelineResult(light_curve.meta['SNID'], sim_params=params, message=str(e))
                 self.failure_result_output.put(result)
 
             else:
@@ -308,7 +308,8 @@ class FitLightCurves(Node):
 
             except Exception as excep:
                 self.fit_results_output.put(
-                    PipelineResult(snid=light_curve.meta['SNID'], sim_params=light_curve.meta, message=f'{self.__class__.__name__}: {excep}')
+                    PipelineResult(snid=light_curve.meta['SNID'], sim_params=light_curve.meta,
+                                   message=f'{self.__class__.__name__}: {excep}')
                 )
 
             else:
