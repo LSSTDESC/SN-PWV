@@ -240,6 +240,7 @@ class SimulateLightCurves(Node):
                 duplicated_lc = self.duplicate_plasticc_lc(light_curve, zp=30)
 
             except Exception as e:
+                raise
                 result = PipelineResult(light_curve.meta['SNID'], sim_params=light_curve.meta, message=str(e))
                 self.failure_result_output.put(result)
 
@@ -384,7 +385,7 @@ class FittingPipeline(Pipeline):
             max_queue: int = 100,
             iter_lim: int = float('inf'),
             ref_stars: Collection[str] = None,
-            pwv_model: SNModel = None
+            pwv_model: PWVModel = None
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
