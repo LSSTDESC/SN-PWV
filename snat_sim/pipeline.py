@@ -416,7 +416,9 @@ class FittingPipeline(Pipeline):
             pwv_model=pwv_model,
             num_processes=simulation_pool)
 
-        self.fit_light_curves = FitLightCurves(sn_model=fit_model, vparams=vparams, bounds=bounds, num_processes=fitting_pool)
+        self.fit_light_curves = FitLightCurves(
+            sn_model=fit_model, vparams=vparams, bounds=bounds, num_processes=fitting_pool)
+
         self.write_to_disk = FitResultsToDisk(sim_model, fit_model, out_path)
 
         # Connect pipeline nodes together
