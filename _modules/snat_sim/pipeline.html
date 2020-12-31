@@ -124,21 +124,23 @@
 
 <span class="sd">Instances of the ``FittingPipeline`` class can be run synchronously</span>
 <span class="sd">(by calling ``FittingPipeline.run``) or asynchronously (with</span>
-<span class="sd">``FittingPipeline.run_async``). Here we demonstrate running a pipeline</span>
-<span class="sd">synchronously.</span>
+<span class="sd">``FittingPipeline.run_async``). A pipeline instance can be created as</span>
+<span class="sd">follows:</span>
 
-<span class="sd">.. code-block:: doctest</span>
+<span class="sd">.. doctest:: python</span>
 
+<span class="sd">   &gt;&gt;&gt; from snat_sim.models import SNModel</span>
 <span class="sd">   &gt;&gt;&gt; from snat_sim.pipeline import FittingPipeline</span>
 
 <span class="sd">   &gt;&gt;&gt; pipeline = FittingPipeline(</span>
-<span class="sd">   &gt;&gt;&gt;     cadence=&#39;alt_sched&#39;,</span>
-<span class="sd">   &gt;&gt;&gt;     sim_model=SNModel(&#39;salt2&#39;),</span>
-<span class="sd">   &gt;&gt;&gt;     fit_model=SNModel(&#39;salt2&#39;),</span>
-<span class="sd">   &gt;&gt;&gt;     vparams=[&#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;],</span>
-<span class="sd">   &gt;&gt;&gt;     out_path=&#39;./demo_out_path.csv&#39;,</span>
-<span class="sd">   &gt;&gt;&gt;     pool_size=6</span>
-<span class="sd">   &gt;&gt;&gt; )</span>
+<span class="sd">   ...     cadence=&#39;alt_sched&#39;,</span>
+<span class="sd">   ...     sim_model=SNModel(&#39;salt2&#39;),</span>
+<span class="sd">   ...     fit_model=SNModel(&#39;salt2&#39;),</span>
+<span class="sd">   ...     vparams=[&#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;],</span>
+<span class="sd">   ...     out_path=&#39;./demo_out_path.csv&#39;,</span>
+<span class="sd">   ...     fitting_pool=6,</span>
+<span class="sd">   ...     simulation_pool=3</span>
+<span class="sd">   ... )</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
@@ -332,7 +334,7 @@
         <span class="n">model_for_sim</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
         <span class="n">model_for_sim</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cosmo</span><span class="p">)</span>
 
-        <span class="c1"># SImulate the light-curve. Make sure to include model parameters as meta data</span>
+        <span class="c1"># Simulate the light-curve. Make sure to include model parameters as meta data</span>
         <span class="n">duplicated</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">plasticc_cadence</span><span class="p">)</span>
         <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">params</span>
         <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span>
@@ -357,7 +359,8 @@
                 <span class="n">duplicated_lc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate_plasticc_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">PipelineResult</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">params</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ObservedCadence</span><span class="o">.</span><span class="n">from_plasticc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">)</span>  <span class="c1"># Format params to match the simulation model</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">PipelineResult</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">failure_result_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -424,7 +427,8 @@
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">excep</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fit_results_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
-                    <span class="n">PipelineResult</span><span class="p">(</span><span class="n">snid</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">excep</span><span class="p">))</span>
+                    <span class="n">PipelineResult</span><span class="p">(</span><span class="n">snid</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span>
+                                   <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">excep</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -438,7 +442,7 @@
                         <span class="n">ndof</span><span class="o">=</span><span class="n">fitted_result</span><span class="o">.</span><span class="n">ndof</span><span class="p">,</span>
                         <span class="n">mb</span><span class="o">=</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">mB</span><span class="p">(),</span>
                         <span class="n">abs_mag</span><span class="o">=</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">MB</span><span class="p">(),</span>
-                        <span class="n">message</span><span class="o">=</span><span class="n">fitted_result</span><span class="o">.</span><span class="n">message</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">fitted_result</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s1">&#39;</span>
                     <span class="p">)</span>
                 <span class="p">)</span></div></div>
 
@@ -498,11 +502,10 @@
             <span class="n">fitting_pool</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">simulation_pool</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">bounds</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Number</span><span class="p">,</span> <span class="n">Number</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">quality_callback</span><span class="p">:</span> <span class="n">callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">max_queue</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
             <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span>
             <span class="n">ref_stars</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">pwv_model</span><span class="p">:</span> <span class="n">SNModel</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="n">pwv_model</span><span class="p">:</span> <span class="n">PWVModel</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Fit light-curves using multiple processes and combine results into an output file</span>
 
@@ -515,7 +518,6 @@
 <span class="sd">            out_path: Path to write results to (.csv extension is enforced)</span>
 <span class="sd">            fitting_pool: Number of child processes allocated to simulating light-curves</span>
 <span class="sd">            simulation_pool: Number of child processes allocated to fitting light-curves</span>
-<span class="sd">            quality_callback: Skip light-curves if this function returns False</span>
 <span class="sd">            max_queue: Maximum number of light-curves to store in pipeline at once</span>
 <span class="sd">            iter_lim: Limit number of processed light-curves (Useful for profiling)</span>
 <span class="sd">            ref_stars: List of reference star types to calibrate simulated supernova with</span>

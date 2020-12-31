@@ -139,10 +139,11 @@ and their default values is provided below.</p>
                       <span class="p">[</span><span class="o">--</span><span class="n">bound_x1</span> <span class="n">BOUND_X1</span> <span class="n">BOUND_X1</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">bound_c</span> <span class="n">BOUND_C</span> <span class="n">BOUND_C</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">receiver_id</span> <span class="n">RECEIVER_ID</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">pwv_model_years</span> <span class="n">PWV_MODEL_YEARS</span> <span class="p">[</span><span class="n">PWV_MODEL_YEARS</span> <span class="o">...</span><span class="p">]]</span>
-                      <span class="p">[</span><span class="o">--</span><span class="n">cut_pwv</span> <span class="n">CUT_PWV</span> <span class="n">CUT_PWV</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">--</span><span class="n">cut_press</span> <span class="n">CUT_PRESS</span> <span class="n">CUT_PRESS</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">--</span><span class="n">cut_temp</span> <span class="n">CUT_TEMP</span> <span class="n">CUT_TEMP</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">cut_rh</span> <span class="n">CUT_RH</span> <span class="n">CUT_RH</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">--</span><span class="n">cut_zenith_delay</span> <span class="n">CUT_ZENITH_DELAY</span> <span class="n">CUT_ZENITH_DELAY</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_PWV</span> <span class="n">CUT_PWV</span> <span class="n">CUT_PWV</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_SrfcPress</span> <span class="n">CUT_SRFCPRESS</span> <span class="n">CUT_SRFCPRESS</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_SrfcTemp</span> <span class="n">CUT_SRFCTEMP</span> <span class="n">CUT_SRFCTEMP</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_SrfcRH</span> <span class="n">CUT_SRFCRH</span> <span class="n">CUT_SRFCRH</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">cut_ZenithDelay</span> <span class="n">CUT_ZENITHDELAY</span> <span class="n">CUT_ZENITHDELAY</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="section" id="Named Arguments">
@@ -227,20 +228,20 @@ and their default values is provided below.</p>
 <dt><kbd>--pwv_model_years</kbd></dt>
 <dd><p>Default: [2016, 2017]</p>
 </dd>
-<dt><kbd>--cut_pwv</kbd></dt>
+<dt><kbd>--cut_PWV</kbd></dt>
 <dd><p>Only use measured data points with a PWV value within the given bounds (units of millimeters)</p>
 <p>Default: [0, 30]</p>
 </dd>
-<dt><kbd>--cut_press</kbd></dt>
+<dt><kbd>--cut_SrfcPress</kbd></dt>
 <dd><p>Only use measured data points with a surface pressure value within the given bounds (units of Millibars)</p>
 </dd>
-<dt><kbd>--cut_temp</kbd></dt>
+<dt><kbd>--cut_SrfcTemp</kbd></dt>
 <dd><p>Only use measured data points with a temperature value within the given bounds (units of Centigrade)</p>
 </dd>
-<dt><kbd>--cut_rh</kbd></dt>
+<dt><kbd>--cut_SrfcRH</kbd></dt>
 <dd><p>Only use measured data points with a relative humidity value within the given bounds (units of Percentage)</p>
 </dd>
-<dt><kbd>--cut_zenith_delay</kbd></dt>
+<dt><kbd>--cut_ZenithDelay</kbd></dt>
 <dd><p>Only use measured data points with a zenith delay value within the given bounds (units of Millimeters)</p>
 </dd>
 </dl>
