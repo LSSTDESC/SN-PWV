@@ -399,12 +399,12 @@
     <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">wave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
 <div class="viewcode-block" id="FixedResTransmission.calc_transmission"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.FixedResTransmission.calc_transmission">[docs]</a>    <span class="k">def</span> <span class="nf">calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">wave</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Evaluate transmission model at given wavelengths</span>
@@ -490,7 +490,7 @@
             <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
             <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
@@ -504,7 +504,7 @@
             <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
             <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
 <div class="viewcode-block" id="PWVModel.calc_airmass"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.PWVModel.calc_airmass">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">calc_airmass</span><span class="p">(</span>
@@ -543,12 +543,12 @@
     <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">pwv_zenith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">time_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">pwv_zenith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">time_format</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
 <div class="viewcode-block" id="PWVModel.pwv_zenith"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.PWVModel.pwv_zenith">[docs]</a>    <span class="k">def</span> <span class="nf">pwv_zenith</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;mjd&#39;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Interpolate the PWV at zenith as a function of time</span>
@@ -587,7 +587,7 @@
             <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
             <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
@@ -600,7 +600,7 @@
             <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
             <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
 <div class="viewcode-block" id="PWVModel.pwv_los"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.PWVModel.pwv_los">[docs]</a>    <span class="k">def</span> <span class="nf">pwv_los</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span>
@@ -768,7 +768,13 @@
         <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandflux</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;zp&#39;</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;zpsys&#39;</span><span class="p">])</span>
         <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;fluxerr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">snr</span>
         <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">light_curve</span></div></div>
+        <span class="k">return</span> <span class="n">light_curve</span></div>
+
+    <span class="k">def</span> <span class="nf">mB</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;t0&#39;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">MB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_peakabsmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">cosmo</span><span class="p">)</span></div>
 
 
 <span class="c1">###############################################################################</span>
