@@ -21,7 +21,7 @@ SPEC_TYPES = ('G2', 'M4', 'M9', 'M0', 'M1', 'M2', 'M3', 'M5', 'K2', 'K9', 'K5', 
 
 # Set default data location and PWV sampling
 DATA_DIR = Path(__file__).parent
-PWV_VALS = np.arange(0, 20, 0.5)
+PWV_VALS = np.arange(0, 100, 0.5)
 
 
 def calculate_lsst_fluxes(spectrum, pwv):
