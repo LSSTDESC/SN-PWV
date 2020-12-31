@@ -265,7 +265,7 @@ class FitLightCurves(Node):
             num_processes: Number of processes to allocate to the node
         """
 
-        self.fit_model = sn_model
+        self.sn_model = sn_model
         self.vparams = vparams
         self.bounds = bounds
 
@@ -274,17 +274,30 @@ class FitLightCurves(Node):
         self.fit_results_output = Output()
         super(FitLightCurves, self).__init__(num_processes)
 
+    def fit_lc(self, light_curve: Table):
+        """Fit the given light-curve
+
+        Args:
+            A light-curve in ``sncosmo`` format
+
+        Returns:
+            - The optimization result represented as a ``Result`` object
+            - A copy of ``self.model`` with parameter values set to optimize the chi-square
+        """
+
+        return sncosmo.fit_lc(
+            light_curve, self.sn_model, self.vparams, bounds=self.bounds,
+            guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
+
     def action(self) -> None:
         """Fit light-curves"""
 
         for light_curve in self.light_curves_input.iter_get():
             # Use the true light-curve parameters as the initial guess
-            self.fit_model.update({k: v for k, v in light_curve.meta.items() if k in self.fit_model.param_names})
+            self.sn_model.update({k: v for k, v in light_curve.meta.items() if k in self.sn_model.param_names})
 
             try:
-                fitted_result, fitted_model = sncosmo.fit_lc(
-                    light_curve, self.fit_model, self.vparams, bounds=self.bounds,
-                    guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
+                fitted_result, fitted_model = self.fit_lc(light_curve)
 
             except Exception as excep:
                 self.fit_results_output.put(
@@ -300,8 +313,8 @@ class FitLightCurves(Node):
                         fit_err=fitted_result.errors,
                         chisq=fitted_result.chisq,
                         ndof=fitted_result.ndof,
-                        mb=fitted_model.mb(),
-                        abs_mag=fitted_model.Mb(),
+                        mb=fitted_model.mB(),
+                        abs_mag=fitted_model.MB(),
                         message=fitted_result.message
                     )
                 )

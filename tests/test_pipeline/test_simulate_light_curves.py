@@ -4,7 +4,7 @@ from unittest import TestCase
 import numpy as np
 from egon.mock import MockSource, MockTarget
 
-from snat_sim import models
+from snat_sim.models import SNModel
 from snat_sim.pipeline import SimulateLightCurves
 from tests.mock import create_mock_plasticc_light_curve
 
@@ -16,7 +16,7 @@ class DuplicatePlasticcSncosmo(TestCase):
     def setUpClass(cls) -> None:
         cls.zp = 35
         cls.plasticc_lc = create_mock_plasticc_light_curve()
-        cls.node = SimulateLightCurves(models.SNModel('salt2-extended'), num_processes=0)
+        cls.node = SimulateLightCurves(SNModel('salt2-extended'), num_processes=0)
         cls.duplicated_lc = cls.node.duplicate_plasticc_lc(cls.plasticc_lc, zp=cls.zp)
 
     def test_lc_meta_matches_params(self) -> None:
@@ -58,10 +58,10 @@ class ResultRouting(TestCase):
     def setUp(self) -> None:
         """Set up mock nodes for feeding/accumulating a ``SimulateLightCurves`` instance"""
 
-        self.source = MockSource([create_mock_plasticc_light_curve()], num_processes=0)
-        self.node = SimulateLightCurves(models.SNModel('salt2-extended'), num_processes=0)
-        self.simulation_target = MockTarget(num_processes=0)
-        self.failure_target = MockTarget(num_processes=0)
+        self.source = MockSource()
+        self.node = SimulateLightCurves(SNModel('salt2-extended'), num_processes=0)
+        self.simulation_target = MockTarget()
+        self.failure_target = MockTarget()
 
         self.source.output.connect(self.node.plasticc_data_input)
         self.node.simulation_output.connect(self.simulation_target.input)

@@ -52,7 +52,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    :maxdepth: 0
    :titlesonly:
 
-   Introduction<self>
+   Introduction<cls>
    overview/install.rst
    overview/data_provenance.rst
    overview/integrations.rst
