@@ -17,13 +17,13 @@ from snat_sim.pipeline import FittingPipeline
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 SUOMINET_VALUES = ('PWV', 'SrfcPress', 'SrfcTemp', 'SrfcRH', 'ZenithDelay')
+AtmModels = Union[models.StaticPWVTrans, models.VariablePWVTrans, models.SeasonalPWVTrans]
 
 
 class AdvancedNamespace(argparse.Namespace):
     """Represents parsed command line arguments cast into friendly object types"""
 
-    def _create_pwv_effect(self, pwv_variability) -> Union[
-        models.StaticPWVTrans, models.VariablePWVTrans, models.SeasonalPWVTrans]:
+    def _create_pwv_effect(self, pwv_variability) -> AtmModels:
         """Create a PWV transmission effect for use with supernova models
 
         Note: ``pwv_variability`` should be a string!
@@ -68,7 +68,7 @@ class AdvancedNamespace(argparse.Namespace):
         data_cuts = dict()
         for value in SUOMINET_VALUES:
             if param_bound := getattr(self, f'cut_{value}', None):
-                data_cuts[value] = [param_bound,]
+                data_cuts[value] = [param_bound, ]
 
         primary_year, *supp_years = self.pwv_model_years
         receiver = GPSReceiver(self.receiver_id, data_cuts=data_cuts)
