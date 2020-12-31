@@ -10,7 +10,7 @@ Instances of the ``FittingPipeline`` class can be run synchronously
 ``FittingPipeline.run_async``). Here we demonstrate running a pipeline
 synchronously.
 
-.. code-block:: doctest
+.. doctest:: python
 
    >>> from snat_sim.pipeline import FittingPipeline
 
