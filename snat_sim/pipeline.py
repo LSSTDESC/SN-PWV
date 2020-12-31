@@ -213,7 +213,7 @@ class SimulateLightCurves(Node):
         model_for_sim.update({p: v for p, v in params.items() if p in model_for_sim.param_names})
         model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
         duplicated = model_for_sim.simulate_lc(plasticc_cadence)
-        duplicated.meta = params
+        duplicated.meta = dict(zip(model_for_sim.param_names, model_for_sim.parameters))
 
         if self.ref_stars is not None:
             pwv_los = self.pwv_model.pwv_los(

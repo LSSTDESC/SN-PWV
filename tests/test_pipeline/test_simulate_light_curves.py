@@ -6,7 +6,7 @@ from unittest import TestCase
 import numpy as np
 from egon.mock import MockSource, MockTarget
 
-from snat_sim.models import SNModel
+from snat_sim.models import SNModel, ObservedCadence
 from snat_sim.pipeline import SimulateLightCurves
 from tests.mock import create_mock_plasticc_light_curve
 
@@ -44,8 +44,11 @@ class LightCurveSimulation(TestCase):
     def test_x0_overwritten_by_cosmo_arg(self) -> None:
         """Test the x0 parameter is overwritten according to the given cosmology"""
 
+        params, _ = ObservedCadence.from_plasticc(self.plasticc_lc)
+
         model = copy(self.node.sim_model)
-        model.set_source_peakabsmag(self.node.abs_mb, 'standard::b', 'AB')
+        model.update({p: v for p, v in params.items() if p in model.param_names})
+        model.set_source_peakabsmag(self.node.abs_mb, 'standard::b', 'AB', cosmo=self.node.cosmo)
         self.assertEqual(model['x0'], self.duplicated_lc.meta['x0'])
 
     def test_zp_is_overwritten_with_constant(self) -> None:
