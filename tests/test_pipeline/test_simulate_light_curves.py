@@ -29,10 +29,12 @@ class LightCurveSimulation(TestCase):
             'x1': 'SIM_SALT2x1',
             'c': 'SIM_SALT2c',
             'z': 'SIM_REDSHIFT_CMB',
-            'x0': 'SIM_SALT2x0',
             'ra': 'RA',
             'dec': 'DECL',
             'SNID': 'SNID'
+            # The x0 param should be overwritten during the simulation
+            # See the ``test_x0_overwritten_by_cosmo_arg`` test
+            # 'x0': 'SIM_SALT2x0',
         }
 
         for sncosmo_param, plasticc_param in param_mapping.items():

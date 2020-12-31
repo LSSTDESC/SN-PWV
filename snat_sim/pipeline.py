@@ -207,14 +207,20 @@ class SimulateLightCurves(Node):
             zp: Zero-point of the duplicated light-curve
         """
 
+        # Get simulation parameters and observational cadence
         params, plasticc_cadence = ObservedCadence.from_plasticc(plasticc_lc, zp=zp)
 
+        # Set model parameters and scale the source brightness to the desired intrinsic brightness
         model_for_sim = copy(self.sim_model)
         model_for_sim.update({p: v for p, v in params.items() if p in model_for_sim.param_names})
         model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
-        duplicated = model_for_sim.simulate_lc(plasticc_cadence)
-        duplicated.meta = dict(zip(model_for_sim.param_names, model_for_sim.parameters))
 
+        # SImulate the light-curve. Make sure to include model parameters as meta data
+        duplicated = model_for_sim.simulate_lc(plasticc_cadence)
+        duplicated.meta = params
+        duplicated.meta['x0'] = model_for_sim['x0']
+
+        # Rescale the light-curve using the reference star catalog if provided
         if self.ref_stars is not None:
             pwv_los = self.pwv_model.pwv_los(
                 duplicated['time'],
