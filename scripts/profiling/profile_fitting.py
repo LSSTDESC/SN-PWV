@@ -4,7 +4,7 @@ from pathlib import Path
 from pwv_kpno.defaults import ctio
 
 from snat_sim import models
-from snat_sim.fitting_pipeline import FittingPipeline
+from snat_sim.pipeline import FittingPipeline
 
 os.environ['CADENCE_SIMS'] = str(Path(__file__).resolve().parent / 'data')
 
@@ -42,10 +42,10 @@ if __name__ == '__main__':
     pipeline = setup_pipeline()
 
     print('Loading data')
-    pipeline._load_queue_plasticc_lc()
+    pipeline.load_plastic.execute()
 
     print('Simulating data')
-    pipeline._duplicate_light_curves()
+    pipeline.simulate_light_curves.execute()
 
     print('Fitting data')
-    pipeline._fit_light_curves()
+    pipeline.fit_light_curves.execute()
