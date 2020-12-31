@@ -8,17 +8,25 @@ from snat_sim.pipeline import FittingPipeline, SNModel
 class ValidatePipelineNodes(TestCase):
     """Validate an instance of the fitting test_pipeline"""
 
-    @staticmethod
-    def runTest() -> None:
-        """Run the builtin test_pipeline validation routine"""
-
-        FittingPipeline(
+    @classmethod
+    def setUpClass(cls) -> None:
+        cls.pipeline = FittingPipeline(
             cadence='alt_sched',
             sim_model=SNModel('salt2'),
             fit_model=SNModel('salt2'),
             vparams=['x0'],
             out_path='foo.csv',
-        ).validate()
+        )
+
+    def test_auto_validation(self) -> None:
+        """Run the builtin test_pipeline validation routine"""
+
+        self.pipeline.validate()
+
+    def test_limit_on_input_simulations(self) -> None:
+        """Test a finite limit is imposed on the number of input PLaSTICC simulations"""
+
+        self.assertLess(self.pipeline.simulate_light_curves.plasticc_data_input.maxsize, float('inf'))
 
 
 class InitErrors(TestCase):
@@ -27,7 +35,8 @@ class InitErrors(TestCase):
     def test_error_on_missing_pwv_model(self) -> None:
         """``ValueError`` should be raised if reference stars are specified without a PWV model."""
 
-        with self.assertRaisesRegex(ValueError, 'Cannot perform reference star subtraction without ``pwv_model`` argument'):
+        with self.assertRaisesRegex(ValueError,
+                                    'Cannot perform reference star subtraction without ``pwv_model`` argument'):
             FittingPipeline(
                 cadence='alt_sched',
                 sim_model=SNModel('salt2'),
