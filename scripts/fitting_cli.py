@@ -16,7 +16,7 @@ from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
-SUOMINET_VALUES = ('press', 'temp', 'rh', 'zenith_delay')
+SUOMINET_VALUES = ('PWV', 'SrfcPress', 'SrfcTemp', 'SrfcRH', 'ZenithDelay')
 
 
 class AdvancedNamespace(argparse.Namespace):
@@ -68,7 +68,7 @@ class AdvancedNamespace(argparse.Namespace):
         data_cuts = dict()
         for value in SUOMINET_VALUES:
             if param_bound := getattr(self, f'cut_{value}', None):
-                data_cuts[value] = param_bound
+                data_cuts[value] = [param_bound,]
 
         primary_year, *supp_years = self.pwv_model_years
         receiver = GPSReceiver(self.receiver_id, data_cuts=data_cuts)
@@ -287,7 +287,7 @@ def create_cli_parser() -> argparse.ArgumentParser:
     )
 
     pwv_modeling_group.add_argument(
-        '--cut_pwv',
+        '--cut_PWV',
         type=float,
         nargs=2,
         default=[0, 30],
@@ -296,7 +296,7 @@ def create_cli_parser() -> argparse.ArgumentParser:
 
     data_cut_names = ('surface pressure', 'temperature', 'relative humidity', 'zenith delay')
     data_cut_units = ('Millibars', 'Centigrade', 'Percentage', 'Millimeters')
-    for arg, name, unit in zip(SUOMINET_VALUES, data_cut_names, data_cut_units):
+    for arg, name, unit in zip(SUOMINET_VALUES[1:], data_cut_names, data_cut_units):
         pwv_modeling_group.add_argument(
             f'--cut_{arg}',
             type=float,
