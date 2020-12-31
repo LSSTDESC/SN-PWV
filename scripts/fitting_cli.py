@@ -7,8 +7,8 @@ and then fitting them with a given SN model.
 import argparse
 import sys
 from pathlib import Path
+from typing import Tuple, Dict, Union
 
-from astropy.table import Table
 from pwv_kpno.gps_pwv import GPSReceiver
 
 sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
@@ -16,36 +16,14 @@ from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
-SUOMINET_VALUES = ('press', 'temp', 'rh', 'zenith_delay')
-
-
-# Todo: This should be in the snat_sim package so it can be tested
-def passes_quality_cuts(light_curve):
-    """Return whether light-curve has 2+ two bands each with 1+ data point with SNR > 5
-
-    Args:
-        light_curve (Table): Astropy table with sncosmo formatted light-curve data
-
-    Returns:
-        A boolean
-    """
-
-    if light_curve.meta['z'] > .88:
-        return False
-
-    light_curve = light_curve.group_by('band')
-
-    passed_cuts = []
-    for band_lc in light_curve.groups:
-        passed_cuts.append((band_lc['flux'] / band_lc['fluxerr'] > 5).any())
-
-    return sum(passed_cuts) >= 2
+SUOMINET_VALUES = ('PWV', 'SrfcPress', 'SrfcTemp', 'SrfcRH', 'ZenithDelay')
+AtmModels = Union[models.StaticPWVTrans, models.VariablePWVTrans, models.SeasonalPWVTrans]
 
 
 class AdvancedNamespace(argparse.Namespace):
     """Represents parsed command line arguments cast into friendly object types"""
 
-    def _create_pwv_effect(self, pwv_variability):
+    def _create_pwv_effect(self, pwv_variability) -> AtmModels:
         """Create a PWV transmission effect for use with supernova models
 
         Note: ``pwv_variability`` should be a string!
@@ -83,21 +61,21 @@ class AdvancedNamespace(argparse.Namespace):
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
     @property
-    def pwv_model(self):
+    def pwv_model(self) -> models.PWVModel:
         """Build a PWV model based on the command line argument"""
 
         print('Building PWV Model...')
         data_cuts = dict()
         for value in SUOMINET_VALUES:
             if param_bound := getattr(self, f'cut_{value}', None):
-                data_cuts[value] = param_bound
+                data_cuts[value] = [param_bound, ]
 
         primary_year, *supp_years = self.pwv_model_years
         receiver = GPSReceiver(self.receiver_id, data_cuts=data_cuts)
         return models.PWVModel.from_suominet_receiver(receiver, primary_year, supp_years)
 
     @property
-    def fitting_bounds(self):
+    def fitting_bounds(self) -> Dict[str, Tuple]:
         """Parameter boundaries to enforce when fitting light-curves
 
         Returns:
@@ -112,7 +90,7 @@ class AdvancedNamespace(argparse.Namespace):
         return fitting_bounds
 
     @property
-    def simulation_model(self):
+    def simulation_model(self) -> models.SNModel:
         """Return the Supernova model used for fitting light-curves
 
         Returns:
@@ -129,7 +107,7 @@ class AdvancedNamespace(argparse.Namespace):
             effect_frames=['obs'])
 
     @property
-    def fitting_model(self):
+    def fitting_model(self) -> models.SNModel:
         """Return the Supernova model used for simulating light-curves
 
         Returns:
@@ -146,11 +124,11 @@ class AdvancedNamespace(argparse.Namespace):
             effect_frames=['obs'])
 
 
-def run_pipeline(command_line_args):
+def run_pipeline(command_line_args: AdvancedNamespace) -> None:
     """Run the analysis pipeline
 
     Args:
-        command_line_args (AdvancedNamespace): Parsed command line arguments
+        command_line_args: Parsed command line arguments
     """
 
     print('Instantiating pipeline...')
@@ -163,7 +141,6 @@ def run_pipeline(command_line_args):
         simulation_pool=command_line_args.sim_pool_size,
         fitting_pool=command_line_args.fit_pool_size,
         bounds=command_line_args.fitting_bounds,
-        quality_callback=passes_quality_cuts,
         iter_lim=command_line_args.iter_lim,
         ref_stars=command_line_args.ref_stars,
         pwv_model=command_line_args.pwv_model
@@ -172,7 +149,7 @@ def run_pipeline(command_line_args):
     pipeline.run()
 
 
-def create_cli_parser():
+def create_cli_parser() -> argparse.ArgumentParser:
     """Return a command line argument parser"""
 
     parser = argparse.ArgumentParser()
@@ -310,7 +287,7 @@ def create_cli_parser():
     )
 
     pwv_modeling_group.add_argument(
-        '--cut_pwv',
+        '--cut_PWV',
         type=float,
         nargs=2,
         default=[0, 30],
@@ -319,7 +296,7 @@ def create_cli_parser():
 
     data_cut_names = ('surface pressure', 'temperature', 'relative humidity', 'zenith delay')
     data_cut_units = ('Millibars', 'Centigrade', 'Percentage', 'Millimeters')
-    for arg, name, unit in zip(SUOMINET_VALUES, data_cut_names, data_cut_units):
+    for arg, name, unit in zip(SUOMINET_VALUES[1:], data_cut_names, data_cut_units):
         pwv_modeling_group.add_argument(
             f'--cut_{arg}',
             type=float,

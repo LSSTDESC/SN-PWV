@@ -7,21 +7,23 @@ Usage Example
 
 Instances of the ``FittingPipeline`` class can be run synchronously
 (by calling ``FittingPipeline.run``) or asynchronously (with
-``FittingPipeline.run_async``). Here we demonstrate running a pipeline
-synchronously.
+``FittingPipeline.run_async``). A pipeline instance can be created as
+follows:
 
-.. code-block:: doctest
+.. doctest:: python
 
+   >>> from snat_sim.models import SNModel
    >>> from snat_sim.pipeline import FittingPipeline
 
    >>> pipeline = FittingPipeline(
-   >>>     cadence='alt_sched',
-   >>>     sim_model=SNModel('salt2'),
-   >>>     fit_model=SNModel('salt2'),
-   >>>     vparams=['x0', 'x1', 'c'],
-   >>>     out_path='./demo_out_path.csv',
-   >>>     pool_size=6
-   >>> )
+   ...     cadence='alt_sched',
+   ...     sim_model=SNModel('salt2'),
+   ...     fit_model=SNModel('salt2'),
+   ...     vparams=['x0', 'x1', 'c'],
+   ...     out_path='./demo_out_path.csv',
+   ...     fitting_pool=6,
+   ...     simulation_pool=3
+   ... )
 
 Module Docs
 -----------
@@ -215,7 +217,7 @@ class SimulateLightCurves(Node):
         model_for_sim.update({p: v for p, v in params.items() if p in model_for_sim.param_names})
         model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
 
-        # SImulate the light-curve. Make sure to include model parameters as meta data
+        # Simulate the light-curve. Make sure to include model parameters as meta data
         duplicated = model_for_sim.simulate_lc(plasticc_cadence)
         duplicated.meta = params
         duplicated.meta['x0'] = model_for_sim['x0']
@@ -240,7 +242,8 @@ class SimulateLightCurves(Node):
                 duplicated_lc = self.duplicate_plasticc_lc(light_curve, zp=30)
 
             except Exception as e:
-                result = PipelineResult(light_curve.meta['SNID'], sim_params=light_curve.meta, message=str(e))
+                params, _ = ObservedCadence.from_plasticc(light_curve)  # Format params to match the simulation model
+                result = PipelineResult(light_curve.meta['SNID'], sim_params=params, message=str(e))
                 self.failure_result_output.put(result)
 
             else:
@@ -307,7 +310,8 @@ class FitLightCurves(Node):
 
             except Exception as excep:
                 self.fit_results_output.put(
-                    PipelineResult(snid=light_curve.meta['SNID'], sim_params=light_curve.meta, message=str(excep))
+                    PipelineResult(snid=light_curve.meta['SNID'], sim_params=light_curve.meta,
+                                   message=f'{self.__class__.__name__}: {excep}')
                 )
 
             else:
@@ -321,7 +325,7 @@ class FitLightCurves(Node):
                         ndof=fitted_result.ndof,
                         mb=fitted_model.mB(),
                         abs_mag=fitted_model.MB(),
-                        message=fitted_result.message
+                        message=f'{self.__class__.__name__}: {fitted_result.message}'
                     )
                 )
 
@@ -381,11 +385,10 @@ class FittingPipeline(Pipeline):
             fitting_pool: int = 1,
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
-            quality_callback: callable = None,
             max_queue: int = 100,
             iter_lim: int = float('inf'),
             ref_stars: Collection[str] = None,
-            pwv_model: SNModel = None
+            pwv_model: PWVModel = None
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -398,7 +401,6 @@ class FittingPipeline(Pipeline):
             out_path: Path to write results to (.csv extension is enforced)
             fitting_pool: Number of child processes allocated to simulating light-curves
             simulation_pool: Number of child processes allocated to fitting light-curves
-            quality_callback: Skip light-curves if this function returns False
             max_queue: Maximum number of light-curves to store in pipeline at once
             iter_lim: Limit number of processed light-curves (Useful for profiling)
             ref_stars: List of reference star types to calibrate simulated supernova with
