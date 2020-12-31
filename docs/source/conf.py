@@ -59,6 +59,7 @@ html_css_files = [
 
 # -- Options for HTML output -------------------------------------------------
 
+autodoc_member_order = 'bysource'
 html_theme_path = guzzle_sphinx_theme.html_theme_path()
 html_theme = 'guzzle_sphinx_theme'
 html_title = 'Supernova Atmospheric Simulation'
