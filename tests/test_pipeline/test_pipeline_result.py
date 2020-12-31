@@ -1,4 +1,4 @@
-"""Tests for the ``OutputDataModel`` class"""
+"""Tests for the ``PipelineResult`` class"""
 
 from unittest import TestCase
 

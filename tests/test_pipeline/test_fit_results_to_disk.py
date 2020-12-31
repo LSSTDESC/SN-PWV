@@ -1,3 +1,5 @@
+"""Tests for the ``FitResultsToDisk`` class"""
+
 from tempfile import NamedTemporaryFile
 from unittest import TestCase
 

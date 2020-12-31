@@ -1,3 +1,5 @@
+"""Tests for the ``FitLightCurves`` class"""
+
 from unittest import TestCase
 
 import sncosmo

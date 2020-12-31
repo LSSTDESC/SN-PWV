@@ -1,3 +1,5 @@
+"""Tests for the ``SimulateLightCurves`` class"""
+
 from copy import copy
 from unittest import TestCase
 
@@ -9,7 +11,7 @@ from snat_sim.pipeline import SimulateLightCurves
 from tests.mock import create_mock_plasticc_light_curve
 
 
-class DuplicatePlasticcSncosmo(TestCase):
+class LightCurveSimulation(TestCase):
     """Tests for the ``duplicate_plasticc_sncosmo`` function"""
 
     @classmethod
