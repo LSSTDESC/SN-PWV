@@ -307,7 +307,7 @@ class FitLightCurves(Node):
 
             except Exception as excep:
                 self.fit_results_output.put(
-                    PipelineResult(snid=light_curve.meta['SNID'], sim_params=light_curve.meta, message=str(excep))
+                    PipelineResult(snid=light_curve.meta['SNID'], sim_params=light_curve.meta, message=f'{self.__class__.__name__}: {excep}')
                 )
 
             else:
@@ -321,7 +321,7 @@ class FitLightCurves(Node):
                         ndof=fitted_result.ndof,
                         mb=fitted_model.mB(),
                         abs_mag=fitted_model.MB(),
-                        message=fitted_result.message
+                        message=f'{self.__class__.__name__}: {fitted_result.message}'
                     )
                 )
 
@@ -381,7 +381,6 @@ class FittingPipeline(Pipeline):
             fitting_pool: int = 1,
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
-            quality_callback: callable = None,
             max_queue: int = 100,
             iter_lim: int = float('inf'),
             ref_stars: Collection[str] = None,
@@ -398,7 +397,6 @@ class FittingPipeline(Pipeline):
             out_path: Path to write results to (.csv extension is enforced)
             fitting_pool: Number of child processes allocated to simulating light-curves
             simulation_pool: Number of child processes allocated to fitting light-curves
-            quality_callback: Skip light-curves if this function returns False
             max_queue: Maximum number of light-curves to store in pipeline at once
             iter_lim: Limit number of processed light-curves (Useful for profiling)
             ref_stars: List of reference star types to calibrate simulated supernova with
