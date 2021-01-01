@@ -920,7 +920,10 @@ class SeasonalPWVTrans(AbstractVariablePWVEffect):
         """
 
         # Convert time values to their corresponding season
-        datetime_objects = Time(time, format=self._time_format).to_datetime()
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            datetime_objects = Time(time, format=self._time_format).to_datetime()
+
         seasons = np.atleast_1d(tsu.datetime_to_season(datetime_objects))
         return np.array([self[season] for season in seasons])
 

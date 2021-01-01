@@ -1,5 +1,6 @@
 """Tests for the ``SNModel`` class"""
 
+import warnings
 from copy import copy
 from unittest import TestCase, skipIf
 
@@ -53,7 +54,11 @@ class BackwardsCompatibility(TestCase):
 
         data = sncosmo.load_example_data()
         model = models.SNModel('salt2')
-        _, fitted_model = sncosmo.fit_lc(data, model, ['x0'])
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore')
+            _, fitted_model = sncosmo.fit_lc(data, model, ['x0'])
+
         self.assertIsInstance(fitted_model, models.SNModel)
 
     @skipIf(no_emcee_package, 'emcee package is not installed')

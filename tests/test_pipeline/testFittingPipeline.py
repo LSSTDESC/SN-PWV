@@ -27,22 +27,3 @@ class ValidatePipelineNodes(TestCase):
         """Test a finite limit is imposed on the number of input PLaSTICC simulations"""
 
         self.assertLess(self.pipeline.simulate_light_curves.plasticc_data_input.maxsize, float('inf'))
-
-
-class InitErrors(TestCase):
-    """Test for errors raised during pipeline init"""
-
-    def test_error_on_missing_pwv_model(self) -> None:
-        """``ValueError`` should be raised if reference stars are specified without a PWV model."""
-
-        with self.assertRaisesRegex(ValueError,
-                                    'Cannot perform reference star subtraction without ``pwv_model`` argument'):
-            FittingPipeline(
-                cadence='alt_sched',
-                sim_model=SNModel('salt2'),
-                fit_model=SNModel('salt2'),
-                vparams=['x0'],
-                ref_stars=('G2', 'M5', 'K2'),
-                pwv_model=None,
-                out_path='foo.csv',
-            )
