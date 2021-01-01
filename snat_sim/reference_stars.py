@@ -140,9 +140,6 @@ class ReferenceStar:
     def get_dataframe(self) -> pd.DataFrame:
         """Retrieve PWV values to use as reference values
 
-        Args:
-            spectral_type: Type of reference star (Default 'G2')
-
         Returns:
             A DataFrame indexed by PWV with columns for flux
         """

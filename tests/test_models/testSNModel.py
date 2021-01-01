@@ -1,5 +1,6 @@
 """Tests for the ``SNModel`` class"""
 
+import warnings
 from copy import copy
 from unittest import TestCase, skipIf
 
@@ -9,7 +10,7 @@ from sncosmo.tests import test_models as sncosmo_test_models
 
 from snat_sim import models
 from tests.mock import create_constant_pwv_model
-import warnings
+
 no_emcee_package = False
 
 try:
