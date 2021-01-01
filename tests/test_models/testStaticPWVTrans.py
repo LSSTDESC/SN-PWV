@@ -19,19 +19,14 @@ class BaseTests(PropagationEffectTests, TestCase):
 
         # Get the expected transmission
         pwv = 5
-
         wave = np.arange(4000, 5000)
-        transmission_model = models.FixedResTransmission(resolution=self.propagation_effect.transmission_res)
+        transmission_model = models.FixedResTransmission(resolution=self.propagation_effect._transmission_res)
         transmission = transmission_model.calc_transmission(pwv=pwv, wave=wave)
-
-        # Get the expected flux
-        flux = np.ones_like(wave)
-        expected_flux = flux * transmission
 
         # Get the returned flux
         self.propagation_effect._parameters = [pwv]
-        propagated_flux = self.propagation_effect.propagate(wave, flux)
-        np.testing.assert_equal(expected_flux, propagated_flux[0])
+        propagated_flux = self.propagation_effect.propagate(wave, np.ones_like(wave))
+        np.testing.assert_equal(transmission, propagated_flux[0])
 
 
 class DefaultParameterValues(TestCase):
