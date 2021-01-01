@@ -1037,7 +1037,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Convert time values to their corresponding season</span>
-        <span class="n">datetime_objects</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_format</span><span class="p">)</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">()</span>
+        <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+            <span class="n">datetime_objects</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_format</span><span class="p">)</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">()</span>
+
         <span class="n">seasons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_season</span><span class="p">(</span><span class="n">datetime_objects</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="p">[</span><span class="n">season</span><span class="p">]</span> <span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">seasons</span><span class="p">])</span></div>
 

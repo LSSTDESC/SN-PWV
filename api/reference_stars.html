@@ -126,11 +126,71 @@
 <p>The <code class="docutils literal notranslate"><span class="pre">reference_stars</span></code> module includes utilities for calibrating
 observed (or simulated) magnitudes relative to a reference star. Reference
 star fluxes are determined relative to a fiducial atmosphere with 4mm of PWV.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>The spectrum for individual spectral types can be retreived
+using the <code class="docutils literal notranslate"><span class="pre">ReferenceStar</span></code> class:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">reference_stars</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g2_star</span> <span class="o">=</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">ReferenceStar</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g2_star</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+<span class="go">3000.000     4.960049e+17</span>
+<span class="go">3000.006     4.659192e+17</span>
+<span class="go">3000.012     4.304657e+17</span>
+<span class="go">3000.018     3.751426e+17</span>
+<span class="go">3000.024     2.847191e+17</span>
+<span class="go">                 ...</span>
+<span class="go">11999.920    1.366567e+18</span>
+<span class="go">11999.940    1.366673e+18</span>
+<span class="go">11999.960    1.366418e+18</span>
+<span class="go">11999.980    1.365863e+18</span>
+<span class="go">12000.000    1.365315e+18</span>
+<span class="go">Length: 933333, dtype: float32</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">ReferenceCatalog</span></code> is used to represent a collection of stars with different
+stellar types. Catalog instances can be used to calibrate supernoca light-curves.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sncosmo</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">load_example_data</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">reference_catalog</span> <span class="o">=</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">ReferenceCatalog</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">reference_catalog</span><span class="o">.</span><span class="n">divide_ref_from_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
-<dl class="py function">
-<dt id="snat_sim.reference_stars.get_available_types">
-<code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">get_available_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#get_available_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.get_available_types" title="Permalink to this definition">¶</a></dt>
+<dl class="py class">
+<dt id="snat_sim.reference_stars.ReferenceStar">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">ReferenceStar</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spectral_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceStar"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceStar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Representation of spectral data from the Goettingen Spectral Library</p>
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceStar.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spectral_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceStar.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceStar.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a spectrum for the given spectral type</p>
+<p>Flux values are returned in phot/cm2/s/angstrom and are index by
+wavelength values in Angstroms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>spectral_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Spectral type (e.g., G2)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceStar.to_pandas">
+<code class="sig-name descname">to_pandas</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceStar.to_pandas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceStar.to_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the spectral data as a <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code> object</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceStar.get_available_types">
+<em class="property">static </em><code class="sig-name descname">get_available_types</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceStar.get_available_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceStar.get_available_types" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the spectral types available on disk</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -142,52 +202,29 @@ star fluxes are determined relative to a fiducial atmosphere with 4mm of PWV.</p
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="snat_sim.reference_stars.get_stellar_spectra">
-<code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">get_stellar_spectra</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spectral_type</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#get_stellar_spectra"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.get_stellar_spectra" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load spectrum for given spectral type</p>
-<p>Flux values are returned in phot/cm2/s/angstrom and are index by
-wavelength values in Angstroms.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>spectral_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Spectral type (e.g., G2)</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>Flux values as a pandas Series</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="snat_sim.reference_stars.get_ref_star_dataframe">
-<code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">get_ref_star_dataframe</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">spectral_type</span><span class="o">=</span><span class="default_value">'G2'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#get_ref_star_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.get_ref_star_dataframe" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceStar.get_dataframe">
+<code class="sig-name descname">get_dataframe</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceStar.get_dataframe"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceStar.get_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve PWV values to use as reference values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>spectral_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Type of reference star (Default ‘G2’)</p>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A DataFrame indexed by PWV with columns for flux</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A DataFrame indexed by PWV with columns for flux</p>
 </dd>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="snat_sim.reference_stars.interp_norm_flux">
-<code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">interp_norm_flux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">pwv</span></em>, <em class="sig-param"><span class="n">spectral_type</span><span class="o">=</span><span class="default_value">'G2'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#interp_norm_flux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.interp_norm_flux" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return normalized reference star flux values</p>
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceStar.flux">
+<code class="sig-name descname">flux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">pwv</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceStar.flux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceStar.flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the reference star flux values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
 <li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]) – PWV values to get magnitudes for</p></li>
-<li><p><strong>spectral_type</strong> – Type of reference star (Default ‘G2’)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -199,16 +236,52 @@ wavelength values in Angstroms.</p>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="snat_sim.reference_stars.average_norm_flux">
-<code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">average_norm_flux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">pwv</span></em>, <em class="sig-param"><span class="n">spectral_types</span><span class="o">=</span><span class="default_value">('G2', 'M5', 'K2')</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#average_norm_flux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.average_norm_flux" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceStar.norm_flux">
+<code class="sig-name descname">norm_flux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">pwv</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceStar.norm_flux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceStar.norm_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the normalized reference star flux values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
+<li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]) – PWV values to get magnitudes for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.reference_stars.ReferenceCatalog">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">ReferenceCatalog</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">spectral_types</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceCatalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceCatalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>A rudimentary implementation of a reference star catalog</p>
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceCatalog.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">spectral_types</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceCatalog.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceCatalog.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a reference star catalog composed of the given spectral types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>*spectral_types</strong> – Spectral types for the catalog (e.g., ‘G2’, ‘M5’, ‘K2’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceCatalog.average_norm_flux">
+<code class="sig-name descname">average_norm_flux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">pwv</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceCatalog.average_norm_flux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceCatalog.average_norm_flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the average normalized reference star flux</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
-<li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – PWV values to get magnitudes for</p></li>
-<li><p><strong>spectral_types</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Types of reference stars to average over</p></li>
+<li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – PWV values to get magnitudes for</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -220,9 +293,9 @@ wavelength values in Angstroms.</p>
 </dl>
 </dd></dl>
 
-<dl class="py function">
-<dt id="snat_sim.reference_stars.divide_ref_from_lc">
-<code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">divide_ref_from_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lc_table</span></em>, <em class="sig-param"><span class="n">pwv</span></em>, <em class="sig-param"><span class="n">spectral_types</span><span class="o">=</span><span class="default_value">('G2', 'M5', 'K2')</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#divide_ref_from_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.divide_ref_from_lc" title="Permalink to this definition">¶</a></dt>
+<dl class="py method">
+<dt id="snat_sim.reference_stars.ReferenceCatalog.divide_ref_from_lc">
+<code class="sig-name descname">divide_ref_from_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lc_table</span></em>, <em class="sig-param"><span class="n">pwv</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceCatalog.divide_ref_from_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceCatalog.divide_ref_from_lc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Divide reference flux from a light-curve</p>
 <p>Recalibrate flux values using the average change in flux of a collection of
 reference stars.</p>
@@ -231,7 +304,6 @@ reference stars.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>lc_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Astropy table with columns <code class="docutils literal notranslate"><span class="pre">flux</span></code> and <code class="docutils literal notranslate"><span class="pre">band</span></code></p></li>
 <li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – PWV value to subtract reference star for</p></li>
-<li><p><strong>spectral_types</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Type of reference stars to use in calibration</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -241,6 +313,82 @@ reference stars.</p>
 <dd class="field-odd"><p>A modified copy of <code class="docutils literal notranslate"><span class="pre">lc_table</span></code></p>
 </dd>
 </dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.reference_stars.VariableCatalog">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.reference_stars.</code><code class="sig-name descname">VariableCatalog</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">spectral_types</span></em>, <em class="sig-param"><span class="n">pwv_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#VariableCatalog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.VariableCatalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reference star catalog that determines the time dependent PWV concentration from an underlying PWV model</p>
+<dl class="py method">
+<dt id="snat_sim.reference_stars.VariableCatalog.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">spectral_types</span></em>, <em class="sig-param"><span class="n">pwv_model</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#VariableCatalog.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.VariableCatalog.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a reference star catalog composed of the given spectral types and a PWV model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*spectral_types</strong> – Spectral types for the catalog (e.g., ‘G2’, ‘M5’, ‘K2’)</p></li>
+<li><p><strong>pwv_model</strong> (<a class="reference internal" href="models.html#snat_sim.models.PWVModel" title="snat_sim.models.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a>) – The PWV model to determine the zenith PWV concentration from</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.reference_stars.VariableCatalog.average_norm_flux">
+<code class="sig-name descname">average_norm_flux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">band</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">ra</span></em>, <em class="sig-param"><span class="n">dec</span></em>, <em class="sig-param"><span class="n">lat</span><span class="o">=</span><span class="default_value">- 30.244573</span></em>, <em class="sig-param"><span class="n">lon</span><span class="o">=</span><span class="default_value">- 70.7499537</span></em>, <em class="sig-param"><span class="n">alt</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#VariableCatalog.average_norm_flux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.VariableCatalog.average_norm_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the average normalized reference star flux</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>]) – Time at which the target is observed</p></li>
+<li><p><strong>ra</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Right Ascension of the target (Deg)</p></li>
+<li><p><strong>dec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Declination of the target (Deg)</p></li>
+<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Latitude of the observer (Deg)</p></li>
+<li><p><strong>lon</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Longitude of the observer (Deg)</p></li>
+<li><p><strong>alt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Altitude of the observer (m)</p></li>
+<li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.reference_stars.VariableCatalog.divide_ref_from_lc">
+<code class="sig-name descname">divide_ref_from_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lc_table</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">ra</span></em>, <em class="sig-param"><span class="n">dec</span></em>, <em class="sig-param"><span class="n">lat</span><span class="o">=</span><span class="default_value">- 30.244573</span></em>, <em class="sig-param"><span class="n">lon</span><span class="o">=</span><span class="default_value">- 70.7499537</span></em>, <em class="sig-param"><span class="n">alt</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#VariableCatalog.divide_ref_from_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.VariableCatalog.divide_ref_from_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide reference flux from a light-curve</p>
+<p>Recalibrate flux values using the average change in flux of a collection of
+reference stars.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lc_table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Astropy table with columns <code class="docutils literal notranslate"><span class="pre">flux</span></code> and <code class="docutils literal notranslate"><span class="pre">band</span></code></p></li>
+<li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>]) – Time at which the target is observed</p></li>
+<li><p><strong>ra</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Right Ascension of the target (Deg)</p></li>
+<li><p><strong>dec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Declination of the target (Deg)</p></li>
+<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Latitude of the observer (Deg)</p></li>
+<li><p><strong>lon</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Longitude of the observer (Deg)</p></li>
+<li><p><strong>alt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Altitude of the observer (m)</p></li>
+<li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A modified copy of <code class="docutils literal notranslate"><span class="pre">lc_table</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </div>

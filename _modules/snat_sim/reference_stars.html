@@ -119,6 +119,43 @@
 <span class="sd">observed (or simulated) magnitudes relative to a reference star. Reference</span>
 <span class="sd">star fluxes are determined relative to a fiducial atmosphere with 4mm of PWV.</span>
 
+<span class="sd">Usage Example</span>
+<span class="sd">-------------</span>
+
+<span class="sd">The spectrum for individual spectral types can be retreived</span>
+<span class="sd">using the ``ReferenceStar`` class:</span>
+
+<span class="sd">.. doctest:: python</span>
+
+<span class="sd">   &gt;&gt;&gt; from snat_sim import reference_stars</span>
+
+<span class="sd">   &gt;&gt;&gt; g2_star = reference_stars.ReferenceStar(&#39;G2&#39;)</span>
+<span class="sd">   &gt;&gt;&gt; print(g2_star.to_pandas())</span>
+<span class="sd">   3000.000     4.960049e+17</span>
+<span class="sd">   3000.006     4.659192e+17</span>
+<span class="sd">   3000.012     4.304657e+17</span>
+<span class="sd">   3000.018     3.751426e+17</span>
+<span class="sd">   3000.024     2.847191e+17</span>
+<span class="sd">                    ...</span>
+<span class="sd">   11999.920    1.366567e+18</span>
+<span class="sd">   11999.940    1.366673e+18</span>
+<span class="sd">   11999.960    1.366418e+18</span>
+<span class="sd">   11999.980    1.365863e+18</span>
+<span class="sd">   12000.000    1.365315e+18</span>
+<span class="sd">   Length: 933333, dtype: float32</span>
+
+
+<span class="sd">A ``ReferenceCatalog`` is used to represent a collection of stars with different</span>
+<span class="sd">stellar types. Catalog instances can be used to calibrate supernoca light-curves.</span>
+
+<span class="sd">.. code-block:: python</span>
+
+<span class="sd">   &gt;&gt;&gt; import sncosmo</span>
+
+<span class="sd">   &gt;&gt;&gt; light_curve = sncosmo.load_example_data()</span>
+<span class="sd">   &gt;&gt;&gt; reference_catalog = reference_stars.ReferenceCatalog(&#39;G2&#39;, &#39;M5&#39;)</span>
+<span class="sd">   &gt;&gt;&gt; print(reference_catalog.divide_ref_from_lc(light_curve, pwv=4))</span>
+
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -133,186 +170,293 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">PWVModel</span>
 
 <span class="n">Numeric</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
 
 
-<div class="viewcode-block" id="get_available_types"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.get_available_types">[docs]</a><span class="k">def</span> <span class="nf">get_available_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Return the spectral types available on disk</span>
+<div class="viewcode-block" id="ReferenceStar"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceStar">[docs]</a><span class="k">class</span> <span class="nc">ReferenceStar</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Representation of spectral data from the Goettingen Spectral Library&quot;&quot;&quot;</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        A list fo spectral types</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ReferenceStar.__init__"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceStar.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spectral_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load a spectrum for the given spectral type</span>
 
-    <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">stem</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">stellar_flux_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*.txt&#39;</span><span class="p">))</span></div>
+<span class="sd">        Flux values are returned in phot/cm2/s/angstrom and are index by</span>
+<span class="sd">        wavelength values in Angstroms.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            spectral_type: Spectral type (e.g., G2)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectral_type</span> <span class="o">=</span> <span class="n">spectral_type</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectral_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_available_types</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Data for spectral type &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spectral_type</span><span class="si">}</span><span class="s1">&quot; is not available.&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Load spectra for different spectral types</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">data_paths</span><span class="o">.</span><span class="n">stellar_spectra_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">spectral_type</span> <span class="o">+</span> <span class="s1">&#39;*.fits&#39;</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_read_stellar_spectra_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ReferenceStar.to_pandas"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceStar.to_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the spectral data as a ``pandas.Series`` object&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_spectrum</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="ReferenceStar.get_available_types"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceStar.get_available_types">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">get_available_types</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Return the spectral types available on disk</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A list fo spectral types</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">upper</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">stellar_flux_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*.txt&#39;</span><span class="p">))</span></div>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_read_stellar_spectra_path</span><span class="p">(</span><span class="n">fpath</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Load fits file with stellar spectrum from phoenix</span>
+
+<span class="sd">        Fits files can be downloaded from:</span>
+<span class="sd">          http://phoenix.astro.physik.uni-goettingen.de/?page_id=15</span>
+
+<span class="sd">        converts from egs/s/cm2/cm to phot/cm2/s/nm using</span>
+<span class="sd">          https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf</span>
+
+<span class="sd">        Flux values are returned in phot/cm2/s/angstrom and are index by</span>
+<span class="sd">        wavelength values in Angstroms.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            fpath: Path of the file to read</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            Flux values as a pandas Series</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Load spectral data</span>
+        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="n">spec</span> <span class="o">=</span> <span class="n">infile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+
+        <span class="c1"># Load data used to convert spectra to new units</span>
+        <span class="c1"># noinspection SpellCheckingInspection</span>
+        <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fpath</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;WAVE_PHOENIX-ACES-AGSS-COND-2011.fits&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
+            <span class="n">lam</span> <span class="o">=</span> <span class="n">infile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># angstroms</span>
+
+        <span class="n">angstroms_per_cm</span> <span class="o">=</span> <span class="mf">1e8</span>
+        <span class="n">conversion_factor</span> <span class="o">=</span> <span class="mf">5.03</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span>  <span class="c1"># See https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf</span>
+        <span class="n">ergs_per_photon</span> <span class="o">=</span> <span class="n">conversion_factor</span> <span class="o">*</span> <span class="n">lam</span>
+
+        <span class="c1"># Evaluate unit conversion</span>
+        <span class="n">spec</span> <span class="o">/=</span> <span class="n">angstroms_per_cm</span>  <span class="c1"># ergs/s/cm2/cm into ergs/s/cm2/Angstrom</span>
+        <span class="n">spec</span> <span class="o">*=</span> <span class="n">ergs_per_photon</span>  <span class="c1"># into phot/cm2/s/angstrom</span>
+
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&gt;=</span> <span class="mi">3000</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&lt;=</span> <span class="mi">12000</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">lam</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+
+<div class="viewcode-block" id="ReferenceStar.get_dataframe"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceStar.get_dataframe">[docs]</a>    <span class="nd">@lru_cache</span><span class="p">()</span>  <span class="c1"># Cache I/O</span>
+    <span class="k">def</span> <span class="nf">get_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Retrieve PWV values to use as reference values</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A DataFrame indexed by PWV with columns for flux</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">rpath</span> <span class="o">=</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">stellar_flux_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">spectral_type</span><span class="si">}</span><span class="s1">.txt&#39;</span>
+        <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;lsst_hardware_</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="s1">&#39;ugrizy&#39;</span><span class="p">]</span>
+        <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PWV&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">band_names</span>
+        <span class="n">reference_star_flux</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+            <span class="n">rpath</span><span class="p">,</span>
+            <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">s&#39;</span><span class="p">,</span>
+            <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="n">column_names</span><span class="p">,</span>
+            <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">,</span>
+            <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+            <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">band_names</span><span class="p">:</span>
+            <span class="n">band_flux</span> <span class="o">=</span> <span class="n">reference_star_flux</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
+            <span class="n">reference_star_flux</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s1">_norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">band_flux</span> <span class="o">/</span> <span class="n">band_flux</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">reference_star_flux</span></div>
+
+<div class="viewcode-block" id="ReferenceStar.flux"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceStar.flux">[docs]</a>    <span class="k">def</span> <span class="nf">flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the reference star flux values</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            band: Band to get flux for</span>
+<span class="sd">            pwv: PWV values to get magnitudes for</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The normalized flux at the given PWV value(s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">reference_star_flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">pwv</span> <span class="o">&lt;</span> <span class="n">reference_star_flux</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">|</span>
+                <span class="p">(</span><span class="n">pwv</span> <span class="o">&gt;</span> <span class="n">reference_star_flux</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;PWV is out of range&#39;</span><span class="p">)</span>
+
+        <span class="n">norm_flux</span> <span class="o">=</span> <span class="n">reference_star_flux</span><span class="p">[</span><span class="n">band</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">norm_flux</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">norm_flux</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ReferenceStar.norm_flux"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceStar.norm_flux">[docs]</a>    <span class="k">def</span> <span class="nf">norm_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the normalized reference star flux values</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            band: Band to get flux for</span>
+<span class="sd">            pwv: PWV values to get magnitudes for</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The normalized flux at the given PWV value(s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">reference_star_flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_dataframe</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">pwv</span> <span class="o">&lt;</span> <span class="n">reference_star_flux</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">|</span>
+                <span class="p">(</span><span class="n">pwv</span> <span class="o">&gt;</span> <span class="n">reference_star_flux</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;PWV is out of range&#39;</span><span class="p">)</span>
+
+        <span class="n">norm_flux</span> <span class="o">=</span> <span class="n">reference_star_flux</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s1">_norm&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">norm_flux</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">norm_flux</span><span class="p">)</span></div></div>
 
 
-<span class="k">def</span> <span class="nf">_read_stellar_spectra_path</span><span class="p">(</span><span class="n">fpath</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Load fits file with stellar spectrum from phoenix</span>
+<div class="viewcode-block" id="ReferenceCatalog"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceCatalog">[docs]</a><span class="k">class</span> <span class="nc">ReferenceCatalog</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A rudimentary implementation of a reference star catalog&quot;&quot;&quot;</span>
 
-<span class="sd">    Fits files can be downloaded from:</span>
-<span class="sd">      http://phoenix.astro.physik.uni-goettingen.de/?page_id=15</span>
+<div class="viewcode-block" id="ReferenceCatalog.__init__"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceCatalog.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">spectral_types</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a reference star catalog composed of the given spectral types</span>
 
-<span class="sd">    converts from egs/s/cm2/cm to phot/cm2/s/nm using</span>
-<span class="sd">      https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf</span>
+<span class="sd">        Args:</span>
+<span class="sd">            *spectral_types: Spectral types for the catalog (e.g., &#39;G2&#39;, &#39;M5&#39;, &#39;K2&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="sd">    Flux values are returned in phot/cm2/s/angstrom and are index by</span>
-<span class="sd">    wavelength values in Angstroms.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">spectral_types</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Must specify at least one spectral type for the catalog.&#39;</span><span class="p">)</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        fpath: Path of the file to read</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectral_types</span> <span class="o">=</span> <span class="n">spectral_types</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">spectra</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ReferenceStar</span><span class="p">(</span><span class="n">st</span><span class="p">)</span> <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">spectral_types</span><span class="p">)</span></div>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        Flux values as a pandas Series</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ReferenceCatalog.average_norm_flux"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceCatalog.average_norm_flux">[docs]</a>    <span class="k">def</span> <span class="nf">average_norm_flux</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">Collection</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the average normalized reference star flux</span>
 
-    <span class="c1"># Load spectral data</span>
-    <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fpath</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-        <span class="n">spec</span> <span class="o">=</span> <span class="n">infile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>
+<span class="sd">        Args:</span>
+<span class="sd">            band: Band to get flux for</span>
+<span class="sd">            pwv: PWV values to get magnitudes for</span>
 
-    <span class="c1"># Load data used to convert spectra to new units</span>
-    <span class="c1"># noinspection SpellCheckingInspection</span>
-    <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">fpath</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;WAVE_PHOENIX-ACES-AGSS-COND-2011.fits&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">infile</span><span class="p">:</span>
-        <span class="n">lam</span> <span class="o">=</span> <span class="n">infile</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">data</span>  <span class="c1"># angstroms</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The normalized flux at the given PWV value(s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="n">angstroms_per_cm</span> <span class="o">=</span> <span class="mf">1e8</span>
-    <span class="n">conversion_factor</span> <span class="o">=</span> <span class="mf">5.03</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="mi">7</span>  <span class="c1"># See https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf</span>
-    <span class="n">ergs_per_photon</span> <span class="o">=</span> <span class="n">conversion_factor</span> <span class="o">*</span> <span class="n">lam</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">norm_flux</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">pwv</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectra</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-    <span class="c1"># Evaluate unit conversion</span>
-    <span class="n">spec</span> <span class="o">/=</span> <span class="n">angstroms_per_cm</span>  <span class="c1"># ergs/s/cm2/cm into ergs/s/cm2/Angstrom</span>
-    <span class="n">spec</span> <span class="o">*=</span> <span class="n">ergs_per_photon</span>  <span class="c1"># into phot/cm2/s/angstrom</span>
+<div class="viewcode-block" id="ReferenceCatalog.divide_ref_from_lc"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceCatalog.divide_ref_from_lc">[docs]</a>    <span class="k">def</span> <span class="nf">divide_ref_from_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lc_table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Divide reference flux from a light-curve</span>
 
-    <span class="n">indices</span> <span class="o">=</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&gt;=</span> <span class="mi">3000</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">lam</span> <span class="o">&lt;=</span> <span class="mi">12000</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">spec</span><span class="p">[</span><span class="n">indices</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">lam</span><span class="p">[</span><span class="n">indices</span><span class="p">])</span>
+<span class="sd">        Recalibrate flux values using the average change in flux of a collection of</span>
+<span class="sd">        reference stars.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            lc_table: Astropy table with columns ``flux`` and ``band``</span>
+<span class="sd">            pwv: PWV value to subtract reference star for</span>
 
-<div class="viewcode-block" id="get_stellar_spectra"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.get_stellar_spectra">[docs]</a><span class="k">def</span> <span class="nf">get_stellar_spectra</span><span class="p">(</span><span class="n">spectral_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Load spectrum for given spectral type</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A modified copy of ``lc_table``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="sd">    Flux values are returned in phot/cm2/s/angstrom and are index by</span>
-<span class="sd">    wavelength values in Angstroms.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">Collection</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pwv</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lc_table</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;PWV must be a float or have the same length as ``lc_table``&#39;</span><span class="p">)</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        spectral_type: Spectral type (e.g., G2)</span>
+            <span class="n">pwv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pwv</span><span class="p">)</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        Flux values as a pandas Series</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pwv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lc_table</span><span class="p">),</span> <span class="n">pwv</span><span class="p">)</span>
 
-    <span class="c1"># Load spectra for different spectral types</span>
-    <span class="n">path</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">data_paths</span><span class="o">.</span><span class="n">stellar_spectra_dir</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">spectral_type</span> <span class="o">+</span> <span class="s1">&#39;*.fits&#39;</span><span class="p">))</span>
-    <span class="k">return</span> <span class="n">_read_stellar_spectra_path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span></div>
+        <span class="n">table_copy</span> <span class="o">=</span> <span class="n">lc_table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">table_copy</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]):</span>
+            <span class="n">band_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table_copy</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">band</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">table_copy</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">][</span><span class="n">band_indices</span><span class="p">]</span> <span class="o">/=</span> <span class="bp">self</span><span class="o">.</span><span class="n">average_norm_flux</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">pwv</span><span class="p">[</span><span class="n">band_indices</span><span class="p">])</span>
 
-
-<div class="viewcode-block" id="get_ref_star_dataframe"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.get_ref_star_dataframe">[docs]</a><span class="nd">@lru_cache</span><span class="p">()</span>  <span class="c1"># Cache I/O</span>
-<span class="k">def</span> <span class="nf">get_ref_star_dataframe</span><span class="p">(</span><span class="n">spectral_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;G2&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Retrieve PWV values to use as reference values</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        spectral_type: Type of reference star (Default &#39;G2&#39;)</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A DataFrame indexed by PWV with columns for flux</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">rpath</span> <span class="o">=</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">stellar_flux_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">spectral_type</span><span class="si">}</span><span class="s1">.txt&#39;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">rpath</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="sa">f</span><span class="s1">&#39;Data not available for specified star </span><span class="si">{</span><span class="n">spectral_type</span><span class="si">}</span><span class="s1">. &#39;</span>
-            <span class="sa">f</span><span class="s1">&#39;Could not find: </span><span class="si">{</span><span class="n">rpath</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-
-    <span class="n">band_names</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;lsst_hardware_</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="s1">&#39;ugrizy&#39;</span><span class="p">]</span>
-    <span class="n">column_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PWV&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">band_names</span>
-    <span class="n">reference_star_flux</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-        <span class="n">rpath</span><span class="p">,</span>
-        <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\\</span><span class="s1">s&#39;</span><span class="p">,</span>
-        <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">names</span><span class="o">=</span><span class="n">column_names</span><span class="p">,</span>
-        <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;#&#39;</span><span class="p">,</span>
-        <span class="n">index_col</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
-        <span class="n">engine</span><span class="o">=</span><span class="s1">&#39;python&#39;</span>
-    <span class="p">)</span>
-
-    <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">band_names</span><span class="p">:</span>
-        <span class="n">band_flux</span> <span class="o">=</span> <span class="n">reference_star_flux</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">]</span>
-        <span class="n">reference_star_flux</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s1">_norm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">band_flux</span> <span class="o">/</span> <span class="n">band_flux</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">reference_star_flux</span></div>
+        <span class="k">return</span> <span class="n">table_copy</span></div></div>
 
 
-<div class="viewcode-block" id="interp_norm_flux"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.interp_norm_flux">[docs]</a><span class="k">def</span> <span class="nf">interp_norm_flux</span><span class="p">(</span><span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">],</span> <span class="n">spectral_type</span><span class="o">=</span><span class="s1">&#39;G2&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return normalized reference star flux values</span>
+<div class="viewcode-block" id="VariableCatalog"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.VariableCatalog">[docs]</a><span class="k">class</span> <span class="nc">VariableCatalog</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;A reference star catalog that determines the time dependent PWV concentration from an underlying PWV model&quot;&quot;&quot;</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        band: Band to get flux for</span>
-<span class="sd">        pwv: PWV values to get magnitudes for</span>
-<span class="sd">        spectral_type: Type of reference star (Default &#39;G2&#39;)</span>
+<div class="viewcode-block" id="VariableCatalog.__init__"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.VariableCatalog.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">spectral_types</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pwv_model</span><span class="p">:</span> <span class="n">PWVModel</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a reference star catalog composed of the given spectral types and a PWV model</span>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        The normalized flux at the given PWV value(s)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        Args:</span>
+<span class="sd">            *spectral_types: Spectral types for the catalog (e.g., &#39;G2&#39;, &#39;M5&#39;, &#39;K2&#39;)</span>
+<span class="sd">            pwv_model: The PWV model to determine the zenith PWV concentration from</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="n">reference_star_flux</span> <span class="o">=</span> <span class="n">get_ref_star_dataframe</span><span class="p">(</span><span class="n">spectral_type</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span>
-            <span class="p">(</span><span class="n">pwv</span> <span class="o">&lt;</span> <span class="n">reference_star_flux</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">|</span>
-            <span class="p">(</span><span class="n">pwv</span> <span class="o">&gt;</span> <span class="n">reference_star_flux</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">max</span><span class="p">())):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;PWV is out of range&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">ReferenceCatalog</span><span class="p">(</span><span class="o">*</span><span class="n">spectral_types</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model</span> <span class="o">=</span> <span class="n">pwv_model</span></div>
 
-    <span class="n">norm_flux</span> <span class="o">=</span> <span class="n">reference_star_flux</span><span class="p">[</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s1">_norm&#39;</span><span class="p">]</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">norm_flux</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">norm_flux</span><span class="p">)</span></div>
+<div class="viewcode-block" id="VariableCatalog.average_norm_flux"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.VariableCatalog.average_norm_flux">[docs]</a>    <span class="k">def</span> <span class="nf">average_norm_flux</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Collection</span><span class="p">],</span>
+            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_latitude</span><span class="p">,</span>
+            <span class="n">lon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_longitude</span><span class="p">,</span>
+            <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
+            <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the average normalized reference star flux</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            band: Band to get flux for</span>
+<span class="sd">            time: Time at which the target is observed</span>
+<span class="sd">            ra: Right Ascension of the target (Deg)</span>
+<span class="sd">            dec: Declination of the target (Deg)</span>
+<span class="sd">            lat: Latitude of the observer (Deg)</span>
+<span class="sd">            lon: Longitude of the observer (Deg)</span>
+<span class="sd">            alt: Altitude of the observer (m)</span>
+<span class="sd">            time_format: Astropy supported format of the time value (Default: &#39;mjd&#39;)</span>
 
-<div class="viewcode-block" id="average_norm_flux"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.average_norm_flux">[docs]</a><span class="k">def</span> <span class="nf">average_norm_flux</span><span class="p">(</span>
-        <span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">spectral_types</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">)</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Return the average normalized reference star flux</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            The normalized flux at the given PWV value(s)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="sd">    Args:</span>
-<span class="sd">        band: Band to get flux for</span>
-<span class="sd">        pwv: PWV values to get magnitudes for</span>
-<span class="sd">        spectral_types: Types of reference stars to average over</span>
+        <span class="n">pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model</span><span class="o">.</span><span class="n">pwv_los</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="n">time_format</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">average_norm_flux</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">pwv</span><span class="p">)</span></div>
 
-<span class="sd">    Returns:</span>
-<span class="sd">        The normalized flux at the given PWV value(s)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="VariableCatalog.divide_ref_from_lc"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.VariableCatalog.divide_ref_from_lc">[docs]</a>    <span class="k">def</span> <span class="nf">divide_ref_from_lc</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">lc_table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span>
+            <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Collection</span><span class="p">],</span>
+            <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+            <span class="n">lat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_latitude</span><span class="p">,</span>
+            <span class="n">lon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_longitude</span><span class="p">,</span>
+            <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
+            <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Divide reference flux from a light-curve</span>
 
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">([</span><span class="n">interp_norm_flux</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">stype</span><span class="p">)</span> <span class="k">for</span> <span class="n">stype</span> <span class="ow">in</span> <span class="n">spectral_types</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+<span class="sd">        Recalibrate flux values using the average change in flux of a collection of</span>
+<span class="sd">        reference stars.</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            lc_table: Astropy table with columns ``flux`` and ``band``</span>
+<span class="sd">            time: Time at which the target is observed</span>
+<span class="sd">            ra: Right Ascension of the target (Deg)</span>
+<span class="sd">            dec: Declination of the target (Deg)</span>
+<span class="sd">            lat: Latitude of the observer (Deg)</span>
+<span class="sd">            lon: Longitude of the observer (Deg)</span>
+<span class="sd">            alt: Altitude of the observer (m)</span>
+<span class="sd">            time_format: Astropy supported format of the time value (Default: &#39;mjd&#39;)</span>
 
-<div class="viewcode-block" id="divide_ref_from_lc"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.divide_ref_from_lc">[docs]</a><span class="k">def</span> <span class="nf">divide_ref_from_lc</span><span class="p">(</span>
-        <span class="n">lc_table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">spectral_types</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">)</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Divide reference flux from a light-curve</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            A modified copy of ``lc_table``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
-<span class="sd">    Recalibrate flux values using the average change in flux of a collection of</span>
-<span class="sd">    reference stars.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        lc_table: Astropy table with columns ``flux`` and ``band``</span>
-<span class="sd">        pwv: PWV value to subtract reference star for</span>
-<span class="sd">        spectral_types: Type of reference stars to use in calibration</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A modified copy of ``lc_table``</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">Collection</span><span class="p">):</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">pwv</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lc_table</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;PWV must be a float or have the same length as ``lc_table``&#39;</span><span class="p">)</span>
-
-        <span class="n">pwv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pwv</span><span class="p">)</span>
-
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">pwv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lc_table</span><span class="p">),</span> <span class="n">pwv</span><span class="p">)</span>
-
-    <span class="n">table_copy</span> <span class="o">=</span> <span class="n">lc_table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-    <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="nb">set</span><span class="p">(</span><span class="n">table_copy</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]):</span>
-        <span class="n">band_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">table_copy</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="n">band</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="n">table_copy</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">][</span><span class="n">band_indices</span><span class="p">]</span> <span class="o">/=</span> <span class="n">average_norm_flux</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">pwv</span><span class="p">[</span><span class="n">band_indices</span><span class="p">],</span> <span class="n">spectral_types</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">table_copy</span></div>
+        <span class="n">pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model</span><span class="o">.</span><span class="n">pwv_los</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="n">time_format</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">divide_ref_from_lc</span><span class="p">(</span><span class="n">lc_table</span><span class="p">,</span> <span class="n">pwv</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>
