@@ -241,7 +241,7 @@ class ObservedCadence:
         observations.sort('time')
         return observations
 
-    def __repr__(self) -> str:
+    def __repr__(self) -> str:  # pragma: no cover
         repr_list = self.to_sncosmo().__repr__().split('\n')
         repr_list[0] = super(ObservedCadence, self).__repr__()
         repr_list.pop(2)
