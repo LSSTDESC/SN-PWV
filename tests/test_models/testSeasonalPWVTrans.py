@@ -19,8 +19,9 @@ class BaseTests(PropagationEffectTests, TestCase):
 class DefaultParameterValues(testVariablePWVTrans.DefaultParameterValues):
     """Tests for the value of default model parameters"""
 
-    def setUp(self):
-        self.propagation_effect = models.SeasonalPWVTrans()
+    @classmethod
+    def setUpClass(cls):
+        cls.propagation_effect = models.SeasonalPWVTrans()
 
     def test_default_seasonal_values_are_zero(self):
         """Test the default values for the observer location match VRO"""

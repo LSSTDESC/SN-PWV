@@ -35,8 +35,9 @@ class BaseTests(PropagationEffectTests, TestCase):
 class DefaultParameterValues(TestCase):
     """Tests for the value of default model parameters"""
 
-    def setUp(self):
-        self.propagation_effect = models.StaticPWVTrans()
+    @classmethod
+    def setUpClass(cls):
+        cls.propagation_effect = models.StaticPWVTrans()
 
     def test_default_pwv_is_zero(self):
         """Test the default ``pwv`` parameter is 0"""
