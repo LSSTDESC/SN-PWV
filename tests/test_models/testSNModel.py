@@ -1,7 +1,7 @@
 """Tests for the ``SNModel`` class"""
 
 from copy import copy
-from unittest import TestCase
+from unittest import TestCase, skipIf
 
 import numpy as np
 import sncosmo
@@ -9,6 +9,14 @@ from sncosmo.tests import test_models as sncosmo_test_models
 
 from snat_sim import models
 from tests.mock import create_constant_pwv_model
+
+try:
+    import emcee
+
+    no_emcee_package = False
+
+except:
+    no_emcee_package = True
 
 
 class SncosmoBaseTests(sncosmo_test_models.TestModel, TestCase):
@@ -25,7 +33,12 @@ class SncosmoBaseTests(sncosmo_test_models.TestModel, TestCase):
 
         self.model.set(z=0.0001)
 
-    def test_sed_matches_sncosmo_model(self):
+
+class BackwardsCompatibility(TestCase):
+    """Test backwards compatibility with ``sncosmo.Model`` objects"""
+
+    @staticmethod
+    def test_sed_matches_sncosmo_model():
         """Test the SED returned by the ``modeling.SNModel`` class matches the ``sncosmo.SNModel`` class"""
 
         wave = np.arange(3000, 12000)
@@ -34,6 +47,23 @@ class SncosmoBaseTests(sncosmo_test_models.TestModel, TestCase):
         custom_model = models.SNModel(sncosmo_model.source)
         custom_flux = custom_model.flux(0, wave)
         np.testing.assert_equal(custom_flux, sncosmo_flux)
+
+    def test_fit_lc_returns_correct_type(self):
+        """Test the fit_lc function returns an ``SNModel`` instance for the fitted model"""
+
+        data = sncosmo.load_example_data()
+        model = models.SNModel('salt2')
+        _, fitted_model = sncosmo.fit_lc(data, model, ['x0'])
+        self.assertIsInstance(fitted_model, models.SNModel)
+
+    @skipIf(no_emcee_package, 'emcee package is not installed')
+    def test_mcmc_lc_returns_correct_type(self):
+        """Test the fit_lc function returns an ``SNModel`` instance for the fitted model"""
+
+        data = sncosmo.load_example_data()
+        model = models.SNModel('salt2')
+        _, fitted_model = sncosmo.mcmc_lc(data, model, ['x0'])
+        self.assertIsInstance(fitted_model, models.SNModel)
 
 
 class Copy(TestCase):
