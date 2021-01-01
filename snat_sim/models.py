@@ -837,6 +837,41 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 class SeasonalPWVTrans(VariablePWVTrans):
     """Atmospheric propagation effect for a fixed PWV concentration per-season"""
 
+    def __init__(self, time_format: str = 'mjd', transmission_res: float = 5.) -> None:
+        """
+
+        Effect Parameters:
+            ra: Target Right Ascension in degrees
+            dec: Target Declination in degrees
+            lat: Observer latitude in degrees (defaults to location of VRO)
+            lon: Observer longitude in degrees (defaults to location of VRO)
+            alt: Observer altitude in meters  (defaults to height of VRO)
+            winter:
+
+
+        Args:
+            time_format: Astropy recognized time format used by the ``pwv_interpolator``
+            transmission_res: Reduce the underlying transmission model by binning to the given resolution
+        """
+
+        # Create atmospheric transmission model
+        super().__init__(time_format=time_format, transmission_res=transmission_res)
+        self._time_format = time_format
+
+        # Define wavelength range of propagation effect
+        self._minwave = self._transmission_model.samp_wave.min()
+        self._maxwave = self._transmission_model.samp_wave.max()
+
+        # Define and store default modeling parameters
+        self._param_names = ['winter', 'spring', 'summer', 'fall', 'ra', 'dec', 'lat', 'lon', 'alt']
+        self.param_names_latex = [
+            'Winter PWV', 'Spring PWV', 'Summer PWV', 'Fall PWV',
+            'Target RA', 'Target Dec',
+            'Observer Latitude (deg)', 'Observer Longitude (deg)', 'Observer Altitude (m)']
+
+        self._parameters = np.array(
+            [0., 0., 0., 0., 0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
+
     def assumed_pwv(self, time: FloatOrArray) -> FloatOrArray:
         """The PWV concentration used by the propagation effect at a given time
 
@@ -850,23 +885,12 @@ class SeasonalPWVTrans(VariablePWVTrans):
         # Convert time values to their corresponding season
         datetime_objects = Time(time, format=self._time_format).to_datetime()
         seasons = tsu.datetime_to_season(datetime_objects)
+        return np.array([self[season] for season in seasons])
 
-        # Get the average PWV for each season
-        avg_pwv_per_season = self._pwv_model.seasonal_averages()
-        return np.array([avg_pwv_per_season[season] for season in seasons])
+    @staticmethod
+    def from_pwv_model(pwv_model: PWVModel):
+        """Create a new instance using the averaged per-season PWV from a PWV model"""
 
-    def propagate(self, wave: np.ndarray, flux: np.ndarray, time: Union[float, np.ndarray]) -> np.ndarray:
-        """Propagate the flux through the atmosphere
-
-        Args:
-            wave: An array of wavelength values
-            flux: An array of flux values
-            time: Array of time values to determine PWV for
-
-        Returns:
-            An array of flux values after suffering from PWV absorption
-        """
-
-        pwv = self.assumed_pwv(time)
-        transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
-        return self._apply_propagation(flux, transmission)
+        trans = SeasonalPWVTrans()
+        trans.update(pwv_model.seasonal_averages())
+        return trans
