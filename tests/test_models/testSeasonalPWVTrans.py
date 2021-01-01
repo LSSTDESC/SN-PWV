@@ -21,17 +21,16 @@ class BaseTests(PropagationEffectTests, TestCase):
         cls.propagation_effect['fall'] = cls.pwv
 
     def test_propagation_includes_pwv_transmission(self):
-        """Test the ``propagate`` applies PWV absorption"""
+        """Test the ``propagate`` method applies PWV absorption"""
 
         # Get the expected transmission
         wave = np.arange(4000, 5000)
-        transmission_model = models.FixedResTransmission(resolution=self.propagation_effect.transmission_res)
+        transmission_model = models.FixedResTransmission(resolution=self.propagation_effect._transmission_res)
         transmission = transmission_model.calc_transmission(pwv=self.pwv, wave=wave)
 
         # Get the returned flux
         propagated_flux = self.propagation_effect.propagate(wave, np.ones_like(wave), time=0)
         np.testing.assert_equal(transmission, propagated_flux[0])
-
 
 
 class DefaultParameterValues(testVariablePWVTrans.DefaultParameterValues):

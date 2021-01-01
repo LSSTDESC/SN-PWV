@@ -15,7 +15,7 @@ class BaseTests(PropagationEffectTests, TestCase):
         cls.propagation_effect = models.StaticPWVTrans()
 
     def test_propagation_includes_pwv_transmission(self):
-        """Test the ``propagate`` applies PWV absorption"""
+        """Test the ``propagate`` method applies PWV absorption"""
 
         # Get the expected transmission
         pwv = 5

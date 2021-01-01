@@ -653,10 +653,14 @@ class SNModel(sncosmo.Model):
         light_curve.meta = dict(zip(self.param_names, self.parameters))
         return light_curve
 
-    def mB(self):
+    def apparent_bmag(self) -> float:
+        """Apparent b band magnitude at ``t0``"""
+
         return self.bandmag('bessellb', 'ab', time=self['t0'])
 
-    def MB(self, cosmo=const.betoule_cosmo):
+    def absolute_bmag(self, cosmo=const.betoule_cosmo) -> float:
+        """Absolute b band magnitude"""
+
         return self.source_peakabsmag('bessellb', 'ab', cosmo=cosmo)
 
 
