@@ -42,7 +42,7 @@ Downloading Light-Curve Sims
    To avoid future headaches, please ensure you actually need this data and
    don't already have it available in your working environment.
 
-Simulated light-curve data is hosted on `Zenodo <https://zenodo.org/>` and can be downloaded using
+Simulated light-curve data is hosted on `Zenodo <https://zenodo.org/>`_ and can be downloaded using
 the ``wget`` command. URL's for various subsets of the data is listed are
 listed in  ``file_list.txt`` and can be downloaded as shown below.
 For convenience, the  ``timeout`` and ``tries`` arguments can be used to
