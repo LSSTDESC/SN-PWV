@@ -1,11 +1,11 @@
-"""Tests for the ``simulation`` module"""
+"""Tests for the ``ObservedCadence`` class"""
 
 from unittest import TestCase
 
 import numpy as np
 
 from snat_sim.models import ObservedCadence
-from .mock import create_mock_plasticc_light_curve
+from ..mock import create_mock_plasticc_light_curve
 
 
 class SncosmoFormatting(TestCase):
