@@ -10,12 +10,12 @@ from sncosmo.tests import test_models as sncosmo_test_models
 from snat_sim import models
 from tests.mock import create_constant_pwv_model
 
+no_emcee_package = False
+
 try:
     import emcee
 
-    no_emcee_package = False
-
-except:
+except ImportError:
     no_emcee_package = True
 
 
@@ -119,7 +119,8 @@ class PropagationSupport(TestCase):
         model.add_effect(effect=sncosmo.CCM89Dust(), frame='free', name=effect_name)
         self.assertIn(effect_name + 'z', model.param_names)
 
-    def test_variable_propagation_support(self):
+    @staticmethod
+    def test_variable_propagation_support():
         """Test a time variable effect can be added and called without error"""
 
         effect = models.VariablePWVTrans(create_constant_pwv_model())
