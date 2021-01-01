@@ -40,6 +40,6 @@ class ResultObjectValues(TestCase):
         self.assertEqual(self.fitted_result.errors, self.pipeline_result.fit_err)
         self.assertEqual(self.fitted_result.chisq, self.pipeline_result.chisq)
         self.assertEqual(self.fitted_result.ndof, self.pipeline_result.ndof)
-        self.assertEqual(self.fitted_model.mB(), self.pipeline_result.mb)
-        self.assertEqual(self.fitted_model.MB(), self.pipeline_result.abs_mag)
+        self.assertEqual(self.fitted_model.apparent_bmag(), self.pipeline_result.mb)
+        self.assertEqual(self.fitted_model.absolute_bmag(), self.pipeline_result.abs_mag)
         self.assertEqual('FitLightCurves: ' + self.fitted_result.message, self.pipeline_result.message)
