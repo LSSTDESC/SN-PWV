@@ -39,7 +39,7 @@ class BackwardsCompatibility(TestCase):
 
     @staticmethod
     def test_sed_matches_sncosmo_model():
-        """Test the SED returned by the ``modeling.SNModel`` class matches the ``sncosmo.SNModel`` class"""
+        """Test the SED returned by the ``modeling.SNModel`` class matches the ``sncosmo.Model`` class"""
 
         wave = np.arange(3000, 12000)
         sncosmo_model = sncosmo.Model('salt2-extended')
