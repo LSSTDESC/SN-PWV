@@ -770,11 +770,15 @@
         <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">light_curve</span></div>
 
-    <span class="k">def</span> <span class="nf">mB</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;t0&#39;</span><span class="p">])</span>
+<div class="viewcode-block" id="SNModel.apparent_bmag"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SNModel.apparent_bmag">[docs]</a>    <span class="k">def</span> <span class="nf">apparent_bmag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Apparent b band magnitude at ``t0``&quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">MB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_peakabsmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">cosmo</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">time</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;t0&#39;</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="SNModel.absolute_bmag"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SNModel.absolute_bmag">[docs]</a>    <span class="k">def</span> <span class="nf">absolute_bmag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Absolute b band magnitude&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">source_peakabsmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">cosmo</span><span class="p">)</span></div></div>
 
 
 <span class="c1">###############################################################################</span>
@@ -855,7 +859,76 @@
         <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">transmission</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span></div></div>
 
 
-<div class="viewcode-block" id="VariablePWVTrans"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePWVTrans">[docs]</a><span class="k">class</span> <span class="nc">VariablePWVTrans</span><span class="p">(</span><span class="n">VariablePropagationEffect</span><span class="p">,</span> <span class="n">StaticPWVTrans</span><span class="p">):</span>
+<div class="viewcode-block" id="AbstractVariablePWVEffect"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.AbstractVariablePWVEffect">[docs]</a><span class="k">class</span> <span class="nc">AbstractVariablePWVEffect</span><span class="p">(</span><span class="n">VariablePropagationEffect</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AbstractVariablePWVEffect.__init__"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.AbstractVariablePWVEffect.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transmission_res</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Time independent atmospheric transmission due to PWV</span>
+
+<span class="sd">        Setting the ``transmission_res`` argument to ``None`` results in the</span>
+<span class="sd">        highest available transmission model available.</span>
+
+<span class="sd">        Effect Parameters:</span>
+<span class="sd">            pwv: Atmospheric concentration of PWV along line of sight in mm</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_res</span> <span class="o">=</span> <span class="n">transmission_res</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_names_latex</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;PWV&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_model</span> <span class="o">=</span> <span class="n">FixedResTransmission</span><span class="p">(</span><span class="n">transmission_res</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AbstractVariablePWVEffect.assumed_pwv"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.AbstractVariablePWVEffect.assumed_pwv">[docs]</a>    <span class="nd">@abc</span><span class="o">.</span><span class="n">abstractmethod</span>
+    <span class="k">def</span> <span class="nf">assumed_pwv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">FloatOrArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatOrArray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The PWV concentration used by the propagation effect at a given time</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            time): Time to get the PWV concentration for</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An array of PWV values in units of mm</span>
+<span class="sd">        &quot;&quot;&quot;</span></div>
+
+    <span class="k">def</span> <span class="nf">_apply_propagation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">transmission</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Apply an atmospheric transmission to flux values</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            flux: Array of flux values</span>
+<span class="sd">            transmission: Array of sampled transmission values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transmission</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>  <span class="c1"># PWV is a vector and transmission is a DataFrame</span>
+            <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">transmission</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Assume PWV is scalar and transmission is Series-like</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">transmission</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">transmission</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Could not identify how to match dimensions of atm. model to source flux.&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AbstractVariablePWVEffect.propagate"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.AbstractVariablePWVEffect.propagate">[docs]</a>    <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wave</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Propagate the flux through the atmosphere</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            wave: An array of wavelength values</span>
+<span class="sd">            flux: An array of flux values</span>
+<span class="sd">            time: Array of time values to determine PWV for</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An array of flux values after suffering from PWV absorption</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
+        <span class="n">transmission</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_model</span><span class="o">.</span><span class="n">calc_transmission</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_propagation</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">transmission</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="VariablePWVTrans"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePWVTrans">[docs]</a><span class="k">class</span> <span class="nc">VariablePWVTrans</span><span class="p">(</span><span class="n">AbstractVariablePWVEffect</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Propagation effect for the atmospheric absorption of light due to time variable PWV&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VariablePWVTrans.__init__"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePWVTrans.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv_model</span><span class="p">:</span> <span class="n">PWVModel</span><span class="p">,</span> <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span><span class="p">,</span> <span class="n">transmission_res</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -895,26 +968,6 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_latitude</span><span class="p">,</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_longitude</span><span class="p">,</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">])</span></div>
 
-    <span class="k">def</span> <span class="nf">_apply_propagation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">transmission</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Apply an atmospheric transmission to flux values</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            flux: Array of flux values</span>
-<span class="sd">            transmission: Array of sampled transmission values</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transmission</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>  <span class="c1"># PWV is a vector and transmission is a DataFrame</span>
-            <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">transmission</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span>
-
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Assume PWV is scalar and transmission is Series-like</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">transmission</span>
-
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">transmission</span><span class="p">)</span>
-
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Could not identify how to match dimensions of atm. model to source flux.&#39;</span><span class="p">)</span>
-
 <div class="viewcode-block" id="VariablePWVTrans.assumed_pwv"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePWVTrans.assumed_pwv">[docs]</a>    <span class="k">def</span> <span class="nf">assumed_pwv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">FloatOrArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatOrArray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;The PWV concentration used by the propagation effect at a given time</span>
 
@@ -932,27 +985,46 @@
             <span class="n">lat</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>
             <span class="n">lon</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lon&#39;</span><span class="p">],</span>
             <span class="n">alt</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;alt&#39;</span><span class="p">],</span>
-            <span class="n">time_format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_format</span><span class="p">)</span></div>
+            <span class="n">time_format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_format</span><span class="p">)</span></div></div>
 
-<div class="viewcode-block" id="VariablePWVTrans.propagate"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.VariablePWVTrans.propagate">[docs]</a>    <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wave</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Propagate the flux through the atmosphere</span>
+
+<div class="viewcode-block" id="SeasonalPWVTrans"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SeasonalPWVTrans">[docs]</a><span class="k">class</span> <span class="nc">SeasonalPWVTrans</span><span class="p">(</span><span class="n">AbstractVariablePWVEffect</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Atmospheric propagation effect for a fixed PWV concentration per-season&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SeasonalPWVTrans.__init__"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SeasonalPWVTrans.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span><span class="p">,</span> <span class="n">transmission_res</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Time variable atmospheric transmission due to PWV that changes per season</span>
+
+<span class="sd">        Effect Parameters:</span>
+<span class="sd">            ra: Target Right Ascension in degrees</span>
+<span class="sd">            dec: Target Declination in degrees</span>
+<span class="sd">            lat: Observer latitude in degrees (defaults to location of VRO)</span>
+<span class="sd">            lon: Observer longitude in degrees (defaults to location of VRO)</span>
+<span class="sd">            alt: Observer altitude in meters  (defaults to height of VRO)</span>
+<span class="sd">            winter:</span>
+
 
 <span class="sd">        Args:</span>
-<span class="sd">            wave: An array of wavelength values</span>
-<span class="sd">            flux: An array of flux values</span>
-<span class="sd">            time: Array of time values to determine PWV for</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            An array of flux values after suffering from PWV absorption</span>
+<span class="sd">            time_format: Astropy recognized time format used by the ``pwv_interpolator``</span>
+<span class="sd">            transmission_res: Reduce the underlying transmission model by binning to the given resolution</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
-        <span class="n">transmission</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_model</span><span class="o">.</span><span class="n">calc_transmission</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_propagation</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">transmission</span><span class="p">)</span></div></div>
+        <span class="c1"># Create atmospheric transmission model</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">transmission_res</span><span class="o">=</span><span class="n">transmission_res</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_format</span> <span class="o">=</span> <span class="n">time_format</span>
 
+        <span class="c1"># Define wavelength range of propagation effect</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_minwave</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_model</span><span class="o">.</span><span class="n">samp_wave</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_maxwave</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_model</span><span class="o">.</span><span class="n">samp_wave</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
-<div class="viewcode-block" id="SeasonalPWVTrans"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SeasonalPWVTrans">[docs]</a><span class="k">class</span> <span class="nc">SeasonalPWVTrans</span><span class="p">(</span><span class="n">VariablePWVTrans</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Atmospheric propagation effect for a fixed PWV concentration per-season&quot;&quot;&quot;</span>
+        <span class="c1"># Define and store default modeling parameters</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_param_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;winter&#39;</span><span class="p">,</span> <span class="s1">&#39;spring&#39;</span><span class="p">,</span> <span class="s1">&#39;summer&#39;</span><span class="p">,</span> <span class="s1">&#39;fall&#39;</span><span class="p">,</span> <span class="s1">&#39;ra&#39;</span><span class="p">,</span> <span class="s1">&#39;dec&#39;</span><span class="p">,</span> <span class="s1">&#39;lat&#39;</span><span class="p">,</span> <span class="s1">&#39;lon&#39;</span><span class="p">,</span> <span class="s1">&#39;alt&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">param_names_latex</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s1">&#39;Winter PWV&#39;</span><span class="p">,</span> <span class="s1">&#39;Spring PWV&#39;</span><span class="p">,</span> <span class="s1">&#39;Summer PWV&#39;</span><span class="p">,</span> <span class="s1">&#39;Fall PWV&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Target RA&#39;</span><span class="p">,</span> <span class="s1">&#39;Target Dec&#39;</span><span class="p">,</span>
+            <span class="s1">&#39;Observer Latitude (deg)&#39;</span><span class="p">,</span> <span class="s1">&#39;Observer Longitude (deg)&#39;</span><span class="p">,</span> <span class="s1">&#39;Observer Altitude (m)&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_latitude</span><span class="p">,</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_longitude</span><span class="p">,</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="SeasonalPWVTrans.assumed_pwv"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SeasonalPWVTrans.assumed_pwv">[docs]</a>    <span class="k">def</span> <span class="nf">assumed_pwv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">FloatOrArray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">FloatOrArray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;The PWV concentration used by the propagation effect at a given time</span>
@@ -966,27 +1038,16 @@
 
         <span class="c1"># Convert time values to their corresponding season</span>
         <span class="n">datetime_objects</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="nb">format</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_format</span><span class="p">)</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">()</span>
-        <span class="n">seasons</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_season</span><span class="p">(</span><span class="n">datetime_objects</span><span class="p">)</span>
+        <span class="n">seasons</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_season</span><span class="p">(</span><span class="n">datetime_objects</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="p">[</span><span class="n">season</span><span class="p">]</span> <span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">seasons</span><span class="p">])</span></div>
 
-        <span class="c1"># Get the average PWV for each season</span>
-        <span class="n">avg_pwv_per_season</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_model</span><span class="o">.</span><span class="n">seasonal_averages</span><span class="p">()</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">avg_pwv_per_season</span><span class="p">[</span><span class="n">season</span><span class="p">]</span> <span class="k">for</span> <span class="n">season</span> <span class="ow">in</span> <span class="n">seasons</span><span class="p">])</span></div>
+<div class="viewcode-block" id="SeasonalPWVTrans.from_pwv_model"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SeasonalPWVTrans.from_pwv_model">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_pwv_model</span><span class="p">(</span><span class="n">pwv_model</span><span class="p">:</span> <span class="n">PWVModel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a new instance using the averaged per-season PWV from a PWV model&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SeasonalPWVTrans.propagate"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SeasonalPWVTrans.propagate">[docs]</a>    <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wave</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Propagate the flux through the atmosphere</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            wave: An array of wavelength values</span>
-<span class="sd">            flux: An array of flux values</span>
-<span class="sd">            time: Array of time values to determine PWV for</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            An array of flux values after suffering from PWV absorption</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">time</span><span class="p">)</span>
-        <span class="n">transmission</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_model</span><span class="o">.</span><span class="n">calc_transmission</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_apply_propagation</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">transmission</span><span class="p">)</span></div></div>
+        <span class="n">trans</span> <span class="o">=</span> <span class="n">SeasonalPWVTrans</span><span class="p">()</span>
+        <span class="n">trans</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">pwv_model</span><span class="o">.</span><span class="n">seasonal_averages</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">trans</span></div></div>
 </pre></div>
 
           </div>

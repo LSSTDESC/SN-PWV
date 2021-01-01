@@ -381,7 +381,7 @@ div.rendered_html tbody tr:hover {
 <h1>PWV effects on SN Magnitude<a class="headerlink" href="#PWV-effects-on-SN-Magnitude" title="Permalink to this headline">¶</a></h1>
 <p>This notebook demonstrates the effects of PWV absorption on the apparent magnitude of SNe.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -420,10 +420,8 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_source</span> <span class="o">=</span> <span class="s1">&#39;salt2-extended&#39;</span>
-<span class="n">model_without_pwv</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">_source</span><span class="p">)</span>
-
-<span class="n">model_with_pwv</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">(</span><span class="n">_source</span><span class="p">)</span>
+<span></span><span class="n">model_without_pwv</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
+<span class="n">model_with_pwv</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
 <span class="n">model_with_pwv</span><span class="o">.</span><span class="n">add_effect</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">StaticPWVTrans</span><span class="p">(),</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">)</span>
 
 <span class="n">pwv_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
@@ -475,7 +473,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 687.04it/s]
+Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 800.51it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -543,7 +541,7 @@ Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 713.66it/s]
+Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 836.46it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -596,7 +594,7 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;snat_sim.models.ObservedCadence object at 0x7fbe4b3de340&gt;
+&lt;snat_sim.models.ObservedCadence object at 0x7f41d8e9ba00&gt;
   time        band        gain  skynoise    zp   zpsys
 ------- --------------- ------- -------- ------- ------
   -20.0 lsst_hardware_g     1.0      0.0    25.0     AB
@@ -623,7 +621,7 @@ curves should be different in each band.</p>
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -654,66 +652,64 @@ curves should be different in each band.</p>
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Iterator over simulated light-curves</span>
+<span></span><span class="c1"># Fit light curves</span>
+<span class="n">vparams</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 <span class="n">light_curves</span> <span class="o">=</span> <span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 
-<span class="c1"># Fit light curves</span>
-<span class="n">vparams</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 <span class="n">fitted_mag</span><span class="p">,</span> <span class="n">fitted_params</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">fit_mag</span><span class="p">(</span>
-        <span class="n">model_without_pwv</span><span class="p">,</span> <span class="n">light_curves</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
-
-<span class="c1"># Get fiducial mag</span>
-<span class="n">fitted_fiducial_mag</span><span class="p">,</span> <span class="n">fitted_fiducial_params</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">fit_fiducial_mag</span><span class="p">(</span>
-        <span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">model_without_pwv</span><span class="p">,</span> <span class="n">cadence</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">reference_pwv_config</span><span class="p">)</span>
+    <span class="n">model_without_pwv</span><span class="p">,</span>
+    <span class="n">light_curves</span><span class="p">,</span>
+    <span class="n">vparams</span><span class="p">,</span>
+    <span class="n">bands</span><span class="p">,</span>
+    <span class="n">pwv_vals</span><span class="p">,</span>
+    <span class="n">z_vals</span><span class="p">)</span>
 
 </pre></div>
 </div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
-<div class="output_area docutils container">
+<div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-<span class="ansi-red-fg">---------------------------------------------------------------------------</span>
-<span class="ansi-red-fg">NameError</span>                                 Traceback (most recent call last)
-<span class="ansi-green-fg">&lt;ipython-input-28-58391f67b049&gt;</span> in <span class="ansi-cyan-fg">&lt;module&gt;</span>
-<span class="ansi-green-intense-fg ansi-bold">      4</span> <span class="ansi-red-fg"># Fit light curves</span>
-<span class="ansi-green-intense-fg ansi-bold">      5</span> vparams <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">&#39;x0&#39;</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#39;x1&#39;</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#39;c&#39;</span><span class="ansi-blue-fg">]</span>
-<span class="ansi-green-fg">----&gt; 6</span><span class="ansi-red-fg"> fitted_mag, fitted_params = sn_magnitudes.fit_mag(
-</span><span class="ansi-green-intense-fg ansi-bold">      7</span>         model_without_pwv, light_curves, vparams, bands, pwv_vals, z_vals)
-<span class="ansi-green-intense-fg ansi-bold">      8</span>
+Light-Curves: 100%|██████████| 231/231 [01:33&lt;00:00,  2.46it/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="c1"># Fit light curves at reference PWV vals</span>
+<span class="n">reference_pwv_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;slope_start&#39;</span><span class="p">],</span> <span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;reference_pwv&#39;</span><span class="p">],</span> <span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;slope_end&#39;</span><span class="p">]]</span>
+<span class="n">reference_light_curves</span> <span class="o">=</span> <span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">reference_pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 
-<span class="ansi-green-fg">~/Github/SN-PWV/snat_sim/sn_magnitudes.py</span> in <span class="ansi-cyan-fg">fit_mag</span><span class="ansi-blue-fg">(model, light_curves, vparams, bands, pwv_arr, z_arr, **kwargs)</span>
-<span class="ansi-green-intense-fg ansi-bold">    213</span>     fitted_mag <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">{</span>b<span class="ansi-blue-fg">:</span> <span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">]</span> <span class="ansi-green-fg">for</span> b <span class="ansi-green-fg">in</span> bands<span class="ansi-blue-fg">}</span>
-<span class="ansi-green-intense-fg ansi-bold">    214</span>     fitted_params <span class="ansi-blue-fg">=</span> <span class="ansi-blue-fg">{</span>b<span class="ansi-blue-fg">:</span> <span class="ansi-blue-fg">[</span><span class="ansi-blue-fg">]</span> <span class="ansi-green-fg">for</span> b <span class="ansi-green-fg">in</span> bands<span class="ansi-blue-fg">}</span>
-<span class="ansi-green-fg">--&gt; 215</span><span class="ansi-red-fg">     </span><span class="ansi-green-fg">for</span> lc <span class="ansi-green-fg">in</span> light_curves<span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">    216</span>         <span class="ansi-red-fg"># Use the true light-curve parameters as the initial guess</span>
-<span class="ansi-green-intense-fg ansi-bold">    217</span>         lc_parameters <span class="ansi-blue-fg">=</span> deepcopy<span class="ansi-blue-fg">(</span>lc<span class="ansi-blue-fg">.</span>meta<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-green-fg">&lt;ipython-input-27-c4df4de7ee74&gt;</span> in <span class="ansi-cyan-fg">iter_lcs_fixed_snr</span><span class="ansi-blue-fg">(cadence, model, pwv_arr, z_arr, snr, verbose)</span>
-<span class="ansi-green-intense-fg ansi-bold">     19</span>     <span class="ansi-green-fg">for</span> pwv<span class="ansi-blue-fg">,</span> z <span class="ansi-green-fg">in</span> tqdm<span class="ansi-blue-fg">(</span>arg_iter<span class="ansi-blue-fg">,</span> total<span class="ansi-blue-fg">=</span>iter_total<span class="ansi-blue-fg">,</span> desc<span class="ansi-blue-fg">=</span><span class="ansi-blue-fg">&#39;Light-Curves&#39;</span><span class="ansi-blue-fg">,</span> disable<span class="ansi-blue-fg">=</span><span class="ansi-green-fg">not</span> verbose<span class="ansi-blue-fg">)</span><span class="ansi-blue-fg">:</span>
-<span class="ansi-green-intense-fg ansi-bold">     20</span>         model<span class="ansi-blue-fg">.</span>set<span class="ansi-blue-fg">(</span>t0<span class="ansi-blue-fg">=</span><span class="ansi-cyan-fg">0.0</span><span class="ansi-blue-fg">,</span> pwv<span class="ansi-blue-fg">=</span>pwv<span class="ansi-blue-fg">,</span> z<span class="ansi-blue-fg">=</span>z<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-fg">---&gt; 21</span><span class="ansi-red-fg">         </span>model<span class="ansi-blue-fg">.</span>set_source_peakabsmag<span class="ansi-blue-fg">(</span>const<span class="ansi-blue-fg">.</span>betoule_abs_mb<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#39;standard::b&#39;</span><span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">&#39;AB&#39;</span><span class="ansi-blue-fg">,</span> cosmo<span class="ansi-blue-fg">=</span>const<span class="ansi-blue-fg">.</span>betoule_cosmo<span class="ansi-blue-fg">)</span>
-<span class="ansi-green-intense-fg ansi-bold">     22</span>         <span class="ansi-green-fg">yield</span> simulate_lc_fixed_snr<span class="ansi-blue-fg">(</span>obs<span class="ansi-blue-fg">,</span> model<span class="ansi-blue-fg">,</span> snr<span class="ansi-blue-fg">,</span> <span class="ansi-blue-fg">**</span>params<span class="ansi-blue-fg">)</span>
-
-<span class="ansi-red-fg">NameError</span>: name &#39;const&#39; is not defined
+<span class="c1"># Get fiducial mag</span>
+<span class="n">fitted_fiducial_mag</span><span class="p">,</span> <span class="n">fitted_fiducial_params</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">fit_mag</span><span class="p">(</span>
+    <span class="n">model_without_pwv</span><span class="p">,</span>
+    <span class="n">reference_light_curves</span><span class="p">,</span>
+    <span class="n">vparams</span><span class="p">,</span>
+    <span class="n">bands</span><span class="p">,</span>
+    <span class="n">reference_pwv_vals</span><span class="p">,</span>
+    <span class="n">z_vals</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Light-Curves: 100%|██████████| 63/63 [00:27&lt;00:00,  2.31it/s]
 </pre></div></div>
 </div>
 <p>Here we visualize the fitted, uncorrected (i.e. without any stretch / color correction) magnitudes.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -724,12 +720,19 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_22_0.png" src="../_images/notebooks_sne_delta_mag_22_0.png" />
+</div>
+</div>
 <hr class="docutils" />
 <p><strong>Sanity Check:</strong> The fitted light-curves are constructed to have a dense, uniform sampling. As a result, the fitted magnitude should look extremely similar to the tabulated magnitudes from earlier.</p>
 <hr class="docutils" />
 <p>We expect to see minimal differences between the tabulated, and fitted magnitudes in each band. However, we do expect to variation in the fitted stretch and color.</p>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -740,9 +743,16 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_25_0.png" src="../_images/notebooks_sne_delta_mag_25_0.png" />
+</div>
+</div>
 <p>We look at the impact of PWV on the fitted magnitude.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -752,8 +762,8 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -770,9 +780,16 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_28_0.png" src="../_images/notebooks_sne_delta_mag_28_0.png" />
+</div>
+</div>
 <p>Next we add in the alpha and beta parameters from the fit.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -791,7 +808,7 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -801,8 +818,8 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -819,6 +836,13 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_32_0.png" src="../_images/notebooks_sne_delta_mag_32_0.png" />
+</div>
+</div>
 <hr class="docutils" />
 <p><strong>Sanity Check:</strong> Unlike some of the previous plots we have made, we expect the overall shape of the the <span class="math notranslate nohighlight">\(\Delta m\)</span> vs <span class="math notranslate nohighlight">\(z\)</span> curves to be similar across bands. Since we are considering fitted magnitudes in the above plot, the presence of PWV impacts the fitted model parameters, and then the model enforces cross-band uniformity when we evaluate the synthetic photometry.</p>
 <hr class="docutils" />
@@ -827,22 +851,34 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 <h2>Relative to a Reference Star<a class="headerlink" href="#Relative-to-a-Reference-Star" title="Permalink to this headline">¶</a></h2>
 <p>In practice flux values are calibrated relative to a reference star. To understand how PWV effects SNe fluxes during this process, we normalize the reference star flux to it’s respective fluxes through PWV=0 and take the difference (SNe flux / normalized reference star flux).</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">iter_light_curve_iter_with_ref</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">)):</span>
+<span></span><span class="k">def</span> <span class="nf">iter_light_curve_iter_with_ref</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">),</span> <span class="n">snr</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Iterator over SN light-curves calibrated to a set of reference stars</span>
 
-    <span class="n">observations</span> <span class="o">=</span> <span class="n">lc_simulation</span><span class="o">.</span><span class="n">create_observations_table</span><span class="p">(</span><span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">)</span>
-    <span class="n">light_curves</span> <span class="o">=</span> <span class="n">lc_simulation</span><span class="o">.</span><span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">observations</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">light_curves</span><span class="p">:</span>
+<span class="sd">    Args:</span>
+<span class="sd">        model            (SNModel): The sncosmo model to use in the simulations</span>
+<span class="sd">        pwv_arr         (np.array): Array of PWV values</span>
+<span class="sd">        z_arr           (np.array): Array of redshift values</span>
+<span class="sd">        spectral_types (list[str]): Spectral types to use in the calibration</span>
+<span class="sd">        snr           (float, int): Signal to noise ratio</span>
+<span class="sd">        verbose             (bool): Show a progress bar</span>
+
+<span class="sd">    Yields:</span>
+<span class="sd">        An Astropy table for each PWV and redshift</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">observations</span> <span class="o">=</span> <span class="n">create_cadence</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="n">snr</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">):</span>
         <span class="n">pwv</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span>
         <span class="k">yield</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">divide_ref_from_lc</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="n">spectral_types</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -854,8 +890,16 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+Light-Curves: 100%|██████████| 231/231 [01:43&lt;00:00,  2.23it/s]
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -865,8 +909,15 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_38_0.png" src="../_images/notebooks_sne_delta_mag_38_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -876,8 +927,15 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_39_0.png" src="../_images/notebooks_sne_delta_mag_39_0.png" />
+</div>
+</div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -890,8 +948,8 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -901,8 +959,15 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_41_0.png" src="../_images/notebooks_sne_delta_mag_41_0.png" />
+</div>
+</div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -922,8 +987,8 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -943,6 +1008,13 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_43_0.png" src="../_images/notebooks_sne_delta_mag_43_0.png" />
+</div>
+</div>
 </div>
 <div class="section" id="Impact-on-Distance-Modulus">
 <h2>Impact on Distance Modulus<a class="headerlink" href="#Impact-on-Distance-Modulus" title="Permalink to this headline">¶</a></h2>
@@ -950,7 +1022,7 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 <div class="section" id="Results-without-using-a-reference-star">
 <h3>Results without using a reference star<a class="headerlink" href="#Results-without-using-a-reference-star" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -964,21 +1036,28 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Account for (what I think is) a numerical error between astropy and sncosmo</span>
-<span class="n">numerical_error_offset</span> <span class="o">=</span> <span class="n">fitted_mu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">constants</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">z_vals</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+<span class="n">numerical_error_offset</span> <span class="o">=</span> <span class="n">fitted_mu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">z_vals</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
 
 <span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_mu</span><span class="p">(</span><span class="n">fitted_mu</span> <span class="o">-</span> <span class="n">numerical_error_offset</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_47_0.png" src="../_images/notebooks_sne_delta_mag_47_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -988,11 +1067,18 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_48_0.png" src="../_images/notebooks_sne_delta_mag_48_0.png" />
+</div>
+</div>
 </div>
 <div class="section" id="Results-with-a-reference-star">
 <h3>Results with a reference star<a class="headerlink" href="#Results-with-a-reference-star" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1005,19 +1091,26 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">numerical_error_offset_ref</span> <span class="o">=</span> <span class="n">fitted_mu_with_ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">constants</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">z_vals</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+<span></span><span class="n">numerical_error_offset_ref</span> <span class="o">=</span> <span class="n">fitted_mu_with_ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">z_vals</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
 <span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_mu</span><span class="p">(</span><span class="n">fitted_mu_with_ref</span> <span class="o">-</span> <span class="n">numerical_error_offset_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_51_0.png" src="../_images/notebooks_sne_delta_mag_51_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1027,12 +1120,19 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_52_0.png" src="../_images/notebooks_sne_delta_mag_52_0.png" />
+</div>
+</div>
 </div>
 </div>
 <div class="section" id="Change-in-Color">
 <h2>Change in Color<a class="headerlink" href="#Change-in-Color" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1040,8 +1140,8 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1051,8 +1151,15 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_55_0.png" src="../_images/notebooks_sne_delta_mag_55_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1062,8 +1169,15 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_56_0.png" src="../_images/notebooks_sne_delta_mag_56_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -1071,6 +1185,13 @@ Light-Curves:   0%|          | 0/231 [00:00&lt;?, ?it/s]
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;delta_fitted_color_with_ref.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 
 </pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_sne_delta_mag_57_0.png" src="../_images/notebooks_sne_delta_mag_57_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">

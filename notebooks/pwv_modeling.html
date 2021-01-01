@@ -730,8 +730,11 @@ Fall Average:   4.97 +\-  2.25 mm
 <span class="n">static_prop</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">StaticPWVTrans</span><span class="p">()</span>
 <span class="n">static_prop</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">4</span>
 
-<span class="c1"># Seasonal and variable effects pull PWV values from an underlying model</span>
-<span class="n">seasonal_prop</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SeasonalPWVTrans</span><span class="p">(</span><span class="n">auto_built_model</span><span class="p">)</span>
+<span class="c1"># Seasonal effects also have user definable pwv parameters (one per season)</span>
+<span class="c1"># or you can determine the seasonal averages from a PWV model</span>
+<span class="n">seasonal_prop</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SeasonalPWVTrans</span><span class="o">.</span><span class="n">from_pwv_model</span><span class="p">(</span><span class="n">auto_built_model</span><span class="p">)</span>
+
+<span class="c1"># Variable effects pull PWV values from an underlying model</span>
 <span class="n">variable_prop</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">VariablePWVTrans</span><span class="p">(</span><span class="n">auto_built_model</span><span class="p">)</span>
 
 </pre></div>
