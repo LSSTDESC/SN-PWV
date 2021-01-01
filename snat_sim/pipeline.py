@@ -323,8 +323,8 @@ class FitLightCurves(Node):
                         fit_err=fitted_result.errors,
                         chisq=fitted_result.chisq,
                         ndof=fitted_result.ndof,
-                        mb=fitted_model.mB(),
-                        abs_mag=fitted_model.MB(),
+                        mb=fitted_model.apparent_bmag(),
+                        abs_mag=fitted_model.absolute_bmag(),
                         message=f'{self.__class__.__name__}: {fitted_result.message}'
                     )
                 )
