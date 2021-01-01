@@ -12,7 +12,7 @@ from typing import Tuple, Dict, Union
 from pwv_kpno.gps_pwv import GPSReceiver
 
 sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
-from snat_sim import models
+from snat_sim import models, reference_stars
 from snat_sim.pipeline import FittingPipeline
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
@@ -76,11 +76,7 @@ class AdvancedNamespace(argparse.Namespace):
 
     @property
     def fitting_bounds(self) -> Dict[str, Tuple]:
-        """Parameter boundaries to enforce when fitting light-curves
-
-        Returns:
-            A dictionary {<Param Name>: [<Lower Bound>, <Upper Bound>]}
-        """
+        """Parameter boundaries to enforce when fitting light-curves"""
 
         fitting_bounds = dict()
         for param in SALT2_PARAMS:
@@ -91,11 +87,7 @@ class AdvancedNamespace(argparse.Namespace):
 
     @property
     def simulation_model(self) -> models.SNModel:
-        """Return the Supernova model used for fitting light-curves
-
-        Returns:
-            An SNModel object with atmospheric propagation effects
-        """
+        """Return the Supernova model used for fitting light-curves"""
 
         propagation_effect = self._create_pwv_effect(self.sim_variability)
 
@@ -108,11 +100,7 @@ class AdvancedNamespace(argparse.Namespace):
 
     @property
     def fitting_model(self) -> models.SNModel:
-        """Return the Supernova model used for simulating light-curves
-
-        Returns:
-            An SNModel object with atmospheric propagation effects
-        """
+        """Return the Supernova model used for simulating light-curves"""
 
         propagation_effect = self._create_pwv_effect(self.fit_variability)
 
@@ -122,6 +110,12 @@ class AdvancedNamespace(argparse.Namespace):
             effects=[propagation_effect],
             effect_names=[''],
             effect_frames=['obs'])
+
+    @property
+    def catalog(self) -> reference_stars.VariableCatalog:
+        """The reference star catalog to calibrate simulations with."""
+
+        return reference_stars.VariableCatalog(*self.ref_stars, pwv_model=self.pwv_model)
 
 
 def run_pipeline(command_line_args: AdvancedNamespace) -> None:
@@ -142,8 +136,7 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         fitting_pool=command_line_args.fit_pool_size,
         bounds=command_line_args.fitting_bounds,
         iter_lim=command_line_args.iter_lim,
-        ref_stars=command_line_args.ref_stars,
-        pwv_model=command_line_args.pwv_model
+        catalog=command_line_args.catalog
     )
 
     pipeline.run()

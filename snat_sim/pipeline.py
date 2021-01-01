@@ -45,8 +45,9 @@ from egon.connectors import Output, Input
 from egon.nodes import Source, Node, Target
 from egon.pipeline import Pipeline
 
-from . import plasticc, reference_stars, constants as const
-from .models import SNModel, PWVModel, ObservedCadence
+from . import plasticc, constants as const
+from .models import SNModel, ObservedCadence
+from .reference_stars import VariableCatalog
 
 warnings.simplefilter('ignore', category=DeprecationWarning)
 
@@ -172,8 +173,7 @@ class SimulateLightCurves(Node):
     def __init__(
             self,
             sn_model: SNModel,
-            ref_stars: Collection[str] = None,
-            pwv_model: PWVModel = None,
+            catalog: VariableCatalog = None,
             num_processes: int = 1,
             abs_mb: float = const.betoule_abs_mb,
             cosmo=const.betoule_cosmo
@@ -182,16 +182,14 @@ class SimulateLightCurves(Node):
 
         Args:
             sn_model: Model to use when simulating light-curves
-            ref_stars: List of reference star types to calibrate simulated supernova with
-            pwv_model: Model for the PWV concentration the reference stars are observed at
+            catalog: Optional reference start catalog to calibrate simulated flux values to
             num_processes: Number of processes to allocate to the node
             abs_mb: The absolute B-band magnitude of the simulated SNe
             cosmo: Cosmology to assume in the simulation
         """
 
         self.sim_model = sn_model
-        self.ref_stars = ref_stars
-        self.pwv_model = pwv_model
+        self.catalog = catalog
         self.abs_mb = abs_mb
         self.cosmo = cosmo
 
@@ -223,14 +221,9 @@ class SimulateLightCurves(Node):
         duplicated.meta['x0'] = model_for_sim['x0']
 
         # Rescale the light-curve using the reference star catalog if provided
-        if self.ref_stars is not None:
-            pwv_los = self.pwv_model.pwv_los(
-                duplicated['time'],
-                ra=plasticc_lc.meta['RA'],
-                dec=plasticc_lc.meta['DECL'],
-                time_format='mjd')
-
-            duplicated = reference_stars.divide_ref_from_lc(duplicated, pwv_los, self.ref_stars)
+        if self.catalog is not None:
+            duplicated = self.catalog.divide_ref_from_lc(
+                duplicated, duplicated['time'], ra=plasticc_lc.meta['RA'], dec=plasticc_lc.meta['DECL'])
 
         return duplicated
 
@@ -387,8 +380,7 @@ class FittingPipeline(Pipeline):
             bounds: Dict[str, Tuple[Number, Number]] = None,
             max_queue: int = 100,
             iter_lim: int = float('inf'),
-            ref_stars: Collection[str] = None,
-            pwv_model: PWVModel = None
+            catalog: VariableCatalog = None
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -403,19 +395,14 @@ class FittingPipeline(Pipeline):
             simulation_pool: Number of child processes allocated to fitting light-curves
             max_queue: Maximum number of light-curves to store in pipeline at once
             iter_lim: Limit number of processed light-curves (Useful for profiling)
-            ref_stars: List of reference star types to calibrate simulated supernova with
-            pwv_model: Model for the PWV concentration the reference stars are observed at
+            catalog: Reference star catalog to calibrate simulated supernova with
         """
-
-        if ref_stars and (pwv_model is None):
-            raise ValueError('Cannot perform reference star subtraction without ``pwv_model`` argument')
 
         # Define the nodes of the analysis pipeline
         self.load_plastic = LoadPlasticcSims(cadence=cadence, iter_lim=iter_lim)
         self.simulate_light_curves = SimulateLightCurves(
             sn_model=sim_model,
-            ref_stars=ref_stars,
-            pwv_model=pwv_model,
+            catalog=catalog,
             num_processes=simulation_pool)
 
         self.fit_light_curves = FitLightCurves(

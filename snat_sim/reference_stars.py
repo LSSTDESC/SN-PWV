@@ -233,15 +233,15 @@ class ReferenceCatalog:
 class VariableCatalog:
     """A reference star catalog that determines the time dependent PWV concentration from an underlying PWV model"""
 
-    def __init__(self, pwv_model: PWVModel, time_format: str, *spectral_types: str) -> None:
+    def __init__(self, *spectral_types: str, pwv_model: PWVModel) -> None:
         """Create a reference star catalog composed of the given spectral types and a PWV model
 
         Args:
             *spectral_types: Spectral types for the catalog (e.g., 'G2', 'M5', 'K2')
+            pwv_model: The PWV model to determine the zenith PWV concentration from
         """
 
         self.catalog = ReferenceCatalog(*spectral_types)
-        self.time_format = time_format
         self.pwv_model = pwv_model
 
     def average_norm_flux(
@@ -252,7 +252,8 @@ class VariableCatalog:
             dec: float,
             lat: float = const.vro_latitude,
             lon: float = const.vro_longitude,
-            alt: float = const.vro_altitude
+            alt: float = const.vro_altitude,
+            time_format: str = 'mjd'
     ) -> np.ndarray:
         """Return the average normalized reference star flux
 
@@ -264,12 +265,13 @@ class VariableCatalog:
             lat: Latitude of the observer (Deg)
             lon: Longitude of the observer (Deg)
             alt: Altitude of the observer (m)
+            time_format: Astropy supported format of the time value (Default: 'mjd')
 
         Returns:
             The normalized flux at the given PWV value(s)
         """
 
-        pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=self.time_format)
+        pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=time_format)
         return self.catalog.average_norm_flux(band, pwv)
 
     def divide_ref_from_lc(
@@ -280,7 +282,8 @@ class VariableCatalog:
             dec: float,
             lat: float = const.vro_latitude,
             lon: float = const.vro_longitude,
-            alt: float = const.vro_altitude
+            alt: float = const.vro_altitude,
+            time_format: str = 'mjd'
     ) -> Table:
         """Divide reference flux from a light-curve
 
@@ -295,10 +298,11 @@ class VariableCatalog:
             lat: Latitude of the observer (Deg)
             lon: Longitude of the observer (Deg)
             alt: Altitude of the observer (m)
+            time_format: Astropy supported format of the time value (Default: 'mjd')
 
         Returns:
             A modified copy of ``lc_table``
         """
 
-        pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=self.time_format)
+        pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=time_format)
         return self.catalog.divide_ref_from_lc(lc_table, pwv)
