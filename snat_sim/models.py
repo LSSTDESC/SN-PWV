@@ -738,7 +738,76 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
         return flux * transmission.values[None, :]
 
 
-class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
+class AbstractVariablePWVEffect(VariablePropagationEffect):
+
+    def __init__(self, transmission_res: float = 5) -> None:
+        """Time independent atmospheric transmission due to PWV
+
+        Setting the ``transmission_res`` argument to ``None`` results in the
+        highest available transmission model available.
+
+        Effect Parameters:
+            pwv: Atmospheric concentration of PWV along line of sight in mm
+
+        Args:
+            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
+        """
+
+        self._transmission_res = transmission_res
+        self._param_names = ['pwv']
+        self.param_names_latex = ['PWV']
+        self._parameters = np.array([0.])
+        self._transmission_model = FixedResTransmission(transmission_res)
+
+    @abc.abstractmethod
+    def assumed_pwv(self, time: FloatOrArray) -> FloatOrArray:
+        """The PWV concentration used by the propagation effect at a given time
+
+        Args:
+            time): Time to get the PWV concentration for
+
+        Returns:
+            An array of PWV values in units of mm
+        """
+
+    def _apply_propagation(self, flux: np.ndarray, transmission: Union[pd.Series, pd.DataFrame]) -> np.ndarray:
+        """Apply an atmospheric transmission to flux values
+
+        Args:
+            flux: Array of flux values
+            transmission: Array of sampled transmission values
+        """
+
+        if isinstance(transmission, pd.DataFrame):  # PWV is a vector and transmission is a DataFrame
+            return flux * transmission.values.T
+
+        else:  # Assume PWV is scalar and transmission is Series-like
+            if np.ndim(flux) == 1:
+                return flux * transmission
+
+            if np.ndim(flux) == 2:
+                return flux * np.atleast_2d(transmission)
+
+        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
+
+    def propagate(self, wave: np.ndarray, flux: np.ndarray, time: Union[float, np.ndarray]) -> np.ndarray:
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave: An array of wavelength values
+            flux: An array of flux values
+            time: Array of time values to determine PWV for
+
+        Returns:
+            An array of flux values after suffering from PWV absorption
+        """
+
+        pwv = self.assumed_pwv(time)
+        transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
+        return self._apply_propagation(flux, transmission)
+
+
+class VariablePWVTrans(AbstractVariablePWVEffect):
     """Propagation effect for the atmospheric absorption of light due to time variable PWV"""
 
     def __init__(self, pwv_model: PWVModel, time_format: str = 'mjd', transmission_res: float = 5.) -> None:
@@ -778,26 +847,6 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
 
         self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
-    def _apply_propagation(self, flux: np.ndarray, transmission: Union[pd.Series, pd.DataFrame]) -> np.ndarray:
-        """Apply an atmospheric transmission to flux values
-
-        Args:
-            flux: Array of flux values
-            transmission: Array of sampled transmission values
-        """
-
-        if isinstance(transmission, pd.DataFrame):  # PWV is a vector and transmission is a DataFrame
-            return flux * transmission.values.T
-
-        else:  # Assume PWV is scalar and transmission is Series-like
-            if np.ndim(flux) == 1:
-                return flux * transmission
-
-            if np.ndim(flux) == 2:
-                return flux * np.atleast_2d(transmission)
-
-        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
-
     def assumed_pwv(self, time: FloatOrArray) -> FloatOrArray:
         """The PWV concentration used by the propagation effect at a given time
 
@@ -817,28 +866,12 @@ class VariablePWVTrans(VariablePropagationEffect, StaticPWVTrans):
             alt=self['alt'],
             time_format=self._time_format)
 
-    def propagate(self, wave: np.ndarray, flux: np.ndarray, time: Union[float, np.ndarray]) -> np.ndarray:
-        """Propagate the flux through the atmosphere
 
-        Args:
-            wave: An array of wavelength values
-            flux: An array of flux values
-            time: Array of time values to determine PWV for
-
-        Returns:
-            An array of flux values after suffering from PWV absorption
-        """
-
-        pwv = self.assumed_pwv(time)
-        transmission = self._transmission_model.calc_transmission(pwv, np.atleast_1d(wave))
-        return self._apply_propagation(flux, transmission)
-
-
-class SeasonalPWVTrans(VariablePWVTrans):
+class SeasonalPWVTrans(AbstractVariablePWVEffect):
     """Atmospheric propagation effect for a fixed PWV concentration per-season"""
 
     def __init__(self, time_format: str = 'mjd', transmission_res: float = 5.) -> None:
-        """
+        """Time variable atmospheric transmission due to PWV that changes per season
 
         Effect Parameters:
             ra: Target Right Ascension in degrees
@@ -855,7 +888,7 @@ class SeasonalPWVTrans(VariablePWVTrans):
         """
 
         # Create atmospheric transmission model
-        super().__init__(time_format=time_format, transmission_res=transmission_res)
+        super().__init__(transmission_res=transmission_res)
         self._time_format = time_format
 
         # Define wavelength range of propagation effect
@@ -884,7 +917,7 @@ class SeasonalPWVTrans(VariablePWVTrans):
 
         # Convert time values to their corresponding season
         datetime_objects = Time(time, format=self._time_format).to_datetime()
-        seasons = tsu.datetime_to_season(datetime_objects)
+        seasons = np.atleast_1d(tsu.datetime_to_season(datetime_objects))
         return np.array([self[season] for season in seasons])
 
     @staticmethod

@@ -9,10 +9,10 @@ from .base import PropagationEffectTests
 
 
 class BaseTests(PropagationEffectTests, TestCase):
-    def setUp(self):
-        self.constant_pwv = 4
-        self.mock_pwv_model = create_constant_pwv_model(self.constant_pwv)
-        self.propagation_effect = models.VariablePWVTrans(self.mock_pwv_model)
+    @classmethod
+    def setUpClass(cls):
+        mock_pwv_model = create_constant_pwv_model(4)
+        cls.propagation_effect = models.VariablePWVTrans(mock_pwv_model)
 
 
 class DefaultParameterValues(TestCase):

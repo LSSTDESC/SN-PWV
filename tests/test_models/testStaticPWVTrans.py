@@ -9,8 +9,10 @@ from .base import PropagationEffectTests
 
 
 class BaseTests(PropagationEffectTests, TestCase):
-    def setUp(self):
-        self.propagation_effect = models.StaticPWVTrans()
+
+    @classmethod
+    def setUpClass(cls):
+        cls.propagation_effect = models.StaticPWVTrans()
 
     def test_propagation_includes_pwv_transmission(self):
         """Test the ``propagate`` applies PWV absorption"""

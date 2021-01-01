@@ -8,12 +8,14 @@ from .base import PropagationEffectTests
 
 
 class BaseTests(PropagationEffectTests, TestCase):
-    def setUp(self):
-        self.propagation_effect = models.SeasonalPWVTrans()
-        self.propagation_effect['winter'] = 3
-        self.propagation_effect['spring'] = 4
-        self.propagation_effect['summer'] = 5
-        self.propagation_effect['fall'] = 6
+
+    @classmethod
+    def setUpClass(cls):
+        cls.propagation_effect = models.SeasonalPWVTrans()
+        cls.propagation_effect['winter'] = 3
+        cls.propagation_effect['spring'] = 4
+        cls.propagation_effect['summer'] = 5
+        cls.propagation_effect['fall'] = 6
 
 
 class DefaultParameterValues(testVariablePWVTrans.DefaultParameterValues):
