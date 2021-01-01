@@ -8,12 +8,22 @@ from astropy.table import Table
 from snat_sim.reference_stars import ReferenceStar, ReferenceCatalog
 
 
+class InitErrors(TestCase):
+    """Test for the raising of appropriate errors at instantiation"""
+
+    def test_value_error_on_missing_args(self) -> None:
+        """Test a descriptive ``ValueError`` is raised for missing arguments"""
+
+        with self.assertRaisesRegex(ValueError, 'Must specify at least one spectral type for the catalog.'):
+            ReferenceCatalog()
+
+
 class AverageNormFlux(TestCase):
     """Tests for the ``average_norm_flux`` function"""
 
     test_band = 'lsst_hardware_z'
 
-    def test_average_matches_ref_stars_for_float(self):
+    def test_average_matches_ref_stars_for_float(self) -> None:
         """Test the return matches the average norm flux at a single PWV for two reference types"""
 
         test_pwv = 5
@@ -22,7 +32,7 @@ class AverageNormFlux(TestCase):
         m5_flux = ReferenceStar('M5').norm_flux(self.test_band, test_pwv)
         self.assertEqual(avg_flux, np.average((g2_flux, m5_flux)))
 
-    def test_average_matches_ref_star_for_array(self):
+    def test_average_matches_ref_star_for_array(self) -> None:
         """Test the return matches the average norm flux at an array of PWV for two reference types"""
 
         test_pwv = [5, 6]
@@ -37,7 +47,7 @@ class AverageNormFlux(TestCase):
 class DivideRefFromLc(TestCase):
     """Tests for the ``divide_ref_from_lc`` function"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Create a dummy table. We don't care that the flux values
         # are non-physical for this set of tests
         self.test_table = Table()
@@ -48,7 +58,7 @@ class DivideRefFromLc(TestCase):
 
         self.catalog = ReferenceCatalog('G2', 'M5')
 
-    def test_no_argument_mutation(self):
+    def test_no_argument_mutation(self) -> None:
         """Test argument table is not mutated"""
 
         original_table = self.test_table.copy()
@@ -69,19 +79,19 @@ class DivideRefFromLc(TestCase):
         returned_flux = list(scaled_table['flux'])
         np.testing.assert_array_equal(expected_flux, returned_flux)
 
-    def test_flux_is_scaled_for_pwv_float(self):
+    def test_flux_is_scaled_for_pwv_float(self) -> None:
         """Test flux values are scaled according to a scalar PWV value"""
 
         self.assert_returned_flux_is_scaled(pwv=15)
 
-    def test_flux_is_scaled_for_pwv_vector(self):
+    def test_flux_is_scaled_for_pwv_vector(self) -> None:
         """Test flux values are scaled according to a vector of PWV values"""
 
         pwv_array = np.full(len(self.test_table), 15)
         self.assert_returned_flux_is_scaled(pwv=pwv_array)
         self.assert_returned_flux_is_scaled(pwv=pwv_array.tolist())
 
-    def test_error_on_mismatched_arg_length(self):
+    def test_error_on_mismatched_arg_length(self) -> None:
         """Test a value error is raised when argument lengths are not the same"""
 
         with self.assertRaises(ValueError):

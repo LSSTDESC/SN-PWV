@@ -130,7 +130,7 @@ class Cache(MemoryCache):
 
             kwargs_for_key = inspect.getcallargs(function, *args, **kwargs)
             for arg_to_cast in self.numpy_args:
-                kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tostring()
+                kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tobytes()
 
             key = tuple(kwargs_for_key.items())
             try:

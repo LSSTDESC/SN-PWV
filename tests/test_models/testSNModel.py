@@ -9,7 +9,7 @@ from sncosmo.tests import test_models as sncosmo_test_models
 
 from snat_sim import models
 from tests.mock import create_constant_pwv_model
-
+import warnings
 no_emcee_package = False
 
 try:
@@ -53,7 +53,11 @@ class BackwardsCompatibility(TestCase):
 
         data = sncosmo.load_example_data()
         model = models.SNModel('salt2')
-        _, fitted_model = sncosmo.fit_lc(data, model, ['x0'])
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings('ignore')
+            _, fitted_model = sncosmo.fit_lc(data, model, ['x0'])
+
         self.assertIsInstance(fitted_model, models.SNModel)
 
     @skipIf(no_emcee_package, 'emcee package is not installed')

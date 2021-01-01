@@ -36,25 +36,13 @@ class ReferenceStar:
             spectral_type: Spectral type (e.g., G2)
         """
 
-        self.spectral_type = spectral_type
-        if spectral_type not in self.get_available_types():
-            raise ValueError(f'Data for spectral type "{spectral_type}" is not available.')
+        self.spectral_type = spectral_type.upper()
+        if self.spectral_type not in self.get_available_types():
+            raise ValueError(f'Data for spectral type "{self.spectral_type}" is not available.')
 
         # Load spectra for different spectral types
-        path = next(data_paths.stellar_spectra_dir.glob(spectral_type + '*.fits'))
+        path = next(data_paths.stellar_spectra_dir.glob(self.spectral_type + '*.fits'))
         self._spectrum = self._read_stellar_spectra_path(path)
-
-    @property
-    def flux(self) -> np.array:
-        """Flux values of the spectrum"""
-
-        return self._spectrum.to_numpy()
-
-    @property
-    def wavelength(self) -> np.array:
-        """Wavelength values of the spectrum"""
-
-        return self._spectrum.index.to_numpy()
 
     def to_pandas(self) -> pd.Series:
         """Return the spectral data as a ``pandas.Series`` object"""
@@ -69,7 +57,7 @@ class ReferenceStar:
             A list fo spectral types
         """
 
-        return sorted(f.stem for f in data_paths.stellar_flux_dir.glob('*.txt'))
+        return sorted(f.stem.upper() for f in data_paths.stellar_flux_dir.glob('*.txt'))
 
     @staticmethod
     def _read_stellar_spectra_path(fpath: Union[str, Path]) -> pd.Series:
@@ -112,7 +100,7 @@ class ReferenceStar:
         return pd.Series(spec[indices], index=lam[indices])
 
     @lru_cache()  # Cache I/O
-    def get_ref_star_dataframe(self) -> pd.DataFrame:
+    def get_dataframe(self) -> pd.DataFrame:
         """Retrieve PWV values to use as reference values
 
         Args:
@@ -123,11 +111,6 @@ class ReferenceStar:
         """
 
         rpath = data_paths.stellar_flux_dir / f'{self.spectral_type}.txt'
-        if not rpath.exists():
-            raise ValueError(
-                f'Flux data not available for specified star {self.spectral_type}. '
-                f'Could not find: {rpath}')
-
         band_names = [f'lsst_hardware_{b}' for b in 'ugrizy']
         column_names = ['PWV'] + band_names
         reference_star_flux = pd.read_csv(
@@ -157,7 +140,7 @@ class ReferenceStar:
             The normalized flux at the given PWV value(s)
         """
 
-        reference_star_flux = self.get_ref_star_dataframe()
+        reference_star_flux = self.get_dataframe()
         if np.any(
                 (pwv < reference_star_flux.index.min()) |
                 (pwv > reference_star_flux.index.max())):
@@ -177,7 +160,7 @@ class ReferenceStar:
             The normalized flux at the given PWV value(s)
         """
 
-        reference_star_flux = self.get_ref_star_dataframe()
+        reference_star_flux = self.get_dataframe()
         if np.any(
                 (pwv < reference_star_flux.index.min()) |
                 (pwv > reference_star_flux.index.max())):
@@ -201,7 +184,7 @@ class ReferenceCatalog:
             raise ValueError('Must specify at least one spectral type for the catalog.')
 
         self.spectral_types = spectral_types
-        self.spectra = (ReferenceStar(st) for st in spectral_types)
+        self.spectra = tuple(ReferenceStar(st) for st in spectral_types)
 
     def average_norm_flux(self, band: str, pwv: Union[Numeric, Collection, np.ndarray], ) -> np.ndarray:
         """Return the average normalized reference star flux
