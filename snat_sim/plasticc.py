@@ -1,6 +1,6 @@
-"""The ``plasticc`` module provides data access for locally available
-PLaSTICC simulations. Data is accessible by specifying the cadence and
-model used in a given simulation.
+"""The ``plasticc`` module provides data access for PLaSTICC light-curve
+simulations stored on the local machine. Data is accessible by specifying
+the cadence and model used in a given simulation.
 
 Usage Example
 -------------

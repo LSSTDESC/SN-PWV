@@ -7,6 +7,8 @@ from tests.mock import create_mock_plasticc_light_curve
 
 
 class SetUp:
+    """Generic setup tasks"""
+
     @classmethod
     def setUpClass(cls) -> None:
         """Instantiate a PLaSTICC data access object"""
@@ -17,20 +19,16 @@ class SetUp:
 
 
 class GetAvailableCadences(TestCase):
-    """Tests for the ``get_available_cadences`` function"""
+    """Test returned cadences match those packaged with ``snat_sim`` by default"""
 
-    def test_cadences_match_test_data(self) -> None:
-        """Test returned cadences match those available in the test data"""
-
+    def runTest(self) -> None:
         self.assertEqual(PLaSTICC.get_available_cadences(), ['alt_sched'])
 
 
 class GetModelHeaders(SetUp, TestCase):
-    """Tests for the ``get_model_headers`` function"""
+    """Tests for the collection of header files"""
 
-    def test_correct_headers_for_test_data(self) -> None:
-        """Test the returned list is empty for a cadence with no available data"""
-
+    def runTest(self) -> None:
         header_paths = self.dao.get_model_headers()
         file_names = sorted(path.name for path in header_paths)
         known_headers = ['LSST_WFD_NONIa-0004_HEAD.FITS', 'LSST_WFD_NONIa-0005_HEAD.FITS']
@@ -38,22 +36,18 @@ class GetModelHeaders(SetUp, TestCase):
 
 
 class CountLightCurves(SetUp, TestCase):
-    """Tests for the ``count_light_curves`` function"""
+    """Test the number of counted light curves matches those in the test data"""
 
-    def test_lc_count_matches_test_data(self) -> None:
-        """Test the number of counted light curves matches those in the test data"""
-
+    def runTest(self) -> None:
         counted_light_curves = self.dao.count_light_curves()
         returned_light_curves = len(list(self.dao.iter_lc(verbose=False)))
         self.assertEqual(returned_light_curves, counted_light_curves)
 
 
 class IterLCForHeader(SetUp, TestCase):
-    """Tests for the ``_iter_lc_for_header`` function"""
+    """Test returned light curves have meta data"""
 
-    def test_lc_has_meta_data(self) -> None:
-        """Test returned light curves have meta data"""
-
+    def runTest(self) -> None:
         test_header = self.dao.get_model_headers()[0]
         lc = next(self.dao._iter_lc_for_header(test_header, verbose=False))
         self.assertTrue(lc.meta)
@@ -67,7 +61,13 @@ class IterLcForCadenceModel(SetUp, TestCase):
 
         total_lc_count = sum(1 for _ in self.dao.iter_lc(verbose=False))
         expected_count = self.dao.count_light_curves()
-        self.assertEqual(total_lc_count, expected_count)
+        self.assertEqual(expected_count, total_lc_count)
+
+    def test_iter_limit(self):
+        """Test the number of returned light-curves is limited by the ``iter_lim`` argument"""
+        
+        total_lc_count = sum(1 for _ in self.dao.iter_lc(iter_lim=5, verbose=False))
+        self.assertEqual(5, total_lc_count)
 
 
 class FormatPlasticcSncosmo(SetUp, TestCase):
