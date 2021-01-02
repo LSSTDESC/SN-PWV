@@ -34,6 +34,7 @@ from __future__ import annotations
 import warnings
 from copy import copy
 from dataclasses import dataclass, field
+from functools import partial
 from numbers import Number
 from pathlib import Path
 from typing import *
@@ -42,11 +43,13 @@ from typing import List, Dict, Iterable
 import sncosmo
 from astropy.table import Table
 from egon.connectors import Output, Input
-from egon.nodes import Source, Node, Target
+from egon.decorators import as_source
+from egon.nodes import Node, Target
 from egon.pipeline import Pipeline
 
-from . import plasticc, constants as const
+from . import constants as const
 from .models import SNModel, ObservedCadence
+from .plasticc import PLaSTICC
 from .reference_stars import VariableCatalog
 
 warnings.simplefilter('ignore', category=DeprecationWarning)
@@ -124,42 +127,6 @@ class PipelineResult:
         col_names.append('abs_mag')
         col_names.append('message')
         return col_names
-
-
-class LoadPlasticcSims(Source):
-    """Pipeline node for loading PLaSTICC data from disk
-
-    Connectors:
-        lc_output: The loaded PLaSTICC light-curves as ``astropy.Table`` objects
-    """
-
-    def __init__(self, cadence: str, model: int = 11, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
-        """Source node for loading PLaSTICC light-curves from disk
-
-        Args:
-            cadence: Cadence to use when simulating light-curves
-            model: The PLaSTICC supernova model to load simulation for (Default is model 11 - Normal SNe)
-            iter_lim: Exit after loading the given number of light-curves
-            num_processes: Number of processes to allocate to the node
-        """
-
-        self.cadence = cadence
-        self.model = model
-        self.iter_lim = iter_lim
-
-        # Node connectors
-        self.lc_output = Output()
-        super().__init__(num_processes)
-
-    def action(self) -> None:
-        """Load PLaSTICC light-curves from disk"""
-
-        light_curve_iter = plasticc.iter_lc_for_cadence_model(self.cadence, model=self.model)
-        for i, light_curve in enumerate(light_curve_iter):
-            if i >= self.iter_lim:
-                break
-
-            self.lc_output.put(light_curve)
 
 
 class SimulateLightCurves(Node):
@@ -399,7 +366,9 @@ class FittingPipeline(Pipeline):
         """
 
         # Define the nodes of the analysis pipeline
-        self.load_plastic = LoadPlasticcSims(cadence=cadence, iter_lim=iter_lim)
+        plasticc_dao = PLaSTICC(cadence, model=11)
+        self.load_plastic = as_source(partial(plasticc_dao.iter_lc, iter_lim=iter_lim))
+
         self.simulate_light_curves = SimulateLightCurves(
             sn_model=sim_model,
             catalog=catalog,
@@ -411,7 +380,7 @@ class FittingPipeline(Pipeline):
         self.write_to_disk = FitResultsToDisk(sim_model, fit_model, out_path)
 
         # Connect pipeline nodes together
-        self.load_plastic.lc_output.connect(self.simulate_light_curves.plasticc_data_input)
+        self.load_plastic.output.connect(self.simulate_light_curves.plasticc_data_input)
         self.simulate_light_curves.simulation_output.connect(self.fit_light_curves.light_curves_input)
         self.simulate_light_curves.failure_result_output.connect(self.write_to_disk.fit_results_input)
         self.fit_light_curves.fit_results_output.connect(self.write_to_disk.fit_results_input)
