@@ -151,6 +151,7 @@
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
 <span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Number</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
@@ -159,11 +160,13 @@
 <span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">egon.connectors</span> <span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Input</span>
-<span class="kn">from</span> <span class="nn">egon.nodes</span> <span class="kn">import</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Target</span>
+<span class="kn">from</span> <span class="nn">egon.decorators</span> <span class="kn">import</span> <span class="n">as_source</span>
+<span class="kn">from</span> <span class="nn">egon.nodes</span> <span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Target</span>
 <span class="kn">from</span> <span class="nn">egon.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
 
-<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">plasticc</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">ObservedCadence</span>
+<span class="kn">from</span> <span class="nn">.plasticc</span> <span class="kn">import</span> <span class="n">PLaSTICC</span>
 <span class="kn">from</span> <span class="nn">.reference_stars</span> <span class="kn">import</span> <span class="n">VariableCatalog</span>
 
 <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="ne">DeprecationWarning</span><span class="p">)</span>
@@ -241,42 +244,6 @@
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;abs_mag&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">col_names</span></div></div>
-
-
-<div class="viewcode-block" id="LoadPlasticcSims"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.LoadPlasticcSims">[docs]</a><span class="k">class</span> <span class="nc">LoadPlasticcSims</span><span class="p">(</span><span class="n">Source</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pipeline node for loading PLaSTICC data from disk</span>
-
-<span class="sd">    Connectors:</span>
-<span class="sd">        lc_output: The loaded PLaSTICC light-curves as ``astropy.Table`` objects</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-<div class="viewcode-block" id="LoadPlasticcSims.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.LoadPlasticcSims.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Source node for loading PLaSTICC light-curves from disk</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            cadence: Cadence to use when simulating light-curves</span>
-<span class="sd">            model: The PLaSTICC supernova model to load simulation for (Default is model 11 - Normal SNe)</span>
-<span class="sd">            iter_lim: Exit after loading the given number of light-curves</span>
-<span class="sd">            num_processes: Number of processes to allocate to the node</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span> <span class="o">=</span> <span class="n">cadence</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span> <span class="o">=</span> <span class="n">iter_lim</span>
-
-        <span class="c1"># Node connectors</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">lc_output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="p">)</span></div>
-
-<div class="viewcode-block" id="LoadPlasticcSims.action"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.LoadPlasticcSims.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load PLaSTICC light-curves from disk&quot;&quot;&quot;</span>
-
-        <span class="n">light_curve_iter</span> <span class="o">=</span> <span class="n">plasticc</span><span class="o">.</span><span class="n">iter_lc_for_cadence_model</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span>
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">light_curve</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">light_curve_iter</span><span class="p">):</span>
-            <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span><span class="p">:</span>
-                <span class="k">break</span>
-
-            <span class="bp">self</span><span class="o">.</span><span class="n">lc_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">light_curve</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="SimulateLightCurves"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.SimulateLightCurves">[docs]</a><span class="k">class</span> <span class="nc">SimulateLightCurves</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
@@ -516,7 +483,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Define the nodes of the analysis pipeline</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">load_plastic</span> <span class="o">=</span> <span class="n">LoadPlasticcSims</span><span class="p">(</span><span class="n">cadence</span><span class="o">=</span><span class="n">cadence</span><span class="p">,</span> <span class="n">iter_lim</span><span class="o">=</span><span class="n">iter_lim</span><span class="p">)</span>
+        <span class="n">plasticc_dao</span> <span class="o">=</span> <span class="n">PLaSTICC</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_plastic</span> <span class="o">=</span> <span class="n">as_source</span><span class="p">(</span><span class="n">partial</span><span class="p">(</span><span class="n">plasticc_dao</span><span class="o">.</span><span class="n">iter_lc</span><span class="p">,</span> <span class="n">iter_lim</span><span class="o">=</span><span class="n">iter_lim</span><span class="p">))</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span> <span class="o">=</span> <span class="n">SimulateLightCurves</span><span class="p">(</span>
             <span class="n">sn_model</span><span class="o">=</span><span class="n">sim_model</span><span class="p">,</span>
             <span class="n">catalog</span><span class="o">=</span><span class="n">catalog</span><span class="p">,</span>
@@ -528,7 +497,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">write_to_disk</span> <span class="o">=</span> <span class="n">FitResultsToDisk</span><span class="p">(</span><span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">out_path</span><span class="p">)</span>
 
         <span class="c1"># Connect pipeline nodes together</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">load_plastic</span><span class="o">.</span><span class="n">lc_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">plasticc_data_input</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_plastic</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">plasticc_data_input</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">simulation_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_light_curves</span><span class="o">.</span><span class="n">light_curves_input</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">failure_result_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">write_to_disk</span><span class="o">.</span><span class="n">fit_results_input</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_light_curves</span><span class="o">.</span><span class="n">fit_results_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">write_to_disk</span><span class="o">.</span><span class="n">fit_results_input</span><span class="p">)</span>
