@@ -16,10 +16,10 @@ class LightCurveSimulation(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.zp = 35
+
         cls.plasticc_lc = create_mock_plasticc_light_curve()
         cls.node = SimulateLightCurves(SNModel('salt2-extended'), num_processes=0)
-        cls.duplicated_lc = cls.node.duplicate_plasticc_lc(cls.plasticc_lc, zp=cls.zp)
+        cls.duplicated_lc = cls.node.duplicate_plasticc_lc(*ObservedCadence.from_plasticc(cls.plasticc_lc))
 
     def test_lc_meta_matches_params(self) -> None:
         """Test parameters in returned meta data match the input light_curve"""
@@ -56,7 +56,8 @@ class LightCurveSimulation(TestCase):
     def test_zp_is_overwritten_with_constant(self) -> None:
         """Test the zero-point of the simulated light_curve is overwritten as a constant"""
 
-        np.testing.assert_equal(self.zp, self.duplicated_lc['zp'])
+        expected_zp = 30
+        np.testing.assert_equal(expected_zp, self.duplicated_lc['zp'])
 
 
 class ResultRouting(TestCase):
@@ -83,8 +84,8 @@ class ResultRouting(TestCase):
     def test_success_routed_to_simulation_output(self) -> None:
         """Test successful simulations are sent to the ``simulation_output`` connector"""
 
-        plasticc_lc = create_mock_plasticc_light_curve()
-        self.source.load_data.append(plasticc_lc)
+        params, cadence = ObservedCadence.from_plasticc(create_mock_plasticc_light_curve())
+        self.source.load_data.append((params, cadence))
         self.run_nodes()
 
         self.assertTrue(self.simulation_target.accumulated_data)
@@ -93,9 +94,10 @@ class ResultRouting(TestCase):
     def test_failure_routed_to_failure_result_output(self) -> None:
         """Test failed simulations are sent to the ``failure_result_output`` connector"""
 
-        plasticc_lc = create_mock_plasticc_light_curve()
-        plasticc_lc.meta['SIM_REDSHIFT_CMB'] = 100  # Pick a crazy redshift so the simulation fails
-        self.source.load_data.append(plasticc_lc)
+        params, cadence = ObservedCadence.from_plasticc(create_mock_plasticc_light_curve())
+        params['z'] = 100  # Pick a crazy redshift so the simulation fails
+
+        self.source.load_data.append((params, cadence))
         self.run_nodes()
 
         self.assertFalse(self.simulation_target.accumulated_data)

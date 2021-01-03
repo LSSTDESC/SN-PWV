@@ -37,7 +37,7 @@ stellar types. Catalog instances can be used to calibrate supernoca light-curves
 
    >>> light_curve = sncosmo.load_example_data()
    >>> reference_catalog = reference_stars.ReferenceCatalog('G2', 'M5')
-   >>> print(reference_catalog.divide_ref_from_lc(light_curve, pwv=4))
+   >>> print(reference_catalog.calibrate_lc(light_curve, pwv=4))
 
 Module Docs
 -----------
@@ -233,8 +233,8 @@ class ReferenceCatalog:
 
         return np.average([s.norm_flux(band, pwv) for s in self.spectra], axis=0)
 
-    def divide_ref_from_lc(self, lc_table: Table, pwv: Union[Numeric, np.ndarray]) -> Table:
-        """Divide reference flux from a light-curve
+    def calibrate_lc(self, lc_table: Table, pwv: Union[Numeric, np.ndarray]) -> Table:
+        """Divide normalized reference flux from a light-curve
 
         Recalibrate flux values using the average change in flux of a collection of
         reference stars.
@@ -308,7 +308,7 @@ class VariableCatalog:
         pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=time_format)
         return self.catalog.average_norm_flux(band, pwv)
 
-    def divide_ref_from_lc(
+    def calibrate_lc(
             self,
             lc_table: Table,
             time: Union[float, np.ndarray, Collection],
@@ -319,7 +319,7 @@ class VariableCatalog:
             alt: float = const.vro_altitude,
             time_format: str = 'mjd'
     ) -> Table:
-        """Divide reference flux from a light-curve
+        """Divide normalized reference flux from a light-curve
 
         Recalibrate flux values using the average change in flux of a collection of
         reference stars.
@@ -339,4 +339,4 @@ class VariableCatalog:
         """
 
         pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=time_format)
-        return self.catalog.divide_ref_from_lc(lc_table, pwv)
+        return self.catalog.calibrate_lc(lc_table, pwv)
