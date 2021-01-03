@@ -154,7 +154,7 @@
 
 <span class="sd">   &gt;&gt;&gt; light_curve = sncosmo.load_example_data()</span>
 <span class="sd">   &gt;&gt;&gt; reference_catalog = reference_stars.ReferenceCatalog(&#39;G2&#39;, &#39;M5&#39;)</span>
-<span class="sd">   &gt;&gt;&gt; print(reference_catalog.divide_ref_from_lc(light_curve, pwv=4))</span>
+<span class="sd">   &gt;&gt;&gt; print(reference_catalog.calibrate_lc(light_curve, pwv=4))</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
@@ -350,8 +350,8 @@
 
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">([</span><span class="n">s</span><span class="o">.</span><span class="n">norm_flux</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">pwv</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">spectra</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="ReferenceCatalog.divide_ref_from_lc"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceCatalog.divide_ref_from_lc">[docs]</a>    <span class="k">def</span> <span class="nf">divide_ref_from_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lc_table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Divide reference flux from a light-curve</span>
+<div class="viewcode-block" id="ReferenceCatalog.calibrate_lc"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.ReferenceCatalog.calibrate_lc">[docs]</a>    <span class="k">def</span> <span class="nf">calibrate_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lc_table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Divide normalized reference flux from a light-curve</span>
 
 <span class="sd">        Recalibrate flux values using the average change in flux of a collection of</span>
 <span class="sd">        reference stars.</span>
@@ -425,7 +425,7 @@
         <span class="n">pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model</span><span class="o">.</span><span class="n">pwv_los</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="n">time_format</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">average_norm_flux</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">pwv</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="VariableCatalog.divide_ref_from_lc"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.VariableCatalog.divide_ref_from_lc">[docs]</a>    <span class="k">def</span> <span class="nf">divide_ref_from_lc</span><span class="p">(</span>
+<div class="viewcode-block" id="VariableCatalog.calibrate_lc"><a class="viewcode-back" href="../../api/reference_stars.html#snat_sim.reference_stars.VariableCatalog.calibrate_lc">[docs]</a>    <span class="k">def</span> <span class="nf">calibrate_lc</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">lc_table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span>
             <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">Collection</span><span class="p">],</span>
@@ -436,7 +436,7 @@
             <span class="n">alt</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
             <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Divide reference flux from a light-curve</span>
+        <span class="sd">&quot;&quot;&quot;Divide normalized reference flux from a light-curve</span>
 
 <span class="sd">        Recalibrate flux values using the average change in flux of a collection of</span>
 <span class="sd">        reference stars.</span>
@@ -456,7 +456,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model</span><span class="o">.</span><span class="n">pwv_los</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="n">time_format</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">divide_ref_from_lc</span><span class="p">(</span><span class="n">lc_table</span><span class="p">,</span> <span class="n">pwv</span><span class="p">)</span></div></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span><span class="n">lc_table</span><span class="p">,</span> <span class="n">pwv</span><span class="p">)</span></div></div>
 </pre></div>
 
           </div>

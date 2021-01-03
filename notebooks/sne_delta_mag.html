@@ -874,7 +874,7 @@ Light-Curves: 100%|██████████| 63/63 [00:25&lt;00:00,  2.47i
     <span class="n">cataloge</span> <span class="o">=</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">ReferenceCatalog</span><span class="p">(</span><span class="o">*</span><span class="n">spectral_types</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="n">snr</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">):</span>
         <span class="n">pwv</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span>
-        <span class="k">yield</span> <span class="n">cataloge</span><span class="o">.</span><span class="n">divide_ref_from_lc</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">cataloge</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>

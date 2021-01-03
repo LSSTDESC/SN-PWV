@@ -219,6 +219,43 @@ follows:</p>
 </dd></dl>
 
 <dl class="py class">
+<dt id="snat_sim.pipeline.LoadPlasticcSims">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.</code><code class="sig-name descname">LoadPlasticcSims</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">num_processes</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#LoadPlasticcSims"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.LoadPlasticcSims" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pipeline node for loading PLaSTICC data from disk</p>
+<dl class="simple">
+<dt>Connectors:</dt><dd><p>output: Tuple with the simulation params (<code class="docutils literal notranslate"><span class="pre">dict</span></code>) and cadence (<code class="docutils literal notranslate"><span class="pre">ObservedCadence</span></code>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="snat_sim.pipeline.LoadPlasticcSims.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">model</span><span class="o">=</span><span class="default_value">11</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">num_processes</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#LoadPlasticcSims.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.LoadPlasticcSims.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Source node for loading PLaSTICC light-curves from disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Cadence to use when simulating light-curves</p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The PLaSTICC supernova model to load simulation for (Default is model 11 - Normal SNe)</p></li>
+<li><p><strong>iter_lim</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Exit after loading the given number of light-curves</p></li>
+<li><p><strong>num_processes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of processes to allocate to the node</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.pipeline.LoadPlasticcSims.action">
+<code class="sig-name descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#LoadPlasticcSims.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.LoadPlasticcSims.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load PLaSTICC light-curves from disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="snat_sim.pipeline.SimulateLightCurves">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.</code><code class="sig-name descname">SimulateLightCurves</code><span class="sig-paren">(</span><em class="sig-param">sn_model</em>, <em class="sig-param">catalog=None</em>, <em class="sig-param">num_processes=1</em>, <em class="sig-param">abs_mb=-19.05</em>, <em class="sig-param">cosmo=FlatLambdaCDM(H0=70 km / (Mpc s)</em>, <em class="sig-param">Om0=0.295</em>, <em class="sig-param">Tcmb0=0 K</em>, <em class="sig-param">Neff=3.04</em>, <em class="sig-param">m_nu=None</em>, <em class="sig-param">Ob0=None)</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#SimulateLightCurves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.SimulateLightCurves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline node for simulating light-curves based on PLaSTICC cadences</p>
@@ -246,13 +283,13 @@ simulation_output: Simulated light-curves as  <code class="docutils literal notr
 
 <dl class="py method">
 <dt id="snat_sim.pipeline.SimulateLightCurves.duplicate_plasticc_lc">
-<code class="sig-name descname">duplicate_plasticc_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">plasticc_lc</span></em>, <em class="sig-param"><span class="n">zp</span><span class="o">=</span><span class="default_value">30</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#SimulateLightCurves.duplicate_plasticc_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.SimulateLightCurves.duplicate_plasticc_lc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">duplicate_plasticc_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">cadence</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#SimulateLightCurves.duplicate_plasticc_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.SimulateLightCurves.duplicate_plasticc_lc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Duplicate a plastic light-curve using the simulation model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>plasticc_lc</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – The light-curve to duplicate</p></li>
-<li><p><strong>zp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Zero-point of the duplicated light-curve</p></li>
+<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The simulation parameters to use with <code class="docutils literal notranslate"><span class="pre">self.model</span></code></p></li>
+<li><p><strong>cadence</strong> (<a class="reference internal" href="models.html#snat_sim.models.ObservedCadence" title="snat_sim.models.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>) – The observed cadence of the returned light-curve</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>

@@ -154,7 +154,7 @@ stellar types. Catalog instances can be used to calibrate supernoca light-curves
 
 <span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">load_example_data</span><span class="p">()</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">reference_catalog</span> <span class="o">=</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">ReferenceCatalog</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">reference_catalog</span><span class="o">.</span><span class="n">divide_ref_from_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">reference_catalog</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -294,9 +294,9 @@ wavelength values in Angstroms.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.reference_stars.ReferenceCatalog.divide_ref_from_lc">
-<code class="sig-name descname">divide_ref_from_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lc_table</span></em>, <em class="sig-param"><span class="n">pwv</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceCatalog.divide_ref_from_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceCatalog.divide_ref_from_lc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Divide reference flux from a light-curve</p>
+<dt id="snat_sim.reference_stars.ReferenceCatalog.calibrate_lc">
+<code class="sig-name descname">calibrate_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lc_table</span></em>, <em class="sig-param"><span class="n">pwv</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#ReferenceCatalog.calibrate_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.ReferenceCatalog.calibrate_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide normalized reference flux from a light-curve</p>
 <p>Recalibrate flux values using the average change in flux of a collection of
 reference stars.</p>
 <dl class="field-list simple">
@@ -362,9 +362,9 @@ reference stars.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.reference_stars.VariableCatalog.divide_ref_from_lc">
-<code class="sig-name descname">divide_ref_from_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lc_table</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">ra</span></em>, <em class="sig-param"><span class="n">dec</span></em>, <em class="sig-param"><span class="n">lat</span><span class="o">=</span><span class="default_value">- 30.244573</span></em>, <em class="sig-param"><span class="n">lon</span><span class="o">=</span><span class="default_value">- 70.7499537</span></em>, <em class="sig-param"><span class="n">alt</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#VariableCatalog.divide_ref_from_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.VariableCatalog.divide_ref_from_lc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Divide reference flux from a light-curve</p>
+<dt id="snat_sim.reference_stars.VariableCatalog.calibrate_lc">
+<code class="sig-name descname">calibrate_lc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">lc_table</span></em>, <em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">ra</span></em>, <em class="sig-param"><span class="n">dec</span></em>, <em class="sig-param"><span class="n">lat</span><span class="o">=</span><span class="default_value">- 30.244573</span></em>, <em class="sig-param"><span class="n">lon</span><span class="o">=</span><span class="default_value">- 70.7499537</span></em>, <em class="sig-param"><span class="n">alt</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/reference_stars.html#VariableCatalog.calibrate_lc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.reference_stars.VariableCatalog.calibrate_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide normalized reference flux from a light-curve</p>
 <p>Recalibrate flux values using the average change in flux of a collection of
 reference stars.</p>
 <dl class="field-list simple">
