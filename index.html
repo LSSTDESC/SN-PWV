@@ -127,25 +127,34 @@ This documentation is provided as a technical reference for the package as
 well as minimal outline of the research it was designed to support. For
 questions concerning the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package, please see the API section of
 these docs or raise an issue on <a class="reference external" href="https://github.com/lsstdesc/sn-pwv">GitHub</a>.</p>
-<div class="section" id="pipeline-overview">
-<h2>Pipeline Overview<a class="headerlink" href="#pipeline-overview" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is designed first and foremost to support scientific
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is designed to support scientific
 research efforts. The documentation may at times assume the reader has
 a basic understanding of astronomy and how astronomical surveys work. However,
 these assumptions are kept to a minimum wherever possible.</p>
-<p><code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> is designed such that each module represents a distinct stage in
-the research process. These steps range in complexity from visualizing simulation
+</div>
+<div class="section" id="pipeline-overview">
+<h2>Pipeline Overview<a class="headerlink" href="#pipeline-overview" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> is designed such that each package module represents a distinct
+stage in the analysis. These steps range in complexity from visualizing simulation
 results to simulating the brightness of astronomical objects as a function of time.
-Ultimately each of these tasks are combined to support a parallelized analysis
-pipeline that handles the bulk of simulation process (outlined below).
-Outputs from this pipeline are then reviewed by researches to draw scientific
-conclusions.</p>
-<p>An example of an running simulation pipeline is shown below. Each process (colored
+Ultimately, each of these tasks are combined to support a combined data analysis
+pipeline.</p>
+<p>An example of a running pipeline instance is shown below. Each process (colored
 in blue) is executed in parallel, and the number of processes launched in each
 pool (grey boxes) can be increased as necessary to meet performance requirements.
-Data sources stored / written on to disk are shown in red, while objects cached
+Data sources read from or written to disk are shown in red. Objects cached
 in memory are shaded orange.</p>
 <a class="reference internal image-reference" href="_images/pipeline.svg"><img alt="_images/pipeline.svg" class="align-center" src="_images/pipeline.svg" width="80%" /></a>
+</div>
+<div class="section" id="light-curve-simulation">
+<h2>Light-Curve Simulation<a class="headerlink" href="#light-curve-simulation" title="Permalink to this headline">¶</a></h2>
+<p>The light-curve simulation process works by combining the results of several
+independent models. The intrinsic behavior of Type Ia Supernovae, the
+propagation of light through our atmosphere, and how the atmospheric makeup
+changes over time are all considered in the simulation process.</p>
+<a class="reference internal image-reference" href="_images/simulation.svg"><img alt="_images/simulation.svg" class="align-center" src="_images/simulation.svg" width="80%" /></a>
 </div>
 <div class="section" id="contribution-and-usage">
 <h2>Contribution and Usage<a class="headerlink" href="#contribution-and-usage" title="Permalink to this headline">¶</a></h2>
