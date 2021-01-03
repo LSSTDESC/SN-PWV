@@ -140,6 +140,10 @@ class ObservedCadence:
     zpsys: Union[str, Collection[str]]
     gain: FloatOrArray
 
+    def __eq__(self, other: ObservedCadence) -> bool:
+        attr_list = ['obs_times', 'bands', 'skynoise', 'zp', 'zpsys', 'gain']
+        return np.all(np.equal(getattr(self, attr), getattr(other, attr)) for attr in attr_list)
+
     @property
     def skynoise(self) -> np.array:
         return self._skynoise.copy()

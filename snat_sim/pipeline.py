@@ -34,7 +34,6 @@ from __future__ import annotations
 import warnings
 from copy import copy
 from dataclasses import dataclass, field
-from functools import partial
 from numbers import Number
 from pathlib import Path
 from typing import *
@@ -43,8 +42,7 @@ from typing import List, Dict, Iterable
 import sncosmo
 from astropy.table import Table
 from egon.connectors import Output, Input
-from egon.decorators import as_source
-from egon.nodes import Node, Target
+from egon.nodes import Node, Target, Source
 from egon.pipeline import Pipeline
 
 from . import constants as const
@@ -129,6 +127,37 @@ class PipelineResult:
         return col_names
 
 
+class LoadPlasticcSims(Source):
+    """Pipeline node for loading PLaSTICC data from disk
+
+    Connectors:
+        output: Tuple with the simulation params (``dict``) and cadence (``ObservedCadence``)
+    """
+
+    def __init__(self, cadence: str, model: int = 11, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
+        """Source node for loading PLaSTICC light-curves from disk
+
+        Args:
+            cadence: Cadence to use when simulating light-curves
+            model: The PLaSTICC supernova model to load simulation for (Default is model 11 - Normal SNe)
+            iter_lim: Exit after loading the given number of light-curves
+            num_processes: Number of processes to allocate to the node
+        """
+
+        self.cadence = PLaSTICC(cadence, model)
+        self.iter_lim = iter_lim
+
+        # Node connectors
+        self.output = Output()
+        super().__init__(num_processes)
+
+    def action(self) -> None:
+        """Load PLaSTICC light-curves from disk"""
+
+        for light_curve in self.cadence.iter_lc(iter_lim=self.iter_lim):
+            self.output.put(ObservedCadence.from_plasticc(light_curve))
+
+
 class SimulateLightCurves(Node):
     """Pipeline node for simulating light-curves based on PLaSTICC cadences
 
@@ -166,16 +195,13 @@ class SimulateLightCurves(Node):
         self.failure_result_output = Output()
         super().__init__(num_processes)
 
-    def duplicate_plasticc_lc(self, plasticc_lc: Table, zp: float = 30) -> Table:
+    def duplicate_plasticc_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> Table:
         """Duplicate a plastic light-curve using the simulation model
 
         Args:
-            plasticc_lc: The light-curve to duplicate
-            zp: Zero-point of the duplicated light-curve
+            params: The simulation parameters to use with ``self.model``
+            cadence: The observed cadence of the returned light-curve
         """
-
-        # Get simulation parameters and observational cadence
-        params, plasticc_cadence = ObservedCadence.from_plasticc(plasticc_lc, zp=zp)
 
         # Set model parameters and scale the source brightness to the desired intrinsic brightness
         model_for_sim = copy(self.sim_model)
@@ -183,27 +209,26 @@ class SimulateLightCurves(Node):
         model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
 
         # Simulate the light-curve. Make sure to include model parameters as meta data
-        duplicated = model_for_sim.simulate_lc(plasticc_cadence)
+        duplicated = model_for_sim.simulate_lc(cadence)
         duplicated.meta = params
         duplicated.meta['x0'] = model_for_sim['x0']
 
         # Rescale the light-curve using the reference star catalog if provided
         if self.catalog is not None:
             duplicated = self.catalog.divide_ref_from_lc(
-                duplicated, duplicated['time'], ra=plasticc_lc.meta['RA'], dec=plasticc_lc.meta['DECL'])
+                duplicated, duplicated['time'], ra=params['ra'], dec=params['dec'])
 
         return duplicated
 
     def action(self) -> None:
         """Simulate light-curves with atmospheric effects"""
 
-        for light_curve in self.plasticc_data_input.iter_get():
+        for params, cadence in self.plasticc_data_input.iter_get():
             try:
-                duplicated_lc = self.duplicate_plasticc_lc(light_curve, zp=30)
+                duplicated_lc = self.duplicate_plasticc_lc(params, cadence)
 
             except Exception as e:
-                params, _ = ObservedCadence.from_plasticc(light_curve)  # Format params to match the simulation model
-                result = PipelineResult(light_curve.meta['SNID'], sim_params=params, message=str(e))
+                result = PipelineResult(params.meta['SNID'], sim_params=params, message=str(e))
                 self.failure_result_output.put(result)
 
             else:
@@ -366,8 +391,7 @@ class FittingPipeline(Pipeline):
         """
 
         # Define the nodes of the analysis pipeline
-        plasticc_dao = PLaSTICC(cadence, model=11)
-        self.load_plastic = as_source(partial(plasticc_dao.iter_lc, iter_lim=iter_lim))
+        self.load_plastic = LoadPlasticcSims(cadence, model=11, iter_lim=iter_lim)
 
         self.simulate_light_curves = SimulateLightCurves(
             sn_model=sim_model,
