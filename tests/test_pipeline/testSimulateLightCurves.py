@@ -95,7 +95,7 @@ class ResultRouting(TestCase):
         """Test failed simulations are sent to the ``failure_result_output`` connector"""
 
         params, cadence = ObservedCadence.from_plasticc(create_mock_plasticc_light_curve())
-        params['z'] = 100  # Pick a crazy redshift so the simulation fails
+        params['z'] = 1000  # Pick a crazy redshift so the simulation fails
 
         self.source.load_data.append((params, cadence))
         self.run_nodes()

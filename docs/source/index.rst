@@ -10,31 +10,43 @@ well as minimal outline of the research it was designed to support. For
 questions concerning the ``snat_sim`` package, please see the API section of
 these docs or raise an issue on `GitHub <https://github.com/lsstdesc/sn-pwv>`_.
 
+.. note:: The ``snat_sim`` package is designed to support scientific
+   research efforts. The documentation may at times assume the reader has
+   a basic understanding of astronomy and how astronomical surveys work. However,
+   these assumptions are kept to a minimum wherever possible.
+
 Pipeline Overview
 -----------------
 
-The ``snat_sim`` package is designed first and foremost to support scientific
-research efforts. The documentation may at times assume the reader has
-a basic understanding of astronomy and how astronomical surveys work. However,
-these assumptions are kept to a minimum wherever possible.
-
-``snat_sim`` is designed such that each module represents a distinct stage in
-the research process. These steps range in complexity from visualizing simulation
+``snat_sim`` is designed such that each package module represents a distinct
+stage in the analysis. These steps range in complexity from visualizing simulation
 results to simulating the brightness of astronomical objects as a function of time.
-Ultimately each of these tasks are combined to support a parallelized analysis
-pipeline that handles the bulk of simulation process (outlined below).
-Outputs from this pipeline are then reviewed by researches to draw scientific
-conclusions.
+Ultimately, each of these tasks are combined to support a combined data analysis
+pipeline.
 
-An example of an running simulation pipeline is shown below. Each process (colored
+An example of a running pipeline instance is shown below. Each process (colored
 in blue) is executed in parallel, and the number of processes launched in each
 pool (grey boxes) can be increased as necessary to meet performance requirements.
-Data sources stored / written on to disk are shown in red, while objects cached
+Data sources read from or written to disk are shown in red. Objects cached
 in memory are shaded orange.
 
 .. image:: ./_static/images/pipeline.svg
    :width: 80%
    :align: center
+
+Light-Curve Simulation
+----------------------
+
+The light-curve simulation process works by combining the results of several
+independent models. The intrinsic behavior of Type Ia Supernovae, the
+propagation of light through our atmosphere, and how the atmospheric makeup
+changes over time are all considered in the simulation process.
+
+
+.. image:: ./_static/images/simulation.svg
+   :width: 80%
+   :align: center
+
 
 Contribution and Usage
 ----------------------
