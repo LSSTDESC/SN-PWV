@@ -172,7 +172,7 @@ class PLaSTICC:
         total = iter_lim or self.count_light_curves()
         with tqdm(self.get_model_headers(), desc=self.cadence, total=total, disable=not verbose) as pbar:
             for header_path in pbar:
-                for lc in self._iter_lc_for_header(header_path, verbose):
+                for lc in self._iter_lc_for_header(header_path, verbose=False):
                     pbar.update()
                     pbar.refresh()
                     yield lc

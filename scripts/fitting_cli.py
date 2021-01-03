@@ -56,7 +56,7 @@ class AdvancedNamespace(argparse.Namespace):
             return models.VariablePWVTrans(self.pwv_model)
 
         elif pwv_variability == 'seasonal':
-            return models.SeasonalPWVTrans(self.pwv_model)
+            return models.SeasonalPWVTrans.from_pwv_model(self.pwv_model)
 
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
