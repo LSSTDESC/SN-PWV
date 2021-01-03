@@ -215,7 +215,7 @@ class SimulateLightCurves(Node):
 
         # Rescale the light-curve using the reference star catalog if provided
         if self.catalog is not None:
-            duplicated = self.catalog.divide_ref_from_lc(
+            duplicated = self.catalog.calibrate_lc(
                 duplicated, duplicated['time'], ra=params['ra'], dec=params['dec'])
 
         return duplicated

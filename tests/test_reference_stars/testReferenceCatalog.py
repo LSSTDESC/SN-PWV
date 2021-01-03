@@ -45,7 +45,7 @@ class AverageNormFlux(TestCase):
 
 
 class DivideRefFromLc(TestCase):
-    """Tests for the ``divide_ref_from_lc`` function"""
+    """Tests for the ``calibrate_lc`` function"""
 
     def setUp(self) -> None:
         # Create a dummy table. We don't care that the flux values
@@ -62,7 +62,7 @@ class DivideRefFromLc(TestCase):
         """Test argument table is not mutated"""
 
         original_table = self.test_table.copy()
-        self.catalog.divide_ref_from_lc(self.test_table, pwv=15)
+        self.catalog.calibrate_lc(self.test_table, pwv=15)
         self.assertTrue(all(original_table == self.test_table))
 
     def assert_returned_flux_is_scaled(self, pwv):
@@ -73,9 +73,9 @@ class DivideRefFromLc(TestCase):
         scale_factor = self.catalog.average_norm_flux(test_band, pwv)
         expected_flux = np.divide(self.test_table['flux'], scale_factor)
 
-        # Scale the flux values with ``divide_ref_from_lc`` and check they
+        # Scale the flux values with ``calibrate_lc`` and check they
         # match manual results
-        scaled_table = self.catalog.divide_ref_from_lc(self.test_table, pwv=pwv)
+        scaled_table = self.catalog.calibrate_lc(self.test_table, pwv=pwv)
         returned_flux = list(scaled_table['flux'])
         np.testing.assert_array_equal(expected_flux, returned_flux)
 
@@ -95,4 +95,4 @@ class DivideRefFromLc(TestCase):
         """Test a value error is raised when argument lengths are not the same"""
 
         with self.assertRaises(ValueError):
-            self.catalog.divide_ref_from_lc(self.test_table, pwv=[1])
+            self.catalog.calibrate_lc(self.test_table, pwv=[1])
