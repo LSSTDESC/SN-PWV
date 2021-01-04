@@ -354,6 +354,7 @@ class FitResultsToDisk(Target):
 
         with self.out_path.open('a') as outfile:
             for result in self.fit_results_input.iter_get():
+                result.message = result.message.replace('\n', ' ').replace(',', '')
                 outfile.write(result.to_csv(self.sim_model.param_names, self.fit_model.param_names))
 
 
