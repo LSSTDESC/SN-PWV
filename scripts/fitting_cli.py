@@ -183,6 +183,13 @@ def create_cli_parser() -> argparse.ArgumentParser:
         help='Output file path (a .csv extension is enforced).'
     )
 
+    parser.add_argument(
+        '-d', '--sim_dir',
+        type=Path,
+        default=None,
+        help='Optionally write simulated light-curves as .ecsv files in the given directory.'
+    )
+
     #######################################################################
     # Light-curve simulation
     #######################################################################
