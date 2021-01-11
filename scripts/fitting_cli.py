@@ -132,6 +132,7 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         fit_model=command_line_args.fitting_model,
         vparams=command_line_args.vparams,
         out_path=command_line_args.out_path,
+        sim_dir=command_line_args.sim_dir,
         simulation_pool=command_line_args.sim_pool_size,
         fitting_pool=command_line_args.fit_pool_size,
         bounds=command_line_args.fitting_bounds,
@@ -139,6 +140,7 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         catalog=command_line_args.catalog
     )
 
+    pipeline.validate()
     pipeline.run()
 
 

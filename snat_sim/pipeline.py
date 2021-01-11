@@ -38,7 +38,6 @@ from numbers import Number
 from pathlib import Path
 from typing import *
 from typing import Dict, Iterable, List
-from warnings import warn
 
 import sncosmo
 from astropy.table import Table
@@ -47,7 +46,7 @@ from egon.nodes import Node, Source, Target
 from egon.pipeline import Pipeline
 
 from . import constants as const
-from .models import ObservedCadence, SNModel
+from .models import AbstractVariablePWVEffect, ObservedCadence, SNModel
 from .plasticc import PLaSTICC
 from .reference_stars import VariableCatalog
 
@@ -211,13 +210,19 @@ class SimulateLightCurves(Node):
 
         # Simulate the light-curve. Make sure to include model parameters as meta data
         duplicated = model_for_sim.simulate_lc(cadence)
-        duplicated.meta = params
-        duplicated.meta['x0'] = model_for_sim['x0']
+        duplicated.meta = dict(zip(model_for_sim.param_names, model_for_sim.parameters))
+        duplicated.meta['SNID'] = params['SNID']
 
         # Rescale the light-curve using the reference star catalog if provided
         if self.catalog is not None:
             duplicated = self.catalog.calibrate_lc(
                 duplicated, duplicated['time'], ra=params['ra'], dec=params['dec'])
+
+        # Add the simulated PWV concentration if there is a variable PWV transmission effect.
+        for effect in model_for_sim.effects:
+            if isinstance(effect, AbstractVariablePWVEffect):
+                duplicated['pwv'] = effect.assumed_pwv(duplicated['time'])
+                break
 
         return duplicated
 
@@ -257,7 +262,7 @@ class SimulationToDisk(Target):
         super(SimulationToDisk, self).__init__(num_processes)
 
     def setup(self) -> None:
-        """Ensure the ouput directory exists"""
+        """Ensure the output directory exists"""
 
         self.out_dir.mkdir(exist_ok=True, parents=False)
 
@@ -266,11 +271,7 @@ class SimulationToDisk(Target):
 
         for lc in self.simulation_input.iter_get():
             path = (self.out_dir / lc.meta['SNID']).with_suffix('.ecsv')
-            try:
-                lc.write(path, overwrite=False)
-
-            except FileExistsError as e:
-                warn(str(e))
+            lc.write(path, overwrite=True)
 
 
 class FitLightCurves(Node):
@@ -454,7 +455,7 @@ class FittingPipeline(Pipeline):
             self.simulate_light_curves.plasticc_data_input.maxsize = max_queue
 
         if sim_dir:
-            self.sims_to_disk = SimulationToDisk(Path(out_path).parent / 'lc_sims')
+            self.sims_to_disk = SimulationToDisk(sim_dir)
             self.simulate_light_curves.simulation_output.connect(self.sims_to_disk.simulation_input)
 
         super(FittingPipeline, self).__init__()
