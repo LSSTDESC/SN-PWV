@@ -425,7 +425,12 @@ class PWVModel:
 
             target_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg)
             altaz = AltAz(obstime=obs_time, location=observer_location)
-            return target_coord.transform_to(altaz).secz.value
+            airmass = target_coord.transform_to(altaz).secz.value
+
+        if np.less_equal(airmass, 1).any():
+            raise ValueError(f'Invalid airmass ({airmass}) for ra={ra}, dec={dec}, time={time} ({time_format})')
+
+        return airmass
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
