@@ -5,6 +5,7 @@ exclude_patterns:
 - "docs/"
 - "notebooks/"
 - "scripts/"
+- "tests/"
 
 checks:
   argument-count:

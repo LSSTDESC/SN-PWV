@@ -65,7 +65,7 @@ class IterLcForCadenceModel(SetUp, TestCase):
 
     def test_iter_limit(self):
         """Test the number of returned light-curves is limited by the ``iter_lim`` argument"""
-        
+
         total_lc_count = sum(1 for _ in self.dao.iter_lc(iter_lim=5, verbose=False))
         self.assertEqual(5, total_lc_count)
 
