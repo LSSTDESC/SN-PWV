@@ -1,4 +1,11 @@
 version: "2"
+
+exclude_patterns:
+- "data/"
+- "docs/"
+- "notebooks/"
+- "scripts/"
+
 checks:
   argument-count:
     config:
