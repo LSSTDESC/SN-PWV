@@ -210,8 +210,8 @@ class SimulateLightCurves(Node):
 
         # Simulate the light-curve. Make sure to include model parameters as meta data
         duplicated = model_for_sim.simulate_lc(cadence)
-        duplicated.meta = dict(zip(model_for_sim.param_names, model_for_sim.parameters))
-        duplicated.meta['SNID'] = params['SNID']
+        duplicated.meta = params
+        duplicated.meta.update(dict(zip(model_for_sim.param_names, model_for_sim.parameters)))
 
         # Rescale the light-curve using the reference star catalog if provided
         if self.catalog is not None:
@@ -318,24 +318,26 @@ class FitLightCurves(Node):
             - A copy of ``self.model`` with parameter values set to optimize the chi-square
         """
 
+        # Use the true light-curve parameters as the initial guess
+        model = copy(self.sn_model)
+        model.update({k: v for k, v in light_curve.meta.items() if k in self.sn_model.param_names})
+
         return sncosmo.fit_lc(
-            light_curve, self.sn_model, self.vparams, bounds=self.bounds,
+            light_curve, model, self.vparams, bounds=self.bounds,
             guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
     def action(self) -> None:
         """Fit light-curves"""
 
         for light_curve in self.light_curves_input.iter_get():
-            # Use the true light-curve parameters as the initial guess
-            self.sn_model.update({k: v for k, v in light_curve.meta.items() if k in self.sn_model.param_names})
-
             try:
                 fitted_result, fitted_model = self.fit_lc(light_curve)
 
             except Exception as excep:
                 self.fit_results_output.put(
-                    PipelineResult(snid=light_curve.meta['SNID'], sim_params=light_curve.meta,
-                                   message=f'{self.__class__.__name__}: {excep}')
+                    PipelineResult(
+                        snid=light_curve.meta['SNID'], sim_params=light_curve.meta,
+                        message=f'{self.__class__.__name__}: {excep}')
                 )
 
             else:
@@ -347,8 +349,8 @@ class FitLightCurves(Node):
                         fit_err=fitted_result.errors,
                         chisq=fitted_result.chisq,
                         ndof=fitted_result.ndof,
-                        mb=fitted_model.apparent_bmag(),
-                        abs_mag=fitted_model.absolute_bmag(),
+                        mb=fitted_model.source.bandmag('bessellb', 'ab', phase=0),
+                        abs_mag=fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo),
                         message=f'{self.__class__.__name__}: {fitted_result.message}'
                     )
                 )
@@ -407,7 +409,7 @@ class FittingPipeline(Pipeline):
             fit_model: SNModel,
             vparams: List[str],
             out_path: Union[str, Path],
-            sim_dir:  Union[str, Path] = None,
+            sim_dir: Union[str, Path] = None,
             fitting_pool: int = 1,
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
