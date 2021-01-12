@@ -320,7 +320,7 @@ class FixedResTransmission:
             xi[:, :, 0] = pwv_eff
             xi[:, :, 1] = np.array(wave)[:, None]
 
-            names = map('{} mm'.format, np.round(pwv, 4).astype(float))
+            names = list(map('{} mm'.format, np.round(pwv, 4).astype(float)))
             return pd.DataFrame(self._interpolator(xi), columns=names)
 
 
