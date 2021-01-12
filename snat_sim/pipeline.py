@@ -37,16 +37,16 @@ from dataclasses import dataclass, field
 from numbers import Number
 from pathlib import Path
 from typing import *
-from typing import List, Dict, Iterable
+from typing import Dict, Iterable, List
 
 import sncosmo
 from astropy.table import Table
-from egon.connectors import Output, Input
-from egon.nodes import Node, Target, Source
+from egon.connectors import Input, Output
+from egon.nodes import Node, Source, Target
 from egon.pipeline import Pipeline
 
 from . import constants as const
-from .models import SNModel, ObservedCadence
+from .models import AbstractVariablePWVEffect, ObservedCadence, SNModel
 from .plasticc import PLaSTICC
 from .reference_stars import VariableCatalog
 
@@ -211,12 +211,18 @@ class SimulateLightCurves(Node):
         # Simulate the light-curve. Make sure to include model parameters as meta data
         duplicated = model_for_sim.simulate_lc(cadence)
         duplicated.meta = params
-        duplicated.meta['x0'] = model_for_sim['x0']
+        duplicated.meta.update(dict(zip(model_for_sim.param_names, model_for_sim.parameters)))
 
         # Rescale the light-curve using the reference star catalog if provided
         if self.catalog is not None:
             duplicated = self.catalog.calibrate_lc(
                 duplicated, duplicated['time'], ra=params['ra'], dec=params['dec'])
+
+        # Add the simulated PWV concentration if there is a variable PWV transmission effect.
+        for effect in model_for_sim.effects:
+            if isinstance(effect, AbstractVariablePWVEffect):
+                duplicated['pwv'] = effect.assumed_pwv(duplicated['time'])
+                break
 
         return duplicated
 
@@ -233,6 +239,39 @@ class SimulateLightCurves(Node):
 
             else:
                 self.simulation_output.put(duplicated_lc)
+
+
+class SimulationToDisk(Target):
+    """Pipeline node for writing simulated light-curves to disk
+
+    Connectors:
+        simulation_input: Simulated light-curves
+    """
+
+    def __init__(
+            self, out_dir: Union[str, Path], num_processes: int = 1
+    ) -> None:
+        """Write simulated light-curves to disk
+
+        Args:
+            out_dir: Path to write results to (.csv extension is enforced)
+        """
+
+        self.out_dir = Path(out_dir)
+        self.simulation_input = Input()
+        super(SimulationToDisk, self).__init__(num_processes)
+
+    def setup(self) -> None:
+        """Ensure the output directory exists"""
+
+        self.out_dir.mkdir(exist_ok=True, parents=False)
+
+    def action(self) -> None:
+        """Write simulated light-curves to disk"""
+
+        for lc in self.simulation_input.iter_get():
+            path = (self.out_dir / lc.meta['SNID']).with_suffix('.ecsv')
+            lc.write(path, overwrite=True)
 
 
 class FitLightCurves(Node):
@@ -279,24 +318,26 @@ class FitLightCurves(Node):
             - A copy of ``self.model`` with parameter values set to optimize the chi-square
         """
 
+        # Use the true light-curve parameters as the initial guess
+        model = copy(self.sn_model)
+        model.update({k: v for k, v in light_curve.meta.items() if k in self.sn_model.param_names})
+
         return sncosmo.fit_lc(
-            light_curve, self.sn_model, self.vparams, bounds=self.bounds,
+            light_curve, model, self.vparams, bounds=self.bounds,
             guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
 
     def action(self) -> None:
         """Fit light-curves"""
 
         for light_curve in self.light_curves_input.iter_get():
-            # Use the true light-curve parameters as the initial guess
-            self.sn_model.update({k: v for k, v in light_curve.meta.items() if k in self.sn_model.param_names})
-
             try:
                 fitted_result, fitted_model = self.fit_lc(light_curve)
 
             except Exception as excep:
                 self.fit_results_output.put(
-                    PipelineResult(snid=light_curve.meta['SNID'], sim_params=light_curve.meta,
-                                   message=f'{self.__class__.__name__}: {excep}')
+                    PipelineResult(
+                        snid=light_curve.meta['SNID'], sim_params=light_curve.meta,
+                        message=f'{self.__class__.__name__}: {excep}')
                 )
 
             else:
@@ -308,8 +349,8 @@ class FitLightCurves(Node):
                         fit_err=fitted_result.errors,
                         chisq=fitted_result.chisq,
                         ndof=fitted_result.ndof,
-                        mb=fitted_model.apparent_bmag(),
-                        abs_mag=fitted_model.absolute_bmag(),
+                        mb=fitted_model.source.bandmag('bessellb', 'ab', phase=0),
+                        abs_mag=fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo),
                         message=f'{self.__class__.__name__}: {fitted_result.message}'
                     )
                 )
@@ -319,7 +360,7 @@ class FitResultsToDisk(Target):
     """Pipeline node for writing fit results to disk
 
     Connectors:
-        fit_results_input: List of values to write as single line in CSV format
+        fit_results_input: ``PipelineResult`` objects to write as individual lines in CSV format
     """
 
     def __init__(
@@ -342,7 +383,7 @@ class FitResultsToDisk(Target):
     def setup(self) -> None:
         """Ensure the parent directory of the destination file exists"""
 
-        self.out_path.parent.mkdir(exist_ok=True, parents=True)
+        self.out_path.parent.mkdir(exist_ok=True, parents=False)
 
         column_names = PipelineResult.column_names(self.sim_model.param_names, self.fit_model.param_names)
         with self.out_path.open('w') as outfile:
@@ -354,6 +395,7 @@ class FitResultsToDisk(Target):
 
         with self.out_path.open('a') as outfile:
             for result in self.fit_results_input.iter_get():
+                result.message = result.message.replace('\n', ' ').replace(',', '')
                 outfile.write(result.to_csv(self.sim_model.param_names, self.fit_model.param_names))
 
 
@@ -367,6 +409,7 @@ class FittingPipeline(Pipeline):
             fit_model: SNModel,
             vparams: List[str],
             out_path: Union[str, Path],
+            sim_dir: Union[str, Path] = None,
             fitting_pool: int = 1,
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
@@ -383,6 +426,7 @@ class FittingPipeline(Pipeline):
             vparams: List of parameter names to vary in the fit
             bounds: Bounds to impose on ``fit_model`` parameters when fitting light-curves
             out_path: Path to write results to (.csv extension is enforced)
+            sim_dir: Optionally write simulated light-curves to disk in the given directory as individual ecsv files
             fitting_pool: Number of child processes allocated to simulating light-curves
             simulation_pool: Number of child processes allocated to fitting light-curves
             max_queue: Maximum number of light-curves to store in pipeline at once
@@ -401,15 +445,19 @@ class FittingPipeline(Pipeline):
         self.fit_light_curves = FitLightCurves(
             sn_model=fit_model, vparams=vparams, bounds=bounds, num_processes=fitting_pool)
 
-        self.write_to_disk = FitResultsToDisk(sim_model, fit_model, out_path)
+        self.fits_to_disk = FitResultsToDisk(sim_model, fit_model, out_path)
 
         # Connect pipeline nodes together
         self.load_plastic.output.connect(self.simulate_light_curves.plasticc_data_input)
         self.simulate_light_curves.simulation_output.connect(self.fit_light_curves.light_curves_input)
-        self.simulate_light_curves.failure_result_output.connect(self.write_to_disk.fit_results_input)
-        self.fit_light_curves.fit_results_output.connect(self.write_to_disk.fit_results_input)
+        self.simulate_light_curves.failure_result_output.connect(self.fits_to_disk.fit_results_input)
+        self.fit_light_curves.fit_results_output.connect(self.fits_to_disk.fit_results_input)
 
         if max_queue:  # Limit the number of light-curves fed into the pipeline
             self.simulate_light_curves.plasticc_data_input.maxsize = max_queue
+
+        if sim_dir:
+            self.sims_to_disk = SimulationToDisk(sim_dir)
+            self.simulate_light_curves.simulation_output.connect(self.sims_to_disk.simulation_input)
 
         super(FittingPipeline, self).__init__()

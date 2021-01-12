@@ -56,7 +56,7 @@ class AdvancedNamespace(argparse.Namespace):
             return models.VariablePWVTrans(self.pwv_model)
 
         elif pwv_variability == 'seasonal':
-            return models.SeasonalPWVTrans(self.pwv_model)
+            return models.SeasonalPWVTrans.from_pwv_model(self.pwv_model)
 
         raise NotImplementedError(f'Unknown variability: {pwv_variability}')
 
@@ -125,13 +125,14 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         command_line_args: Parsed command line arguments
     """
 
-    print('Instantiating pipeline...')
+    print(f'Instantiating pipeline (target: {command_line_args.out_path})')
     pipeline = FittingPipeline(
         cadence=command_line_args.cadence,
         sim_model=command_line_args.simulation_model,
         fit_model=command_line_args.fitting_model,
         vparams=command_line_args.vparams,
         out_path=command_line_args.out_path,
+        sim_dir=command_line_args.sim_dir,
         simulation_pool=command_line_args.sim_pool_size,
         fitting_pool=command_line_args.fit_pool_size,
         bounds=command_line_args.fitting_bounds,
@@ -139,6 +140,7 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         catalog=command_line_args.catalog
     )
 
+    pipeline.validate()
     pipeline.run()
 
 
@@ -181,6 +183,13 @@ def create_cli_parser() -> argparse.ArgumentParser:
         type=Path,
         required=True,
         help='Output file path (a .csv extension is enforced).'
+    )
+
+    parser.add_argument(
+        '-d', '--sim_dir',
+        type=Path,
+        default=None,
+        help='Optionally write simulated light-curves as .ecsv files in the given directory.'
     )
 
     #######################################################################

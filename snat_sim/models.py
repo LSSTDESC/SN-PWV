@@ -320,7 +320,7 @@ class FixedResTransmission:
             xi[:, :, 0] = pwv_eff
             xi[:, :, 1] = np.array(wave)[:, None]
 
-            names = map('{} mm'.format, np.round(pwv, 4).astype(float))
+            names = list(map('{} mm'.format, np.round(pwv, 4).astype(float)))
             return pd.DataFrame(self._interpolator(xi), columns=names)
 
 
@@ -425,7 +425,12 @@ class PWVModel:
 
             target_coord = SkyCoord(ra=ra * u.deg, dec=dec * u.deg)
             altaz = AltAz(obstime=obs_time, location=observer_location)
-            return target_coord.transform_to(altaz).secz.value
+            airmass = target_coord.transform_to(altaz).secz.value
+
+        if np.less_equal(airmass, 1).any():
+            raise ValueError(f'Invalid airmass ({airmass}) for ra={ra}, dec={dec}, time={time} ({time_format})')
+
+        return airmass
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
@@ -656,16 +661,6 @@ class SNModel(sncosmo.Model):
         light_curve['fluxerr'] = light_curve['flux'] / snr
         light_curve.meta = dict(zip(self.param_names, self.parameters))
         return light_curve
-
-    def apparent_bmag(self) -> float:
-        """Apparent b band magnitude at ``t0``"""
-
-        return self.bandmag('bessellb', 'ab', time=self['t0'])
-
-    def absolute_bmag(self, cosmo=const.betoule_cosmo) -> float:
-        """Absolute b band magnitude"""
-
-        return self.source_peakabsmag('bessellb', 'ab', cosmo=cosmo)
 
 
 ###############################################################################

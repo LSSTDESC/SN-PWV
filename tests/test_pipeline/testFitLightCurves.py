@@ -5,6 +5,7 @@ from unittest import TestCase
 import sncosmo
 from egon.mock import MockSource, MockTarget
 
+from snat_sim import constants as const
 from snat_sim.models import SNModel
 from snat_sim.pipeline import FitLightCurves
 
@@ -33,6 +34,8 @@ class ResultObjectValues(TestCase):
 
     def runTest(self) -> None:
         fit_params = dict(zip(self.fitted_result.param_names, self.fitted_result.parameters))
+        apparent_bmag = self.fitted_model.source.bandmag('bessellb', 'ab', phase=0),
+        absolute_bmag = self.fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo),
 
         self.assertEqual(self.lc.meta['SNID'], self.pipeline_result.snid)
         self.assertEqual(self.lc.meta, self.pipeline_result.sim_params)
@@ -40,6 +43,6 @@ class ResultObjectValues(TestCase):
         self.assertEqual(self.fitted_result.errors, self.pipeline_result.fit_err)
         self.assertEqual(self.fitted_result.chisq, self.pipeline_result.chisq)
         self.assertEqual(self.fitted_result.ndof, self.pipeline_result.ndof)
-        self.assertEqual(self.fitted_model.apparent_bmag(), self.pipeline_result.mb)
-        self.assertEqual(self.fitted_model.absolute_bmag(), self.pipeline_result.abs_mag)
+        self.assertEqual(apparent_bmag, self.pipeline_result.mb)
+        self.assertEqual(absolute_bmag, self.pipeline_result.abs_mag)
         self.assertEqual('FitLightCurves: ' + self.fitted_result.message, self.pipeline_result.message)

@@ -6,7 +6,7 @@ from unittest import TestCase
 import numpy as np
 from egon.mock import MockSource, MockTarget
 
-from snat_sim.models import SNModel, ObservedCadence
+from snat_sim.models import ObservedCadence, SNModel
 from snat_sim.pipeline import SimulateLightCurves
 from tests.mock import create_mock_plasticc_light_curve
 
@@ -16,13 +16,14 @@ class LightCurveSimulation(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
-
         cls.plasticc_lc = create_mock_plasticc_light_curve()
         cls.node = SimulateLightCurves(SNModel('salt2-extended'), num_processes=0)
-        cls.duplicated_lc = cls.node.duplicate_plasticc_lc(*ObservedCadence.from_plasticc(cls.plasticc_lc))
+
+        cls.sim_params, cls.sim_cadence = ObservedCadence.from_plasticc(cls.plasticc_lc)
+        cls.duplicated_lc = cls.node.duplicate_plasticc_lc(cls.sim_params, cls.sim_cadence)
 
     def test_lc_meta_matches_params(self) -> None:
-        """Test parameters in returned meta data match the input light_curve"""
+        """Test parameters in returned meta data match the input plasticc light_curve"""
 
         param_mapping = {  # Maps sncosmo param names to plasticc names
             't0': 'SIM_PEAKMJD',
@@ -42,6 +43,18 @@ class LightCurveSimulation(TestCase):
                 self.duplicated_lc.meta[sncosmo_param], self.plasticc_lc.meta[plasticc_param],
                 f'Incorrect {sncosmo_param} parameter in meta (PLaSTICC parameter {plasticc_param}).'
             )
+
+    def test_all_sim_params_in_meta(self) -> None:
+        """Test all simulation parameters are copied into the simulated metadata"""
+
+        # The x0 param should be overwritten during the simulation
+        # See the ``test_x0_overwritten_by_cosmo_arg`` test
+        sim_params = self.sim_params.copy()
+        sim_params.pop('x0')
+
+        for param, val in sim_params.items():
+            self.assertIn(param, self.duplicated_lc.meta, f'Parameter {param} missing in meta.')
+            self.assertEqual(val, self.duplicated_lc.meta[param], f'Incorrect value for {param} parameter in meta.')
 
     def test_x0_overwritten_by_cosmo_arg(self) -> None:
         """Test the x0 parameter is overwritten according to the given cosmology"""
