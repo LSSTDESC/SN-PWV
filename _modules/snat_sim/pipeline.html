@@ -154,16 +154,16 @@
 <span class="kn">from</span> <span class="nn">numbers</span> <span class="kn">import</span> <span class="n">Number</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
 
 <span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">from</span> <span class="nn">egon.connectors</span> <span class="kn">import</span> <span class="n">Output</span><span class="p">,</span> <span class="n">Input</span>
-<span class="kn">from</span> <span class="nn">egon.nodes</span> <span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Target</span><span class="p">,</span> <span class="n">Source</span>
+<span class="kn">from</span> <span class="nn">egon.connectors</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span>
+<span class="kn">from</span> <span class="nn">egon.nodes</span> <span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Target</span>
 <span class="kn">from</span> <span class="nn">egon.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">ObservedCadence</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">AbstractVariablePWVEffect</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">SNModel</span>
 <span class="kn">from</span> <span class="nn">.plasticc</span> <span class="kn">import</span> <span class="n">PLaSTICC</span>
 <span class="kn">from</span> <span class="nn">.reference_stars</span> <span class="kn">import</span> <span class="n">VariableCatalog</span>
 
@@ -328,12 +328,18 @@
         <span class="c1"># Simulate the light-curve. Make sure to include model parameters as meta data</span>
         <span class="n">duplicated</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">)</span>
         <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">params</span>
-        <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span>
+        <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">model_for_sim</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span>
 
         <span class="c1"># Rescale the light-curve using the reference star catalog if provided</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">duplicated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span>
                 <span class="n">duplicated</span><span class="p">,</span> <span class="n">duplicated</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">ra</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">],</span> <span class="n">dec</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Add the simulated PWV concentration if there is a variable PWV transmission effect.</span>
+        <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">effects</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">effect</span><span class="p">,</span> <span class="n">AbstractVariablePWVEffect</span><span class="p">):</span>
+                <span class="n">duplicated</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">duplicated</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+                <span class="k">break</span>
 
         <span class="k">return</span> <span class="n">duplicated</span></div>
 
@@ -350,6 +356,39 @@
 
             <span class="k">else</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">simulation_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">duplicated_lc</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SimulationToDisk"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.SimulationToDisk">[docs]</a><span class="k">class</span> <span class="nc">SimulationToDisk</span><span class="p">(</span><span class="n">Target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline node for writing simulated light-curves to disk</span>
+
+<span class="sd">    Connectors:</span>
+<span class="sd">        simulation_input: Simulated light-curves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SimulationToDisk.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.SimulationToDisk.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">out_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Write simulated light-curves to disk</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            out_dir: Path to write results to (.csv extension is enforced)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_dir</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SimulationToDisk</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulationToDisk.setup"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.SimulationToDisk.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Ensure the output directory exists&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulationToDisk.action"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.SimulationToDisk.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Write simulated light-curves to disk&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_input</span><span class="o">.</span><span class="n">iter_get</span><span class="p">():</span>
+            <span class="n">path</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_dir</span> <span class="o">/</span> <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.ecsv&#39;</span><span class="p">)</span>
+            <span class="n">lc</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
 
 
 <div class="viewcode-block" id="FitLightCurves"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.FitLightCurves">[docs]</a><span class="k">class</span> <span class="nc">FitLightCurves</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
@@ -396,24 +435,26 @@
 <span class="sd">            - A copy of ``self.model`` with parameter values set to optimize the chi-square</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="c1"># Use the true light-curve parameters as the initial guess</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sn_model</span><span class="p">)</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
+
         <span class="k">return</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span>
-            <span class="n">light_curve</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn_model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
+            <span class="n">light_curve</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">vparams</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">bounds</span><span class="p">,</span>
             <span class="n">guess_t0</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">guess_amplitude</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">guess_z</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">warn</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="FitLightCurves.action"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.FitLightCurves.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Fit light-curves&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">light_curve</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">light_curves_input</span><span class="o">.</span><span class="n">iter_get</span><span class="p">():</span>
-            <span class="c1"># Use the true light-curve parameters as the initial guess</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sn_model</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sn_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
-
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">fitted_result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">excep</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fit_results_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span>
-                    <span class="n">PipelineResult</span><span class="p">(</span><span class="n">snid</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span>
-                                   <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">excep</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                    <span class="n">PipelineResult</span><span class="p">(</span>
+                        <span class="n">snid</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">,</span>
+                        <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">excep</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
@@ -425,8 +466,8 @@
                         <span class="n">fit_err</span><span class="o">=</span><span class="n">fitted_result</span><span class="o">.</span><span class="n">errors</span><span class="p">,</span>
                         <span class="n">chisq</span><span class="o">=</span><span class="n">fitted_result</span><span class="o">.</span><span class="n">chisq</span><span class="p">,</span>
                         <span class="n">ndof</span><span class="o">=</span><span class="n">fitted_result</span><span class="o">.</span><span class="n">ndof</span><span class="p">,</span>
-                        <span class="n">mb</span><span class="o">=</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">apparent_bmag</span><span class="p">(),</span>
-                        <span class="n">abs_mag</span><span class="o">=</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">absolute_bmag</span><span class="p">(),</span>
+                        <span class="n">mb</span><span class="o">=</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span>
+                        <span class="n">abs_mag</span><span class="o">=</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">source_peakabsmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">),</span>
                         <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">fitted_result</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s1">&#39;</span>
                     <span class="p">)</span>
                 <span class="p">)</span></div></div>
@@ -436,7 +477,7 @@
     <span class="sd">&quot;&quot;&quot;Pipeline node for writing fit results to disk</span>
 
 <span class="sd">    Connectors:</span>
-<span class="sd">        fit_results_input: List of values to write as single line in CSV format</span>
+<span class="sd">        fit_results_input: ``PipelineResult`` objects to write as individual lines in CSV format</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="FitResultsToDisk.__init__"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.FitResultsToDisk.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
@@ -459,7 +500,7 @@
 <div class="viewcode-block" id="FitResultsToDisk.setup"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.FitResultsToDisk.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Ensure the parent directory of the destination file exists&quot;&quot;&quot;</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="n">column_names</span> <span class="o">=</span> <span class="n">PipelineResult</span><span class="o">.</span><span class="n">column_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
@@ -471,6 +512,7 @@
 
         <span class="k">with</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="s1">&#39;a&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outfile</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_results_input</span><span class="o">.</span><span class="n">iter_get</span><span class="p">():</span>
+                <span class="n">result</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
                 <span class="n">outfile</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">))</span></div></div>
 
 
@@ -484,6 +526,7 @@
             <span class="n">fit_model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
             <span class="n">vparams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
             <span class="n">out_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+            <span class="n">sim_dir</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">fitting_pool</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">simulation_pool</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">bounds</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Number</span><span class="p">,</span> <span class="n">Number</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -500,6 +543,7 @@
 <span class="sd">            vparams: List of parameter names to vary in the fit</span>
 <span class="sd">            bounds: Bounds to impose on ``fit_model`` parameters when fitting light-curves</span>
 <span class="sd">            out_path: Path to write results to (.csv extension is enforced)</span>
+<span class="sd">            sim_dir: Optionally write simulated light-curves to disk in the given directory as individual ecsv files</span>
 <span class="sd">            fitting_pool: Number of child processes allocated to simulating light-curves</span>
 <span class="sd">            simulation_pool: Number of child processes allocated to fitting light-curves</span>
 <span class="sd">            max_queue: Maximum number of light-curves to store in pipeline at once</span>
@@ -518,16 +562,20 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_light_curves</span> <span class="o">=</span> <span class="n">FitLightCurves</span><span class="p">(</span>
             <span class="n">sn_model</span><span class="o">=</span><span class="n">fit_model</span><span class="p">,</span> <span class="n">vparams</span><span class="o">=</span><span class="n">vparams</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">num_processes</span><span class="o">=</span><span class="n">fitting_pool</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">write_to_disk</span> <span class="o">=</span> <span class="n">FitResultsToDisk</span><span class="p">(</span><span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">out_path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fits_to_disk</span> <span class="o">=</span> <span class="n">FitResultsToDisk</span><span class="p">(</span><span class="n">sim_model</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">out_path</span><span class="p">)</span>
 
         <span class="c1"># Connect pipeline nodes together</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_plastic</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">plasticc_data_input</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">simulation_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_light_curves</span><span class="o">.</span><span class="n">light_curves_input</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">failure_result_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">write_to_disk</span><span class="o">.</span><span class="n">fit_results_input</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fit_light_curves</span><span class="o">.</span><span class="n">fit_results_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">write_to_disk</span><span class="o">.</span><span class="n">fit_results_input</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">failure_result_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fits_to_disk</span><span class="o">.</span><span class="n">fit_results_input</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fit_light_curves</span><span class="o">.</span><span class="n">fit_results_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fits_to_disk</span><span class="o">.</span><span class="n">fit_results_input</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">max_queue</span><span class="p">:</span>  <span class="c1"># Limit the number of light-curves fed into the pipeline</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">plasticc_data_input</span><span class="o">.</span><span class="n">maxsize</span> <span class="o">=</span> <span class="n">max_queue</span>
+
+        <span class="k">if</span> <span class="n">sim_dir</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sims_to_disk</span> <span class="o">=</span> <span class="n">SimulationToDisk</span><span class="p">(</span><span class="n">sim_dir</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span><span class="o">.</span><span class="n">simulation_output</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sims_to_disk</span><span class="o">.</span><span class="n">simulation_input</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">(</span><span class="n">FittingPipeline</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span></div></div>
 </pre></div>

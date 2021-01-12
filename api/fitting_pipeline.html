@@ -312,6 +312,49 @@ simulation_output: Simulated light-curves as  <code class="docutils literal notr
 </dd></dl>
 
 <dl class="py class">
+<dt id="snat_sim.pipeline.SimulationToDisk">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.</code><code class="sig-name descname">SimulationToDisk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">out_dir</span></em>, <em class="sig-param"><span class="n">num_processes</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#SimulationToDisk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.SimulationToDisk" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pipeline node for writing simulated light-curves to disk</p>
+<dl class="simple">
+<dt>Connectors:</dt><dd><p>simulation_input: Simulated light-curves</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="snat_sim.pipeline.SimulationToDisk.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">out_dir</span></em>, <em class="sig-param"><span class="n">num_processes</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#SimulationToDisk.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.SimulationToDisk.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write simulated light-curves to disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>out_dir</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path to write results to (.csv extension is enforced)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.pipeline.SimulationToDisk.setup">
+<code class="sig-name descname">setup</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#SimulationToDisk.setup"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.SimulationToDisk.setup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ensure the output directory exists</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.pipeline.SimulationToDisk.action">
+<code class="sig-name descname">action</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#SimulationToDisk.action"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.SimulationToDisk.action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Write simulated light-curves to disk</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
 <dt id="snat_sim.pipeline.FitLightCurves">
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.</code><code class="sig-name descname">FitLightCurves</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sn_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">num_processes</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#FitLightCurves"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.FitLightCurves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline node for fitting simulated light-curves</p>
@@ -372,7 +415,7 @@ fit_results_output: Fit results as a list</p>
 <em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.</code><code class="sig-name descname">FitResultsToDisk</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">num_processes</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#FitResultsToDisk"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.FitResultsToDisk" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline node for writing fit results to disk</p>
 <dl class="simple">
-<dt>Connectors:</dt><dd><p>fit_results_input: List of values to write as single line in CSV format</p>
+<dt>Connectors:</dt><dd><p>fit_results_input: <code class="docutils literal notranslate"><span class="pre">PipelineResult</span></code> objects to write as individual lines in CSV format</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -412,11 +455,11 @@ fit_results_output: Fit results as a list</p>
 
 <dl class="py class">
 <dt id="snat_sim.pipeline.FittingPipeline">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.</code><code class="sig-name descname">FittingPipeline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">fitting_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">simulation_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">catalog</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#FittingPipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.FittingPipeline" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.</code><code class="sig-name descname">FittingPipeline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">sim_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fitting_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">simulation_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">catalog</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#FittingPipeline"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.FittingPipeline" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline of parallel processes for simulating and fitting light-curves</p>
 <dl class="py method">
 <dt id="snat_sim.pipeline.FittingPipeline.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">fitting_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">simulation_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">catalog</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#FittingPipeline.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.FittingPipeline.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">sim_dir</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fitting_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">simulation_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">catalog</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/pipeline.html#FittingPipeline.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.FittingPipeline.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit light-curves using multiple processes and combine results into an output file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -427,6 +470,7 @@ fit_results_output: Fit results as a list</p>
 <li><p><strong>vparams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of parameter names to vary in the fit</p></li>
 <li><p><strong>bounds</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>]]]) – Bounds to impose on <code class="docutils literal notranslate"><span class="pre">fit_model</span></code> parameters when fitting light-curves</p></li>
 <li><p><strong>out_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path to write results to (.csv extension is enforced)</p></li>
+<li><p><strong>sim_dir</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – Optionally write simulated light-curves to disk in the given directory as individual ecsv files</p></li>
 <li><p><strong>fitting_pool</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of child processes allocated to simulating light-curves</p></li>
 <li><p><strong>simulation_pool</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of child processes allocated to fitting light-curves</p></li>
 <li><p><strong>max_queue</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Maximum number of light-curves to store in pipeline at once</p></li>
