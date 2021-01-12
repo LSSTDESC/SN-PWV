@@ -125,7 +125,7 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         command_line_args: Parsed command line arguments
     """
 
-    print('Instantiating pipeline...')
+    print(f'Instantiating pipeline (target: {command_line_args.out_path})')
     pipeline = FittingPipeline(
         cadence=command_line_args.cadence,
         sim_model=command_line_args.simulation_model,
