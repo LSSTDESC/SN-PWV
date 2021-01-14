@@ -201,7 +201,7 @@ class ObservedCadence:
             light_curve = light_curve[light_curve['PHOTFLAG'] != 0]
 
         params = {
-            'SNID': light_curve.meta['SNID'],
+            'SNID': light_curve.meta['SNID'].strip(),
             'ra': light_curve.meta['RA'],
             'dec': light_curve.meta['DECL'],
             't0': light_curve.meta['SIM_PEAKMJD'],
