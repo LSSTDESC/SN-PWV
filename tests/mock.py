@@ -68,7 +68,7 @@ def create_mock_plasticc_light_curve():
             'SKY_SIG': np.full_like(time_values, 80)
         },
         meta={
-            'SNID': 123456,
+            'SNID': '123456',
             'RA': 10,
             'DECL': -5,
             'SIM_PEAKMJD': 0,
