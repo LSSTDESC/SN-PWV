@@ -152,10 +152,10 @@ class ScatterPlotBuilder(BasePlotter):
             y_labels: Optional[StrColl] = None,
             plot_width: int = 1200,
             plot_height: Optional[int] = None,
-            contour: bool = False,
             link_axes: bool = True,
+            contour: bool = False,
             **kwargs
-    ) -> models.Box:
+    ) -> Union[models.GridBox, plotting.Figure]:
         """Create an interactive row of scatter plots
 
         Args:
@@ -170,7 +170,7 @@ class ScatterPlotBuilder(BasePlotter):
             **kwargs: Any arguments for constructing bokeh circle plots
 
         Returns:
-            A row of bokeh figures
+            A bokeh figure or a layout of figures
         """
 
         x_vals = np.atleast_1d(x_vals)
@@ -188,6 +188,9 @@ class ScatterPlotBuilder(BasePlotter):
 
         else:
             figs = [self._make_scatter(*args, width, height, **kwargs) for args in arg_iter]
+
+        if len(figs) == 1:
+            return figs[0]
 
         if link_axes:
             self._link_scatter_axes(figs)
@@ -269,9 +272,10 @@ class HistogramBuilder(BasePlotter):
             x_labels: Optional[StrColl] = None,
             plot_width: int = 1200,
             plot_height: Optional[int] = None,
+            link_axes: bool = True,
             bins: Optional[np.ndarray] = None,
             **kwargs
-    ) -> models.Box:
+    ) -> Union[models.GridBox, plotting.Figure]:
         """Create an interactive row of histogram plots
 
         Args:
@@ -279,11 +283,12 @@ class HistogramBuilder(BasePlotter):
             x_labels: Optional axis labels to use for x values
             plot_width: Width of the overall figure
             plot_height: Height of the overall figure (Defaults to the same value as ``plot_width``)
+            link_axes: Whether to link together subplot axes
             bins: Bins to use for each histogram
             **kwargs: Any arguments for constructing bokeh circle plots
 
         Returns:
-            A row of bokeh figures
+            A bokeh figure or a layout of figures
         """
 
         x_vals = np.atleast_1d(x_vals)
@@ -295,7 +300,15 @@ class HistogramBuilder(BasePlotter):
         height = plot_height or width
 
         arg_iter = zip(x_vals, x_labels, bins)
-        return layouts.gridplot([[self._make_histogram(x, xl, b, width, height, **kwargs) for x, xl, b in arg_iter]])
+        figs = [self._make_histogram(x, xl, b, width, height, **kwargs) for x, xl, b in arg_iter]
+
+        if len(figs) == 1:
+            return figs[0]
+
+        if link_axes:
+            self._link_hist_axes(figs)
+
+        return layouts.gridplot([figs])
 
     def _make_histogram(
             self, x: str, x_label: str, bins: Optional[np.array], plot_width: int, plot_height: int, **kwargs
@@ -320,6 +333,17 @@ class HistogramBuilder(BasePlotter):
         fig.quad(bottom=0, left=hedges[:-1], right=hedges[1:], top=hhist, **kwargs)
         fig.xaxis.axis_label = x_label or x
         return fig
+
+    @staticmethod
+    def _link_hist_axes(figures: List[plotting.Figure]) -> None:
+        """Link x axis ranges together for all plots
+
+        Args:
+            figures: list of bokeh figures
+        """
+
+        for fig in figures:
+            fig.x_range = figures[0].x_range
 
 
 @pd.api.extensions.register_dataframe_accessor('snat_sim_bokeh')
