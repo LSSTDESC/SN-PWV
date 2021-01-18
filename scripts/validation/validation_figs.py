@@ -56,6 +56,7 @@ def load_pipeline_output(path: Path) -> pd.DataFrame:
     df.index = df.index.astype(str)
     return df
 
+
 def build_sn_model(variability, pwv_model, source='salt2-extended'):
     if variability.isnumeric():
         transmission_effect = StaticPWVTrans()
@@ -76,6 +77,7 @@ def build_sn_model(variability, pwv_model, source='salt2-extended'):
         effects=[effect],
         effect_names=[''],
         effect_frames=['obs'])
+
 
 ##############################################################################
 # Load pipeline data
@@ -107,7 +109,7 @@ param_scatter = pipeline_output.snat_sim_bokeh.corner(
 )
 
 # Stretch color contour plots
-param_contour = pipeline_output.snat_sim_bokeh.scatter(
+sim_contour, fit_contour = pipeline_output.snat_sim_bokeh.scatter(
     x_vals=['sim_c', 'fit_c'], y_vals=['sim_x1', 'fit_x1'],
     x_labels=['Simulated c', 'Fitted c'],
     y_labels=['Simulated x1', 'Fitted x1'],
@@ -130,9 +132,9 @@ mag_scatter = pipeline_output.snat_sim_bokeh.scatter('sim_z', 'mb', 'z', 'Appare
 mu_scatter = pipeline_output.snat_sim_bokeh.scatter('sim_z', 'mu', 'z', 'Fitted Distance Modulus', plot_width=600)
 
 z = np.arange(pipeline_output.sim_z.min(), pipeline_output.sim_z.max() + .005, .005)
-mag_scatter.line(z, betoule_cosmo.distmod(z), color='red', legend_label='Betoule et al. 2014')
-mag_scatter.line(z, wmap9.distmod(z), color='grey', legend_label='WMAP9')
-mag_scatter.legend.click_policy = 'hide'
+mu_scatter.line(z, betoule_cosmo.distmod(z), color='red', legend_label='Betoule et al. 2014')
+mu_scatter.line(z, wmap9.distmod(z), color='grey', legend_label='WMAP9')
+mu_scatter.legend.click_policy = 'hide'
 
 # The following code adds interactive light-curve fits on a per SNID basis
 bands = 'ugrizy'
@@ -147,8 +149,6 @@ for source, color, band in zip(sources, colors, bands):
     lc_plot.line(x='time', y='fitted_flux', source=source, color=color, legend_label=f'Fitted {band}', alpha=.5)
     lc_figs.append(lc_plot)
 
-lc_figs = np.reshape(lc_figs, (3, 2)).tolist()
-
 select_snid = Select(title="SNID", value=lc_sims.index[0], options=sorted(lc_sims.index.unique()))
 
 
@@ -159,10 +159,10 @@ def update():
     fitted_param_values = pipeline_output.loc[select_snid.value]
     sn_model.update({p: fitted_param_values[f'fit_{p}'] for p in sn_model.param_names})
 
-    for band, source in zip('ugrizy', sources):
+    for band, figure in zip('ugrizy', lc_figs):
         full_band_name = f'lsst_hardware_{band}'
         band_data = df[df.band == full_band_name]
-        source.data = dict(
+        figure.renderers[-1].data_source.data = dict(
             time=band_data.time,
             flux=band_data.flux,
             fitted_flux=sn_model.bandflux(full_band_name, band_data.time, zp=band_data.zp, zpsys=band_data.zpsys)
@@ -176,9 +176,10 @@ update()  # initial load of the data
 # Layout document
 ##############################################################################
 
+lc_figs = np.reshape(lc_figs, (3, 2)).tolist()
 doc_layout = layouts.layout([
     [param_scatter],
-    [param_contour],
+    [sim_contour, fit_contour],
     [mag_scatter, mu_scatter],
     [pwv_hist, pwv_scatter],
     [model_hist, model_scatter],

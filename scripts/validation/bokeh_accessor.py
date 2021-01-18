@@ -1,3 +1,4 @@
+from itertools import repeat
 from typing import *
 
 import numpy as np
@@ -6,7 +7,7 @@ from arviz.plots import kdeplot
 from bokeh import layouts, models, plotting
 
 StrColl = TypeVar('StrColl', str, Collection[str])
-default_tooltips = [('SNID', '@snid'), ('Chisq', '@chisq'), ('DOF', '@ndof')]
+default_tooltips = [('SNID', '@snid')]
 default_tools = 'pan,box_zoom,wheel_zoom,save,box_select,lasso_select,reset,help'
 
 
@@ -150,12 +151,14 @@ class ScatterPlotBuilder(BasePlotter):
             y_vals: StrColl,
             x_labels: Optional[StrColl] = None,
             y_labels: Optional[StrColl] = None,
+            x_err: str = None,
+            y_err: str = None,
             plot_width: int = 1200,
             plot_height: Optional[int] = None,
             link_axes: bool = True,
             contour: bool = False,
             **kwargs
-    ) -> Union[models.GridBox, plotting.Figure]:
+    ) -> Union[plotting.Figure, List[plotting.Figure]]:
         """Create an interactive row of scatter plots
 
         Args:
@@ -177,16 +180,18 @@ class ScatterPlotBuilder(BasePlotter):
         y_vals = np.atleast_1d(y_vals)
         x_labels = np.atleast_1d(x_labels) if x_labels is not None else x_vals
         y_labels = np.atleast_1d(y_labels) if y_labels is not None else y_vals
+        x_err = np.atleast_1d(x_err) if x_err else repeat(None)
+        y_err = np.atleast_1d(y_err) if x_err else repeat(None)
 
         # Default to a square aspect ratio for each subplot
         width = int(plot_width / len(x_vals))
         height = plot_height or width
 
-        arg_iter = zip(x_vals, y_vals, x_labels, y_labels)
         if contour:
+            arg_iter = zip(x_vals, y_vals, x_labels, y_labels)
             figs = [self._make_contour(*args, width, height, **kwargs) for args in arg_iter]
-
         else:
+            arg_iter = zip(x_vals, y_vals, x_labels, y_labels, x_err, y_err)
             figs = [self._make_scatter(*args, width, height, **kwargs) for args in arg_iter]
 
         if len(figs) == 1:
@@ -195,10 +200,13 @@ class ScatterPlotBuilder(BasePlotter):
         if link_axes:
             self._link_scatter_axes(figs)
 
-        return layouts.gridplot([figs])
+        return figs
 
     def _make_scatter(
-            self, x: str, y: str, x_label: str, y_label: str,
+            self,
+            x: str, y: str,
+            x_label: str, y_label: str,
+            x_err: str = None, y_err: str = None,
             plot_width: int = 1200, plot_height: int = 1200,
             fig: Optional[plotting.Figure] = None, **kwargs
     ) -> plotting.Figure:
@@ -222,6 +230,23 @@ class ScatterPlotBuilder(BasePlotter):
         fig.circle(x, y, source=self.source, **kwargs)
         fig.xaxis.axis_label = x_label or x
         fig.yaxis.axis_label = y_label
+
+        if x_err:
+            x_err_x = []
+            x_err_y = []
+            for px, py, err in zip(x, y, self.source.data[x_err]):
+                x_err_x.append((px - err, px + err))
+                x_err_y.append((py, py))
+            fig.multi_line(x_err_x, x_err_y, **kwargs)
+
+        if y_err:
+            y_err_x = []
+            y_err_y = []
+            for px, py, err in zip(x, y, self.source.data[y_err]):
+                y_err_x.append((px, px))
+                y_err_y.append((py - err, py + err))
+            fig.multi_line(y_err_x, y_err_y, **kwargs)
+
         return fig
 
     def _make_contour(
@@ -275,7 +300,7 @@ class HistogramBuilder(BasePlotter):
             link_axes: bool = True,
             bins: Optional[np.ndarray] = None,
             **kwargs
-    ) -> Union[models.GridBox, plotting.Figure]:
+    ) -> Union[plotting.Figure, List[plotting.Figure]]:
         """Create an interactive row of histogram plots
 
         Args:
@@ -308,7 +333,7 @@ class HistogramBuilder(BasePlotter):
         if link_axes:
             self._link_hist_axes(figs)
 
-        return layouts.gridplot([figs])
+        return figs
 
     def _make_histogram(
             self, x: str, x_label: str, bins: Optional[np.array], plot_width: int, plot_height: int, **kwargs
