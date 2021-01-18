@@ -137,7 +137,7 @@ mu_scatter.line(z, betoule_cosmo.distmod(z), color='red', legend_label='Betoule 
 mu_scatter.line(z, wmap9.distmod(z), color='grey', legend_label='WMAP9')
 mu_scatter.legend.click_policy = 'hide'
 
-# The following code plots light-curve fits on a per SNID basis
+# Plot the simulated light-curves and their fits
 bands = 'ugrizy'
 sources = [ColumnDataSource(data=dict(time=[], flux=[], fitted_flux=[])) for _ in bands]
 colors = ('blue', 'orange', 'green', 'red', 'purple', 'black')
@@ -148,6 +148,9 @@ for source, color, band in zip(sources, colors, bands):
     lc_plot.renderers.append(Span(location=0, dimension='width', line_color='grey', line_width=1))
     lc_plot.circle(x='time', y='flux', source=source, color=color, legend_label=band)
     lc_plot.line(x='time', y='fitted_flux', source=source, color=color, legend_label=f'Fitted {band}', alpha=.5)
+
+    lc_plot.xaxis.axis_label = 'Time (MJD)'
+    lc_plot.yaxis.axis_label = 'Flux'
     lc_figs.append(lc_plot)
 
 # Here we create a tabular representation of the light-curve data
