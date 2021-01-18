@@ -12,6 +12,7 @@ from astropy.table import Table, vstack
 from bokeh import layouts, plotting
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Select, Span
+from bokeh.models.widgets import DataTable, TableColumn
 from pwv_kpno.defaults import ctio
 
 import bokeh_accessor
@@ -136,7 +137,7 @@ mu_scatter.line(z, betoule_cosmo.distmod(z), color='red', legend_label='Betoule 
 mu_scatter.line(z, wmap9.distmod(z), color='grey', legend_label='WMAP9')
 mu_scatter.legend.click_policy = 'hide'
 
-# The following code adds interactive light-curve fits on a per SNID basis
+# The following code plots light-curve fits on a per SNID basis
 bands = 'ugrizy'
 sources = [ColumnDataSource(data=dict(time=[], flux=[], fitted_flux=[])) for _ in bands]
 colors = ('blue', 'orange', 'green', 'red', 'purple', 'black')
@@ -149,6 +150,15 @@ for source, color, band in zip(sources, colors, bands):
     lc_plot.line(x='time', y='fitted_flux', source=source, color=color, legend_label=f'Fitted {band}', alpha=.5)
     lc_figs.append(lc_plot)
 
+# Here we create a tabular representation of the light-curve data
+table_source = ColumnDataSource(lc_sims.head())
+data_table = DataTable(
+    columns=[TableColumn(field=Ci, title=Ci) for Ci in lc_sims.columns],
+    source=table_source,
+    width=1200
+)
+
+# Add the ability to refine plotted light_curves and tabular data per SNID
 select_snid = Select(title="SNID", value=lc_sims.index[0], options=sorted(lc_sims.index.unique()))
 
 
@@ -156,13 +166,15 @@ def update():
     """Call back for updating light-curve plots to reflect the selected SNID"""
 
     df = lc_sims[lc_sims.index == select_snid.value]
+    table_source.data = df
+
     fitted_param_values = pipeline_output.loc[select_snid.value]
     sn_model.update({p: fitted_param_values[f'fit_{p}'] for p in sn_model.param_names})
 
-    for band, figure in zip('ugrizy', lc_figs):
+    for band, s in zip('ugrizy', sources):
         full_band_name = f'lsst_hardware_{band}'
         band_data = df[df.band == full_band_name]
-        figure.renderers[-1].data_source.data = dict(
+        s.data = dict(
             time=band_data.time,
             flux=band_data.flux,
             fitted_flux=sn_model.bandflux(full_band_name, band_data.time, zp=band_data.zp, zpsys=band_data.zpsys)
@@ -176,16 +188,16 @@ update()  # initial load of the data
 # Layout document
 ##############################################################################
 
-lc_figs = np.reshape(lc_figs, (3, 2)).tolist()
 doc_layout = layouts.layout([
     [param_scatter],
-    [sim_contour, fit_contour],
-    [mag_scatter, mu_scatter],
-    [pwv_hist, pwv_scatter],
-    [model_hist, model_scatter],
-    [airmass_hist, airmass_scatter],
+    layouts.gridplot([[sim_contour, fit_contour]]),
+    layouts.gridplot([[mag_scatter, mu_scatter]]),
+    layouts.gridplot([[pwv_hist, pwv_scatter]]),
+    layouts.gridplot([[model_hist, model_scatter]]),
+    layouts.gridplot([[airmass_hist, airmass_scatter]]),
     [select_snid],
-    lc_figs
+    layouts.gridplot(np.reshape(lc_figs, (2, 3)).tolist()),
+    [data_table]
 ])
 
 curdoc().add_root(doc_layout)
