@@ -76,9 +76,9 @@ class MemoryCache(OrderedDict):
         super(MemoryCache, self).__init__()
 
         self.max_size = max_size
-        size_when_empty = sys.getsizeof(self)
-        if (self.max_size is not None) and (self.max_size <= size_when_empty):
-            raise ValueError(f'MemoryCache size limit must exceed {size_when_empty} bytes')
+        if max_size is not None:
+            if not isinstance(max_size, int) or max_size <= 0:
+                raise ValueError('Maximum cache size must be a positive integer')
 
     def __setitem__(self, key: Hashable, value: Any):
         """Update an entry in the hash table."""
@@ -90,7 +90,7 @@ class MemoryCache(OrderedDict):
         """Pop items from memory until instance size is <= the size limit."""
 
         if self.max_size is not None:
-            while sys.getsizeof(self) > self.max_size:
+            while self and sys.getsizeof(self) > self.max_size:
                 self.popitem(last=False)
 
 

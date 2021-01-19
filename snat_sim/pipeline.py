@@ -256,7 +256,9 @@ class SimulateLightCurves(Node):
                 duplicated_lc = self.duplicate_plasticc_lc(params, cadence)
 
             except Exception as e:
-                result = PipelineResult(params['SNID'], sim_params=params, message=str(e))
+                result = PipelineResult(
+                    params['SNID'], sim_params=params,
+                    message=f'{self.__class__.__name__}: {e}')
                 self.failure_result_output.put(result)
 
             else:

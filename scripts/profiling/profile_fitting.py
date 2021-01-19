@@ -1,12 +1,11 @@
 import os
-from pathlib import Path
 
 from pwv_kpno.defaults import ctio
 
 from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
 
-os.environ['CADENCE_SIMS'] = str(Path(__file__).resolve().parent / 'data')
+os.environ['CADENCE_SIMS'] = '/mnt/md0/sn-sims/'
 
 
 def setup_pipeline():
@@ -25,7 +24,7 @@ def setup_pipeline():
         effect_names=[''],
         effect_frames=['obs'])
 
-    return FittingPipeline(
+    pipeline = FittingPipeline(
         cadence='alt_sched',
         sim_model=sn_model_sim,
         fit_model=sn_model_fit,
@@ -34,8 +33,15 @@ def setup_pipeline():
         fitting_pool=6,
         out_path='./test.csv',
         max_queue=1000,
-        iter_lim=100
+        iter_lim=1500
     )
+
+    # Run the pipeline in the main thread
+    pipeline.load_plastic.num_processes = 0
+    pipeline.simulate_light_curves.num_processes = 0
+    pipeline.fit_light_curves.num_processes = 0
+    pipeline.fits_to_disk.num_processes = 0
+    return pipeline
 
 
 if __name__ == '__main__':
