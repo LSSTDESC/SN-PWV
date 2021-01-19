@@ -10,13 +10,7 @@ from snat_sim.utils.caching import MemoryCache
 
 
 class MemoryManagement(TestCase):
-    """Tests for the ``MemoryCache`` class"""
-
-    def test_error_on_zero_size_limit(self) -> None:
-        """Test an error is raise when instantiating a MemoryCache of size zero"""
-
-        with self.assertRaises(ValueError):
-            MemoryCache(max_size=0)
+    """Tests for the enforcement of a limit on the consumed memory"""
 
     def test_max_size_is_enforced(self) -> None:
         """Test the memory cache enforces the prescribed size limit as data is added / removed"""
@@ -67,3 +61,25 @@ class NumpyCache(TestCase):
             return x + y
 
         add(np.array([1, 2]), np.array([1, 2]))
+
+
+class InitErrors(TestCase):
+    """Tests for the raising of errors on init"""
+
+    def test_error_on_zero_size_limit(self) -> None:
+        """Test an error is raise when instantiating a MemoryCache of size zero"""
+
+        with self.assertRaises(ValueError):
+            MemoryCache(max_size=0)
+
+    def test_error_on_negative_size_limit(self) -> None:
+        """Test an error is raise when instantiating a MemoryCache of negative size"""
+
+        with self.assertRaises(ValueError):
+            MemoryCache(max_size=-1)
+
+    def test_error_on_float_size_limit(self) -> None:
+        """Test an error is raise when instantiating a MemoryCache with a float"""
+
+        with self.assertRaises(ValueError):
+            MemoryCache(max_size=1.2)
