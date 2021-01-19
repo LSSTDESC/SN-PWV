@@ -11,18 +11,17 @@ questions concerning the ``snat_sim`` package, please see the API section of
 these docs or raise an issue on `GitHub <https://github.com/lsstdesc/sn-pwv>`_.
 
 .. note:: The ``snat_sim`` package is designed to support scientific
-   research efforts. The documentation may at times assume the reader has
+   research efforts. This documentation may at times assume the reader has
    a basic understanding of astronomy and how astronomical surveys work. However,
    these assumptions are kept to a minimum wherever possible.
 
 Pipeline Overview
 -----------------
 
-``snat_sim`` is designed such that each package module represents a distinct
-stage in the analysis. These steps range in complexity from visualizing simulation
-results to simulating the brightness of astronomical objects as a function of time.
-Ultimately, each of these tasks are combined to support a combined data analysis
-pipeline.
+Each module of the ``snat_sim`` package is designed to represent a distinct
+stage of the analysis process. Ultimately, this functionality is brought together
+in the form of a single, modular analysis pipeline -
+the ``pipeline.FittingPipeline`` class.
 
 An example of a running pipeline instance is shown below. Each process (colored
 in blue) is executed in parallel, and the number of processes launched in each
@@ -40,7 +39,7 @@ Light-Curve Simulation
 The light-curve simulation process works by combining the results of several
 independent models. The intrinsic behavior of Type Ia Supernovae, the
 propagation of light through our atmosphere, and how the atmospheric makeup
-changes over time are all considered in the simulation process.
+changes over time are all considered in the simulation.
 
 
 .. image:: ./_static/images/simulation.svg
