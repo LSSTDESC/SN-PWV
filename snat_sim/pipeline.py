@@ -46,7 +46,7 @@ from egon.nodes import Node, Source, Target
 from egon.pipeline import Pipeline
 
 from . import constants as const
-from .models import AbstractVariablePWVEffect, ObservedCadence, SNModel
+from .models import AbstractVariablePWVEffect, ObservedCadence, PWVModel, SNModel, StaticPWVTrans
 from .plasticc import PLaSTICC
 from .reference_stars import VariableCatalog
 
@@ -172,7 +172,8 @@ class SimulateLightCurves(Node):
             catalog: VariableCatalog = None,
             num_processes: int = 1,
             abs_mb: float = const.betoule_abs_mb,
-            cosmo=const.betoule_cosmo
+            cosmo=const.betoule_cosmo,
+            include_pwv: bool = False
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -188,6 +189,7 @@ class SimulateLightCurves(Node):
         self.catalog = catalog
         self.abs_mb = abs_mb
         self.cosmo = cosmo
+        self.include_pwv_col = include_pwv
 
         # Node connectors
         self.plasticc_data_input = Input()
@@ -219,12 +221,32 @@ class SimulateLightCurves(Node):
                 duplicated, duplicated['time'], ra=params['ra'], dec=params['dec'])
 
         # Add the simulated PWV concentration if there is a variable PWV transmission effect.
-        for effect in model_for_sim.effects:
-            if isinstance(effect, AbstractVariablePWVEffect):
-                duplicated['pwv'] = effect.assumed_pwv(duplicated['time'])
-                break
+        if self.include_pwv_col:
+            self.add_pwv_columns_to_table(duplicated, model_for_sim, ra=params['ra'], dec=params['dec'])
 
         return duplicated
+
+    @staticmethod
+    def add_pwv_columns_to_table(light_curve: Table, model_for_sim: SNModel, ra: float, dec: float) -> None:
+        """Add columns for PWV and Airmass to a light-curve table
+
+        Args:
+            light_curve: The simulated light-curve table
+            model_for_sim: The model used to simulate the light-curve
+            ra: The Right Ascension of the supernova
+            dec: The declination  of the supernova
+        """
+
+        for effect in model_for_sim.effects:
+            if isinstance(effect, AbstractVariablePWVEffect):
+                light_curve['pwv'] = effect.assumed_pwv(light_curve['time'])
+                light_curve['airmass'] = PWVModel.calc_airmass(light_curve['time'], ra=ra, dec=dec)
+                break
+
+            if isinstance(effect, StaticPWVTrans):
+                light_curve['pwv'] = effect['pwv']
+                light_curve['airmass'] = 1
+                break
 
     def action(self) -> None:
         """Simulate light-curves with atmospheric effects"""
@@ -413,7 +435,7 @@ class FittingPipeline(Pipeline):
             fitting_pool: int = 1,
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
-            max_queue: int = 100,
+            max_queue: int = 200,
             iter_lim: int = float('inf'),
             catalog: VariableCatalog = None
     ) -> None:
@@ -440,7 +462,9 @@ class FittingPipeline(Pipeline):
         self.simulate_light_curves = SimulateLightCurves(
             sn_model=sim_model,
             catalog=catalog,
-            num_processes=simulation_pool)
+            num_processes=simulation_pool,
+            include_pwv=sim_dir is not None
+        )
 
         self.fit_light_curves = FitLightCurves(
             sn_model=fit_model, vparams=vparams, bounds=bounds, num_processes=fitting_pool)
