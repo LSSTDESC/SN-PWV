@@ -318,7 +318,7 @@
             <span class="n">light_curve</span> <span class="o">=</span> <span class="n">light_curve</span><span class="p">[</span><span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;PHOTFLAG&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
 
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;SNID&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span>
+            <span class="s1">&#39;SNID&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
             <span class="s1">&#39;ra&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">],</span>
             <span class="s1">&#39;dec&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;DECL&#39;</span><span class="p">],</span>
             <span class="s1">&#39;t0&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_PEAKMJD&#39;</span><span class="p">],</span>

@@ -163,7 +163,7 @@
 <span class="kn">from</span> <span class="nn">egon.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">AbstractVariablePWVEffect</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">SNModel</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">AbstractVariablePWVEffect</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">PWVModel</span><span class="p">,</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">StaticPWVTrans</span>
 <span class="kn">from</span> <span class="nn">.plasticc</span> <span class="kn">import</span> <span class="n">PLaSTICC</span>
 <span class="kn">from</span> <span class="nn">.reference_stars</span> <span class="kn">import</span> <span class="n">VariableCatalog</span>
 
@@ -289,7 +289,8 @@
             <span class="n">catalog</span><span class="p">:</span> <span class="n">VariableCatalog</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">abs_mb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span>
-            <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span>
+            <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">,</span>
+            <span class="n">include_pwv</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Fit light-curves using multiple processes and combine results into an output file</span>
 
@@ -305,6 +306,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">catalog</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abs_mb</span> <span class="o">=</span> <span class="n">abs_mb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cosmo</span> <span class="o">=</span> <span class="n">cosmo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_pwv_col</span> <span class="o">=</span> <span class="n">include_pwv</span>
 
         <span class="c1"># Node connectors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">plasticc_data_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">()</span>
@@ -336,12 +338,32 @@
                 <span class="n">duplicated</span><span class="p">,</span> <span class="n">duplicated</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">ra</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">],</span> <span class="n">dec</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">])</span>
 
         <span class="c1"># Add the simulated PWV concentration if there is a variable PWV transmission effect.</span>
-        <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">effects</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">effect</span><span class="p">,</span> <span class="n">AbstractVariablePWVEffect</span><span class="p">):</span>
-                <span class="n">duplicated</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">duplicated</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
-                <span class="k">break</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_pwv_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_pwv_columns_to_table</span><span class="p">(</span><span class="n">duplicated</span><span class="p">,</span> <span class="n">model_for_sim</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">],</span> <span class="n">dec</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">])</span>
 
         <span class="k">return</span> <span class="n">duplicated</span></div>
+
+<div class="viewcode-block" id="SimulateLightCurves.add_pwv_columns_to_table"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.SimulateLightCurves.add_pwv_columns_to_table">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">add_pwv_columns_to_table</span><span class="p">(</span><span class="n">light_curve</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="n">model_for_sim</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add columns for PWV and Airmass to a light-curve table</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            light_curve: The simulated light-curve table</span>
+<span class="sd">            model_for_sim: The model used to simulate the light-curve</span>
+<span class="sd">            ra: The Right Ascension of the supernova</span>
+<span class="sd">            dec: The declination  of the supernova</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">effects</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">effect</span><span class="p">,</span> <span class="n">AbstractVariablePWVEffect</span><span class="p">):</span>
+                <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+                <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;airmass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PWVModel</span><span class="o">.</span><span class="n">calc_airmass</span><span class="p">(</span><span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">)</span>
+                <span class="k">break</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">effect</span><span class="p">,</span> <span class="n">StaticPWVTrans</span><span class="p">):</span>
+                <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">effect</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span>
+                <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;airmass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">break</span></div>
 
 <div class="viewcode-block" id="SimulateLightCurves.action"><a class="viewcode-back" href="../../api/fitting_pipeline.html#snat_sim.pipeline.SimulateLightCurves.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Simulate light-curves with atmospheric effects&quot;&quot;&quot;</span>
@@ -530,7 +552,7 @@
             <span class="n">fitting_pool</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">simulation_pool</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
             <span class="n">bounds</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Number</span><span class="p">,</span> <span class="n">Number</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">max_queue</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+            <span class="n">max_queue</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">200</span><span class="p">,</span>
             <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span>
             <span class="n">catalog</span><span class="p">:</span> <span class="n">VariableCatalog</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -557,7 +579,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">simulate_light_curves</span> <span class="o">=</span> <span class="n">SimulateLightCurves</span><span class="p">(</span>
             <span class="n">sn_model</span><span class="o">=</span><span class="n">sim_model</span><span class="p">,</span>
             <span class="n">catalog</span><span class="o">=</span><span class="n">catalog</span><span class="p">,</span>
-            <span class="n">num_processes</span><span class="o">=</span><span class="n">simulation_pool</span><span class="p">)</span>
+            <span class="n">num_processes</span><span class="o">=</span><span class="n">simulation_pool</span><span class="p">,</span>
+            <span class="n">include_pwv</span><span class="o">=</span><span class="n">sim_dir</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fit_light_curves</span> <span class="o">=</span> <span class="n">FitLightCurves</span><span class="p">(</span>
             <span class="n">sn_model</span><span class="o">=</span><span class="n">fit_model</span><span class="p">,</span> <span class="n">vparams</span><span class="o">=</span><span class="n">vparams</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">num_processes</span><span class="o">=</span><span class="n">fitting_pool</span><span class="p">)</span>
