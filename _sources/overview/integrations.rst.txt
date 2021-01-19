@@ -28,7 +28,7 @@ links to detailed documentation of the accessible functions.
 Time Series Utilities
 ^^^^^^^^^^^^^^^^^^^^^
 
-Time series utilities are available for `pandas.Series` objects and are accessible via the
+Time series utilities are available for ``pandas.Series`` objects and are accessible via the
 ``tsu`` accessor name.
 
 .. py:currentmodule:: snat_sim.utils.time_series.TSUAccessor
