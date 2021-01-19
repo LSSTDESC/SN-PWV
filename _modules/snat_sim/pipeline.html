@@ -373,7 +373,9 @@
                 <span class="n">duplicated_lc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate_plasticc_lc</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">cadence</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                <span class="n">result</span> <span class="o">=</span> <span class="n">PipelineResult</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">PipelineResult</span><span class="p">(</span>
+                    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">failure_result_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
 
             <span class="k">else</span><span class="p">:</span>
