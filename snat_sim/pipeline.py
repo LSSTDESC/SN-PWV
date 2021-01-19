@@ -20,7 +20,7 @@ follows:
    ...     sim_model=SNModel('salt2'),
    ...     fit_model=SNModel('salt2'),
    ...     vparams=['x0', 'x1', 'c'],
-   ...     out_dir='./demo_out_path.csv',
+   ...     out_path='./demo_out_path.csv',
    ...     fitting_pool=6,
    ...     simulation_pool=3
    ... )
