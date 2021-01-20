@@ -352,7 +352,7 @@ object if <code class="docutils literal notranslate"><span class="pre">pwv</span
 
 <dl class="py method">
 <dt id="snat_sim.models.PWVModel.calc_airmass">
-<em class="property">static </em><code class="sig-name descname">calc_airmass</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">ra</span></em>, <em class="sig-param"><span class="n">dec</span></em>, <em class="sig-param"><span class="n">lat</span><span class="o">=</span><span class="default_value">- 30.244573</span></em>, <em class="sig-param"><span class="n">lon</span><span class="o">=</span><span class="default_value">- 70.7499537</span></em>, <em class="sig-param"><span class="n">alt</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#PWVModel.calc_airmass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.PWVModel.calc_airmass" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">calc_airmass</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">time</span></em>, <em class="sig-param"><span class="n">ra</span></em>, <em class="sig-param"><span class="n">dec</span></em>, <em class="sig-param"><span class="n">lat</span><span class="o">=</span><span class="default_value">- 30.244573</span></em>, <em class="sig-param"><span class="n">lon</span><span class="o">=</span><span class="default_value">- 70.7499537</span></em>, <em class="sig-param"><span class="n">alt</span><span class="o">=</span><span class="default_value">1024</span></em>, <em class="sig-param"><span class="n">time_format</span><span class="o">=</span><span class="default_value">'mjd'</span></em>, <em class="sig-param"><span class="n">raise_below_horizon</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#PWVModel.calc_airmass"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.models.PWVModel.calc_airmass" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the airmass through which a target is observed</p>
 <p>Default latitude, longitude, and altitude are set to the Rubin
 Observatory.</p>
@@ -366,6 +366,7 @@ Observatory.</p>
 <li><p><strong>lon</strong> – Longitude of the observer (Deg)</p></li>
 <li><p><strong>alt</strong> – Altitude of the observer (m)</p></li>
 <li><p><strong>time_format</strong> – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
+<li><p><strong>raise_below_horizon</strong> – If true, raise a ValueError for an airmasses less than 1</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
