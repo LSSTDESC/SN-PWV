@@ -36,7 +36,7 @@ class DataPaths:
     def _config_path(self) -> Path:
         """The path of the PWV configuration file"""
 
-        return Path(__file__).resolve().parent / 'defaults' / 'ref_pwv.yaml'
+        return self.data_dir / 'defaults' / 'ref_pwv.yaml'
 
     @property
     def stellar_spectra_dir(self) -> Path:
