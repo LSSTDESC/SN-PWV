@@ -375,7 +375,8 @@ class PWVModel:
             lat: float = const.vro_latitude,
             lon: float = const.vro_longitude,
             alt: float = const.vro_altitude,
-            time_format: str = 'mjd'
+            time_format: str = 'mjd',
+            raise_below_horizon: bool = True
     ) -> float:
         ...  # pragma: no cover
 
@@ -389,13 +390,16 @@ class PWVModel:
             lat: float = const.vro_latitude,
             lon: float = const.vro_longitude,
             alt: float = const.vro_altitude,
-            time_format: str = 'mjd'
+            time_format: str = 'mjd',
+            raise_below_horizon: bool = True
     ) -> np.array:
         ...  # pragma: no cover
 
     @staticmethod
     def calc_airmass(
-            time, ra, dec, lat=const.vro_latitude, lon=const.vro_longitude, alt=const.vro_altitude, time_format='mjd'):
+            time, ra, dec, lat=const.vro_latitude, lon=const.vro_longitude, alt=const.vro_altitude,
+            time_format='mjd', raise_below_horizon=True
+    ):
         """Calculate the airmass through which a target is observed
 
         Default latitude, longitude, and altitude are set to the Rubin
@@ -409,6 +413,7 @@ class PWVModel:
             lon: Longitude of the observer (Deg)
             alt: Altitude of the observer (m)
             time_format: Astropy supported format of the time value (Default: 'mjd')
+            raise_below_horizon: If true, raise a ValueError for an airmasses less than 1
 
         Returns:
             Airmass in units of Sec(z)
@@ -427,7 +432,7 @@ class PWVModel:
             altaz = AltAz(obstime=obs_time, location=observer_location)
             airmass = target_coord.transform_to(altaz).secz.value
 
-        if np.less_equal(airmass, 1).any():
+        if raise_below_horizon and np.less(airmass, 1).any():
             raise ValueError(f'Invalid airmass ({airmass}) for ra={ra}, dec={dec}, time={time} ({time_format})')
 
         return airmass
