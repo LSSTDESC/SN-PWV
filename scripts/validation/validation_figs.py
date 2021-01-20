@@ -11,7 +11,7 @@ from astropy.cosmology import WMAP9 as wmap9
 from astropy.table import Table, vstack
 from bokeh import layouts, plotting
 from bokeh.io import curdoc
-from bokeh.models import ColumnDataSource, Select, Span
+from bokeh.models import ColumnDataSource, Div, Select, Span
 from bokeh.models.widgets import DataTable, TableColumn
 from pwv_kpno.defaults import ctio
 
@@ -145,9 +145,10 @@ colors = ('blue', 'orange', 'green', 'red', 'purple', 'black')
 lc_figs = []
 for source, color, band in zip(sources, colors, bands):
     lc_plot = plotting.figure(plot_height=400, plot_width=400, title="", toolbar_location=None)
-    lc_plot.renderers.append(Span(location=0, dimension='width', line_color='grey', line_width=1))
+    lc_plot.renderers.append(Span(location=0, dimension='width', line_color='grey', line_dash='dotted', line_width=1))
     lc_plot.circle(x='time', y='flux', source=source, color=color, legend_label=band)
     lc_plot.line(x='time', y='fitted_flux', source=source, color=color, legend_label=f'Fitted {band}', alpha=.5)
+    lc_plot.legend.click_policy = 'hide'
 
     lc_plot.xaxis.axis_label = 'Time (MJD)'
     lc_plot.yaxis.axis_label = 'Flux'
@@ -162,7 +163,7 @@ data_table = DataTable(
 )
 
 # Add the ability to refine plotted light_curves and tabular data per SNID
-select_snid = Select(title="SNID", value=lc_sims.index[0], options=sorted(lc_sims.index.unique()))
+select_snid = Select(title="SNID", value=pipeline_output.index[0], options=sorted(pipeline_output.index.unique()))
 
 
 def update():
@@ -192,6 +193,7 @@ update()  # initial load of the data
 ##############################################################################
 
 doc_layout = layouts.layout([
+    [Div(text=rf'<h1>{validation_path.stem}</h1>')],
     [param_scatter],
     layouts.gridplot([[sim_contour, fit_contour]]),
     layouts.gridplot([[mag_scatter, mu_scatter]]),

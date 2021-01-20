@@ -48,7 +48,7 @@ class AdvancedNamespace(argparse.Namespace):
         # even if it is numeric. A typecast is sometimes in order.
         if pwv_variability.isnumeric():
             transmission_effect = models.StaticPWVTrans()
-            transmission_effect.set(pwv=float(parsed_args.fit_variability))
+            transmission_effect.set(pwv=float(pwv_variability))
             return transmission_effect
 
         # Model PWV continuously over the year using CTIO data
@@ -106,7 +106,7 @@ class AdvancedNamespace(argparse.Namespace):
 
         print('Building supernova fitting model...')
         return models.SNModel(
-            source=self.sim_source,
+            source=self.fit_source,
             effects=[propagation_effect],
             effect_names=[''],
             effect_frames=['obs'])
