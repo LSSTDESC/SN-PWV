@@ -1,4 +1,4 @@
-"""Interactive plotting for light-curve fits"""
+"""Interactive Bokeh application for plotting light-curve simulations"""
 
 import sys
 from pathlib import Path
