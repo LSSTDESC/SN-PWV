@@ -61,8 +61,8 @@ You can decompress them using the following commands:
 
 .. code-block:: bash
 
-   tar -xvzf [FILE TO DECOMPRESS].tar.gz --verbose
-   gunzip [FILE TO DECOMPRESS]/*/*.gz --verbose
+   tar -xvzf [FILE TO DECOMPRESS].tar.gz
+   gunzip [FILE TO DECOMPRESS]/*/*.gz
 
 Configuring Your Environment
 ----------------------------
