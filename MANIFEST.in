@@ -1,1 +1,3 @@
 graft data/*
+prune data/plasticc/alt_sched
+recursive-exclude data *.py
