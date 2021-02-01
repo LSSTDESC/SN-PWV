@@ -1,0 +1,8 @@
+guzzle_sphinx_theme
+nbsphinx
+nbsphinx_link
+sphinx
+sphinx-argparse
+sphinx-copybutton
+IPython
+sphinx_autodoc_typehints
