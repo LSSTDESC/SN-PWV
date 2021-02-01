@@ -5,34 +5,6 @@ The ``snat_sim`` package is not available via a package manager, but can
 be installed directly from the project's source code. Please follow the
 steps outlined below to install and configure the package.
 
-Downloading the Source
-----------------------
-
-Source code for this project is available on
-`GitHub <https://github.com/LSSTDESC/SN-PWV>`_ and can be downloaded directly
-from the GitHub repository page or by using the ``git`` command line utility:
-
-.. code-block:: bash
-
-   git clone  --depth=1 --branch=master https://github.com/LSSTDESC/SN-PWV.git SN-PWV
-   rm -rf ./SN-PWV/.git
-
-The package can then be installed into your working environment manually, or
-using ``pip``:
-
-.. code-block:: bash
-
-   cd SN-PWV
-   pip install .
-
-If you want to run the package's test suite, you will also need to install
-the test suite dependencies:
-
-.. code-block:: bash
-
-   cd SN-PWV
-   pip install .[tests]
-
 Running at NERSC
 ----------------
 
@@ -42,7 +14,7 @@ The only manual setup task is to define an appropriate
 Python environment for running the source code.
 
 If you have not already done so, configure your Python interpreter as follows
-(This only has to be done once).
+(this only has to be done once).
 
 .. code-block:: bash
 
@@ -67,6 +39,45 @@ For example:
 
 Using a Custom Environment
 --------------------------
+
+For individuals developing on machines not linked to the CORI filesystem,
+the project source code is publicly available and can be downloaded/configured
+as outlined below.
+
+Downloading the Source
+----------------------
+
+Source code for this project is available on
+`GitHub <https://github.com/LSSTDESC/SN-PWV>`_ and can be downloaded directly
+from the GitHub repository page or by using the ``git`` command line utility:
+
+.. code-block:: bash
+
+   git clone  --depth=1 --branch=master https://github.com/LSSTDESC/SN-PWV.git SN-PWV
+   rm -rf ./SN-PWV/.git
+
+The package can then be installed into your working environment manually, or
+using ``pip``:
+
+.. code-block:: bash
+
+   cd SN-PWV
+   pip install .
+
+If you want to run the package's test suite, you will need to install
+the test suite dependencies:
+
+.. code-block:: bash
+
+   pip install .[tests]
+
+Extra dependencies are also required for building package documentation.
+These requirements can be found in the ``docs`` directory, and installed as follows
+
+.. code-block:: bash
+
+   cd SN-PWV/docs/
+   pip install .[docs]
 
 Downloading Light-Curve Sims
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
