@@ -57,4 +57,3 @@ dependencies:
     - tqdm==4.56.0
     - typing-extensions==3.7.4.3
     - urllib3==1.26.3
-prefix: /global/homes/d/djp81/.conda/envs/SN-PWV
