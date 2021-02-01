@@ -26,7 +26,7 @@ define a new conda environment
 
 .. code-block:: bash
 
-   conda env create --file SN-PWV/cori_env.yml -y
+   conda env create --file SN-PWV/cori_env.yml
 
 You can now activate and deactivate the Python environment for this project at will.
 When working inside the environment, the necessary environmental variables will already be set.
@@ -45,7 +45,7 @@ the project source code is publicly available and can be downloaded/configured
 as outlined below.
 
 Downloading the Source
-----------------------
+^^^^^^^^^^^^^^^^^^^^^^
 
 Source code for this project is available on
 `GitHub <https://github.com/LSSTDESC/SN-PWV>`_ and can be downloaded directly
@@ -76,7 +76,6 @@ These requirements can be found in the ``docs`` directory, and installed as foll
 
 .. code-block:: bash
 
-   cd SN-PWV/docs/
    pip install .[docs]
 
 Downloading Light-Curve Sims
