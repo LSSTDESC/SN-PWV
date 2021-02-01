@@ -33,9 +33,43 @@ the test suite dependencies:
    cd SN-PWV
    pip install .[tests]
 
+Running at NERSC
+----------------
+
+If you are running this analysis on the Cori filesystem at NERSC,
+most of the setup procedure has already been completed for you.
+The only manual setup task is to define an appropriate
+Python environment for running the source code.
+
+If you have not already done so, configure your Python interpreter as follows
+(This only has to be done once).
+
+.. code-block:: bash
+
+   module load python
+   conda init
+
+Next, use the environment file included with the project source code to
+define a new conda environment
+
+.. code-block:: bash
+
+   conda env create --file SN-PWV/cori_env.yml -y
+
+You can now activate and deactivate the Python environment for this project at will.
+When working inside the environment, the necessary environmental variables will already be set.
+For example:
+
+.. code-block:: bash
+
+   conda activate SN-PWV
+   echo $CADENCE_SIMS
+
+Using a Custom Environment
+--------------------------
 
 Downloading Light-Curve Sims
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. important:: Not all parts of this project require existing light-curve
    simulations. The complete data set takes up several hundred GB of storage.
@@ -65,7 +99,7 @@ You can decompress them using the following commands:
    gunzip [FILE TO DECOMPRESS]/*/*.gz
 
 Configuring Your Environment
-----------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The path of the downloaded data needs to be specified in the project
 environment so that the software knows where to find the simulated
