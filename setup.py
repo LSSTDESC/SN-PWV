@@ -5,7 +5,10 @@ from setuptools import find_packages, setup
 
 # Get list of requirements
 with open('requirements.txt') as f:
-    requirements = f.read().splitlines()
+    core_requirements = f.read().splitlines()
+
+with open('docs/requirements.txt') as f:
+    doc_requirements = f.read().splitlines()
 
 # Get package version
 init_path = Path(__file__).resolve().parent / 'snat_sim/__init__.py'
@@ -25,9 +28,10 @@ setup(name='snat_sim',
       url='https://desc-sn-pwv.readthedocs.io/en/latest/',
       license='GPL v3',
       python_requires='>=3.8',
-      install_requires=requirements,
+      install_requires=core_requirements,
       include_package_data=True,
       extras_require={
-          'tests': ['sndata']
+          'tests': ['sndata'],
+          'docs': doc_requirements
       }
       )

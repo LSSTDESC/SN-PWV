@@ -4,5 +4,5 @@ nbsphinx_link
 sphinx
 sphinx-argparse
 sphinx-copybutton
-IPython  # Ensures syntax highlighting in notebook docs
+IPython
 sphinx_autodoc_typehints
