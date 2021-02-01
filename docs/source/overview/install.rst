@@ -21,12 +21,13 @@ If you have not already done so, configure your Python interpreter as follows
    module load python
    conda init
 
-Next, use the environment file included with the project source code to
-define a new conda environment
+Next, download the environment file included with the project source code, and use it
+to define a new conda environment
 
 .. code-block:: bash
 
-   conda env create --file SN-PWV/cori_env.yml
+   wget https://raw.githubusercontent.com/LSSTDESC/SN-PWV/master/cori_env.yml
+   conda env create --file cori_env.yml
 
 You can now activate and deactivate the Python environment for this project at will.
 When working inside the environment, the necessary environmental variables will already be set.
