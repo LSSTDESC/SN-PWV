@@ -30,7 +30,7 @@ Data sources read from or written to disk are shown in red. Objects cached
 in memory are shaded orange.
 
 .. image:: ./_static/images/pipeline.svg
-   :width: 80%
+   :width: 95%
    :align: center
 
 Light-Curve Simulation
@@ -43,7 +43,7 @@ changes over time are all considered in the simulation.
 
 
 .. image:: ./_static/images/simulation.svg
-   :width: 80%
+   :width: 95%
    :align: center
 
 
