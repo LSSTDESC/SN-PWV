@@ -1,8 +1,0 @@
-guzzle_sphinx_theme
-nbsphinx
-nbsphinx_link
-sphinx
-sphinx-argparse
-sphinx-copybutton
-IPython  # Ensures syntax highlighting in notebook docs
-sphinx_autodoc_typehints
