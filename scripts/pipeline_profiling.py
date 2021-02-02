@@ -28,7 +28,8 @@ def setup_pipeline(iter_lim=1500):
         simulation_pool=4,
         fitting_pool=6,
         out_path='./test.csv',
-        iter_lim=iter_lim
+        iter_lim=iter_lim,
+        max_queue=iter_lim + 1  # Allow all data to be loaded so we can run sequentially
     )
 
     # Run the pipeline in the main thread
