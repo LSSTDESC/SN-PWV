@@ -5,8 +5,6 @@ from pwv_kpno.defaults import ctio
 from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
 
-os.environ['CADENCE_SIMS'] = '/mnt/md0/sn-sims/'
-
 
 def setup_pipeline():
     pwv_model = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
