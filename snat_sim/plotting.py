@@ -19,6 +19,10 @@ Plotting Function Summaries
    plot_residuals_on_sky
    plot_spectral_template
    plot_year_pwv_vs_time
+   compare_prop_effects
+   plot_transmission_variation
+   plot_flux_variation
+   plot_delta_sn_flux
 
 Module Docs
 -----------
@@ -690,20 +694,23 @@ def compare_prop_effects(
 
 
 def plot_transmission_variation(
-        low_pwv: float, high_pwv: float, wave_min: float = 6500, wave_max: float = 10000, resolution: int = 9
+        pwv1: float, pwv2: float, wave_min: float = 6500, wave_max: float = 10000, resolution: int = 9
 ) -> Tuple[plt.figure, plt.Axes]:
-    """
+    """Compare the atmospheric transmission function for two PWV concentrations
 
     Args:
-        low_pwv:
-        high_pwv:
-        wave_min:
-        wave_max:
-        resolution:
+        pwv1: The first PWV concentration to plot the transmission for
+        pwv2: The second PWV concentration to plot the transmission for
+        wave_min: Minimum wavelength to plot
+        wave_max: Maximum wavelength to plot
+        resolution: Bin the atmospheric transmission function to a lower transmission
 
     Returns:
-
+        The matplotlib figure and axis
     """
+
+    low_pwv = min(pwv1, pwv2)
+    high_pwv = max(pwv1, pwv2)
 
     wave = np.arange(wave_min, wave_max)
     low_transmission = v1_transmission(pwv=low_pwv, wave=wave, res=resolution)
@@ -720,26 +727,29 @@ def plot_transmission_variation(
 
 
 def plot_flux_variation(
-        low_pwv: float,
-        high_pwv: float,
+        pwv1: float,
+        pwv2: float,
         z: float = .55,
         wave_min: float = 6500,
         wave_max: float = 10000,
         resolution: int = 9
 ) -> Tuple[plt.figure, plt.Axes]:
-    """
+    """Compare the PWV absorbed flux of a SN IA for two PWV concentrations
 
     Args:
-        low_pwv:
-        high_pwv:
-        z:
-        wave_min:
-        wave_max:
-        resolution:
+        pwv1: The first PWV concentration to plot the flux for
+        pwv2: The second PWV concentration to plot the flux for
+        z: The redshift of the SN Ia
+        wave_min: Minimum wavelength to plot
+        wave_max: Maximum wavelength to plot
+        resolution: Bin the atmospheric transmission function to a lower transmission
 
     Returns:
-
+        The matplotlib figure and axis
     """
+
+    low_pwv = min(pwv1, pwv2)
+    high_pwv = max(pwv1, pwv2)
 
     model = models.SNModel('salt2-extended')
     model.add_effect(models.StaticPWVTrans(transmission_res=resolution), '', 'obs')
@@ -761,15 +771,17 @@ def plot_flux_variation(
 
 
 def plot_delta_sn_flux(pwv: float = 4, wave_min: float = 6500, wave_max: float = 10000) -> Tuple[plt.figure, np.array]:
-    """
+    """Plot the change to spectroscopic SN Ia flux over wavelength and redshift
+
+    An imshow style plot with the change in flux along the color axis.
 
     Args:
-        pwv:
-        wave_min:
-        wave_max:
+        pwv: The PWV concentration to use when determining the change in flux
+        wave_min: Minimum wavelength to plot
+        wave_max: Maximum wavelength to plot
 
     Returns:
-
+        The matplotlib figure and and array of matplotlib axes
     """
 
     model = models.SNModel('salt2-extended')
