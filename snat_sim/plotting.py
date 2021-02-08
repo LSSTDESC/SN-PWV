@@ -720,6 +720,9 @@ def plot_transmission_variation(
     axis.plot(wave, low_transmission, color='k', label=f'PWV = {low_pwv} mm', linewidth=1.5)
     axis.fill_between(wave, low_transmission, high_transmission, label=f'PWV = {high_pwv} mm', alpha=.75)
 
+    axis.set_title(r'Change in atmospheric PWV transmission flux due to $\Delta$PWV')
+    axis.set_xlabel('Wavelength ($\AA$)')
+    axis.set_ylabel('PWV Transmission')
     axis.set_xlim(wave_min, wave_max)
     axis.set_ylim(.5, 1)
     axis.legend(framealpha=1)
@@ -765,6 +768,9 @@ def plot_flux_variation(
     axis.plot(wave, low_pwv_flux, color='k', label=f'PWV = {low_pwv} mm', linewidth=1.5)
     axis.fill_between(wave, low_pwv_flux, high_pwv_flux, label=f'PWV = {high_pwv} mm', alpha=.75)
 
+    axis.set_title(r'Change in SN Ia flux due to $\Delta$PWV')
+    axis.set_xlabel('Wavelength ($\AA$)')
+    axis.set_ylabel('SN Ia Flux')
     axis.set_xlim(wave_min, wave_max)
     axis.legend(framealpha=1)
     return fig, axis
@@ -814,10 +820,15 @@ def plot_delta_sn_flux(pwv: float = 4, wave_min: float = 6500, wave_max: float =
         band = sncosmo.get_bandpass(f'lsst_total_{b}')
         bottom_ax.plot(band.wave, band.trans, label=f'{b} Band')
 
+    # Format top axis
+    top_ax.set_title('Change in spectral SN Ia flux due to PWV')
+    top_ax.set_ylabel('Redshift (z)')
+
     # Format bottom axis
     bottom_ax.set_ylim(0, 1)
     bottom_ax.set_xlim(wave_min, wave_max)
     bottom_ax.set_xlabel(r'Wavelength $\AA$')
+    bottom_ax.set_ylabel('Filters')
     bottom_ax.xaxis.set_minor_locator(MultipleLocator(250))
     bottom_ax.set_xticks(np.arange(wave_min, wave_max + 1, 500))
     bottom_ax.set_yticks([0, .25, .5, .75])
