@@ -24,8 +24,8 @@ Module Docs
 -----------
 """
 
-from datetime import datetime
-from datetime import timedelta
+from copy import copy
+from datetime import datetime, timedelta
 from typing import *
 
 import matplotlib.dates as mdates
@@ -36,13 +36,14 @@ from astropy import units as u
 from astropy.coordinates import SkyCoord
 from astropy.cosmology import FlatwCDM
 from astropy.cosmology.core import Cosmology
+from astropy.time import Time
 from matplotlib import pyplot as plt
 from matplotlib.ticker import MultipleLocator
 from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
 from . import constants as const
-from .models import SNModel
+from . import models
 
 Numeric = Union[int, float]
 
@@ -647,3 +648,169 @@ def plot_residuals_on_sky(
 
     plt.colorbar(scat).set_label('Hubble Residual', rotation=270, labelpad=15)
     return fig, axis
+
+
+def compare_prop_effects(
+        pwv_data: pd.Series, static: models.StaticPWVTrans,
+        seasonal: models.SeasonalPWVTrans, variable: models.VariablePWVTrans
+) -> Tuple[plt.figure, plt.Axes]:
+    """Compare the Zenith PWV assumed by different propagation effects
+
+    Args:
+        pwv_data: Series with PWV values and a Datetime index
+        static: Static propagation effect
+        seasonal: Seasonal Propagation effect
+        variable: Variable Propagation effect
+
+    Returns:
+        The matplotlib figure and axis
+    """
+
+    # Disable airmass scaling so we get values at zenith
+    variable = copy(variable)
+    variable._pwv_model.calc_airmass = lambda *args, **kwargs: 1
+
+    pwv_data = pwv_data.sort_index()
+    x_vals = np.arange(pwv_data.index[0], pwv_data.index[-1], timedelta(days=1)).astype(datetime)
+    mjd_vals = Time(x_vals).mjd
+
+    plt.figure(figsize=(9, 6))
+    plt.scatter(pwv_data.index, pwv_data.values, s=2, alpha=.1, color='grey')
+    plt.plot(x_vals, variable.assumed_pwv(mjd_vals), label='Variable')
+    plt.plot(x_vals, seasonal.assumed_pwv(mjd_vals), label='Seasonal', linewidth=2.5)
+    plt.plot([x_vals[0], x_vals[-1]], [static['pwv'], static['pwv']], label='Static', linewidth=2.5)
+
+    plt.legend(loc='upper right', framealpha=1)
+    plt.ylabel('PWV (mm)')
+    plt.xlabel('Date (UTC)')
+    plt.ylim(0, 25)
+    plt.legend()
+
+    return plt.gcf(), plt.gca()
+
+
+def plot_transmission_variation(
+        low_pwv: float, high_pwv: float, wave_min: float = 6500, wave_max: float = 10000, resolution: int = 9
+) -> Tuple[plt.figure, plt.Axes]:
+    """
+
+    Args:
+        low_pwv:
+        high_pwv:
+        wave_min:
+        wave_max:
+        resolution:
+
+    Returns:
+
+    """
+
+    wave = np.arange(wave_min, wave_max)
+    low_transmission = v1_transmission(pwv=low_pwv, wave=wave, res=resolution)
+    high_transmission = v1_transmission(pwv=high_pwv, wave=wave, res=resolution)
+
+    fig, axis = plt.subplots(figsize=(10, 5))
+    axis.plot(wave, low_transmission, color='k', label=f'PWV = {low_pwv} mm', linewidth=1.5)
+    axis.fill_between(wave, low_transmission, high_transmission, label=f'PWV = {high_pwv} mm', alpha=.75)
+
+    axis.set_xlim(wave_min, wave_max)
+    axis.set_ylim(.5, 1)
+    axis.legend(framealpha=1)
+    return fig, axis
+
+
+def plot_flux_variation(
+        low_pwv: float,
+        high_pwv: float,
+        z: float = .55,
+        wave_min: float = 6500,
+        wave_max: float = 10000,
+        resolution: int = 9
+) -> Tuple[plt.figure, plt.Axes]:
+    """
+
+    Args:
+        low_pwv:
+        high_pwv:
+        z:
+        wave_min:
+        wave_max:
+        resolution:
+
+    Returns:
+
+    """
+
+    model = models.SNModel('salt2-extended')
+    model.add_effect(models.StaticPWVTrans(transmission_res=resolution), '', 'obs')
+
+    wave = np.arange(wave_min, wave_max)
+    model.set(z=z, pwv=low_pwv)
+    low_pwv_flux = model.flux(0, wave)
+
+    model.set(pwv=high_pwv)
+    high_pwv_flux = model.flux(0, wave)
+
+    fig, axis = plt.subplots(figsize=(10, 5))
+    axis.plot(wave, low_pwv_flux, color='k', label=f'PWV = {low_pwv} mm', linewidth=1.5)
+    axis.fill_between(wave, low_pwv_flux, high_pwv_flux, label=f'PWV = {high_pwv} mm', alpha=.75)
+
+    axis.set_xlim(wave_min, wave_max)
+    axis.legend(framealpha=1)
+    return fig, axis
+
+
+def plot_delta_sn_flux(pwv: float = 4, wave_min: float = 6500, wave_max: float = 10000) -> Tuple[plt.figure, np.array]:
+    """
+
+    Args:
+        pwv:
+        wave_min:
+        wave_max:
+
+    Returns:
+
+    """
+
+    model = models.SNModel('salt2-extended')
+    model.add_effect(models.StaticPWVTrans(transmission_res=10), '', 'obs')
+
+    delta_flux = []
+    wave = np.arange(wave_min, wave_max)
+    for z in np.arange(0.0001, 1.01, .1):
+        model.set(z=z, pwv=pwv)
+        flux = model.flux(0, wave)
+
+        model.set(pwv=0)
+        flux_model = model.flux(0, wave)
+
+        delta_flux.append(flux - flux_model)
+
+    fig, (top_ax, bottom_ax) = plt.subplots(
+        nrows=2, figsize=(10, 5), sharex='col',
+        gridspec_kw={'height_ratios': [4, 1.75]})
+
+    top_ax.imshow(
+        delta_flux,
+        origin='lower',
+        extent=[wave_min, wave_max, 0, 1],
+        aspect='auto',
+        cmap='Blues_r')
+
+    # Plot the band passes
+    for b in 'rizy':
+        band = sncosmo.get_bandpass(f'lsst_total_{b}')
+        bottom_ax.plot(band.wave, band.trans, label=f'{b} Band')
+
+    # Format bottom axis
+    bottom_ax.set_ylim(0, 1)
+    bottom_ax.set_xlim(wave_min, wave_max)
+    bottom_ax.set_xlabel(r'Wavelength $\AA$')
+    bottom_ax.xaxis.set_minor_locator(MultipleLocator(250))
+    bottom_ax.set_xticks(np.arange(wave_min, wave_max + 1, 500))
+    bottom_ax.set_yticks([0, .25, .5, .75])
+    bottom_ax.legend(loc='lower left', framealpha=1)
+
+    plt.subplots_adjust(hspace=0)
+
+    return fig, np.array([top_ax, bottom_ax])
