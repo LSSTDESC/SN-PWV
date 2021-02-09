@@ -13,7 +13,7 @@ follows:
 .. doctest:: python
 
    >>> from snat_sim.models import SNModel
-   >>> from snat_sim.pipelines import FittingPipeline
+   >>> from snat_sim.pipeline import FittingPipeline
 
    >>> pipeline = FittingPipeline(
    ...     cadence='alt_sched',
