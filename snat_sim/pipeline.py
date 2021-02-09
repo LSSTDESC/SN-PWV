@@ -172,6 +172,7 @@ class SimulateLightCurves(Node):
             sn_model: SNModel,
             catalog: VariableCatalog = None,
             num_processes: int = 1,
+            add_scatter=True,
             abs_mb: float = const.betoule_abs_mb,
             cosmo=const.betoule_cosmo,
             include_pwv: bool = False
@@ -188,6 +189,7 @@ class SimulateLightCurves(Node):
 
         self.sim_model = sn_model
         self.catalog = catalog
+        self.add_scatter = add_scatter
         self.abs_mb = abs_mb
         self.cosmo = cosmo
         self.include_pwv_col = include_pwv
@@ -212,7 +214,7 @@ class SimulateLightCurves(Node):
         model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
 
         # Simulate the light-curve. Make sure to include model parameters as meta data
-        duplicated = model_for_sim.simulate_lc(cadence)
+        duplicated = model_for_sim.simulate_lc(cadence, scatter=self.add_scatter)
         duplicated.meta = params
         duplicated.meta.update(dict(zip(model_for_sim.param_names, model_for_sim.parameters)))
 
@@ -438,7 +440,8 @@ class FittingPipeline(Pipeline):
             bounds: Dict[str, Tuple[Number, Number]] = None,
             max_queue: int = 200,
             iter_lim: int = float('inf'),
-            catalog: VariableCatalog = None
+            catalog: VariableCatalog = None,
+            add_scatter=True
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -455,6 +458,7 @@ class FittingPipeline(Pipeline):
             max_queue: Maximum number of light-curves to store in pipeline at once
             iter_lim: Limit number of processed light-curves (Useful for profiling)
             catalog: Reference star catalog to calibrate simulated supernova with
+            add_scatter: Add randomly generated scatter to simulated light-curve points
         """
 
         # Define the nodes of the analysis pipeline
@@ -464,7 +468,8 @@ class FittingPipeline(Pipeline):
             sn_model=sim_model,
             catalog=catalog,
             num_processes=simulation_pool,
-            include_pwv=sim_path is not None
+            include_pwv=sim_path is not None,
+            add_scatter=add_scatter
         )
 
         self.fit_light_curves = FitLightCurves(
