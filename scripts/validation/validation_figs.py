@@ -1,3 +1,12 @@
+"""A Bokeh based script for visualizing pipeline output data from validation runs
+
+To run this script:
+    ``bokeh serve [PAH TO SCRIPT] --args [PATH TO PIPELINE CSV OUTPUT FILE]``
+
+To run the validation fits that this script is intended to visualize, see
+``validation_fits.sh``.
+"""
+
 import sys
 from pathlib import Path
 from typing import *
