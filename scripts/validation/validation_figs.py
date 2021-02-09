@@ -1,14 +1,22 @@
+"""A Bokeh based script for visualizing pipeline output data from validation runs
+
+To run this script:
+    ``bokeh serve [PAH TO SCRIPT] --args [PATH TO PIPELINE CSV OUTPUT FILE]``
+
+To run the validation fits that this script is intended to visualize, see
+``validation_fits.sh``.
+"""
+
 import sys
 from pathlib import Path
 from typing import *
 
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
-print(Path(__file__).parent.parent.parent)
 
+import h5py
 import numpy as np
 import pandas as pd
 from astropy.cosmology import WMAP9 as wmap9
-from astropy.table import Table, vstack
 from bokeh import layouts, plotting
 from bokeh.io import curdoc
 from bokeh.models import ColumnDataSource, Div, Select, Span
@@ -22,25 +30,27 @@ from snat_sim.models import PWVModel, SNModel, SeasonalPWVTrans, StaticPWVTrans,
 GridLayoutType = List[List[plotting.Figure]]
 
 
-def load_light_curve_sims(directory: Path) -> pd.DataFrame:
+def load_light_curve_sims(path: Path) -> pd.DataFrame:
     """Load a combined table of all light-curve simulation from a directory
 
     Args:
-        directory: A directory of light-curves in ecsv format
+        path: File path in HDF5 format
 
     Returns:
         A vertically stacked copy of all light-curve data points
     """
 
-    light_curves = []
-    for path in directory.glob('*.ecsv'):
-        data = Table.read(path)
-        data['snid'] = path.stem
-        light_curves.append(data)
+    dataframes = []
+    file = h5py.File(path)
+    for key in file.keys():
+        df = pd.DataFrame(np.array(file[key]))
+        df['snid'] = key
+        dataframes.append(df)
 
-    all_data = vstack(light_curves, metadata_conflicts='silent').to_pandas(index='snid')
-    all_data.index = all_data.index.astype(str)
-    return all_data
+    data = pd.concat(dataframes, axis=0).set_index('snid')
+    data['band'] = data.band.str.decode('utf-8')
+    data['zpsys'] = data.zpsys.str.decode('utf-8')
+    return data
 
 
 def load_pipeline_output(path: Path) -> pd.DataFrame:
@@ -92,7 +102,7 @@ sn_model = build_sn_model(validation_path.stem.split('_')[-1], pwv_model)
 pipeline_output = load_pipeline_output(validation_path)
 pipeline_output['mu'] = pipeline_output['mb'] - pipeline_output['abs_mag']
 
-lc_sims = load_light_curve_sims(validation_path.parent / validation_path.stem)
+lc_sims = load_light_curve_sims(validation_path.with_suffix('.h5'))
 lc_sims['pwv_model'] = pwv_model.pwv_zenith(lc_sims['time'])
 
 ##############################################################################

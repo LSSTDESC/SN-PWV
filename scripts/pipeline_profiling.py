@@ -1,14 +1,10 @@
-import os
-
 from pwv_kpno.defaults import ctio
 
 from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
 
-os.environ['CADENCE_SIMS'] = '/mnt/md0/sn-sims/'
 
-
-def setup_pipeline():
+def setup_pipeline(iter_lim=150):
     pwv_model = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
     propagation_effect = models.VariablePWVTrans(pwv_model)
 
@@ -32,8 +28,8 @@ def setup_pipeline():
         simulation_pool=4,
         fitting_pool=6,
         out_path='./test.csv',
-        max_queue=1000,
-        iter_lim=1500
+        iter_lim=iter_lim,
+        max_queue=iter_lim + 1  # Allow all data to be loaded so we can run sequentially
     )
 
     # Run the pipeline in the main thread

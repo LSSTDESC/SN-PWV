@@ -40,6 +40,7 @@ from typing import *
 from typing import Dict, Iterable, List
 
 import sncosmo
+from astropy.io.misc.hdf5 import write_table_hdf5
 from astropy.table import Table
 from egon.connectors import Input, Output
 from egon.nodes import Node, Source, Target
@@ -272,30 +273,28 @@ class SimulationToDisk(Target):
         simulation_input: Simulated light-curves
     """
 
-    def __init__(
-            self, out_dir: Union[str, Path], num_processes: int = 1
-    ) -> None:
+    def __init__(self, out_path: Union[str, Path], num_processes: int = 1) -> None:
         """Write simulated light-curves to disk
 
         Args:
-            out_dir: Path to write results to (.csv extension is enforced)
+            out_path: HDF5 path (``.h5``) to write results to
         """
 
-        self.out_dir = Path(out_dir)
+        self.out_path = Path(out_path).with_suffix('.h5')
         self.simulation_input = Input()
         super(SimulationToDisk, self).__init__(num_processes)
 
     def setup(self) -> None:
         """Ensure the output directory exists"""
 
-        self.out_dir.mkdir(exist_ok=True, parents=False)
+        self.out_path.parent.mkdir(exist_ok=True, parents=False)
 
     def action(self) -> None:
         """Write simulated light-curves to disk"""
 
+        path_str = str(self.out_path)
         for lc in self.simulation_input.iter_get():
-            path = (self.out_dir / lc.meta['SNID']).with_suffix('.ecsv')
-            lc.write(path, overwrite=True)
+            write_table_hdf5(table=lc, output=path_str, path=lc.meta['SNID'], append=True)
 
 
 class FitLightCurves(Node):
@@ -433,7 +432,7 @@ class FittingPipeline(Pipeline):
             fit_model: SNModel,
             vparams: List[str],
             out_path: Union[str, Path],
-            sim_dir: Union[str, Path] = None,
+            sim_path: Union[str, Path] = None,
             fitting_pool: int = 1,
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
@@ -450,7 +449,7 @@ class FittingPipeline(Pipeline):
             vparams: List of parameter names to vary in the fit
             bounds: Bounds to impose on ``fit_model`` parameters when fitting light-curves
             out_path: Path to write results to (.csv extension is enforced)
-            sim_dir: Optionally write simulated light-curves to disk in the given directory as individual ecsv files
+            sim_path: Optionally write simulated light-curves to disk in HDF5 format
             fitting_pool: Number of child processes allocated to simulating light-curves
             simulation_pool: Number of child processes allocated to fitting light-curves
             max_queue: Maximum number of light-curves to store in pipeline at once
@@ -465,7 +464,7 @@ class FittingPipeline(Pipeline):
             sn_model=sim_model,
             catalog=catalog,
             num_processes=simulation_pool,
-            include_pwv=sim_dir is not None
+            include_pwv=sim_path is not None
         )
 
         self.fit_light_curves = FitLightCurves(
@@ -482,8 +481,6 @@ class FittingPipeline(Pipeline):
         if max_queue:  # Limit the number of light-curves fed into the pipeline
             self.simulate_light_curves.plasticc_data_input.maxsize = max_queue
 
-        if sim_dir:
-            self.sims_to_disk = SimulationToDisk(sim_dir)
+        if sim_path:
+            self.sims_to_disk = SimulationToDisk(sim_path)
             self.simulate_light_curves.simulation_output.connect(self.sims_to_disk.simulation_input)
-
-        super(FittingPipeline, self).__init__()
