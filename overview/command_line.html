@@ -128,7 +128,7 @@ pipeline. This is particularly useful when running multiple pipeline instances
 for different configuration arguments. An outline of the command line arguments
 and their default values is provided below.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">fitting_cli</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">c</span> <span class="n">CADENCE</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SIM_POOL_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">FIT_POOL_SIZE</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">ITER_LIM</span><span class="p">]</span> <span class="o">-</span><span class="n">o</span> <span class="n">OUT_PATH</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span> <span class="n">SIM_DIR</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">ITER_LIM</span><span class="p">]</span> <span class="o">-</span><span class="n">o</span> <span class="n">OUT_PATH</span> <span class="p">[</span><span class="o">-</span><span class="n">d</span> <span class="n">SIM_PATH</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">sim_source</span> <span class="n">SIM_SOURCE</span><span class="p">]</span> <span class="o">--</span><span class="n">sim_variability</span>
                       <span class="n">SIM_VARIABILITY</span> <span class="p">[</span><span class="o">--</span><span class="n">ref_stars</span> <span class="n">REF_STARS</span> <span class="p">[</span><span class="n">REF_STARS</span> <span class="o">...</span><span class="p">]]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">fit_source</span> <span class="n">FIT_SOURCE</span><span class="p">]</span> <span class="o">--</span><span class="n">fit_variability</span>
@@ -167,8 +167,8 @@ and their default values is provided below.</p>
 <dt><kbd>-o, --out_path</kbd></dt>
 <dd><p>Output file path (a .csv extension is enforced).</p>
 </dd>
-<dt><kbd>-d, --sim_dir</kbd></dt>
-<dd><p>Optionally write simulated light-curves as .ecsv files in the given directory.</p>
+<dt><kbd>-d, --sim_path</kbd></dt>
+<dd><p>Optionally write simulated light-curves to the given HDF5 file path.</p>
 </dd>
 </dl>
 </div>
