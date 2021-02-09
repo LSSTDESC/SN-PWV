@@ -1,3 +1,47 @@
+"""Defines a standardized data model for communication between pipeline nodes
+
+Usage Example
+-------------
+
+Data models are defined as Python data classes. All fields in the data model
+are onptional except for the supernova identifier (``snid``). Other fields
+include the supernova model parameters used in a light-curve simulation / fit
+and the chi-squared, degrees of freedom, and B-band magnitudes returned by
+the fitted model.
+
+.. doctest::
+
+   >>> from snat_sim.pipeline.data_model import PipelineResult
+   >>> data_obj = PipelineResult(
+   ... snid='1234567',
+   ... sim_params={'x0': 1, 'x1': .1, 'c': .5},
+   ... fit_params={'x0': .9, 'x1': .12, 'c': .51},
+   ... fit_err={'x0': .1, 'x1': .01, 'c': .05},
+   ... chisq=12,
+   ... ndof=11,
+   ... mb=22.5,
+   ... abs_mag=-19.1,
+   ... message='The fit exited successfully'
+   ... )
+
+Data products can be converted into familiar data structures using instance
+the methods demonstrated below (see the full class documentation for a
+complete list of available methods). Missing numerical data is masked using
+the value ``-99.99``.
+
+.. doctest::
+
+   >>> # Pick which simulated and fitted parameters to include in the output
+   >>> include_sim_params = ['x0', 'x1']
+   >>> include_fit_params = ['x0', 'c']
+   >>>
+   >>> data_list = data_obj.to_list(include_sim_params, include_fit_params)
+   >>> data_str = data_obj.to_csv(include_sim_params, include_fit_params)
+
+Module Docs
+-----------
+"""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -6,7 +50,7 @@ from typing import Dict, Iterable, List
 
 @dataclass
 class PipelineResult:
-    """Class representation of data products produced by the ``FittingPipeline``"""
+    """Class representation of internal pipeline data products"""
 
     snid: str
     sim_params: Dict[str, float] = field(default_factory=dict)
@@ -29,10 +73,10 @@ class PipelineResult:
             A list of strings and floats
         """
 
-        out_list = self.to_list(fit_params, sim_params)
+        out_list = self.to_list(sim_params, fit_params)
         return ','.join(map(str, out_list)) + '\n'
 
-    def to_list(self, fit_params, sim_params) -> List[str, float]:
+    def to_list(self, sim_params, fit_params) -> List[str, float]:
         """Return class data as a list with missing values masked as -99.99
 
         Args:
