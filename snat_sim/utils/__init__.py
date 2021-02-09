@@ -17,6 +17,9 @@ SubModules
    caching
    filters
    time_series
+
+Module Docs
+-----------
 """
 
 from . import *
