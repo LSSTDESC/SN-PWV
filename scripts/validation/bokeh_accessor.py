@@ -1,3 +1,5 @@
+"""Exposes customized Bokeh plotting routines as pandas accessor objects."""
+
 from itertools import repeat
 from typing import *
 
