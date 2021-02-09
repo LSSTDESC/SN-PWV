@@ -100,6 +100,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#The-Approach">The Approach</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Automated-Model-Building">Automated Model Building</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Propagation-Effects">Propagation Effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#Impact-on-SN-Spectra">Impact on SN Spectra</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
@@ -383,11 +384,8 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">astropy.time</span> <span class="kn">import</span> <span class="n">Time</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">pwv_kpno.gps_pwv</span> <span class="kn">import</span> <span class="n">GPSReceiver</span>
 
@@ -611,7 +609,7 @@ Fall Average:   4.88 +\-  2.20 mm
 <span></span><span class="n">resampled_pwv</span> <span class="o">=</span> <span class="n">supplemented_pwv</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">resample_data_across_year</span><span class="p">()</span>
 <span class="n">interpolated_pwv</span> <span class="o">=</span> <span class="n">resampled_pwv</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">periodic_interpolation</span><span class="p">()</span>
 <span class="n">plotting</span><span class="o">.</span><span class="n">plot_year_pwv_vs_time</span><span class="p">(</span><span class="n">interpolated_pwv</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Resampled PWv&#39;</span><span class="p">);</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Resampled PWV&#39;</span><span class="p">);</span>
 
 </pre></div>
 </div>
@@ -651,16 +649,16 @@ Fall Average:   4.97 +\-  2.25 mm
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">plot_interpolation_validation</span><span class="p">(</span><span class="n">pwv_data</span><span class="p">,</span> <span class="n">pwv_model</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">plot_interpolation_validation</span><span class="p">(</span><span class="n">pwv_data</span><span class="p">,</span> <span class="n">pwv_model_obj</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Over plot the modeled and measured PWV</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        pwv_data    (Series): Series with PWV values and a Datetime index</span>
-<span class="sd">        pwv_model (PWVModel): PWV model to plot</span>
+<span class="sd">        pwv_model_obj (PWVModel): PWV model to plot</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">pwv_data</span> <span class="o">=</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
-    <span class="n">interpolated_pwv_data</span> <span class="o">=</span> <span class="n">pwv_model</span><span class="o">.</span><span class="n">pwv_zenith</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">interpolated_pwv_data</span> <span class="o">=</span> <span class="n">pwv_model_obj</span><span class="o">.</span><span class="n">pwv_zenith</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
@@ -740,70 +738,84 @@ Fall Average:   4.97 +\-  2.25 mm
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">compare_prop_effects</span><span class="p">(</span><span class="n">pwv_data</span><span class="p">,</span> <span class="n">static</span><span class="p">,</span> <span class="n">seasonal</span><span class="p">,</span> <span class="n">variable</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Compare the Zenith PWV assumed by different propagation effects</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        pwv_data           (Series): Series with PWV values and a Datetime index</span>
-<span class="sd">        static     (StaticPWVTrans): Static propagation effect</span>
-<span class="sd">        seasonal (SeasonalPWVTrans): Seasonal Propagation effect</span>
-<span class="sd">        variable (VariablePWVTrans): Variable Propagation effect</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="c1"># Disable airmass scaling so we get values at zenith</span>
-    <span class="n">variable</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
-    <span class="n">variable</span><span class="o">.</span><span class="n">_pwv_model</span><span class="o">.</span><span class="n">calc_airmass</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="mi">1</span>
-
-    <span class="n">pwv_data</span> <span class="o">=</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
-    <span class="n">x_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">datetime</span><span class="p">)</span>
-    <span class="n">mjd_vals</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span><span class="n">x_vals</span><span class="p">)</span><span class="o">.</span><span class="n">mjd</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;grey&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">variable</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">mjd_vals</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Variable&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x_vals</span><span class="p">,</span> <span class="n">seasonal</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">mjd_vals</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Seasonal&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">x_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]],</span> <span class="p">[</span><span class="n">static</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">],</span> <span class="n">static</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Static&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">2.5</span><span class="p">)</span>
-
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper right&#39;</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;PWV (mm)&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date (UTC)&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">compare_prop_effects</span><span class="p">(</span><span class="n">ctio_weather</span><span class="o">.</span><span class="n">PWV</span><span class="p">,</span> <span class="n">static_prop</span><span class="p">,</span> <span class="n">seasonal_prop</span><span class="p">,</span> <span class="n">variable_prop</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">));</span>
 
 </pre></div>
 </div>
-</div>
-<div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
-</pre></div>
-</div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">compare_prop_effects</span><span class="p">(</span><span class="n">ctio_weather</span><span class="o">.</span><span class="n">PWV</span><span class="p">,</span> <span class="n">static_prop</span><span class="p">,</span> <span class="n">seasonal_prop</span><span class="p">,</span> <span class="n">variable_prop</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2016</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">datetime</span><span class="p">(</span><span class="mi">2017</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-
-</pre></div>
-</div>
-</div>
-<div class="nboutput docutils container">
-<div class="prompt empty docutils container">
-</div>
-<div class="output_area stderr docutils container">
-<div class="highlight"><pre>
-&lt;ipython-input-12-03d4c13c0588&gt;:16: DeprecationWarning: parsing timezone aware datetimes is deprecated; this will raise an error in the future
-  x_vals = np.arange(pwv_data.index[0], pwv_data.index[-1], timedelta(days=1)).astype(datetime)
-</pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_pwv_modeling_21_1.png" src="../_images/notebooks_pwv_modeling_21_1.png" />
+<img alt="../_images/notebooks_pwv_modeling_20_0.png" src="../_images/notebooks_pwv_modeling_20_0.png" />
+</div>
+</div>
+</div>
+<div class="section" id="Impact-on-SN-Spectra">
+<h2>Impact on SN Spectra<a class="headerlink" href="#Impact-on-SN-Spectra" title="Permalink to this headline">¶</a></h2>
+<p>To understand the impact of seasonal PWV variability (in a very rudimentary way) we compare the atmospheric transmission for the lowest and highest average seasonal PWV as determined from the final PWV variability model shown above.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_transmission_variation</span><span class="p">(</span><span class="mf">3.78</span><span class="p">,</span> <span class="mf">7.33</span><span class="p">);</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_22_0.png" src="../_images/notebooks_pwv_modeling_22_0.png" />
+</div>
+</div>
+<p>We also make a similar comparison using the observed SN Ia spectrum (at a given redshift).</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_flux_variation</span><span class="p">(</span><span class="mf">3.78</span><span class="p">,</span> <span class="mf">7.33</span><span class="p">,</span> <span class="n">z</span><span class="o">=.</span><span class="mi">55</span><span class="p">);</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_24_0.png" src="../_images/notebooks_pwv_modeling_24_0.png" />
+</div>
+</div>
+<p>The plot above is going to depend heavily on the chosen redshift. To better understand this dependence, we can visualize the absolute change in spectral flux due to PWV (i.e., the change in flux relative to PWV=0). Some key take points:</p>
+<ol class="arabic simple">
+<li><p>The first and second absorption feature have a much smaller effect than the reddest shown feature. This is expected since PWV absorbs less light at bluer wavelengths. However, since SNe emit much more light at these wavelengths, the effect should not be ignored.</p></li>
+<li><p>The above statement is less important for the second feature when speaking photometrically because the absorption feature falls between bandpass curves.</p></li>
+<li><p>There is an oscillatory nature in the change in flux as a function of redshift. This is most visible for the reddest feature, yet is present across the plot. This can be attributed to the non-trivial interplay of the broad absorption features of SNe Ia and the absorption features of the atmosphere.</p></li>
+</ol>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_sn_flux</span><span class="p">();</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_pwv_modeling_26_0.png" src="../_images/notebooks_pwv_modeling_26_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">

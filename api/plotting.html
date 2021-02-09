@@ -169,6 +169,18 @@ analysis results that are visually consistent and easily reproducible.</p>
 <tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_year_pwv_vs_time" title="snat_sim.plotting.plot_year_pwv_vs_time"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_year_pwv_vs_time</span></code></a></p></td>
 <td><p>Plot PWV measurements taken over a single year as a function of time.</p></td>
 </tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.compare_prop_effects" title="snat_sim.plotting.compare_prop_effects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compare_prop_effects</span></code></a></p></td>
+<td><p>Compare the Zenith PWV assumed by different propagation effects</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_transmission_variation" title="snat_sim.plotting.plot_transmission_variation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_transmission_variation</span></code></a></p></td>
+<td><p>Compare the atmospheric transmission function for two PWV concentrations</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_flux_variation" title="snat_sim.plotting.plot_flux_variation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_flux_variation</span></code></a></p></td>
+<td><p>Compare the PWV absorbed flux of a SN IA for two PWV concentrations</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_delta_sn_flux" title="snat_sim.plotting.plot_delta_sn_flux"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_delta_sn_flux</span></code></a></p></td>
+<td><p>Plot the change to spectroscopic SN Ia flux over wavelength and redshift</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -445,6 +457,97 @@ given PWV and redshift</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plotting.compare_prop_effects">
+<code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">compare_prop_effects</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv_data</span></em>, <em class="sig-param"><span class="n">static</span></em>, <em class="sig-param"><span class="n">seasonal</span></em>, <em class="sig-param"><span class="n">variable</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#compare_prop_effects"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.compare_prop_effects" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare the Zenith PWV assumed by different propagation effects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pwv_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – Series with PWV values and a Datetime index</p></li>
+<li><p><strong>static</strong> (<a class="reference internal" href="models.html#snat_sim.models.StaticPWVTrans" title="snat_sim.models.StaticPWVTrans"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticPWVTrans</span></code></a>) – Static propagation effect</p></li>
+<li><p><strong>seasonal</strong> (<a class="reference internal" href="models.html#snat_sim.models.SeasonalPWVTrans" title="snat_sim.models.SeasonalPWVTrans"><code class="xref py py-class docutils literal notranslate"><span class="pre">SeasonalPWVTrans</span></code></a>) – Seasonal Propagation effect</p></li>
+<li><p><strong>variable</strong> (<a class="reference internal" href="models.html#snat_sim.models.VariablePWVTrans" title="snat_sim.models.VariablePWVTrans"><code class="xref py py-class docutils literal notranslate"><span class="pre">VariablePWVTrans</span></code></a>) – Variable Propagation effect</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The matplotlib figure and axis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plotting.plot_transmission_variation">
+<code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_transmission_variation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv1</span></em>, <em class="sig-param"><span class="n">pwv2</span></em>, <em class="sig-param"><span class="n">wave_min</span><span class="o">=</span><span class="default_value">6500</span></em>, <em class="sig-param"><span class="n">wave_max</span><span class="o">=</span><span class="default_value">10000</span></em>, <em class="sig-param"><span class="n">resolution</span><span class="o">=</span><span class="default_value">9</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_transmission_variation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_transmission_variation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare the atmospheric transmission function for two PWV concentrations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pwv1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The first PWV concentration to plot the transmission for</p></li>
+<li><p><strong>pwv2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The second PWV concentration to plot the transmission for</p></li>
+<li><p><strong>wave_min</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum wavelength to plot</p></li>
+<li><p><strong>wave_max</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Maximum wavelength to plot</p></li>
+<li><p><strong>resolution</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Bin the atmospheric transmission function to a lower transmission</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The matplotlib figure and axis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plotting.plot_flux_variation">
+<code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_flux_variation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv1</span></em>, <em class="sig-param"><span class="n">pwv2</span></em>, <em class="sig-param"><span class="n">z</span><span class="o">=</span><span class="default_value">0.55</span></em>, <em class="sig-param"><span class="n">wave_min</span><span class="o">=</span><span class="default_value">6500</span></em>, <em class="sig-param"><span class="n">wave_max</span><span class="o">=</span><span class="default_value">10000</span></em>, <em class="sig-param"><span class="n">resolution</span><span class="o">=</span><span class="default_value">9</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_flux_variation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_flux_variation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compare the PWV absorbed flux of a SN IA for two PWV concentrations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pwv1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The first PWV concentration to plot the flux for</p></li>
+<li><p><strong>pwv2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The second PWV concentration to plot the flux for</p></li>
+<li><p><strong>z</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The redshift of the SN Ia</p></li>
+<li><p><strong>wave_min</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum wavelength to plot</p></li>
+<li><p><strong>wave_max</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Maximum wavelength to plot</p></li>
+<li><p><strong>resolution</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Bin the atmospheric transmission function to a lower transmission</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The matplotlib figure and axis</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="snat_sim.plotting.plot_delta_sn_flux">
+<code class="sig-prename descclassname">snat_sim.plotting.</code><code class="sig-name descname">plot_delta_sn_flux</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pwv</span><span class="o">=</span><span class="default_value">4</span></em>, <em class="sig-param"><span class="n">wave_min</span><span class="o">=</span><span class="default_value">6500</span></em>, <em class="sig-param"><span class="n">wave_max</span><span class="o">=</span><span class="default_value">10000</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_sn_flux"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_sn_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot the change to spectroscopic SN Ia flux over wavelength and redshift</p>
+<p>An imshow style plot with the change in flux along the color axis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pwv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The PWV concentration to use when determining the change in flux</p></li>
+<li><p><strong>wave_min</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum wavelength to plot</p></li>
+<li><p><strong>wave_max</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Maximum wavelength to plot</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The matplotlib figure and and array of matplotlib axes</p>
 </dd>
 </dl>
 </dd></dl>
