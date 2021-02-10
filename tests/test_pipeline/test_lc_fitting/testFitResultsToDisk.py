@@ -1,7 +1,6 @@
 """Tests for the ``FitResultsToDisk`` class"""
 
-from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import NamedTemporaryFile
 from unittest import TestCase
 
 from egon.mock import MockSource
@@ -62,32 +61,3 @@ class ResultsWrittenToFile(TestCase):
         last_line = self.out_file.readlines()[-1]
         expected_line = self.result.to_csv(self.sn_model.param_names, self.sn_model.param_names)
         self.assertEqual(expected_line, last_line)
-
-
-class FileFormatting(TestCase):
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        cls.temp_dir = TemporaryDirectory()
-        out_path = Path(cls.temp_dir.name) / 'out_data.csv'
-
-        node = FitResultsToDisk()
-
-    @classmethod
-    def tearDownClass(cls) -> None:
-        cls.temp_dir.cleanup()
-
-    def test_file_header(self):
-        """Test the first line in the file is a header with column names"""
-
-        self.fail()
-
-    def test_csv_format(self):
-        """Test data is written in CSV format"""
-
-        self.fail()
-
-    def test_all_inputs_to_disk(self):
-        """Test all input values are written to disk on separate lines"""
-
-        self.fail()

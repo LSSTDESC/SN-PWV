@@ -16,6 +16,7 @@ class ValidatePipelineNodes(TestCase):
             fit_model=SNModel('salt2'),
             vparams=['x0'],
             out_path='foo.csv',
+            sim_path='bar.h5'
         )
 
     def test_auto_validation(self) -> None:
