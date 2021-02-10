@@ -10,7 +10,7 @@ import numpy as np
 from astropy.io.misc.hdf5 import write_table_hdf5
 from astropy.table import Table
 from egon.connectors import Input, Output
-from egon.nodes import Node, Target
+from egon.nodes import Node, Source, Target
 
 from .data_model import PipelineResult
 from .. import constants as const
@@ -158,7 +158,7 @@ class SimulationToDisk(Target):
             write_table_hdf5(table=lc, output=path_str, path=lc.meta['SNID'], append=True)
 
 
-class SimulationFromDisk(Target):
+class SimulationFromDisk(Source):
     """Pipeline node for writing simulated light-curves to disk
 
     Connectors:
@@ -193,6 +193,6 @@ class SimulationFromDisk(Target):
             data = Table(np.array(self.sim_data[key]))
             cols_to_cast = [c for c, cdata in data.columns.items() if cdata.dtype.type == np.bytes_]
             for column in cols_to_cast:
-                data[column] = data[column].as_type(str)
+                data[column] = data[column].astype(str)
 
             self.simulation_output.put(data)
