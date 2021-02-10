@@ -5,6 +5,8 @@ from pathlib import Path
 from typing import *
 from typing import Dict
 
+import h5py
+import numpy as np
 from astropy.io.misc.hdf5 import write_table_hdf5
 from astropy.table import Table
 from egon.connectors import Input, Output
@@ -154,3 +156,43 @@ class SimulationToDisk(Target):
         path_str = str(self.out_path)
         for lc in self.simulation_input.iter_get():
             write_table_hdf5(table=lc, output=path_str, path=lc.meta['SNID'], append=True)
+
+
+class SimulationFromDisk(Target):
+    """Pipeline node for writing simulated light-curves to disk
+
+    Connectors:
+        simulation_input: Simulated light-curves
+    """
+
+    def __init__(self, int_path: Union[str, Path], num_processes: int = 1) -> None:
+        """Write simulated light-curves to disk
+
+        Args:
+            int_path: HDF5 path (``.h5``) to read results from
+        """
+
+        if num_processes > 1:
+            raise ValueError('Number of forked processes for loading cached sims cannot exceed 1')
+
+        self.sim_data: h5py.File
+        self.out_path = Path(int_path).with_suffix('.h5')
+        self.simulation_output = Output()
+
+        super().__init__(num_processes)
+
+    def setup(self) -> None:
+        """Establish I/O for input file"""
+
+        self.sim_data = h5py.File(self.out_path)
+
+    def action(self) -> None:
+        """Write simulated light-curves to disk"""
+
+        for key in self.sim_data.keys():
+            data = Table(np.array(self.sim_data[key]))
+            cols_to_cast = [c for c, cdata in data.columns.items() if cdata.dtype.type == np.bytes_]
+            for column in cols_to_cast:
+                data[column] = data[column].as_type(str)
+
+            self.simulation_output.put(data)
