@@ -70,7 +70,7 @@ class PipelineResult:
             fit_params: The fitted parameter values to include in the output
 
         Returns:
-            A list of strings and floats
+            A string with data in CSV format
         """
 
         out_list = self.to_list(sim_params, fit_params)

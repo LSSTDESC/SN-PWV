@@ -6,11 +6,11 @@ import numpy as np
 import sncosmo
 
 from snat_sim.models import SNModel
-from snat_sim.pipeline import PipelineResult
+from snat_sim.pipeline.data_model import PipelineResult
 
 
-class ListFormatting(TestCase):
-    """Test values are added to the output list in the order matching the output header"""
+class ToList(TestCase):
+    """Test values are converted to a list in the order matching the output header"""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -97,8 +97,8 @@ class ListFormatting(TestCase):
         self.assertEqual(len(self.column_names), len(self.result_list))
 
 
-class MaskedRowCreation(TestCase):
-    """Tests for the creation of masked table entries"""
+class MaskedListCreation(TestCase):
+    """Tests for the creation of masked list entries"""
 
     @classmethod
     def setUpClass(cls) -> None:
