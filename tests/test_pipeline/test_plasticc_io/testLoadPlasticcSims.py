@@ -5,7 +5,7 @@ from unittest import TestCase
 from egon.mock import MockTarget
 
 from snat_sim.models import ObservedCadence
-from snat_sim.pipeline import LoadPlasticcSims
+from snat_sim.pipeline.plasticc_io import LoadPlasticcSims
 from snat_sim.plasticc import PLaSTICC
 
 
