@@ -1,12 +1,10 @@
-"""Tests for the ``FittingPipeline`` class"""
-
 from unittest import TestCase
 
 from snat_sim.pipeline.pipelines import FittingPipeline, SNModel
 
 
 class ValidatePipelineNodes(TestCase):
-    """Validate an instance of the fitting test_pipeline"""
+    """Validate an instance of the fitting pipeline"""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -20,7 +18,7 @@ class ValidatePipelineNodes(TestCase):
         )
 
     def test_auto_validation(self) -> None:
-        """Run the builtin test_pipeline validation routine"""
+        """Run the builtin pipeline validation routine"""
 
         self.pipeline.validate()
 

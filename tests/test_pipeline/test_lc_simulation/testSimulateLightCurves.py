@@ -1,5 +1,3 @@
-"""Tests for the ``SimulateLightCurves`` class"""
-
 from copy import copy
 from unittest import TestCase
 

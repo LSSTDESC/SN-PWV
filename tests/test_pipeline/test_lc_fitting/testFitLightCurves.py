@@ -1,5 +1,3 @@
-"""Tests for the ``FitLightCurves`` class"""
-
 from typing import List
 from unittest import TestCase
 

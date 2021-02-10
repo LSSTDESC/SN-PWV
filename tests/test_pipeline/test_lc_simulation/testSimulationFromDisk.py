@@ -11,9 +11,12 @@ from snat_sim.pipeline.lc_simultion import SimulationFromDisk
 
 
 class InputDataMatchesDisk(TestCase):
+    """Test that data written to disk matches data loaded by the node"""
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Setup a mock pipeline to read dummy data from disk"""
+
         # Create a demo light-curve table
         cls.demo_lc = sncosmo.load_example_data()
         cls.demo_lc.meta['SNID'] = '12345'
@@ -34,6 +37,8 @@ class InputDataMatchesDisk(TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """Delete temporary files"""
+
         cls.temp_out_dir.cleanup()
 
     def runTest(self) -> None:
