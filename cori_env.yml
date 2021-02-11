@@ -58,3 +58,4 @@ dependencies:
     - typing-extensions==3.7.4.3
     - urllib3==1.26.3
     - git+git://github.com/lsstdesc/SN-PWV.git
+    - h5py==3.1.0

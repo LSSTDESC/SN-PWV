@@ -1,7 +1,7 @@
 :orphan:
 
-snat_sim.filters
-================
+snat_sim.utils.filters
+======================
 
 .. automodule:: snat_sim.utils.filters
    :members:

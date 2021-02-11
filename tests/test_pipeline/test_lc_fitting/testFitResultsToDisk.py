@@ -1,12 +1,10 @@
-"""Tests for the ``FitResultsToDisk`` class"""
-
 from tempfile import NamedTemporaryFile
 from unittest import TestCase
 
 from egon.mock import MockSource
 
 from snat_sim.models import SNModel
-from snat_sim.pipeline import FitResultsToDisk, PipelineResult
+from snat_sim.pipeline.lc_fitting import FitResultsToDisk, PipelineResult
 
 
 class WritesHeaderOnSetup(TestCase):

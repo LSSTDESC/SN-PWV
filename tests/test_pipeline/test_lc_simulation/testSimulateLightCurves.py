@@ -1,5 +1,3 @@
-"""Tests for the ``SimulateLightCurves`` class"""
-
 from copy import copy
 from unittest import TestCase
 
@@ -7,7 +5,7 @@ import numpy as np
 from egon.mock import MockSource, MockTarget
 
 from snat_sim.models import ObservedCadence, SNModel
-from snat_sim.pipeline import SimulateLightCurves
+from snat_sim.pipeline.lc_simultion import SimulateLightCurves
 from tests.mock import create_mock_plasticc_light_curve
 
 
