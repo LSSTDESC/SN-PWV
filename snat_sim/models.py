@@ -623,7 +623,7 @@ class SNModel(sncosmo.Model):
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
 
-    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True) -> Table:
+    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True, fixed_snr: Optional[float] = None) -> Table:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -633,13 +633,19 @@ class SNModel(sncosmo.Model):
         Args:
             cadence: Observational cadence to evaluate the light-curve with
             scatter: Whether to add random noise to the flux values
+            fixed_snr: Optionally simulate the light-curve using a fixed signal to noise ratio
 
         Returns:
             The simulated light-curve as an astropy table in the ``sncosmo`` format
         """
 
         flux = self.bandflux(cadence.bands, cadence.obs_times, zp=cadence.zp, zpsys=cadence.zpsys)
-        fluxerr = np.sqrt(cadence.skynoise ** 2 + np.abs(flux) / cadence.gain)
+
+        if fixed_snr:
+            fluxerr = flux / fixed_snr
+
+        else:
+            fluxerr = np.sqrt(cadence.skynoise ** 2 + np.abs(flux) / cadence.gain)
 
         if scatter:
             flux = np.atleast_1d(np.random.normal(flux, fluxerr))
@@ -648,24 +654,6 @@ class SNModel(sncosmo.Model):
             data=[cadence.obs_times, cadence.bands, flux, fluxerr, cadence.zp, cadence.zpsys],
             names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'),
             meta=dict(zip(self.param_names, self.parameters)))
-
-    def simulate_lc_fixed_snr(self, cadence: ObservedCadence, snr: float = .05) -> Table:
-        """Simulate a SN light-curve with a fixed SNR for the given cadence
-
-        Args:
-            cadence: Observational cadence to evaluate the light-curve with
-            snr: Signal to noise ratio
-
-        Returns:
-            The simulated light-curve as an astropy table in the ``sncosmo`` format
-        """
-
-        obs = cadence.to_sncosmo()
-        light_curve = obs[['time', 'band', 'zp', 'zpsys']]
-        light_curve['flux'] = self.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
-        light_curve['fluxerr'] = light_curve['flux'] / snr
-        light_curve.meta = dict(zip(self.param_names, self.parameters))
-        return light_curve
 
 
 ###############################################################################
