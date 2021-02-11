@@ -91,7 +91,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    api/models.rst
    api/plasticc.rst
    api/reference_stars.rst
-   api/pipeline.rst
+   api/pipeline/pipeline.rst
    api/sn_magnitudes.rst
    api/plotting.rst
    api/utils/utils.rst
