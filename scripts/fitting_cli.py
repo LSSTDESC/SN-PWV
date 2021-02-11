@@ -326,10 +326,10 @@ def create_cli_parser() -> argparse.ArgumentParser:
     )
 
     debugging_group.add_argument(
-        '--fixed_snr',
+        '--fixed-snr',
         type=float,
         default=None,
-        help='Simulate light-curves with a fixxed signal to noise ratio.'
+        help='Simulate light-curves with a fixed signal to noise ratio.'
     )
 
     return parser

@@ -1,7 +1,7 @@
 """A Bokeh based script for visualizing pipeline output data from validation runs
 
 To run this script:
-    ``bokeh serve [PAH TO SCRIPT] --args [PATH TO PIPELINE CSV OUTPUT FILE]``
+    ``bokeh serve [PAH TO SCRIPT] --args [PATH TO PIPELINE CSV OUTPUT] [PATH TO PIPELINE HDF5 OUTPUT]``
 
 To run the validation fits that this script is intended to visualize, see
 ``validation_fits.sh``.
@@ -102,7 +102,7 @@ sn_model = build_sn_model(validation_path.stem.split('_')[-1], pwv_model)
 pipeline_output = load_pipeline_output(validation_path)
 pipeline_output['mu'] = pipeline_output['mb'] - pipeline_output['abs_mag']
 
-lc_sims = load_light_curve_sims(validation_path.with_suffix('.h5'))
+lc_sims = load_light_curve_sims(Path(sys.argv[2]).resolve())
 lc_sims['pwv_model'] = pwv_model.pwv_zenith(lc_sims['time'])
 
 ##############################################################################

@@ -7,7 +7,7 @@ from typing import Dict
 
 import h5py
 import numpy as np
-from astropy.cosmology import Cosmology
+from astropy.cosmology.core import Cosmology
 from astropy.io.misc.hdf5 import write_table_hdf5
 from astropy.table import Table
 from egon.connectors import Input, Output
