@@ -6,6 +6,8 @@ from egon.nodes import Source
 from ..models import ObservedCadence
 from ..plasticc import PLaSTICC
 
+__all__ = ['LoadPlasticcSims']
+
 
 class LoadPlasticcSims(Source):
     """Pipeline node for loading PLaSTICC data from disk

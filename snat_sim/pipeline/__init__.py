@@ -29,4 +29,7 @@ Module Docs
 -----------
 """
 
+from . import nodes
 from .pipelines import FittingPipeline
+
+FittingPipeline.__module__ = __name__
