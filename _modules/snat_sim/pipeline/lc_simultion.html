@@ -1,0 +1,350 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.pipeline.lc_simultion &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../pipeline.html" accesskey="U">snat_sim.pipeline</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.pipeline.lc_simultion</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/integrations.html">Package Integrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/command_line.html">Command Line Interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <h1>Source code for snat_sim.pipeline.lc_simultion</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span>
+
+<span class="kn">import</span> <span class="nn">h5py</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.io.misc.hdf5</span> <span class="kn">import</span> <span class="n">write_table_hdf5</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span> <span class="nn">egon.connectors</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span>
+<span class="kn">from</span> <span class="nn">egon.nodes</span> <span class="kn">import</span> <span class="n">Node</span><span class="p">,</span> <span class="n">Source</span><span class="p">,</span> <span class="n">Target</span>
+
+<span class="kn">from</span> <span class="nn">.data_model</span> <span class="kn">import</span> <span class="n">PipelineResult</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">AbstractVariablePWVEffect</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">PWVModel</span><span class="p">,</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">StaticPWVTrans</span>
+<span class="kn">from</span> <span class="nn">..reference_stars</span> <span class="kn">import</span> <span class="n">VariableCatalog</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;SimulateLightCurves&#39;</span><span class="p">,</span> <span class="s1">&#39;SimulationToDisk&#39;</span><span class="p">,</span> <span class="s1">&#39;SimulationFromDisk&#39;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="SimulateLightCurves"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulateLightCurves">[docs]</a><span class="k">class</span> <span class="nc">SimulateLightCurves</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline node for simulating light-curves based on PLaSTICC cadences</span>
+
+<span class="sd">    Connectors:</span>
+<span class="sd">        plasticc_data_input: PLaSTICC light-curves as ``astropy.Table`` objects</span>
+<span class="sd">        simulation_output: Simulated light-curves as  ``astropy.Table`` objects</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SimulateLightCurves.__init__"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulateLightCurves.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">sn_model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
+            <span class="n">catalog</span><span class="p">:</span> <span class="n">VariableCatalog</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="n">add_scatter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">abs_mb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span>
+            <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">,</span>
+            <span class="n">include_pwv</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Fit light-curves using multiple processes and combine results into an output file</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            sn_model: Model to use when simulating light-curves</span>
+<span class="sd">            catalog: Optional reference start catalog to calibrate simulated flux values to</span>
+<span class="sd">            num_processes: Number of processes to allocate to the node</span>
+<span class="sd">            abs_mb: The absolute B-band magnitude of the simulated SNe</span>
+<span class="sd">            cosmo: Cosmology to assume in the simulation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span> <span class="o">=</span> <span class="n">sn_model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">catalog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_scatter</span> <span class="o">=</span> <span class="n">add_scatter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">abs_mb</span> <span class="o">=</span> <span class="n">abs_mb</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cosmo</span> <span class="o">=</span> <span class="n">cosmo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">include_pwv_col</span> <span class="o">=</span> <span class="n">include_pwv</span>
+
+        <span class="c1"># Node connectors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">plasticc_data_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">failure_result_output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulateLightCurves.duplicate_plasticc_lc"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulateLightCurves.duplicate_plasticc_lc">[docs]</a>    <span class="k">def</span> <span class="nf">duplicate_plasticc_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">cadence</span><span class="p">:</span> <span class="n">ObservedCadence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Duplicate a plastic light-curve using the simulation model</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params: The simulation parameters to use with ``self.model``</span>
+<span class="sd">            cadence: The observed cadence of the returned light-curve</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Set model parameters and scale the source brightness to the desired intrinsic brightness</span>
+        <span class="n">model_for_sim</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span><span class="p">)</span>
+        <span class="n">model_for_sim</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
+        <span class="n">model_for_sim</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cosmo</span><span class="p">)</span>
+
+        <span class="c1"># Simulate the light-curve. Make sure to include model parameters as meta data</span>
+        <span class="n">duplicated</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">)</span>
+        <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">model_for_sim</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span>
+
+        <span class="c1"># Rescale the light-curve using the reference star catalog if provided</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">duplicated</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span>
+                <span class="n">duplicated</span><span class="p">,</span> <span class="n">duplicated</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">ra</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">],</span> <span class="n">dec</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">])</span>
+
+        <span class="c1"># Add the simulated PWV concentration if there is a variable PWV transmission effect.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">include_pwv_col</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_pwv_columns_to_table</span><span class="p">(</span><span class="n">duplicated</span><span class="p">,</span> <span class="n">model_for_sim</span><span class="p">,</span> <span class="n">ra</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">],</span> <span class="n">dec</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">duplicated</span></div>
+
+<div class="viewcode-block" id="SimulateLightCurves.add_pwv_columns_to_table"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulateLightCurves.add_pwv_columns_to_table">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">add_pwv_columns_to_table</span><span class="p">(</span><span class="n">light_curve</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="n">model_for_sim</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">ra</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">dec</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Add columns for PWV and Airmass to a light-curve table</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            light_curve: The simulated light-curve table</span>
+<span class="sd">            model_for_sim: The model used to simulate the light-curve</span>
+<span class="sd">            ra: The Right Ascension of the supernova</span>
+<span class="sd">            dec: The declination  of the supernova</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">effect</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">effects</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">effect</span><span class="p">,</span> <span class="n">AbstractVariablePWVEffect</span><span class="p">):</span>
+                <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">effect</span><span class="o">.</span><span class="n">assumed_pwv</span><span class="p">(</span><span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">])</span>
+                <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;airmass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PWVModel</span><span class="o">.</span><span class="n">calc_airmass</span><span class="p">(</span><span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">)</span>
+                <span class="k">break</span>
+
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">effect</span><span class="p">,</span> <span class="n">StaticPWVTrans</span><span class="p">):</span>
+                <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">effect</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span>
+                <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;airmass&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="k">break</span></div>
+
+<div class="viewcode-block" id="SimulateLightCurves.action"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulateLightCurves.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Simulate light-curves with atmospheric effects&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">plasticc_data_input</span><span class="o">.</span><span class="n">iter_get</span><span class="p">():</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">duplicated_lc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">duplicate_plasticc_lc</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">cadence</span><span class="p">)</span>
+
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">PipelineResult</span><span class="p">(</span>
+                    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">sim_params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                    <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s1">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">failure_result_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">simulation_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">duplicated_lc</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SimulationToDisk"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulationToDisk">[docs]</a><span class="k">class</span> <span class="nc">SimulationToDisk</span><span class="p">(</span><span class="n">Target</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline node for writing simulated light-curves to disk</span>
+
+<span class="sd">    Connectors:</span>
+<span class="sd">        simulation_input: Simulated light-curves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SimulationToDisk.__init__"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulationToDisk.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Write simulated light-curves to disk</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            out_path: HDF5 path (``.h5``) to write results to</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.h5&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SimulationToDisk</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulationToDisk.setup"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulationToDisk.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Ensure the output directory exists&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulationToDisk.action"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulationToDisk.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Write simulated light-curves to disk&quot;&quot;&quot;</span>
+
+        <span class="n">path_str</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulation_input</span><span class="o">.</span><span class="n">iter_get</span><span class="p">():</span>
+            <span class="n">write_table_hdf5</span><span class="p">(</span><span class="n">table</span><span class="o">=</span><span class="n">lc</span><span class="p">,</span> <span class="n">output</span><span class="o">=</span><span class="n">path_str</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">],</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="SimulationFromDisk"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulationFromDisk">[docs]</a><span class="k">class</span> <span class="nc">SimulationFromDisk</span><span class="p">(</span><span class="n">Source</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline node for writing simulated light-curves to disk</span>
+
+<span class="sd">    Connectors:</span>
+<span class="sd">        simulation_input: Simulated light-curves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SimulationFromDisk.__init__"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulationFromDisk.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">int_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Write simulated light-curves to disk</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            int_path: HDF5 path (``.h5``) to read results from</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">num_processes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Number of forked processes for loading cached sims cannot exceed 1&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_data</span><span class="p">:</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">int_path</span><span class="p">)</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="s1">&#39;.h5&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">simulation_output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulationFromDisk.setup"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulationFromDisk.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Establish I/O for input file&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sim_data</span> <span class="o">=</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SimulationFromDisk.action"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulationFromDisk.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Write simulated light-curves to disk&quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">sim_data</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_data</span><span class="p">[</span><span class="n">key</span><span class="p">]))</span>
+            <span class="n">cols_to_cast</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">cdata</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">cdata</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">bytes_</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="n">cols_to_cast</span><span class="p">:</span>
+                <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">column</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">simulation_output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../pipeline.html" >snat_sim.pipeline</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.pipeline.lc_simultion</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

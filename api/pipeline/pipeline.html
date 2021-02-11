@@ -1,0 +1,241 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.pipeline &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="snat_sim.sn_magnitudes" href="../sn_magnitudes.html" />
+    <link rel="prev" title="snat_sim.reference_stars" href="../reference_stars.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../sn_magnitudes.html" title="snat_sim.sn_magnitudes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../reference_stars.html" title="snat_sim.reference_stars"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.pipeline</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/integrations.html">Package Integrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/command_line.html">Command Line Interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">snat_sim.utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="module-snat_sim.pipeline">
+<span id="snat-sim-pipeline"></span><h1>snat_sim.pipeline<a class="headerlink" href="#module-snat_sim.pipeline" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">pipeline</span></code> module defines the <code class="docutils literal notranslate"><span class="pre">FittingPipeline</span></code> class, which
+is built to provide a parallelized approach to simulating and fitting
+light-curves with atmospheric effects.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>Instances of the <code class="docutils literal notranslate"><span class="pre">FittingPipeline</span></code> class can be run synchronously
+(by calling <code class="docutils literal notranslate"><span class="pre">FittingPipeline.run</span></code>) or asynchronously (with
+<code class="docutils literal notranslate"><span class="pre">FittingPipeline.run_async</span></code>). A pipeline instance can be created as
+follows:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">SNModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.pipeline</span> <span class="kn">import</span> <span class="n">FittingPipeline</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FittingPipeline</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">cadence</span><span class="o">=</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">sim_model</span><span class="o">=</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">fit_model</span><span class="o">=</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">vparams</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">out_path</span><span class="o">=</span><span class="s1">&#39;./demo_out_path.csv&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">fitting_pool</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">simulation_pool</span><span class="o">=</span><span class="mi">3</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>SubModules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+<p>Although the <code class="docutils literal notranslate"><span class="pre">pipeline</span></code> module provides prebuilt data analysis pipelines,
+you can also build customized pipelines using any of the nodes used in the
+prebuilt pipelines. Relevant documentation can be found in the following
+pages:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="nodes.html#module-snat_sim.pipeline.nodes" title="snat_sim.pipeline.nodes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">nodes</span></code></a></p></td>
+<td><p>Defines the individual data processing nodes used to construct complete data analysis pipelines.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="data_model.html#module-snat_sim.pipeline.data_model" title="snat_sim.pipeline.data_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">data_model</span></code></a></p></td>
+<td><p>Defines a standardized data model for communication between pipeline nodes.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="module-docs">
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="snat_sim.pipeline.FittingPipeline">
+<em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.</code><code class="sig-name descname">FittingPipeline</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">sim_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fitting_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">simulation_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">200</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">catalog</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">add_scatter</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.pipeline.FittingPipeline" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pipeline of parallel processes for simulating and fitting light-curves</p>
+<dl class="py method">
+<dt id="snat_sim.pipeline.FittingPipeline.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">cadence</span></em>, <em class="sig-param"><span class="n">sim_model</span></em>, <em class="sig-param"><span class="n">fit_model</span></em>, <em class="sig-param"><span class="n">vparams</span></em>, <em class="sig-param"><span class="n">out_path</span></em>, <em class="sig-param"><span class="n">sim_path</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fitting_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">simulation_pool</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">bounds</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">max_queue</span><span class="o">=</span><span class="default_value">200</span></em>, <em class="sig-param"><span class="n">iter_lim</span><span class="o">=</span><span class="default_value">inf</span></em>, <em class="sig-param"><span class="n">catalog</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">add_scatter</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/pipelines.html#FittingPipeline.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.FittingPipeline.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit light-curves using multiple processes and combine results into an output file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Cadence to use when simulating light-curves</p></li>
+<li><p><strong>sim_model</strong> (<a class="reference internal" href="../models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Model to use when simulating light-curves</p></li>
+<li><p><strong>fit_model</strong> (<a class="reference internal" href="../models.html#snat_sim.models.SNModel" title="snat_sim.models.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Model to use when fitting light-curves</p></li>
+<li><p><strong>vparams</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of parameter names to vary in the fit</p></li>
+<li><p><strong>bounds</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>]]]) – Bounds to impose on <code class="docutils literal notranslate"><span class="pre">fit_model</span></code> parameters when fitting light-curves</p></li>
+<li><p><strong>out_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path to write results to (.csv extension is enforced)</p></li>
+<li><p><strong>sim_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – Optionally write simulated light-curves to disk in HDF5 format</p></li>
+<li><p><strong>fitting_pool</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of child processes allocated to simulating light-curves</p></li>
+<li><p><strong>simulation_pool</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of child processes allocated to fitting light-curves</p></li>
+<li><p><strong>max_queue</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Maximum number of light-curves to store in pipeline at once</p></li>
+<li><p><strong>iter_lim</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Limit number of processed light-curves (Useful for profiling)</p></li>
+<li><p><strong>catalog</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<a class="reference internal" href="../reference_stars.html#snat_sim.reference_stars.VariableCatalog" title="snat_sim.reference_stars.VariableCatalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">VariableCatalog</span></code></a>]) – Reference star catalog to calibrate simulated supernova with</p></li>
+<li><p><strong>add_scatter</strong> – Add randomly generated scatter to simulated light-curve points</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../sn_magnitudes.html" title="snat_sim.sn_magnitudes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../reference_stars.html" title="snat_sim.reference_stars"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.pipeline</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>
