@@ -25,6 +25,21 @@ follows:
    ...     simulation_pool=3
    ... )
 
+
+SubModules
+----------
+
+Although the ``pipeline`` module provides prebuilt data analysis pipelines,
+you can also build customized pipelines using any of the nodes used in the
+prebuilt pipelines. Relevant documentation can be found in the following
+pages:
+
+.. autosummary::
+   :nosignatures:
+
+   nodes
+   data_model
+
 Module Docs
 -----------
 """

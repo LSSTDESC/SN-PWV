@@ -1,4 +1,4 @@
-"""Defines a standardized data model for communication between pipeline nodes
+"""Defines a standardized data model for communication between pipeline nodes.
 
 Usage Example
 -------------

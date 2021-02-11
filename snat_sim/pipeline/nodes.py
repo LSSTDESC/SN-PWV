@@ -1,3 +1,13 @@
+"""Defines the individual data processing nodes used to construct complete
+data analysis pipelines.
+
+Nodes are built on the ``egon`` framework. For more information see the
+official `Egon Documentation <https://mwvgroup.github.io/Egon/>`_.
+
+Module Docs
+-----------
+"""
+
 from .plasticc_io import *
 from .lc_simultion import *
 from .lc_fitting import *
