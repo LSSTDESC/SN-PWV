@@ -7,7 +7,7 @@ and then fitting them with a given SN model.
 import argparse
 import sys
 from pathlib import Path
-from typing import Tuple, Dict, Union
+from typing import Dict, Tuple, Union
 
 from pwv_kpno.gps_pwv import GPSReceiver
 
@@ -117,6 +117,12 @@ class AdvancedNamespace(argparse.Namespace):
 
         return reference_stars.VariableCatalog(*self.ref_stars, pwv_model=self.pwv_model)
 
+    @property
+    def add_scatter(self):
+        """Whether to include added scatter in the light-curve simulations."""
+
+        return not self.no_scatter
+
 
 def run_pipeline(command_line_args: AdvancedNamespace) -> None:
     """Run the analysis pipeline
@@ -137,7 +143,8 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         fitting_pool=command_line_args.fit_pool_size,
         bounds=command_line_args.fitting_bounds,
         iter_lim=command_line_args.iter_lim,
-        catalog=command_line_args.catalog
+        catalog=command_line_args.catalog,
+        add_scatter=command_line_args.add_scatter
     )
 
     pipeline.validate()
@@ -222,6 +229,12 @@ def create_cli_parser() -> argparse.ArgumentParser:
         default=('G2', 'M5', 'K2'),
         nargs='+',
         help='Reference star(s) to calibrate simulated SNe against.'
+    )
+
+    simulation_group.add_argument(
+        '--no-scatter',
+        action='store_true',
+        help='Turn off added scatter when simulating light-curves.'
     )
 
     #######################################################################
