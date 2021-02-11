@@ -144,7 +144,8 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         bounds=command_line_args.fitting_bounds,
         iter_lim=command_line_args.iter_lim,
         catalog=command_line_args.catalog,
-        add_scatter=command_line_args.add_scatter
+        add_scatter=command_line_args.add_scatter,
+        fixed_snr=command_line_args.fixed_snr
     )
 
     pipeline.validate()
@@ -231,12 +232,6 @@ def create_cli_parser() -> argparse.ArgumentParser:
         help='Reference star(s) to calibrate simulated SNe against.'
     )
 
-    simulation_group.add_argument(
-        '--no-scatter',
-        action='store_true',
-        help='Turn off added scatter when simulating light-curves.'
-    )
-
     #######################################################################
     # Light-curve fitting
     #######################################################################
@@ -318,6 +313,24 @@ def create_cli_parser() -> argparse.ArgumentParser:
             nargs=2,
             help=f'Only use measured data points with a {name} value within the given bounds (units of {unit})'
         )
+
+    debugging_group = parser.add_argument_group(
+        'Debugging / Validation',
+        description='Options used when debugging pipeline behavior.'
+    )
+
+    debugging_group.add_argument(
+        '--no-scatter',
+        action='store_true',
+        help='Turn off added scatter when simulating light-curves.'
+    )
+
+    debugging_group.add_argument(
+        '--fixed_snr',
+        type=float,
+        default=None,
+        help='Simulate light-curves with a fixxed signal to noise ratio.'
+    )
 
     return parser
 
