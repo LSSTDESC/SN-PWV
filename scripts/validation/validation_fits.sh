@@ -11,6 +11,6 @@ python ../fitting_cli.py -s 1 -f 10 -i 500 -c alt_sched --sim_variability epoch 
 
 # Runs with light-curve scatter turned off and a fixed SNR
 # Useful in checking handling of the underlying model covariances
-python ../fitting_cli.py -s 1 -f 10 -i 500 -c alt_sched --sim_variability 0 --fit_variability 0 -d ../../data/validation/no_scat_pwv_sim_0_fit_0.h5      -o ../../data/validation/no_scat_pwv_sim_0_fit_0.csv      --no-scatter
-python ../fitting_cli.py -s 1 -f 10 -i 500 -c alt_sched --sim_variability 0 --fit_variability 0 -d ../../data/validation/snr5_pwv_sim_0_fit_0.h5         -o ../../data/validation/snr5_pwv_sim_0_fit_0.csv                      --fixed-snr 5
-python ../fitting_cli.py -s 1 -f 10 -i 500 -c alt_sched --sim_variability 0 --fit_variability 0 -d ../../data/validation/no_scat_snr5_pwv_sim_0_fit_0.h5 -o ../../data/validation/no_scat_snr5_pwv_sim_0_fit_0.csv --no-scatter --fixed-snr 5
+python ../fitting_cli.py -s 1 -f 10 -i 500 -c alt_sched --sim_variability 0 --fit_variability 0 -d ../../data/validation/no_scat_pwv_sim_0_fit_0.h5         -o ../../data/validation/no_scat_pwv_sim_0_fit_0.csv         --no-scatter
+python ../fitting_cli.py -s 1 -f 10 -i 500 -c alt_sched --sim_variability 0 --fit_variability 0 -d ../../data/validation/snr1000_pwv_sim_0_fit_0.h5         -o ../../data/validation/snr1000_pwv_sim_0_fit_0.csv                      --fixed-snr 1000
+python ../fitting_cli.py -s 1 -f 10 -i 500 -c alt_sched --sim_variability 0 --fit_variability 0 -d ../../data/validation/no_scat_snr1000_pwv_sim_0_fit_0.h5 -o ../../data/validation/no_scat_snr1000_pwv_sim_0_fit_0.csv --no-scatter --fixed-snr 1000

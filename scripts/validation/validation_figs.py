@@ -23,7 +23,7 @@ from bokeh.models import ColumnDataSource, Div, Select, Span, Whisker
 from bokeh.models.widgets import DataTable, TableColumn
 from pwv_kpno.defaults import ctio
 
-import bokeh_acce0ssor
+import bokeh_accessor
 from snat_sim.constants import betoule_cosmo
 from snat_sim.models import PWVModel, SNModel, SeasonalPWVTrans, StaticPWVTrans, VariablePWVTrans
 
