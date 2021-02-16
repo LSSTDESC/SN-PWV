@@ -87,6 +87,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    :caption: API Reference
    :titlesonly:
 
+   api/data_paths.rst
    api/constants.rst
    api/models.rst
    api/plasticc.rst
