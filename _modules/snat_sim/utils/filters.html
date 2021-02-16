@@ -26,8 +26,6 @@
     <script src="../../../_static/clipboard.min.js"></script>
     <script src="../../../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   
@@ -95,6 +93,7 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
@@ -168,7 +167,7 @@
 <span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 
-<span class="kn">from</span> <span class="nn">snat_sim._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
+<span class="kn">from</span> <span class="nn">snat_sim.data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
 
 
 <div class="viewcode-block" id="register_sncosmo_filter"><a class="viewcode-back" href="../../../api/utils/filters.html#snat_sim.utils.filters.register_sncosmo_filter">[docs]</a><span class="k">def</span> <span class="nf">register_sncosmo_filter</span><span class="p">(</span><span class="n">wave</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">trans</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">force</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -201,7 +200,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># Register each filter</span>
-    <span class="n">ctio_filter_dir</span> <span class="o">=</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">get_filters_dir</span><span class="p">(</span><span class="s1">&#39;ctio&#39;</span><span class="p">)</span>
+    <span class="n">ctio_filter_dir</span> <span class="o">=</span> <span class="n">paths_at_init</span><span class="o">.</span><span class="n">get_filters_dir</span><span class="p">(</span><span class="s1">&#39;ctio&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">filter_name</span> <span class="ow">in</span> <span class="s1">&#39;ugrizY&#39;</span><span class="p">:</span>
         <span class="c1"># Iterate over bands with and without the atmosphere</span>
         <span class="k">for</span> <span class="n">extension</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;_filter&#39;</span><span class="p">):</span>
@@ -242,7 +241,7 @@
 <span class="sd">        force: Re-register bands even if they are already registered</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">lsst_filter_dir</span> <span class="o">=</span> <span class="n">data_paths</span><span class="o">.</span><span class="n">get_filters_dir</span><span class="p">(</span><span class="s1">&#39;lsst_baseline&#39;</span><span class="p">)</span>
+    <span class="n">lsst_filter_dir</span> <span class="o">=</span> <span class="n">paths_at_init</span><span class="o">.</span><span class="n">get_filters_dir</span><span class="p">(</span><span class="s1">&#39;lsst_baseline&#39;</span><span class="p">)</span>
     <span class="n">nm_in_angstrom</span> <span class="o">=</span> <span class="mi">10</span>
 
     <span class="c1"># Define file names for each optical component</span>

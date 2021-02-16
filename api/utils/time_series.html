@@ -26,8 +26,6 @@
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   
@@ -93,6 +91,7 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plasticc.html">snat_sim.plasticc</a></li>
@@ -170,7 +169,7 @@ accessor attribut, see the <code class="docutils literal notranslate"><span clas
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="snat_sim.utils.time_series.datetime_to_sec_in_year">
-<code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">datetime_to_sec_in_year</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">date</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#datetime_to_sec_in_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.datetime_to_sec_in_year" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">snat_sim.utils.time_series.</span></code><code class="sig-name descname"><span class="pre">datetime_to_sec_in_year</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#datetime_to_sec_in_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.time_series.datetime_to_sec_in_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate number of seconds elapsed modulo 1 year.</p>
 <p>Accurate to within a microsecond.</p>
 <dl class="field-list simple">
@@ -188,11 +187,11 @@ accessor attribut, see the <code class="docutils literal notranslate"><span clas
 
 <dl class="py class">
 <dt id="snat_sim.utils.time_series.TSUAccessor">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.utils.time_series.</code><code class="sig-name descname">TSUAccessor</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pandas_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.utils.time_series.</span></code><code class="sig-name descname"><span class="pre">TSUAccessor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pandas Series accessor for time series utilities</p>
 <dl class="py method">
 <dt id="snat_sim.utils.time_series.TSUAccessor.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pandas_obj</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends <code class="docutils literal notranslate"><span class="pre">pandas</span></code> support for time series data</p>
 <p>DO NOT USE THIS CLASS DIRECTLY! This class is registered as a pandas accessor.
 See the module level usage example for more information.</p>
@@ -200,7 +199,7 @@ See the module level usage example for more information.</p>
 
 <dl class="py method">
 <dt id="snat_sim.utils.time_series.TSUAccessor.supplemented_data">
-<code class="sig-name descname">supplemented_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">year</span></em>, <em class="sig-param"><span class="n">supp_years</span><span class="o">=</span><span class="default_value">()</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.supplemented_data"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.supplemented_data" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">supplemented_data</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supp_years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.supplemented_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.supplemented_data" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the supplemented subset of the series corresponding to a given year</p>
 <p>Data for the given year is supplemented with any available data from
 supplementary years by asserting that the measured values from
@@ -225,7 +224,7 @@ specified by the <code class="docutils literal notranslate"><span class="pre">su
 
 <dl class="py method">
 <dt id="snat_sim.utils.time_series.TSUAccessor.periodic_interpolation">
-<code class="sig-name descname">periodic_interpolation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.periodic_interpolation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.periodic_interpolation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">periodic_interpolation</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.periodic_interpolation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.periodic_interpolation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Linearly interpolate the series using periodic boundary conditions</p>
 <p>Similar to the default linear interpolation used by pandas, but
 missing values at the beginning and end of the series are
@@ -242,7 +241,7 @@ interpolated assuming a periodic boundary condition.</p>
 
 <dl class="py method">
 <dt id="snat_sim.utils.time_series.TSUAccessor.resample_data_across_year">
-<code class="sig-name descname">resample_data_across_year</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.resample_data_across_year"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.resample_data_across_year" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">resample_data_across_year</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#TSUAccessor.resample_data_across_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.time_series.TSUAccessor.resample_data_across_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resample the series evenly from the beginning of the
 earliest year through the end of the latest year.</p>
 <dl class="field-list simple">

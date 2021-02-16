@@ -26,8 +26,6 @@
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   
@@ -93,6 +91,7 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plasticc.html">snat_sim.plasticc</a></li>
@@ -154,11 +153,11 @@ the value <code class="docutils literal notranslate"><span class="pre">-99.99</s
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="snat_sim.pipeline.data_model.PipelineResult">
-<em class="property">class </em><code class="sig-prename descclassname">snat_sim.pipeline.data_model.</code><code class="sig-name descname">PipelineResult</code><span class="sig-paren">(</span><em class="sig-param">snid</em>, <em class="sig-param">sim_params=&lt;factory&gt;</em>, <em class="sig-param">fit_params=&lt;factory&gt;</em>, <em class="sig-param">fit_err=&lt;factory&gt;</em>, <em class="sig-param">chisq=-99.99</em>, <em class="sig-param">ndof=-99.99</em>, <em class="sig-param">mb=-99.99</em>, <em class="sig-param">abs_mag=-99.99</em>, <em class="sig-param">message=''</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.data_model.</span></code><code class="sig-name descname"><span class="pre">PipelineResult</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">snid</span></em>, <em class="sig-param"><span class="pre">sim_params=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">fit_params=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">fit_err=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">chisq=-99.99</span></em>, <em class="sig-param"><span class="pre">ndof=-99.99</span></em>, <em class="sig-param"><span class="pre">mb=-99.99</span></em>, <em class="sig-param"><span class="pre">abs_mag=-99.99</span></em>, <em class="sig-param"><span class="pre">message=''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class representation of internal pipeline data products</p>
 <dl class="py method">
 <dt id="snat_sim.pipeline.data_model.PipelineResult.to_csv">
-<code class="sig-name descname">to_csv</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sim_params</span></em>, <em class="sig-param"><span class="n">fit_params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.to_csv"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.to_csv" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">to_csv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.to_csv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Combine light-curve fit results into single row matching the output table file format</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -178,7 +177,7 @@ the value <code class="docutils literal notranslate"><span class="pre">-99.99</s
 
 <dl class="py method">
 <dt id="snat_sim.pipeline.data_model.PipelineResult.to_list">
-<code class="sig-name descname">to_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sim_params</span></em>, <em class="sig-param"><span class="n">fit_params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.to_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.to_list" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">to_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.to_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return class data as a list with missing values masked as -99.99</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -195,7 +194,7 @@ the value <code class="docutils literal notranslate"><span class="pre">-99.99</s
 
 <dl class="py method">
 <dt id="snat_sim.pipeline.data_model.PipelineResult.column_names">
-<em class="property">static </em><code class="sig-name descname">column_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sim_params</span></em>, <em class="sig-param"><span class="n">fit_params</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.column_names"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.column_names" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">column_names</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.column_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.column_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of column names matching the data model used by <code class="docutils literal notranslate"><span class="pre">PipelineResult.to_csv</span></code></p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -215,7 +214,7 @@ the value <code class="docutils literal notranslate"><span class="pre">-99.99</s
 
 <dl class="py method">
 <dt id="snat_sim.pipeline.data_model.PipelineResult.__init__">
-<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">snid</em>, <em class="sig-param">sim_params=&lt;factory&gt;</em>, <em class="sig-param">fit_params=&lt;factory&gt;</em>, <em class="sig-param">fit_err=&lt;factory&gt;</em>, <em class="sig-param">chisq=-99.99</em>, <em class="sig-param">ndof=-99.99</em>, <em class="sig-param">mb=-99.99</em>, <em class="sig-param">abs_mag=-99.99</em>, <em class="sig-param">message=''</em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">snid</span></em>, <em class="sig-param"><span class="pre">sim_params=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">fit_params=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">fit_err=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">chisq=-99.99</span></em>, <em class="sig-param"><span class="pre">ndof=-99.99</span></em>, <em class="sig-param"><span class="pre">mb=-99.99</span></em>, <em class="sig-param"><span class="pre">abs_mag=-99.99</span></em>, <em class="sig-param"><span class="pre">message=''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 

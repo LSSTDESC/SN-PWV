@@ -1,0 +1,270 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.data_paths &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.data_paths</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/integrations.html">Package Integrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/command_line.html">Command Line Interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/data_paths.html">snat_sim.data_paths</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/utils.html">snat_sim.utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <h1>Source code for snat_sim.data_paths</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The ``data_paths`` module is responsible for pointing at local file paths</span>
+<span class="sd">by the parent package.</span>
+
+<span class="sd">The ``DataPaths`` provides a single access point for retrieving all external</span>
+<span class="sd">file paths used by the parent package. Default paths are assumed automatically,</span>
+<span class="sd">unless customized options are defined in the working environment (see the docs</span>
+<span class="sd">for more details.)</span>
+
+
+<span class="sd">Usage Example</span>
+<span class="sd">-------------</span>
+
+<span class="sd">To identify the current paths as defined in the working environemt:</span>
+
+<span class="sd">.. doctest::</span>
+
+<span class="sd">   &gt;&gt;&gt; from snat_sim.data_paths import DataPaths</span>
+<span class="sd">   &gt;&gt;&gt;</span>
+<span class="sd">   &gt;&gt;&gt; current_paths = DataPaths()</span>
+<span class="sd">   &gt;&gt;&gt; spectra_dir = current_paths.stellar_spectra_dir</span>
+<span class="sd">   &gt;&gt;&gt; print(type(spectra_dir))</span>
+<span class="sd">   &lt;class &#39;pathlib.PosixPath&#39;&gt;</span>
+
+<span class="sd">A record is kept of any custom paths defined in the working environment at the</span>
+<span class="sd">time of package instantiation. These paths are available as an instance of the</span>
+<span class="sd">``DataPaths`` class:</span>
+
+
+<span class="sd">   &gt;&gt;&gt; from snat_sim.data_paths import paths_at_init</span>
+<span class="sd">   &gt;&gt;&gt;</span>
+<span class="sd">   &gt;&gt;&gt; print(type(paths_at_init))</span>
+<span class="sd">   &lt;class &#39;snat_sim.data_paths.DataPaths&#39;&gt;</span>
+
+<span class="sd">Module Docs</span>
+<span class="sd">-----------</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
+
+
+<div class="viewcode-block" id="DataPaths"><a class="viewcode-back" href="../../api/data_paths.html#snat_sim.data_paths.DataPaths">[docs]</a><span class="k">class</span> <span class="nc">DataPaths</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Points to the location of on disk data used by the parent package&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="DataPaths.__init__"><a class="viewcode-back" href="../../api/data_paths.html#snat_sim.data_paths.DataPaths.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Establish the location of package data on the local machine&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                <span class="s1">&#39;SNAT_SIM_DATA&#39;</span><span class="p">,</span>
+                <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s1">&#39;data&#39;</span>
+            <span class="p">)</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_plasticc_directory</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;CADENCE_SIMS&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_plasticc_directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s1">&#39;plasticc&#39;</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">joblib_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Directory to store function calls cached by joblib&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s1">&#39;joblib&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">_config_path</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The path of the PWV configuration file&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s1">&#39;defaults&#39;</span> <span class="o">/</span> <span class="s1">&#39;ref_pwv.yaml&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stellar_spectra_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Directory with stellar spectra&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s1">&#39;stellar_spectra&#39;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">stellar_flux_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Directory with stellar flux values&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s1">&#39;stellar_fluxes&#39;</span>
+
+<div class="viewcode-block" id="DataPaths.get_filters_dir"><a class="viewcode-back" href="../../api/data_paths.html#snat_sim.data_paths.DataPaths.get_filters_dir">[docs]</a>    <span class="k">def</span> <span class="nf">get_filters_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">survey</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Directory with filter profiles</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            survey: Return subdirectory for the given filter</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_dir</span> <span class="o">/</span> <span class="s1">&#39;filters&#39;</span>
+        <span class="k">if</span> <span class="n">survey</span><span class="p">:</span>
+            <span class="n">path</span> <span class="o">/=</span> <span class="n">survey</span>
+
+        <span class="k">return</span> <span class="n">path</span></div>
+
+<div class="viewcode-block" id="DataPaths.get_plasticc_dir"><a class="viewcode-back" href="../../api/data_paths.html#snat_sim.data_paths.DataPaths.get_plasticc_dir">[docs]</a>    <span class="k">def</span> <span class="nf">get_plasticc_dir</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Path</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Directory with PLaSTICC simulation data</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            cadence: Return subdirectory for the given simulation cadence</span>
+<span class="sd">            model: Return subdirectory for the given simulation model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">plasticc_directory</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_plasticc_directory</span>
+        <span class="k">if</span> <span class="n">cadence</span><span class="p">:</span>
+            <span class="n">plasticc_directory</span> <span class="o">/=</span> <span class="n">cadence</span>
+
+            <span class="k">if</span> <span class="n">model</span><span class="p">:</span>
+                <span class="n">plasticc_directory</span> <span class="o">/=</span> <span class="sa">f</span><span class="s1">&#39;LSST_WFD_</span><span class="si">{</span><span class="n">cadence</span><span class="si">}</span><span class="s1">_MODEL</span><span class="si">{</span><span class="n">model</span><span class="si">}</span><span class="s1">&#39;</span>
+
+        <span class="k">elif</span> <span class="n">model</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;``model`` cannot be defined without also specifying the ``cadence``.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">plasticc_directory</span></div></div>
+
+
+<span class="c1"># Prebuilt object representing the ``data_dir`` as determined at package init</span>
+<span class="c1"># Objects instantiated later on may have a different ``data_dir`` if the variables</span>
+<span class="c1"># in the working environment change during runtime</span>
+<span class="n">paths_at_init</span> <span class="o">=</span> <span class="n">DataPaths</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.data_paths</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

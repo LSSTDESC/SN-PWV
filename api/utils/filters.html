@@ -26,8 +26,6 @@
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   
@@ -93,6 +91,7 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../constants.html">snat_sim.constants</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plasticc.html">snat_sim.plasticc</a></li>
@@ -159,7 +158,7 @@ Space and Time (LSST) are registered with and then retrieved from the
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
 <dt id="snat_sim.utils.filters.register_sncosmo_filter">
-<code class="sig-prename descclassname">snat_sim.utils.filters.</code><code class="sig-name descname">register_sncosmo_filter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wave</span></em>, <em class="sig-param"><span class="n">trans</span></em>, <em class="sig-param"><span class="n">name</span></em>, <em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_sncosmo_filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.filters.register_sncosmo_filter" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">snat_sim.utils.filters.</span></code><code class="sig-name descname"><span class="pre">register_sncosmo_filter</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_sncosmo_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.filters.register_sncosmo_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a filter profile with sncosmo</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -178,7 +177,7 @@ Space and Time (LSST) are registered with and then retrieved from the
 
 <dl class="py function">
 <dt id="snat_sim.utils.filters.register_decam_filters">
-<code class="sig-prename descclassname">snat_sim.utils.filters.</code><code class="sig-name descname">register_decam_filters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_decam_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.filters.register_decam_filters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">snat_sim.utils.filters.</span></code><code class="sig-name descname"><span class="pre">register_decam_filters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_decam_filters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.filters.register_decam_filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register DECam filter scripts, CCD response, and fiducial ATM with sncosmo</p>
 <dl class="simple">
 <dt>Registered Filters:</dt><dd><ul class="simple">
@@ -200,7 +199,7 @@ Space and Time (LSST) are registered with and then retrieved from the
 
 <dl class="py function">
 <dt id="snat_sim.utils.filters.register_lsst_filters">
-<code class="sig-prename descclassname">snat_sim.utils.filters.</code><code class="sig-name descname">register_lsst_filters</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_lsst_filters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#snat_sim.utils.filters.register_lsst_filters" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">snat_sim.utils.filters.</span></code><code class="sig-name descname"><span class="pre">register_lsst_filters</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_lsst_filters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.filters.register_lsst_filters" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register LSST filter scripts, hardware responses, and fiducial ATM with sncosmo</p>
 <dl class="simple">
 <dt>Registered Filters:</dt><dd><ul class="simple">
