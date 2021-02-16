@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 from unittest import TestCase
 
-from snat_sim._data_paths import DataPaths
+from snat_sim.data_paths import DataPaths
 
 
 class UsesEnvironmentalVariables(TestCase):

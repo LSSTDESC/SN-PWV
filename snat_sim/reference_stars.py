@@ -54,7 +54,7 @@ import pandas as pd
 from astropy.table import Table
 
 from . import constants as const
-from ._data_paths import data_paths
+from .data_paths import paths_at_init
 from .models import PWVModel
 
 Numeric = Union[int, float]
@@ -78,7 +78,7 @@ class ReferenceStar:
             raise ValueError(f'Data for spectral type "{self.spectral_type}" is not available.')
 
         # Load spectra for different spectral types
-        path = next(data_paths.stellar_spectra_dir.glob(self.spectral_type + '*.fits'))
+        path = next(paths_at_init.stellar_spectra_dir.glob(self.spectral_type + '*.fits'))
         self._spectrum = self._read_stellar_spectra_path(path)
 
     def to_pandas(self) -> pd.Series:
@@ -94,7 +94,7 @@ class ReferenceStar:
             A list fo spectral types
         """
 
-        return sorted(f.stem.upper() for f in data_paths.stellar_flux_dir.glob('*.txt'))
+        return sorted(f.stem.upper() for f in paths_at_init.stellar_flux_dir.glob('*.txt'))
 
     @staticmethod
     def _read_stellar_spectra_path(fpath: Union[str, Path]) -> pd.Series:
@@ -144,7 +144,7 @@ class ReferenceStar:
             A DataFrame indexed by PWV with columns for flux
         """
 
-        rpath = data_paths.stellar_flux_dir / f'{self.spectral_type}.txt'
+        rpath = paths_at_init.stellar_flux_dir / f'{self.spectral_type}.txt'
         band_names = [f'lsst_hardware_{b}' for b in 'ugrizy']
         column_names = ['PWV'] + band_names
         reference_star_flux = pd.read_csv(
