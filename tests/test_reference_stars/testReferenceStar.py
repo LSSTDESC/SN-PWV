@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal
 
-from snat_sim._data_paths import data_paths
+from snat_sim.data_paths import data_paths
 from snat_sim.reference_stars import ReferenceStar
 
 

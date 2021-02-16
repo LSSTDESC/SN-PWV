@@ -103,7 +103,7 @@ from scipy.interpolate import RegularGridInterpolator
 
 from snat_sim.utils.caching import Cache
 from . import constants as const
-from ._data_paths import data_paths
+from .data_paths import data_paths
 from .utils import time_series as tsu
 
 Numeric = Union[float, int]

@@ -21,7 +21,7 @@ from astropy.table import Table
 from tqdm import tqdm
 
 from . import constants as const
-from ._data_paths import data_paths
+from .data_paths import data_paths
 from .models import SNModel
 
 Numeric = Union[int, float]

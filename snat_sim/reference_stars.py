@@ -54,7 +54,7 @@ import pandas as pd
 from astropy.table import Table
 
 from . import constants as const
-from ._data_paths import data_paths
+from .data_paths import data_paths
 from .models import PWVModel
 
 Numeric = Union[int, float]

@@ -51,7 +51,7 @@ from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
-from ._data_paths import data_paths
+from .data_paths import data_paths
 
 
 class PLaSTICC:
