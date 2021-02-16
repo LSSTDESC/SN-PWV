@@ -1,5 +1,38 @@
-"""The ``_data_paths`` module is responsible for pointing at locally available
-data used by the parent package.
+"""The ``data_paths`` module is responsible for pointing at local file paths
+by the parent package.
+
+The ``DataPaths`` provides a single access point for retrieving all external
+file paths used by the parent package. Default paths are assumed automatically,
+unless customized options are defined in the working environment (see the docs
+for more details.)
+
+
+Usage Example
+-------------
+
+To identify the current paths as defined in the working environemt:
+
+.. doctest::
+
+   >>> from snat_sim.data_paths import DataPaths
+   >>>
+   >>> current_paths = DataPaths()
+   >>> spectra_dir = current_paths.stellar_spectra_dir
+   >>> print(type(spectra_dir))
+   <class 'pathlib.PosixPath'>
+
+A record is kept of any custom paths defined in the working environment at the
+time of package instantiation. These paths are available as an instance of the
+``DataPaths`` class:
+
+
+   >>> from snat_sim.data_paths import paths_at_init
+   >>>
+   >>> print(type(paths_at_init))
+   <class 'snat_sim.data_paths.DataPaths'>
+
+Module Docs
+-----------
 """
 
 import os
