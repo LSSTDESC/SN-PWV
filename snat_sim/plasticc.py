@@ -51,7 +51,7 @@ from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
-from .data_paths import data_paths
+from .data_paths import paths_at_init
 
 
 class PLaSTICC:
@@ -96,12 +96,12 @@ class PLaSTICC:
     def get_available_cadences() -> List[str]:
         """Return a list of all available cadences available in the working environment"""
 
-        return [p.name for p in data_paths.get_plasticc_dir().glob('*') if p.is_dir()]
+        return [p.name for p in paths_at_init.get_plasticc_dir().glob('*') if p.is_dir()]
 
     def get_model_headers(self) -> List[Path]:
         """Return a list of file paths for all simulation header files"""
 
-        return list(data_paths.get_plasticc_dir(self.cadence, self.model).glob('*HEAD.FITS'))
+        return list(paths_at_init.get_plasticc_dir(self.cadence, self.model).glob('*HEAD.FITS'))
 
     def count_light_curves(self) -> int:
         """Return the number of available light-curve simulations for the current cadence and model"""

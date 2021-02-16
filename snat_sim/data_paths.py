@@ -87,4 +87,4 @@ class DataPaths:
 # Prebuilt object representing the ``data_dir`` as determined at package init
 # Objects instantiated later on may have a different ``data_dir`` if the variables
 # in the working environment change during runtime
-data_paths = DataPaths()
+paths_at_init = DataPaths()
