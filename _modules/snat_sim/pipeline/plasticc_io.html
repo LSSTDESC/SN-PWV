@@ -132,7 +132,7 @@
 <span class="sd">        output: Tuple with the simulation params (``dict``) and cadence (``ObservedCadence``)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="LoadPlasticcSims.__init__"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.LoadPlasticcSims.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">11</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Source node for loading PLaSTICC light-curves from disk</span>
 
 <span class="sd">        Args:</span>
@@ -147,13 +147,13 @@
 
         <span class="c1"># Node connectors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">()</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="p">)</span></div>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="p">)</span>
 
-<div class="viewcode-block" id="LoadPlasticcSims.action"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.LoadPlasticcSims.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load PLaSTICC light-curves from disk&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">light_curve</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span><span class="o">.</span><span class="n">iter_lc</span><span class="p">(</span><span class="n">iter_lim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ObservedCadence</span><span class="o">.</span><span class="n">from_plasticc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">))</span></div></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">ObservedCadence</span><span class="o">.</span><span class="n">from_plasticc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">))</span></div>
 </pre></div>
 
           </div>

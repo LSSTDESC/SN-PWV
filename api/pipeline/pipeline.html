@@ -125,27 +125,6 @@
 <p>The <code class="docutils literal notranslate"><span class="pre">pipeline</span></code> module defines the <code class="docutils literal notranslate"><span class="pre">FittingPipeline</span></code> class, which
 is built to provide a parallelized approach to simulating and fitting
 light-curves with atmospheric effects.</p>
-<div class="section" id="usage-example">
-<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
-<p>Instances of the <code class="docutils literal notranslate"><span class="pre">FittingPipeline</span></code> class can be run synchronously
-(by calling <code class="docutils literal notranslate"><span class="pre">FittingPipeline.run</span></code>) or asynchronously (with
-<code class="docutils literal notranslate"><span class="pre">FittingPipeline.run_async</span></code>). A pipeline instance can be created as
-follows:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">SNModel</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.pipeline</span> <span class="kn">import</span> <span class="n">FittingPipeline</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FittingPipeline</span><span class="p">(</span>
-<span class="gp">... </span>    <span class="n">cadence</span><span class="o">=</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">sim_model</span><span class="o">=</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2&#39;</span><span class="p">),</span>
-<span class="gp">... </span>    <span class="n">fit_model</span><span class="o">=</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2&#39;</span><span class="p">),</span>
-<span class="gp">... </span>    <span class="n">vparams</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span>
-<span class="gp">... </span>    <span class="n">out_path</span><span class="o">=</span><span class="s1">&#39;./demo_out_path.csv&#39;</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">fitting_pool</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
-<span class="gp">... </span>    <span class="n">simulation_pool</span><span class="o">=</span><span class="mi">3</span>
-<span class="gp">... </span><span class="p">)</span>
-</pre></div>
-</div>
-</div>
 <div class="section" id="submodules">
 <h2>SubModules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 <p>Although the <code class="docutils literal notranslate"><span class="pre">pipeline</span></code> module provides prebuilt data analysis pipelines,
@@ -166,6 +145,27 @@ pages:</p>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>Instances of the <code class="docutils literal notranslate"><span class="pre">FittingPipeline</span></code> class can be run synchronously
+(by calling <code class="docutils literal notranslate"><span class="pre">FittingPipeline.run</span></code>) or asynchronously (with
+<code class="docutils literal notranslate"><span class="pre">FittingPipeline.run_async</span></code>). A pipeline instance can be created as
+follows:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">SNModel</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.pipeline</span> <span class="kn">import</span> <span class="n">FittingPipeline</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pipeline</span> <span class="o">=</span> <span class="n">FittingPipeline</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">cadence</span><span class="o">=</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">sim_model</span><span class="o">=</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">fit_model</span><span class="o">=</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2&#39;</span><span class="p">),</span>
+<span class="gp">... </span>    <span class="n">vparams</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="n">out_path</span><span class="o">=</span><span class="s1">&#39;./demo_out_path.csv&#39;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">fitting_pool</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">simulation_pool</span><span class="o">=</span><span class="mi">3</span>
+<span class="gp">... </span><span class="p">)</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
