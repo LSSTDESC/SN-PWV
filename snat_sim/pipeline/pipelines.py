@@ -31,7 +31,8 @@ class FittingPipeline(Pipeline):
             max_queue: int = 200,
             iter_lim: int = float('inf'),
             catalog: VariableCatalog = None,
-            add_scatter=True
+            add_scatter: bool = True,
+            fixed_snr: Optional[float] = None
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -59,7 +60,8 @@ class FittingPipeline(Pipeline):
             catalog=catalog,
             num_processes=simulation_pool,
             include_pwv=sim_path is not None,
-            add_scatter=add_scatter
+            add_scatter=add_scatter,
+            fixed_snr=fixed_snr
         )
 
         self.fit_light_curves = FitLightCurves(

@@ -272,7 +272,7 @@ def plot_spectral_template(
         gridspec_kw={'height_ratios': [4, 1.75]})
 
     # Plot spectral template at given redshifts
-    model = SNModel(source)
+    model = models.SNModel(source)
     flux_scale = 1e-13
     for i, z in enumerate(reversed(z_arr)):
         color = f'C{len(z_arr) - i - 1}'
