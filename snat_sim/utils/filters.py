@@ -50,7 +50,7 @@ import pandas as pd
 import sncosmo
 from astropy.table import Table
 
-from snat_sim._data_paths import data_paths
+from snat_sim.data_paths import paths_at_init
 
 
 def register_sncosmo_filter(wave: np.array, trans: np.array, name: str, force: bool = False) -> None:
@@ -83,7 +83,7 @@ def register_decam_filters(force: bool = False) -> None:
     """
 
     # Register each filter
-    ctio_filter_dir = data_paths.get_filters_dir('ctio')
+    ctio_filter_dir = paths_at_init.get_filters_dir('ctio')
     for filter_name in 'ugrizY':
         # Iterate over bands with and without the atmosphere
         for extension in ('', '_filter'):
@@ -124,7 +124,7 @@ def register_lsst_filters(force: bool = False) -> None:
         force: Re-register bands even if they are already registered
     """
 
-    lsst_filter_dir = data_paths.get_filters_dir('lsst_baseline')
+    lsst_filter_dir = paths_at_init.get_filters_dir('lsst_baseline')
     nm_in_angstrom = 10
 
     # Define file names for each optical component

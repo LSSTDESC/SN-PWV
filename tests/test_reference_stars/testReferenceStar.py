@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from pandas.testing import assert_series_equal
 
-from snat_sim._data_paths import data_paths
+from snat_sim.data_paths import paths_at_init
 from snat_sim.reference_stars import ReferenceStar
 
 
@@ -57,7 +57,7 @@ class StellarSpectraParsing(TestCase):
 
     def runTest(self) -> None:
         for stellar_type, fname in zip(self.stellar_types, self.file_names):
-            full_path = data_paths.stellar_spectra_dir / fname
+            full_path = paths_at_init.stellar_spectra_dir / fname
             spec_by_path = ReferenceStar._read_stellar_spectra_path(full_path)
             spec_by_type = ReferenceStar(stellar_type).to_pandas()
             assert_series_equal(spec_by_path, spec_by_type)
