@@ -32,7 +32,7 @@ Usage Example
 -------------
 
 To ensure backwards compatibility and ease of use, supernovae modeling with the
-``snat_sim`` package follows the same
+``snat_sim`` package follows (but also extends) the same
 `design pattern <https://sncosmo.readthedocs.io/en/stable/models.html>`_
 as the ``sncosmo`` package. Models are instantiated for a given spectral
 template and various propagation effects can be added to the model. In the
@@ -57,21 +57,21 @@ cadence (i.e., how the light-curve should be sampled in time):
 
 .. doctest:: python
 
-    >>> cadence = models.ObservedCadence(
-    ...     obs_times=[-1, 0, 1],
-    ...     bands=['sdssr', 'sdssr', 'sdssr'],
-    ...     zp=25, zpsys='AB', skynoise=0, gain=1
-    ... )
+   >>> cadence = models.ObservedCadence(
+   ...     obs_times=[-1, 0, 1],
+   ...     bands=['sdssr', 'sdssr', 'sdssr'],
+   ...     zp=25, zpsys='AB', skynoise=0, gain=1
+   ... )
 
 Light-curves can then be simulated directly from the model:
 
 .. doctest:: python
 
-    >>> # Here we simulate a light-curve with statistical noise
-    >>> light_curve = supernova_model.simulate_lc(cadence)
+   >>> # Here we simulate a light-curve with statistical noise
+   >>> light_curve = supernova_model.simulate_lc(cadence)
 
-    >>> # Here we simulate a light-curve with a fixed signal to noise ratio
-    >>> light_curve_fixed_snr = supernova_model.simulate_lc_fixed_snr(cadence, snr=5)
+   >>> # Here we simulate a light-curve with a fixed signal to noise ratio
+   >>> light_curve_fixed_snr = supernova_model.simulate_lc(cadence, fixed_snr=5)
 
 
 Module Docs
