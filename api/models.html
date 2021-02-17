@@ -172,7 +172,7 @@ package is listed below:</p>
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
 <p>To ensure backwards compatibility and ease of use, supernovae modeling with the
-<code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package follows the same
+<code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package follows (but also extends) the same
 <a class="reference external" href="https://sncosmo.readthedocs.io/en/stable/models.html">design pattern</a>
 as the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package. Models are instantiated for a given spectral
 template and various propagation effects can be added to the model. In the
@@ -203,7 +203,7 @@ cadence (i.e., how the light-curve should be sampled in time):</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">)</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here we simulate a light-curve with a fixed signal to noise ratio</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve_fixed_snr</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve_fixed_snr</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -443,7 +443,7 @@ objects instead of numerical values for <code class="docutils literal notranslat
 <dd><p>An observer-frame supernova model composed of a Source and zero or more effects</p>
 <dl class="py method">
 <dt id="snat_sim.models.SNModel.simulate_lc">
-<code class="sig-name descname"><span class="pre">simulate_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SNModel.simulate_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.SNModel.simulate_lc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">simulate_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_snr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SNModel.simulate_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.SNModel.simulate_lc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate a SN light-curve</p>
 <p>If <code class="docutils literal notranslate"><span class="pre">scatter</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then simulated flux values include an added
 random component drawn from a normal distribution with a standard deviation
@@ -453,26 +453,7 @@ equal to the error of the observation.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cadence</strong> (<a class="reference internal" href="#snat_sim.models.ObservedCadence" title="snat_sim.models.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>) – Observational cadence to evaluate the light-curve with</p></li>
 <li><p><strong>scatter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to add random noise to the flux values</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The simulated light-curve as an astropy table in the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> format</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.models.SNModel.simulate_lc_fixed_snr">
-<code class="sig-name descname"><span class="pre">simulate_lc_fixed_snr</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">snr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.05</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models.html#SNModel.simulate_lc_fixed_snr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.SNModel.simulate_lc_fixed_snr" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulate a SN light-curve with a fixed SNR for the given cadence</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cadence</strong> (<a class="reference internal" href="#snat_sim.models.ObservedCadence" title="snat_sim.models.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>) – Observational cadence to evaluate the light-curve with</p></li>
-<li><p><strong>snr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Signal to noise ratio</p></li>
+<li><p><strong>fixed_snr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Optionally simulate the light-curve using a fixed signal to noise ratio</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>

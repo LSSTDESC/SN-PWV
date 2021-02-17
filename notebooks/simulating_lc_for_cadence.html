@@ -376,7 +376,7 @@ div.rendered_html tbody tr:hover {
 <div class="section" id="Simulating-Light-Curves-with-a-Cadence">
 <h1>Simulating Light-Curves with a Cadence<a class="headerlink" href="#Simulating-Light-Curves-with-a-Cadence" title="Permalink to this headline">¶</a></h1>
 <p>This notebook demonstrates the simulation of normal Type Ia Supernova (SN Ia) light-curves using realistic cadences and atmospheric variability expected from LSST. To achieve this we use data from the PLaSTICC simulations to establish the cadence, light-curve parameters, and location of SNe observed by LSST. Light-curves with customized time-variable PWV transmission effects are then simulated using these parameters.</p>
-<p>Plots in this notebook are rendered using a subset of demo PLaSTICC data included ib the project repository. To access a larger data set, configure your working environment as outlined <a class="reference external" href="https://lsstdesc.org/SN-PWV/overview/install.html">in the docs</a>.</p>
+<p>Plots in this notebook are rendered using a subset of the PLaSTICC simulation data. To access this data, configure your working environment as outlined <a class="reference external" href="https://lsstdesc.org/SN-PWV/overview/install.html">in the docs</a>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -401,8 +401,27 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">snat_sim._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
+<span class="n">data_paths</span><span class="o">.</span><span class="n">get_plasticc_dir</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+PosixPath(&#39;/mnt/md0/bulk/sn-sims&#39;)
+</pre></div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -415,7 +434,7 @@ div.rendered_html tbody tr:hover {
 <h2>The PLaSTICC Data<a class="headerlink" href="#The-PLaSTICC-Data" title="Permalink to this headline">¶</a></h2>
 <p>Instead of evaluating different cadences from scratch, we take the PLaSTICC simulations as a starting point. First we check what cadence simulations are available on the notebook’s host server.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -425,17 +444,17 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&#39;alt_sched&#39;, &#39;SALT2.WFIRST-H17&#39;]
+[&#39;kraken_2044&#39;, &#39;alt_sched_rolling&#39;, &#39;alt_sched&#39;, &#39;kraken_2026&#39;]
 </pre></div></div>
 </div>
 <p>Simulated light-curves are written in the SNANA file format and are distributed across multiple files. We load a light-curve from one of these files and demonstrate the data model below. Each cadence includes simulations run with multiple supernova models. In this notebook we only need simulations for normal SNe (Model 11).</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -450,11 +469,11 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Available Light-curves:  115
+Available Light-curves:  4737479
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -465,7 +484,7 @@ Available Light-curves:  115
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -489,44 +508,44 @@ Available Light-curves:  115
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Params:
-{&#39;t0&#39;: 61273.546875, &#39;x1&#39;: -0.2906228005886078, &#39;c&#39;: -0.0052853855304419994, &#39;z&#39;: 0.7410398721694946, &#39;x0&#39;: 4.672373506764416e-06}
+{&#39;t0&#39;: 61480.12109375, &#39;x1&#39;: -0.6282458305358887, &#39;c&#39;: -0.02218671888113022, &#39;z&#39;: 0.7469527125358582, &#39;x0&#39;: 4.628982424037531e-06}
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
-<i>Table length=160</i>
-<table id="table140295123842576" class="table-striped table-bordered table-condensed">
+<i>Table length=205</i>
+<table id="table139862320380128" class="table-striped table-bordered table-condensed">
 <thead><tr><th>MJD</th><th>FLT</th><th>FIELD</th><th>PHOTFLAG</th><th>PHOTPROB</th><th>FLUXCAL</th><th>FLUXCALERR</th><th>PSF_SIG1</th><th>SKY_SIG</th><th>ZEROPT</th><th>SIM_MAGOBS</th></tr></thead>
 <thead><tr><th>float64</th><th>str2</th><th>str12</th><th>int32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th></tr></thead>
-<tr><td>61219.4048</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>14.332019</td><td>16.920704</td><td>2.11</td><td>53.25</td><td>30.97</td><td>98.96096</td></tr>
-<tr><td>61219.4253</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>4.7013106</td><td>11.557173</td><td>2.6</td><td>52.35</td><td>31.62</td><td>98.93262</td></tr>
-<tr><td>61221.3849</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>43.46232</td><td>17.499113</td><td>2.26</td><td>70.75</td><td>31.33</td><td>98.94894</td></tr>
-<tr><td>61221.4041</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-4.999122</td><td>20.480957</td><td>2.17</td><td>63.32</td><td>30.98</td><td>98.96096</td></tr>
-<tr><td>61226.3669</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-19.352911</td><td>18.73842</td><td>1.89</td><td>67.13</td><td>30.99</td><td>98.96096</td></tr>
-<tr><td>61226.3866</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>17.293465</td><td>12.58728</td><td>1.8</td><td>84.59</td><td>31.65</td><td>98.93262</td></tr>
-<tr><td>61232.3392</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>-2.4777157</td><td>3.5982351</td><td>1.58</td><td>24.47</td><td>31.52</td><td>98.93262</td></tr>
-<tr><td>61232.3594</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>-0.51873475</td><td>6.499994</td><td>1.76</td><td>31.71</td><td>31.26</td><td>98.94894</td></tr>
-<tr><td>61234.3378</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-6.713076</td><td>10.039667</td><td>1.55</td><td>42.27</td><td>30.95</td><td>98.96096</td></tr>
-<tr><td>61234.3558</td><td>u</td><td>NULL</td><td>0</td><td>0.0</td><td>-13.051482</td><td>8.302558</td><td>1.82</td><td>2.84</td><td>28.49</td><td>98.87472</td></tr>
+<tr><td>61387.3365</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>4.7668333</td><td>4.6751437</td><td>2.01</td><td>24.21</td><td>31.49</td><td>98.93107</td></tr>
+<tr><td>61389.3355</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-2.588817</td><td>12.943774</td><td>1.91</td><td>43.79</td><td>30.94</td><td>98.96006</td></tr>
+<tr><td>61389.3544</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>35.501144</td><td>46.115395</td><td>1.81</td><td>70.9</td><td>30.02</td><td>98.96628</td></tr>
+<tr><td>61390.3328</td><td>u</td><td>NULL</td><td>0</td><td>0.0</td><td>-2.244006</td><td>7.831321</td><td>1.64</td><td>2.94</td><td>28.48</td><td>98.87183</td></tr>
+<tr><td>61390.3514</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-52.145115</td><td>33.700497</td><td>1.47</td><td>64.44</td><td>30.03</td><td>98.96628</td></tr>
+<tr><td>61392.2299</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>5.403219</td><td>7.8971477</td><td>1.85</td><td>34.28</td><td>31.19</td><td>98.94777</td></tr>
+<tr><td>61394.3293</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>1.3313534</td><td>3.1216543</td><td>1.38</td><td>23.79</td><td>31.5</td><td>98.93107</td></tr>
+<tr><td>61394.3507</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>15.543685</td><td>27.063326</td><td>1.34</td><td>56.71</td><td>30.03</td><td>98.96628</td></tr>
+<tr><td>61405.2879</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>6.803223</td><td>5.417797</td><td>1.88</td><td>31.7</td><td>31.55</td><td>98.93107</td></tr>
+<tr><td>61405.3097</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>10.470747</td><td>7.061696</td><td>1.69</td><td>35.72</td><td>31.26</td><td>98.94777</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>61706.0451</td><td>g</td><td>NULL</td><td>0</td><td>0.0</td><td>-3.7390416</td><td>2.772255</td><td>1.79</td><td>15.31</td><td>31.46</td><td>33.93645</td></tr>
-<tr><td>61706.0619</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>1.3270241</td><td>5.414172</td><td>1.47</td><td>31.6</td><td>31.26</td><td>29.939222</td></tr>
-<tr><td>61708.0456</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-9.111599</td><td>16.76604</td><td>2.58</td><td>42.02</td><td>30.94</td><td>30.106071</td></tr>
-<tr><td>61708.063</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>0.48962396</td><td>4.1641707</td><td>1.82</td><td>24.35</td><td>31.51</td><td>32.014782</td></tr>
-<tr><td>61712.0441</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>-17.24845</td><td>8.23407</td><td>3.47</td><td>25.03</td><td>31.5</td><td>32.05809</td></tr>
-<tr><td>61712.0621</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>-4.120818</td><td>7.820267</td><td>2.07</td><td>32.14</td><td>31.25</td><td>29.991539</td></tr>
-<tr><td>61721.0116</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>3.9988456</td><td>44.34187</td><td>1.78</td><td>72.02</td><td>30.06</td><td>29.795492</td></tr>
-<tr><td>61721.0302</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>3.0074763</td><td>21.632719</td><td>2.2</td><td>65.96</td><td>30.98</td><td>30.219286</td></tr>
-<tr><td>61723.0135</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-48.92356</td><td>34.403667</td><td>1.42</td><td>70.05</td><td>30.06</td><td>29.811768</td></tr>
-<tr><td>61723.0316</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>1.9817708</td><td>15.085443</td><td>1.64</td><td>61.7</td><td>30.98</td><td>30.23661</td></tr>
+<tr><td>61875.0115</td><td>u</td><td>NULL</td><td>0</td><td>0.0</td><td>10.29389</td><td>6.694741</td><td>1.39</td><td>2.86</td><td>28.5</td><td>98.87183</td></tr>
+<tr><td>61875.0305</td><td>g</td><td>NULL</td><td>0</td><td>0.0</td><td>-0.39340433</td><td>2.0522623</td><td>1.33</td><td>14.95</td><td>31.44</td><td>33.831097</td></tr>
+<tr><td>61878.978</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-1.6844352</td><td>29.669317</td><td>1.58</td><td>51.82</td><td>30.01</td><td>29.617575</td></tr>
+<tr><td>61878.9958</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-7.0402</td><td>13.692554</td><td>2.06</td><td>42.95</td><td>30.94</td><td>30.014353</td></tr>
+<tr><td>61881.9734</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-46.466133</td><td>29.61527</td><td>1.48</td><td>55.73</td><td>30.02</td><td>29.642986</td></tr>
+<tr><td>61881.9871</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>3.6633909</td><td>3.5757632</td><td>1.54</td><td>24.37</td><td>31.5</td><td>31.70918</td></tr>
+<tr><td>61883.9747</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-6.228678</td><td>31.823051</td><td>1.72</td><td>51.53</td><td>30.02</td><td>29.659918</td></tr>
+<tr><td>61883.992</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>3.5952897</td><td>4.650464</td><td>2.02</td><td>23.98</td><td>31.49</td><td>31.731249</td></tr>
+<tr><td>61885.9702</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-5.892972</td><td>20.891136</td><td>2.7</td><td>50.46</td><td>30.95</td><td>30.077633</td></tr>
+<tr><td>61885.9872</td><td>g</td><td>NULL</td><td>0</td><td>0.0</td><td>-6.8839006</td><td>4.450736</td><td>2.8</td><td>14.98</td><td>31.41</td><td>33.95182</td></tr>
 </table></div>
 </div>
 <p>Here we reformat the data to be compatible with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> so we can easily visualize the light-curve.</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -540,7 +559,7 @@ Params:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_simulating_lc_for_cadence_10_0.png" src="../_images/notebooks_simulating_lc_for_cadence_10_0.png" />
+<img alt="../_images/notebooks_simulating_lc_for_cadence_11_0.png" src="../_images/notebooks_simulating_lc_for_cadence_11_0.png" />
 </div>
 </div>
 </div>
@@ -548,7 +567,7 @@ Params:
 <h2>Simulating Light-Curves<a class="headerlink" href="#Simulating-Light-Curves" title="Permalink to this headline">¶</a></h2>
 <p>Since we need to add in our own atmospheric variability, the pre-tabulated flux values above are of limited use. Instead, we use the PLaSTICC meta-data to establish the cadence and model parameters for each simulated SN. This information is then used to simulate our own light-curves with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -563,7 +582,7 @@ Params:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -572,41 +591,41 @@ Params:
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
-<i>Table length=160</i>
-<table id="table140295109582368" class="table-striped table-bordered table-condensed">
+<i>Table length=205</i>
+<table id="table139861523166496" class="table-striped table-bordered table-condensed">
 <thead><tr><th>time</th><th>band</th><th>flux</th><th>fluxerr</th><th>zp</th><th>zpsys</th></tr></thead>
 <thead><tr><th>float64</th><th>str15</th><th>float64</th><th>float64</th><th>float64</th><th>str8</th></tr></thead>
-<tr><td>61219.4048</td><td>lsst_hardware_z</td><td>-55.27909869585919</td><td>53.25</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61219.4253</td><td>lsst_hardware_r</td><td>-133.11328950396134</td><td>52.349998474121094</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61221.3849</td><td>lsst_hardware_i</td><td>-43.63949370015787</td><td>70.75</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61221.4041</td><td>lsst_hardware_z</td><td>49.29636230007911</td><td>63.31999969482422</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61226.3669</td><td>lsst_hardware_z</td><td>115.3805354208237</td><td>67.12999725341797</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61226.3866</td><td>lsst_hardware_r</td><td>-49.07075188997029</td><td>84.58999633789062</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61232.3392</td><td>lsst_hardware_r</td><td>8.50763991549057</td><td>24.469999313354492</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61232.3594</td><td>lsst_hardware_i</td><td>47.66481074481253</td><td>31.709999084472656</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61234.3378</td><td>lsst_hardware_z</td><td>-1.6406738822227926</td><td>42.27000045776367</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61234.3558</td><td>lsst_hardware_u</td><td>-1.716732065426339</td><td>2.8399999141693115</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>-36.18417685286991</td><td>24.209999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>-81.44789659193381</td><td>43.790000915527344</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>-56.36072191411337</td><td>70.9000015258789</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>1.8641101743718074</td><td>2.940000057220459</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>117.97532537687275</td><td>64.44000244140625</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>-26.22287265488026</td><td>34.279998779296875</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61394.3293</td><td>lsst_hardware_r</td><td>-0.480894668240527</td><td>23.790000915527344</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61394.3507</td><td>lsst_hardware_y</td><td>-109.10362368099632</td><td>56.709999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61405.2879</td><td>lsst_hardware_r</td><td>-39.54378033805916</td><td>31.700000762939453</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61405.3097</td><td>lsst_hardware_i</td><td>-87.10985337536336</td><td>35.720001220703125</td><td>30.0</td><td>AB</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>61706.0451</td><td>lsst_hardware_g</td><td>-17.4910123783021</td><td>15.3100004196167</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61706.0619</td><td>lsst_hardware_i</td><td>45.09745198551258</td><td>31.600000381469727</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61708.0456</td><td>lsst_hardware_z</td><td>15.177686973806178</td><td>42.02000045776367</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61708.063</td><td>lsst_hardware_r</td><td>44.91409211479955</td><td>24.350000381469727</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61712.0441</td><td>lsst_hardware_r</td><td>36.74603060563231</td><td>25.030000686645508</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61712.0621</td><td>lsst_hardware_i</td><td>44.88304061662258</td><td>32.13999938964844</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61721.0116</td><td>lsst_hardware_y</td><td>-92.91396237135497</td><td>72.0199966430664</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61721.0302</td><td>lsst_hardware_z</td><td>56.69351335900877</td><td>65.95999908447266</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61723.0135</td><td>lsst_hardware_y</td><td>-33.89257489960195</td><td>70.05000305175781</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61723.0316</td><td>lsst_hardware_z</td><td>-33.41837134347996</td><td>61.70000076293945</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61875.0115</td><td>lsst_hardware_u</td><td>-2.5757706142083308</td><td>2.859999895095825</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61875.0305</td><td>lsst_hardware_g</td><td>-8.893751534996861</td><td>14.949999809265137</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61878.978</td><td>lsst_hardware_y</td><td>1.1488054923012592</td><td>51.81999969482422</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61878.9958</td><td>lsst_hardware_z</td><td>18.484513094948735</td><td>42.95000076293945</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>32.72222936017294</td><td>55.72999954223633</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>5.335716140262142</td><td>24.3700008392334</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>-50.49090105891955</td><td>51.529998779296875</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61883.992</td><td>lsst_hardware_r</td><td>36.031133712661365</td><td>23.979999542236328</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>34.65369840427042</td><td>50.459999084472656</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>5.623162929815328</td><td>14.979999542236328</td><td>30.0</td><td>AB</td></tr>
 </table></div>
 </div>
 <p>When comparing our own “duplicated” light-curves with the original PLaSTICC simulations, we care about three things: 1. Do the light-curves have the same time sampling? 2. Do the light-curves have the same parameters (except for x0 which depends on the spectral template and cosmology)? 3. Do the light-curves have a similar SNR?</p>
 <p>The time sampling is easily verified by looking at the plotted data:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -619,12 +638,12 @@ Params:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_simulating_lc_for_cadence_15_0.png" src="../_images/notebooks_simulating_lc_for_cadence_15_0.png" />
+<img alt="../_images/notebooks_simulating_lc_for_cadence_16_0.png" src="../_images/notebooks_simulating_lc_for_cadence_16_0.png" />
 </div>
 </div>
 <p>Similarly we can check the light-curve parameters:</p>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -634,21 +653,21 @@ Params:
 </div>
 </div>
 <div class="nboutput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;z&#39;: 0.7410398721694946,
- &#39;t0&#39;: 61273.546875,
- &#39;x0&#39;: 3.1504382640457388e-06,
- &#39;x1&#39;: -0.2906228005886078,
- &#39;c&#39;: -0.0052853855304419994}
+{&#39;z&#39;: 0.7469527125358582,
+ &#39;t0&#39;: 61480.12109375,
+ &#39;x0&#39;: 3.089103659315635e-06,
+ &#39;x1&#39;: -0.6282458305358887,
+ &#39;c&#39;: -0.02218671888113022}
 </pre></div></div>
 </div>
 <p>For the SNR it is more informative to look at a distribution over many light-curves:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -711,7 +730,7 @@ Params:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -725,7 +744,7 @@ Params:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_simulating_lc_for_cadence_20_0.png" src="../_images/notebooks_simulating_lc_for_cadence_20_0.png" />
+<img alt="../_images/notebooks_simulating_lc_for_cadence_21_0.png" src="../_images/notebooks_simulating_lc_for_cadence_21_0.png" />
 </div>
 </div>
 </div>
@@ -733,7 +752,7 @@ Params:
 <h2>Adding Atmospheric Effects<a class="headerlink" href="#Adding-Atmospheric-Effects" title="Permalink to this headline">¶</a></h2>
 <p>To simulate light-curves with PWV effects, we need a model for the PWV over time. This is easily defined as follows:</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -746,7 +765,7 @@ Params:
 </div>
 <p>Next we need a SN Model that incorporates the PWV concentration along line of sight (i.e. the PWV scaled for the airmass at the time of observation). The <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package doesn’t have a clearly defined approach to adding time variable propagation effects. We use custom classes from the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package instead, which mimic <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but include time variable propagation effects.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -763,7 +782,7 @@ Params:
 </div>
 </div>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -802,7 +821,7 @@ Params:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -823,12 +842,12 @@ Params:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_simulating_lc_for_cadence_26_0.png" src="../_images/notebooks_simulating_lc_for_cadence_26_0.png" />
+<img alt="../_images/notebooks_simulating_lc_for_cadence_27_0.png" src="../_images/notebooks_simulating_lc_for_cadence_27_0.png" />
 </div>
 </div>
 <p>The PWV along line of sight is equivalent to the PWV at zenith times the airmass of the observation. We quickly validate the airmass calculation of the <code class="docutils literal notranslate"><span class="pre">VariablePWVTrans</span></code> class.</p>
 <div class="nbinput nblast docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -871,7 +890,7 @@ Params:
 </div>
 </div>
 <div class="nbinput docutils container">
-<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
@@ -884,7 +903,7 @@ Params:
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_simulating_lc_for_cadence_29_0.png" src="../_images/notebooks_simulating_lc_for_cadence_29_0.png" />
+<img alt="../_images/notebooks_simulating_lc_for_cadence_30_0.png" src="../_images/notebooks_simulating_lc_for_cadence_30_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">

@@ -143,6 +143,7 @@ and their default values is provided below.</p>
                       <span class="p">[</span><span class="o">--</span><span class="n">cut_SrfcTemp</span> <span class="n">CUT_SRFCTEMP</span> <span class="n">CUT_SRFCTEMP</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">cut_SrfcRH</span> <span class="n">CUT_SRFCRH</span> <span class="n">CUT_SRFCRH</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">cut_ZenithDelay</span> <span class="n">CUT_ZENITHDELAY</span> <span class="n">CUT_ZENITHDELAY</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">scatter</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fixed</span><span class="o">-</span><span class="n">snr</span> <span class="n">FIXED_SNR</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="section" id="Named Arguments">
@@ -245,6 +246,19 @@ and their default values is provided below.</p>
 </dd>
 <dt><kbd>--cut_ZenithDelay</kbd></dt>
 <dd><p>Only use measured data points with a zenith delay value within the given bounds (units of Millimeters)</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="Debugging / Validation">
+<h2>Debugging / Validation<a class="headerlink" href="#Debugging / Validation" title="Permalink to this headline">¶</a></h2>
+<p>Options used when debugging pipeline behavior.</p>
+<dl class="option-list">
+<dt><kbd>--no-scatter</kbd></dt>
+<dd><p>Turn off added scatter when simulating light-curves.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--fixed-snr</kbd></dt>
+<dd><p>Simulate light-curves with a fixed signal to noise ratio.</p>
 </dd>
 </dl>
 </div>

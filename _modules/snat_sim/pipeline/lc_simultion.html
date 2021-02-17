@@ -123,6 +123,7 @@
 
 <span class="kn">import</span> <span class="nn">h5py</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">astropy.cosmology.core</span> <span class="kn">import</span> <span class="n">Cosmology</span>
 <span class="kn">from</span> <span class="nn">astropy.io.misc.hdf5</span> <span class="kn">import</span> <span class="n">write_table_hdf5</span>
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">egon.connectors</span> <span class="kn">import</span> <span class="n">Input</span><span class="p">,</span> <span class="n">Output</span>
@@ -149,9 +150,10 @@
             <span class="n">sn_model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
             <span class="n">catalog</span><span class="p">:</span> <span class="n">VariableCatalog</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
-            <span class="n">add_scatter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">add_scatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">fixed_snr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">abs_mb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span>
-            <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">,</span>
+            <span class="n">cosmo</span><span class="p">:</span> <span class="n">Cosmology</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">,</span>
             <span class="n">include_pwv</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Fit light-curves using multiple processes and combine results into an output file</span>
@@ -167,6 +169,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sim_model</span> <span class="o">=</span> <span class="n">sn_model</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catalog</span> <span class="o">=</span> <span class="n">catalog</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_scatter</span> <span class="o">=</span> <span class="n">add_scatter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fixed_snr</span> <span class="o">=</span> <span class="n">fixed_snr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">abs_mb</span> <span class="o">=</span> <span class="n">abs_mb</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">cosmo</span> <span class="o">=</span> <span class="n">cosmo</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">include_pwv_col</span> <span class="o">=</span> <span class="n">include_pwv</span>
@@ -191,7 +194,7 @@
         <span class="n">model_for_sim</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cosmo</span><span class="p">)</span>
 
         <span class="c1"># Simulate the light-curve. Make sure to include model parameters as meta data</span>
-        <span class="n">duplicated</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">)</span>
+        <span class="n">duplicated</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_snr</span><span class="p">)</span>
         <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">params</span>
         <span class="n">duplicated</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">model_for_sim</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span>
 

@@ -396,7 +396,6 @@ div.rendered_html tbody tr:hover {
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">sn_magnitudes</span><span class="p">,</span> <span class="n">reference_stars</span><span class="p">,</span> <span class="n">plotting</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">tests.mock</span> <span class="kn">import</span> <span class="n">create_cadence</span>
@@ -474,7 +473,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 845.08it/s]
+Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 626.55it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -542,7 +541,7 @@ Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 879.81it/s]
+Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 639.43it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -595,7 +594,7 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;snat_sim.models.ObservedCadence object at 0x7ff1eb4dcb80&gt;
+&lt;snat_sim.models.ObservedCadence object at 0x7f3c53f677c0&gt;
   time        band        gain  skynoise    zp   zpsys
 ------- --------------- ------- -------- ------- ------
   -20.0 lsst_hardware_g     1.0      0.0    25.0     AB
@@ -647,7 +646,7 @@ curves should be different in each band.</p>
     <span class="k">for</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">arg_iter</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">iter_total</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Light-Curves&#39;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
         <span class="n">model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">t0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="n">model</span><span class="o">.</span><span class="n">simulate_lc_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">snr</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="o">=</span><span class="n">snr</span><span class="p">)</span>
 
 </pre></div>
 </div>
@@ -677,7 +676,7 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 231/231 [01:31&lt;00:00,  2.52it/s]
+Light-Curves: 100%|██████████| 231/231 [01:26&lt;00:00,  2.69it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -705,7 +704,7 @@ Light-Curves: 100%|██████████| 231/231 [01:31&lt;00:00,  2.5
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 63/63 [00:25&lt;00:00,  2.47it/s]
+Light-Curves: 100%|██████████| 63/63 [00:19&lt;00:00,  3.22it/s]
 </pre></div></div>
 </div>
 <p>Here we visualize the fitted, uncorrected (i.e. without any stretch / color correction) magnitudes.</p>
@@ -871,11 +870,10 @@ Light-Curves: 100%|██████████| 63/63 [00:25&lt;00:00,  2.47i
 <span class="sd">        An Astropy table for each PWV and redshift</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">observations</span> <span class="o">=</span> <span class="n">create_cadence</span><span class="p">()</span>
-    <span class="n">cataloge</span> <span class="o">=</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">ReferenceCatalog</span><span class="p">(</span><span class="o">*</span><span class="n">spectral_types</span><span class="p">)</span>
+    <span class="n">catalog</span> <span class="o">=</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">ReferenceCatalog</span><span class="p">(</span><span class="o">*</span><span class="n">spectral_types</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="n">snr</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">):</span>
         <span class="n">pwv</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span>
-        <span class="k">yield</span> <span class="n">cataloge</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">)</span>
+        <span class="k">yield</span> <span class="n">catalog</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -897,7 +895,7 @@ Light-Curves: 100%|██████████| 63/63 [00:25&lt;00:00,  2.47i
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 231/231 [01:26&lt;00:00,  2.67it/s]
+Light-Curves: 100%|██████████| 231/231 [00:59&lt;00:00,  3.89it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">

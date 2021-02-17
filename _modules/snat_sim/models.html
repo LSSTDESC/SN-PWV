@@ -148,7 +148,7 @@
 <span class="sd">-------------</span>
 
 <span class="sd">To ensure backwards compatibility and ease of use, supernovae modeling with the</span>
-<span class="sd">``snat_sim`` package follows the same</span>
+<span class="sd">``snat_sim`` package follows (but also extends) the same</span>
 <span class="sd">`design pattern &lt;https://sncosmo.readthedocs.io/en/stable/models.html&gt;`_</span>
 <span class="sd">as the ``sncosmo`` package. Models are instantiated for a given spectral</span>
 <span class="sd">template and various propagation effects can be added to the model. In the</span>
@@ -173,21 +173,21 @@
 
 <span class="sd">.. doctest:: python</span>
 
-<span class="sd">    &gt;&gt;&gt; cadence = models.ObservedCadence(</span>
-<span class="sd">    ...     obs_times=[-1, 0, 1],</span>
-<span class="sd">    ...     bands=[&#39;sdssr&#39;, &#39;sdssr&#39;, &#39;sdssr&#39;],</span>
-<span class="sd">    ...     zp=25, zpsys=&#39;AB&#39;, skynoise=0, gain=1</span>
-<span class="sd">    ... )</span>
+<span class="sd">   &gt;&gt;&gt; cadence = models.ObservedCadence(</span>
+<span class="sd">   ...     obs_times=[-1, 0, 1],</span>
+<span class="sd">   ...     bands=[&#39;sdssr&#39;, &#39;sdssr&#39;, &#39;sdssr&#39;],</span>
+<span class="sd">   ...     zp=25, zpsys=&#39;AB&#39;, skynoise=0, gain=1</span>
+<span class="sd">   ... )</span>
 
 <span class="sd">Light-curves can then be simulated directly from the model:</span>
 
 <span class="sd">.. doctest:: python</span>
 
-<span class="sd">    &gt;&gt;&gt; # Here we simulate a light-curve with statistical noise</span>
-<span class="sd">    &gt;&gt;&gt; light_curve = supernova_model.simulate_lc(cadence)</span>
+<span class="sd">   &gt;&gt;&gt; # Here we simulate a light-curve with statistical noise</span>
+<span class="sd">   &gt;&gt;&gt; light_curve = supernova_model.simulate_lc(cadence)</span>
 
-<span class="sd">    &gt;&gt;&gt; # Here we simulate a light-curve with a fixed signal to noise ratio</span>
-<span class="sd">    &gt;&gt;&gt; light_curve_fixed_snr = supernova_model.simulate_lc_fixed_snr(cadence, snr=5)</span>
+<span class="sd">   &gt;&gt;&gt; # Here we simulate a light-curve with a fixed signal to noise ratio</span>
+<span class="sd">   &gt;&gt;&gt; light_curve_fixed_snr = supernova_model.simulate_lc(cadence, fixed_snr=5)</span>
 
 
 <span class="sd">Module Docs</span>
@@ -739,7 +739,7 @@
         <span class="n">new_model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">new_model</span>
 
-<div class="viewcode-block" id="SNModel.simulate_lc"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SNModel.simulate_lc">[docs]</a>    <span class="k">def</span> <span class="nf">simulate_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">scatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<div class="viewcode-block" id="SNModel.simulate_lc"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SNModel.simulate_lc">[docs]</a>    <span class="k">def</span> <span class="nf">simulate_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">scatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Simulate a SN light-curve</span>
 
 <span class="sd">        If ``scatter`` is ``True``, then simulated flux values include an added</span>
@@ -749,13 +749,19 @@
 <span class="sd">        Args:</span>
 <span class="sd">            cadence: Observational cadence to evaluate the light-curve with</span>
 <span class="sd">            scatter: Whether to add random noise to the flux values</span>
+<span class="sd">            fixed_snr: Optionally simulate the light-curve using a fixed signal to noise ratio</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The simulated light-curve as an astropy table in the ``sncosmo`` format</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandflux</span><span class="p">(</span><span class="n">cadence</span><span class="o">.</span><span class="n">bands</span><span class="p">,</span> <span class="n">cadence</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="n">cadence</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span> <span class="n">zpsys</span><span class="o">=</span><span class="n">cadence</span><span class="o">.</span><span class="n">zpsys</span><span class="p">)</span>
-        <span class="n">fluxerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cadence</span><span class="o">.</span><span class="n">skynoise</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">/</span> <span class="n">cadence</span><span class="o">.</span><span class="n">gain</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">fixed_snr</span><span class="p">:</span>
+            <span class="n">fluxerr</span> <span class="o">=</span> <span class="n">flux</span> <span class="o">/</span> <span class="n">fixed_snr</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">fluxerr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cadence</span><span class="o">.</span><span class="n">skynoise</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">/</span> <span class="n">cadence</span><span class="o">.</span><span class="n">gain</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">scatter</span><span class="p">:</span>
             <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">fluxerr</span><span class="p">))</span>
@@ -763,25 +769,7 @@
         <span class="k">return</span> <span class="n">Table</span><span class="p">(</span>
             <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">cadence</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">cadence</span><span class="o">.</span><span class="n">bands</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">fluxerr</span><span class="p">,</span> <span class="n">cadence</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span> <span class="n">cadence</span><span class="o">.</span><span class="n">zpsys</span><span class="p">],</span>
             <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;flux&#39;</span><span class="p">,</span> <span class="s1">&#39;fluxerr&#39;</span><span class="p">,</span> <span class="s1">&#39;zp&#39;</span><span class="p">,</span> <span class="s1">&#39;zpsys&#39;</span><span class="p">),</span>
-            <span class="n">meta</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span></div>
-
-<div class="viewcode-block" id="SNModel.simulate_lc_fixed_snr"><a class="viewcode-back" href="../../api/models.html#snat_sim.models.SNModel.simulate_lc_fixed_snr">[docs]</a>    <span class="k">def</span> <span class="nf">simulate_lc_fixed_snr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">snr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">.</span><span class="mi">05</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Simulate a SN light-curve with a fixed SNR for the given cadence</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            cadence: Observational cadence to evaluate the light-curve with</span>
-<span class="sd">            snr: Signal to noise ratio</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            The simulated light-curve as an astropy table in the ``sncosmo`` format</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">obs</span> <span class="o">=</span> <span class="n">cadence</span><span class="o">.</span><span class="n">to_sncosmo</span><span class="p">()</span>
-        <span class="n">light_curve</span> <span class="o">=</span> <span class="n">obs</span><span class="p">[[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;zp&#39;</span><span class="p">,</span> <span class="s1">&#39;zpsys&#39;</span><span class="p">]]</span>
-        <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandflux</span><span class="p">(</span><span class="n">obs</span><span class="p">[</span><span class="s1">&#39;band&#39;</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;zp&#39;</span><span class="p">],</span> <span class="n">obs</span><span class="p">[</span><span class="s1">&#39;zpsys&#39;</span><span class="p">])</span>
-        <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;fluxerr&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;flux&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">snr</span>
-        <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
-        <span class="k">return</span> <span class="n">light_curve</span></div></div>
+            <span class="n">meta</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span></div></div>
 
 
 <span class="c1">###############################################################################</span>
