@@ -16,7 +16,7 @@ srun
 python -m cProfile -o "fit_with_$SLURM_ARRAY_TASK_ID.pstat" ../fitting_cli.py \
     --sim_pool_size 30 - $SLURM_ARRAY_TASK_ID \
     --fit_pool_size $SLURM_ARRAY_TASK_ID \
-    --iter_lim 250 \
+    --iter_lim 100 \
     --cadence alt_sched \
     --sim_variability epoch \
     --fit_variability seasonal \

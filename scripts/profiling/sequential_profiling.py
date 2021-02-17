@@ -4,7 +4,7 @@ from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
 
 
-def setup_pipeline(iter_lim=150):
+def setup_pipeline(iter_lim=50):
     pwv_model = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
     propagation_effect = models.VariablePWVTrans(pwv_model)
 
