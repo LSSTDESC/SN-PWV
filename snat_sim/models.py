@@ -340,13 +340,13 @@ class PWVModel:
 
         self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
-        cache_type = os.environ.get('SNAT_SIM_CACHE_TYPE', 0)
+        cache_type = int(os.environ.get('SNAT_SIM_CACHE_TYPE', 0))
         if cache_type == 1:
-            memory = joblib.Memory(str(data_paths.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
-            self.calc_airmass = memory.cache(self.calc_airmass)
+            self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
 
         elif cache_type == 2:
-            self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
+            memory = joblib.Memory(str(data_paths.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
+            self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod
     def from_suominet_receiver(receiver: GPSReceiver, year: int, supp_years: Collection[int] = None) -> PWVModel:
