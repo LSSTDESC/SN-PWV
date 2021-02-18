@@ -104,7 +104,7 @@ from scipy.interpolate import RegularGridInterpolator
 
 from snat_sim.utils.caching import Cache
 from . import constants as const
-from ._data_paths import data_paths
+from .data_paths import paths_at_init
 from .utils import time_series as tsu
 
 Numeric = Union[float, int]
@@ -345,7 +345,7 @@ class PWVModel:
             self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
 
         elif cache_type == 2:
-            memory = joblib.Memory(str(data_paths.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
+            memory = joblib.Memory(str(paths_at_init.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
             self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod

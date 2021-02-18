@@ -21,7 +21,7 @@ from astropy.table import Table
 from tqdm import tqdm
 
 from . import constants as const
-from ._data_paths import data_paths
+from .data_paths import paths_at_init
 from .models import SNModel
 
 Numeric = Union[int, float]
@@ -29,7 +29,7 @@ Numeric = Union[int, float]
 
 # Todo: Add dictionary keys to docs? - consider named tuple?
 @lru_cache()  # Cache I/O
-def get_config_pwv_vals(config_path: Union[str, Path] = data_paths._config_path) -> Dict[str, float]:
+def get_config_pwv_vals(config_path: Union[str, Path] = paths_at_init._config_path) -> Dict[str, float]:
     """Retrieve PWV values to use as reference values
 
     Returned values include:
