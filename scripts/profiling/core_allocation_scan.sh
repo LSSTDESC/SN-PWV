@@ -12,7 +12,12 @@
 #SBATCH --time=60:00
 #SBATCH --array=14,17,20,23,26,29
 
-srun
+
+module purge
+module load python
+
+conda activate SN-PWV
+
 python -m cProfile -o "core_allocation_$SLURM_ARRAY_TASK_ID.pstat" ../fitting_cli.py \
     --sim_pool_size 30 - $SLURM_ARRAY_TASK_ID \
     --fit_pool_size $SLURM_ARRAY_TASK_ID \

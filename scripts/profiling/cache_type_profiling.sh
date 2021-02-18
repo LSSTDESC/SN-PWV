@@ -9,7 +9,9 @@
 #SBATCH --time=60:00
 
 module purge
-module conda activate SN-PWV
+module load python
+
+conda activate SN-PWV
 
 export SNAT_SIM_CACHE_TYPE=0
 python -m cProfile -o "cache_$SNAT_SIM_CACHE_TYPE.pstat" sequential_profiling.py alt_sched_small
