@@ -4,7 +4,7 @@
 #SBATCH --qos=debug
 #SBATCH --ntasks=1
 #SBATCH --mem-per-cpu=32000
-#SBATCH --licenses=cscratch1
+#SBATCH -L SCRATCH,cfs
 #SBATCH --constraint=haswell
 #SBATCH --time=60:00
 
@@ -42,4 +42,3 @@ python -m cProfile -o "cache_$SNAT_SIM_CACHE_TYPE.pstat" sequential_profiling.py
 python -m cProfile -o "cache_second_$SNAT_SIM_CACHE_TYPE.pstat" sequential_profiling.py $USE_CADENCE
 
 rm -r $SNAT_SIM_CACHE
-wait
