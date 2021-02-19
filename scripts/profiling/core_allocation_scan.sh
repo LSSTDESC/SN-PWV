@@ -4,8 +4,7 @@
 #
 # Single CPU using Haswell 32 core machine
 #SBATCH --qos=debug
-#SBATCH --mem-per-cpu=32000
-#SBATCH --licenses=cscratch1
+#SBATCH -L SCRATCH,cfs
 #SBATCH --constraint=haswell
 #SBATCH --array=38,46,54,62
 
