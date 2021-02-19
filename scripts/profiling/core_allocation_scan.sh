@@ -6,7 +6,7 @@
 #SBATCH --qos=debug
 #SBATCH -L SCRATCH,cfs
 #SBATCH --constraint=haswell
-#SBATCH --array=38,42,46,50,54,58,62,64,66
+#SBATCH --array=42,46,50,54,58
 
 
 module purge
@@ -23,7 +23,7 @@ export OMP_NUM_THREADS=2
 python -m cProfile -o "core_allocation_$SLURM_ARRAY_TASK_ID.pstat" ../fitting_cli.py \
     --sim_pool_size $(($NON_IO_CORES - $SLURM_ARRAY_TASK_ID)) \
     --fit_pool_size $SLURM_ARRAY_TASK_ID \
-    --iter_lim 100 \
+    --iter_lim 250 \
     --cadence alt_sched \
     --sim_variability epoch \
     --fit_variability seasonal \
