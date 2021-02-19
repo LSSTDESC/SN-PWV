@@ -1,21 +1,0 @@
-Warning: Python module not loaded, you already have Python loaded via conda init
-Profiling with data from: /global/cscratch1/sd/djp81/Cadence/alt_sched/LSST_WFD_alt_sched_MODEL11
-alt_sched:   0%|          | 0/10 [00:00<?, ?it/s]alt_sched:  10%|█         | 1/10 [00:24<03:39, 24.39s/it]alt_sched:  10%|█         | 1/10 [00:24<03:39, 24.39s/it]alt_sched:  20%|██        | 2/10 [00:24<03:15, 24.39s/it]alt_sched:  30%|███       | 3/10 [00:24<02:50, 24.39s/it]alt_sched:  40%|████      | 4/10 [00:24<02:26, 24.39s/it]alt_sched:  50%|█████     | 5/10 [00:24<02:01, 24.39s/it]alt_sched:  60%|██████    | 6/10 [00:24<01:37, 24.39s/it]alt_sched:  70%|███████   | 7/10 [00:24<01:13, 24.39s/it]alt_sched:  80%|████████  | 8/10 [00:24<00:48, 24.39s/it]alt_sched:  90%|█████████ | 9/10 [00:24<00:24, 24.39s/it]alt_sched: 100%|██████████| 10/10 [00:24<00:00, 24.39s/it]alt_sched:   0%|          | 0/10 [00:24<?, ?it/s]         
-Loading data
-Simulating data
-Fitting data
-Profiling with data from: /global/cscratch1/sd/djp81/Cadence/alt_sched/LSST_WFD_alt_sched_MODEL11
-alt_sched:   0%|          | 0/10 [00:00<?, ?it/s]alt_sched:  10%|█         | 1/10 [00:24<03:41, 24.66s/it]alt_sched:  10%|█         | 1/10 [00:24<03:41, 24.66s/it]alt_sched:  20%|██        | 2/10 [00:24<03:17, 24.66s/it]alt_sched:  30%|███       | 3/10 [00:24<02:52, 24.66s/it]alt_sched:  40%|████      | 4/10 [00:24<02:27, 24.66s/it]alt_sched:  50%|█████     | 5/10 [00:24<02:03, 24.66s/it]alt_sched:  60%|██████    | 6/10 [00:24<01:38, 24.66s/it]alt_sched:  70%|███████   | 7/10 [00:24<01:13, 24.66s/it]alt_sched:  80%|████████  | 8/10 [00:24<00:49, 24.66s/it]alt_sched:  90%|█████████ | 9/10 [00:24<00:24, 24.66s/it]alt_sched: 100%|██████████| 10/10 [00:24<00:00, 24.66s/it]alt_sched:   0%|          | 0/10 [00:24<?, ?it/s]         
-Loading data
-Simulating data
-Fitting data
-Profiling with data from: /global/cscratch1/sd/djp81/Cadence/alt_sched/LSST_WFD_alt_sched_MODEL11
-alt_sched:   0%|          | 0/10 [00:00<?, ?it/s]alt_sched:  10%|█         | 1/10 [00:23<03:33, 23.77s/it]alt_sched:  10%|█         | 1/10 [00:23<03:33, 23.77s/it]alt_sched:  20%|██        | 2/10 [00:23<03:10, 23.77s/it]alt_sched:  30%|███       | 3/10 [00:23<02:46, 23.77s/it]alt_sched:  40%|████      | 4/10 [00:23<00:27,  4.53s/it]alt_sched:  40%|████      | 4/10 [00:23<00:27,  4.53s/it]alt_sched:  50%|█████     | 5/10 [00:23<00:22,  4.53s/it]alt_sched:  60%|██████    | 6/10 [00:23<00:18,  4.53s/it]alt_sched:  70%|███████   | 7/10 [00:23<00:13,  4.53s/it]alt_sched:  80%|████████  | 8/10 [00:23<00:09,  4.53s/it]alt_sched:  90%|█████████ | 9/10 [00:23<00:04,  4.53s/it]alt_sched: 100%|██████████| 10/10 [00:23<00:00,  4.53s/it]alt_sched:   0%|          | 0/10 [00:24<?, ?it/s]         
-Loading data
-Simulating data
-Fitting data
-Profiling with data from: /global/cscratch1/sd/djp81/Cadence/alt_sched/LSST_WFD_alt_sched_MODEL11
-alt_sched:   0%|          | 0/10 [00:00<?, ?it/s]alt_sched:  10%|█         | 1/10 [00:24<03:37, 24.14s/it]alt_sched:  10%|█         | 1/10 [00:24<03:37, 24.14s/it]alt_sched:  20%|██        | 2/10 [00:24<03:13, 24.14s/it]alt_sched:  30%|███       | 3/10 [00:24<02:48, 24.14s/it]alt_sched:  40%|████      | 4/10 [00:24<02:24, 24.14s/it]alt_sched:  50%|█████     | 5/10 [00:24<02:00, 24.14s/it]alt_sched:  60%|██████    | 6/10 [00:24<00:11,  2.99s/it]alt_sched:  60%|██████    | 6/10 [00:24<00:11,  2.99s/it]alt_sched:  70%|███████   | 7/10 [00:24<00:08,  2.99s/it]alt_sched:  80%|████████  | 8/10 [00:24<00:05,  2.99s/it]alt_sched:  90%|█████████ | 9/10 [00:24<00:02,  2.99s/it]alt_sched: 100%|██████████| 10/10 [00:24<00:00,  2.99s/it]alt_sched:   0%|          | 0/10 [00:24<?, ?it/s]         
-Loading data
-Simulating data
-Fitting data
