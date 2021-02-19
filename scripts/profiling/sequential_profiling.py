@@ -4,6 +4,7 @@ from pwv_kpno.defaults import ctio
 
 from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
+from snat_sim.data_paths import paths_at_init
 
 
 def setup_pipeline(cadence, iter_lim):
@@ -50,10 +51,15 @@ if __name__ == '__main__':
         raise ValueError('Cadence not specified on command line.')
 
     try:
-        ITER_LIM = sys.argv[2]
+        ITER_LIM = int(sys.argv[2])
 
     except IndexError:
         ITER_LIM = 10
+
+    plasticc_data_path = paths_at_init.get_plasticc_dir(CADENCE, 11)
+    print(f'Profiling with data from: {plasticc_data_path}')
+    if not plasticc_data_path.exists():
+        raise RuntimeError(f'Data directory not found for model 11: {plasticc_data_path}')
 
     pipeline = setup_pipeline(CADENCE, ITER_LIM)
 
