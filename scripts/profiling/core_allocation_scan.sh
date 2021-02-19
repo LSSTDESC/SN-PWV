@@ -4,13 +4,10 @@
 #
 # Single CPU using Haswell 32 core machine
 #SBATCH --qos=debug
-#SBATCH --ntasks=1
 #SBATCH --mem-per-cpu=32000
 #SBATCH --licenses=cscratch1
 #SBATCH --constraint=haswell
-#
-#SBATCH --time=60:00
-#SBATCH --array=14,17,20,23,26,29
+#SBATCH --array=38,46,54,62
 
 
 module purge
