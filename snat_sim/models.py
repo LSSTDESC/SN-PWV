@@ -340,7 +340,7 @@ class PWVModel:
 
         self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
-        cache_type = int(os.environ.get('SNAT_SIM_CACHE_TYPE', 0))
+        cache_type = int(os.environ.get('SNAT_SIM_CACHE_TYPE', 1))
         if cache_type == 1:
             self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
 
