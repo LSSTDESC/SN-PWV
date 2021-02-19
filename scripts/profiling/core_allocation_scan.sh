@@ -6,7 +6,7 @@
 #SBATCH --qos=debug
 #SBATCH -L SCRATCH,cfs
 #SBATCH --constraint=haswell
-#SBATCH --array=38,46,54,62
+#SBATCH --array=38,42,46,50,54,58,62,64,66
 
 
 module purge
@@ -15,6 +15,10 @@ module load python
 conda activate SN-PWV
 
 export NON_IO_CORES=62
+
+export OPENBLAS_NUM_THREADS=2
+export GOTO_NUM_THREADS=2
+export OMP_NUM_THREADS=2
 
 python -m cProfile -o "core_allocation_$SLURM_ARRAY_TASK_ID.pstat" ../fitting_cli.py \
     --sim_pool_size $(($NON_IO_CORES - $SLURM_ARRAY_TASK_ID)) \
