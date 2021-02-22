@@ -33,6 +33,11 @@ median = plot_data.median()
 std = plot_data.std()
 
 fig, axis = plt.subplots()
+axis.axhline(0, linestyle='--', color='k')
+for _, row in plot_data.iterrows():
+    row = row.sort_index()
+    axis.plot(row.index, row, alpha=.2, color='grey')
+
 axis.scatter(median.index, median)
 axis.errorbar(median.index, median, yerr=std, linestyle='')
 

@@ -7,6 +7,8 @@ import numpy as np
 from matplotlib import colors
 from matplotlib import pyplot as plt
 
+# Global config options
+number_lc_sims = 10
 results_dir = Path(__file__).resolve().parent / 'cache_type_profiling'
 cache_files = ('cache_0.pstat', 'cache_1.pstat', 'cache_2.pstat', 'cache_second_2.pstat')
 function_names = [
@@ -55,5 +57,6 @@ if __name__ == '__main__':
     ax.set_yticks(y)
     ax.set_yticklabels([Path(fname).stem for fname in cache_files])
 
+    fig.suptitle(f'Runtimes for {number_lc_sims} light-curves')
     plt.tight_layout()
     plt.show()
