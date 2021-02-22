@@ -9,7 +9,13 @@ from matplotlib import pyplot as plt
 
 results_dir = Path(__file__).resolve().parent / 'cache_type_profiling'
 cache_files = ('cache_0.pstat', 'cache_1.pstat', 'cache_2.pstat', 'cache_second_2.pstat')
-function_names = ['total_runtime', 'snat_sim/pipeline/plasticc_io/action', 'snat_sim/pipeline/lc_simultion/action', 'snat_sim/pipeline/lc_fitting/action', 'snat_sim/models/calc_airmass']
+function_names = [
+    'total_runtime',
+    'snat_sim/pipeline/plasticc_io/action',
+    'snat_sim/pipeline/lc_simultion/action',
+    'snat_sim/pipeline/lc_fitting/action',
+    'snat_sim/models/calc_airmass'
+]
 
 
 def load_profile_results(path: Path) -> dict:
