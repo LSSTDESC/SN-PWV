@@ -1,3 +1,5 @@
+"""Visualizes profiling results from the `core_allocation_scan`` job"""
+
 from pathlib import Path
 from pstats import Stats
 
