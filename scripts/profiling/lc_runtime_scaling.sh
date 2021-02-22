@@ -7,6 +7,7 @@
 #SBATCH -L SCRATCH,cfs
 #SBATCH --constraint=haswell
 #SBATCH --array=400,800,1200,1600,2000
+#SBATCH --time=30:00
 
 module purge
 module load python
