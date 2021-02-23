@@ -6,7 +6,7 @@
 #SBATCH --qos=debug
 #SBATCH -L SCRATCH,cfs
 #SBATCH --constraint=haswell
-#SBATCH --array=400,800,1200,1600,2000
+#SBATCH --array=4000,8000,12000,16000,20000
 #SBATCH --time=30:00
 
 module purge
