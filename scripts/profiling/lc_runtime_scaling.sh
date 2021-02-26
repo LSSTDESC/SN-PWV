@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=snat_sim_core_allocation_scan
-#SBATCH --output=core_allocation_scan.log
+#SBATCH --job-name=snat_sim_lc_runtime_scaling
+#SBATCH --output=lc_runtime_scaling.log
 #
 # Single CPU using Haswell 32 core machine
 #SBATCH --qos=debug
@@ -24,5 +24,5 @@ python -m cProfile -o "lc_runtime_scaling_$SLURM_ARRAY_TASK_ID.pstat" ../fitting
   --cadence alt_sched \
   --sim_variability epoch \
   --fit_variability seasonal \
-  --out_path "core_allocation_$SLURM_ARRAY_TASK_ID.csv"
+  --out_path "lc_runtime_scaling_$SLURM_ARRAY_TASK_ID.csv"
 wait
