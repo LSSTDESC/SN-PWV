@@ -34,12 +34,18 @@ def make_bar_plot(results_dir, runs):
     ax.set_xticklabels(('None', 'Memoize', 'Joblib', 'Joblib Cached'))
     ax.set_ylabel('Runtime (s)')
     ax.set_xlabel('Caching Method')
-    ax.set_ylim(0, 300)
     plt.legend()
-    plt.show()
 
 
 if __name__ == '__main__':
     _results_dir = Path(__file__).resolve().parent / 'cache_type_profiling'
     _runs = (500, 1000, 2000)
-    make_bar_plot(_results_dir, _runs)
+    make_bar_plot(_results_dir / 'pwv_4', _runs)
+    plt.title('Fixed PWV = 4 mm When Fitting')
+    plt.ylim(0, 300)
+    plt.show()
+
+    make_bar_plot(_results_dir / 'pwv_seasonal', _runs)
+    plt.title('Seasonal PWV When Fitting')
+    plt.ylim(0, 525)
+    plt.show()
