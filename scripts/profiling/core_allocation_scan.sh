@@ -10,7 +10,6 @@
 
 module purge
 module load python
-
 conda activate SN-PWV
 
 # 64 cores total minus two processes for I/O
