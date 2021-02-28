@@ -1,18 +1,7 @@
 #!/bin/bash
-# ------------------------ Setup / Documentation -----------------------
-# This script profiles the performance of the analysis pipeline using
+
+# This batch job profiles the performance of the analysis pipeline using
 # different kinds of memoization / caching routines
-#
-# Run the following setup tasks in login node before job submission
-#
-# 1. Make sure the ``SN-PWV`` conda environment is defined:
-#     $ wget https://raw.githubusercontent.com/LSSTDESC/SN-PWV/master/cori_env.yml
-#     $ conda env create --file cori_env.yml
-#
-# 2. Copy profiling data to scratch directory if not already available:
-#    $ mkdir -p $SCRATCH/Cadence/alt_sched
-#    $ cp -u -r $CADENCE_SIMS/alt_sched/LSST_WFD_alt_sched_MODEL11 $SCRATCH/Cadence/alt_sched/
-# ----------------------------------------------------------------------
 
 #SBATCH --job-name=snat_sim_cache_type_profiling
 #SBATCH --output=cache_type_profiling.log

@@ -1,4 +1,13 @@
 #!/bin/bash
+
+# This batch job profiles the performance of the analysis pipeline when
+# run using different process allocation ratios. The number of processes
+# spawned by the pipeline is fixed to 64 with two processes automatically
+# allocated to I/O. The remaining number of processes are allocated to
+# either the simulation or fitting of light-curves. Profile results
+# are only saved for the main process (which is not included in the
+# above count of 64).
+
 #SBATCH --job-name=snat_sim_core_allocation_scan
 #SBATCH --output=core_allocation_scan.log
 #

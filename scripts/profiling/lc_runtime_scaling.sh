@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# This batch job profiles how quickly the analysis pipeline can
+# analyze a given number of light-curves,
+
 #SBATCH --job-name=snat_sim_lc_runtime_scaling
 #SBATCH --output=lc_runtime_scaling.log
 #
