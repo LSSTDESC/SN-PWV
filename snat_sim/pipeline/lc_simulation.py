@@ -7,6 +7,7 @@ from typing import Dict
 
 import h5py
 import numpy as np
+from astropy.cosmology.core import Cosmology
 from astropy.io.misc.hdf5 import write_table_hdf5
 from astropy.table import Table
 from egon.connectors import Input, Output
@@ -33,9 +34,10 @@ class SimulateLightCurves(Node):
             sn_model: SNModel,
             catalog: VariableCatalog = None,
             num_processes: int = 1,
-            add_scatter=True,
+            add_scatter: bool = True,
+            fixed_snr: Optional[float] = None,
             abs_mb: float = const.betoule_abs_mb,
-            cosmo=const.betoule_cosmo,
+            cosmo: Cosmology = const.betoule_cosmo,
             include_pwv: bool = False
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
@@ -51,6 +53,7 @@ class SimulateLightCurves(Node):
         self.sim_model = sn_model
         self.catalog = catalog
         self.add_scatter = add_scatter
+        self.fixed_snr = fixed_snr
         self.abs_mb = abs_mb
         self.cosmo = cosmo
         self.include_pwv_col = include_pwv
@@ -75,7 +78,7 @@ class SimulateLightCurves(Node):
         model_for_sim.set_source_peakabsmag(self.abs_mb, 'standard::b', 'AB', cosmo=self.cosmo)
 
         # Simulate the light-curve. Make sure to include model parameters as meta data
-        duplicated = model_for_sim.simulate_lc(cadence, scatter=self.add_scatter)
+        duplicated = model_for_sim.simulate_lc(cadence, scatter=self.add_scatter, fixed_snr=self.fixed_snr)
         duplicated.meta = params
         duplicated.meta.update(dict(zip(model_for_sim.param_names, model_for_sim.parameters)))
 

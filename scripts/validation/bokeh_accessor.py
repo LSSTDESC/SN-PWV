@@ -239,6 +239,7 @@ class ScatterPlotBuilder(BasePlotter):
             for px, py, err in zip(x, y, self.source.data[x_err]):
                 x_err_x.append((px - err, px + err))
                 x_err_y.append((py, py))
+
             fig.multi_line(x_err_x, x_err_y, **kwargs)
 
         if y_err:
@@ -247,6 +248,7 @@ class ScatterPlotBuilder(BasePlotter):
             for px, py, err in zip(x, y, self.source.data[y_err]):
                 y_err_x.append((px, px))
                 y_err_y.append((py - err, py + err))
+
             fig.multi_line(y_err_x, y_err_y, **kwargs)
 
         return fig

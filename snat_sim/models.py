@@ -32,7 +32,7 @@ Usage Example
 -------------
 
 To ensure backwards compatibility and ease of use, supernovae modeling with the
-``snat_sim`` package follows the same
+``snat_sim`` package follows (but also extends) the same
 `design pattern <https://sncosmo.readthedocs.io/en/stable/models.html>`_
 as the ``sncosmo`` package. Models are instantiated for a given spectral
 template and various propagation effects can be added to the model. In the
@@ -57,21 +57,21 @@ cadence (i.e., how the light-curve should be sampled in time):
 
 .. doctest:: python
 
-    >>> cadence = models.ObservedCadence(
-    ...     obs_times=[-1, 0, 1],
-    ...     bands=['sdssr', 'sdssr', 'sdssr'],
-    ...     zp=25, zpsys='AB', skynoise=0, gain=1
-    ... )
+   >>> cadence = models.ObservedCadence(
+   ...     obs_times=[-1, 0, 1],
+   ...     bands=['sdssr', 'sdssr', 'sdssr'],
+   ...     zp=25, zpsys='AB', skynoise=0, gain=1
+   ... )
 
 Light-curves can then be simulated directly from the model:
 
 .. doctest:: python
 
-    >>> # Here we simulate a light-curve with statistical noise
-    >>> light_curve = supernova_model.simulate_lc(cadence)
+   >>> # Here we simulate a light-curve with statistical noise
+   >>> light_curve = supernova_model.simulate_lc(cadence)
 
-    >>> # Here we simulate a light-curve with a fixed signal to noise ratio
-    >>> light_curve_fixed_snr = supernova_model.simulate_lc_fixed_snr(cadence, snr=5)
+   >>> # Here we simulate a light-curve with a fixed signal to noise ratio
+   >>> light_curve_fixed_snr = supernova_model.simulate_lc(cadence, fixed_snr=5)
 
 
 Module Docs
@@ -629,7 +629,7 @@ class SNModel(sncosmo.Model):
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
 
-    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True) -> Table:
+    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True, fixed_snr: Optional[float] = None) -> Table:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -639,13 +639,19 @@ class SNModel(sncosmo.Model):
         Args:
             cadence: Observational cadence to evaluate the light-curve with
             scatter: Whether to add random noise to the flux values
+            fixed_snr: Optionally simulate the light-curve using a fixed signal to noise ratio
 
         Returns:
             The simulated light-curve as an astropy table in the ``sncosmo`` format
         """
 
         flux = self.bandflux(cadence.bands, cadence.obs_times, zp=cadence.zp, zpsys=cadence.zpsys)
-        fluxerr = np.sqrt(cadence.skynoise ** 2 + np.abs(flux) / cadence.gain)
+
+        if fixed_snr:
+            fluxerr = flux / fixed_snr
+
+        else:
+            fluxerr = np.sqrt(cadence.skynoise ** 2 + np.abs(flux) / cadence.gain)
 
         if scatter:
             flux = np.atleast_1d(np.random.normal(flux, fluxerr))
@@ -654,24 +660,6 @@ class SNModel(sncosmo.Model):
             data=[cadence.obs_times, cadence.bands, flux, fluxerr, cadence.zp, cadence.zpsys],
             names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'),
             meta=dict(zip(self.param_names, self.parameters)))
-
-    def simulate_lc_fixed_snr(self, cadence: ObservedCadence, snr: float = .05) -> Table:
-        """Simulate a SN light-curve with a fixed SNR for the given cadence
-
-        Args:
-            cadence: Observational cadence to evaluate the light-curve with
-            snr: Signal to noise ratio
-
-        Returns:
-            The simulated light-curve as an astropy table in the ``sncosmo`` format
-        """
-
-        obs = cadence.to_sncosmo()
-        light_curve = obs[['time', 'band', 'zp', 'zpsys']]
-        light_curve['flux'] = self.bandflux(obs['band'], obs['time'], obs['zp'], obs['zpsys'])
-        light_curve['fluxerr'] = light_curve['flux'] / snr
-        light_curve.meta = dict(zip(self.param_names, self.parameters))
-        return light_curve
 
 
 ###############################################################################
