@@ -1,3 +1,4 @@
+from time import sleep
 from typing import List
 from unittest import TestCase
 
@@ -31,6 +32,7 @@ class GenericSetup:
         cls.node.fit_results_output.connect(target.input)
         for mock_node in (source, cls.node, target):
             mock_node.execute()
+            sleep(2)
 
         cls.pipeline_result = target.accumulated_data[0]
 
