@@ -8,7 +8,7 @@ from typing import Dict, List
 from egon.pipeline import Pipeline
 
 from .lc_fitting import FitLightCurves, FitResultsToDisk
-from .lc_simultion import SimulateLightCurves, SimulationToDisk
+from .lc_simulation import SimulateLightCurves, SimulationToDisk
 from .plasticc_io import LoadPlasticcSims
 from ..models import SNModel
 from ..reference_stars import VariableCatalog

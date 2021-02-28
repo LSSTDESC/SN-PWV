@@ -7,7 +7,7 @@ import sncosmo
 from astropy.io.misc.hdf5 import write_table_hdf5
 from egon.mock import MockTarget
 
-from snat_sim.pipeline.lc_simultion import SimulationFromDisk
+from snat_sim.pipeline.lc_simulation import SimulationFromDisk
 
 
 class InputDataMatchesDisk(TestCase):

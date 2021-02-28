@@ -1,10 +1,13 @@
+import sys
+
 from pwv_kpno.defaults import ctio
 
 from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
+from snat_sim.data_paths import paths_at_init
 
 
-def setup_pipeline(iter_lim=150):
+def setup_pipeline(cadence, iter_lim):
     pwv_model = models.PWVModel.from_suominet_receiver(ctio, 2016, [2017])
     propagation_effect = models.VariablePWVTrans(pwv_model)
 
@@ -20,8 +23,8 @@ def setup_pipeline(iter_lim=150):
         effect_names=[''],
         effect_frames=['obs'])
 
-    pipeline = FittingPipeline(
-        cadence='alt_sched',
+    fitting_pipeline = FittingPipeline(
+        cadence=cadence,
         sim_model=sn_model_sim,
         fit_model=sn_model_fit,
         vparams=['x0', 'x1', 'c'],
@@ -33,15 +36,32 @@ def setup_pipeline(iter_lim=150):
     )
 
     # Run the pipeline in the main thread
-    pipeline.load_plastic.num_processes = 0
-    pipeline.simulate_light_curves.num_processes = 0
-    pipeline.fit_light_curves.num_processes = 0
-    pipeline.fits_to_disk.num_processes = 0
-    return pipeline
+    fitting_pipeline.load_plastic.num_processes = 0
+    fitting_pipeline.simulate_light_curves.num_processes = 0
+    fitting_pipeline.fit_light_curves.num_processes = 0
+    fitting_pipeline.fits_to_disk.num_processes = 0
+    return fitting_pipeline
 
 
 if __name__ == '__main__':
-    pipeline = setup_pipeline()
+    try:
+        CADENCE = sys.argv[1]
+
+    except IndexError:
+        raise ValueError('Cadence not specified on command line.')
+
+    try:
+        ITER_LIM = int(sys.argv[2])
+
+    except IndexError:
+        ITER_LIM = 10
+
+    plasticc_data_path = paths_at_init.get_plasticc_dir(CADENCE, 11)
+    print(f'Profiling with data from: {plasticc_data_path}')
+    if not plasticc_data_path.exists():
+        raise RuntimeError(f'Data directory not found for model 11: {plasticc_data_path}')
+
+    pipeline = setup_pipeline(CADENCE, ITER_LIM)
 
     print('Loading data')
     pipeline.load_plastic.execute()

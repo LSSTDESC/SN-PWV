@@ -81,6 +81,7 @@ Module Docs
 from __future__ import annotations
 
 import abc
+import os
 import warnings
 from copy import copy
 from dataclasses import dataclass
@@ -339,8 +340,13 @@ class PWVModel:
 
         self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
-        memory = joblib.Memory(str(paths_at_init.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
-        self.calc_airmass = memory.cache(self.calc_airmass)
+        cache_type = int(os.environ.get('SNAT_SIM_CACHE_TYPE', 1))
+        if cache_type == 1:
+            self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
+
+        elif cache_type == 2:
+            memory = joblib.Memory(str(paths_at_init.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
+            self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod
     def from_suominet_receiver(receiver: GPSReceiver, year: int, supp_years: Collection[int] = None) -> PWVModel:

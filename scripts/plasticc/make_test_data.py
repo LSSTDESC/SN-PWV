@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-"""Copy a small subset of PLaSTIC data into the test suite.
+"""Create a small subset of PLaSTIC used for testing / profiling.
 
 Usage:
    python make_test_data.py [PLaSTICC Data Directory] [Cadence Name] [Model Number]

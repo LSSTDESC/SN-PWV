@@ -63,7 +63,12 @@ class DataPaths:
     def joblib_path(self) -> Path:
         """Directory to store function calls cached by joblib"""
 
-        return self.data_dir / 'joblib'
+        data_path = os.environ.get(
+            'SNAT_SIM_CACHE',
+            self.data_dir / 'joblib'
+        )
+
+        return Path(data_path)
 
     @property
     def _config_path(self) -> Path:

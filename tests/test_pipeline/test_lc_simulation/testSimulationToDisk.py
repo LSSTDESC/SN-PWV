@@ -9,7 +9,7 @@ from astropy.io.misc.hdf5 import read_table_hdf5
 from astropy.table import Table
 from egon.mock import MockSource
 
-from snat_sim.pipeline.lc_simultion import SimulationToDisk
+from snat_sim.pipeline.lc_simulation import SimulationToDisk
 
 
 def read_h5(*args, **kwargs) -> Table:
