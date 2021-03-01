@@ -168,8 +168,10 @@ class PLaSTICC:
             An Astropy table with simulated light-curve data
         """
 
+        max_lc = self.count_light_curves()
+        total = min(iter_lim, max_lc) if iter_lim else max_lc
+
         i = 0
-        total = iter_lim or self.count_light_curves()
         with tqdm(self.get_model_headers(), desc=self.cadence, total=total, disable=not verbose) as pbar:
             for header_path in pbar:
                 for lc in self._iter_lc_for_header(header_path, verbose=False):
