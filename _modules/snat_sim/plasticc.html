@@ -284,8 +284,10 @@
 <span class="sd">            An Astropy table with simulated light-curve data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="n">max_lc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_light_curves</span><span class="p">()</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">iter_lim</span><span class="p">,</span> <span class="n">max_lc</span><span class="p">)</span> <span class="k">if</span> <span class="n">iter_lim</span> <span class="k">else</span> <span class="n">max_lc</span>
+
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">total</span> <span class="o">=</span> <span class="n">iter_lim</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_light_curves</span><span class="p">()</span>
         <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_model_headers</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cadence</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">header_path</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
