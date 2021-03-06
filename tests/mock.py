@@ -1,12 +1,13 @@
 """Mock objects used when evaluating the test suite"""
 
 from datetime import datetime, timedelta
+from typing import *
 
 import numpy as np
 import pandas as pd
 from astropy.table import Table
 
-from snat_sim.models import PWVModel
+from snat_sim.models import ObservedCadence, PWVModel
 
 
 def create_mock_pwv_data(
@@ -17,8 +18,8 @@ def create_mock_pwv_data(
     """Return a ``Series`` of mock PWV values that alternate between .5 and 1
 
     Args:
-        start_time (datetime): Start date of the returned series index
-        end_time   (datetime): End date of the returned series index
+        start_time (datetime): Start time of the returned series index
+        end_time   (datetime): End time of the returned series index
         delta     (timedelta): Sampling rate of the datetime values
         offset    (timedelta): Apply a linear offset to the returned values
 
@@ -67,7 +68,7 @@ def create_mock_plasticc_light_curve():
             'SKY_SIG': np.full_like(time_values, 80)
         },
         meta={
-            'SNID': 123456,
+            'SNID': '123456',
             'RA': 10,
             'DECL': -5,
             'SIM_PEAKMJD': 0,
@@ -117,3 +118,37 @@ def create_mock_pipeline_outputs():
         keep_columns.append(param + '_err')
     pipeline_fits = pipeline_fits[keep_columns]
     return pipeline_fits.to_pandas()
+
+
+def create_cadence(
+        obs_time: Collection[float] = range(-20, 51),
+        bands: Collection[str] = ('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
+        zp: Union[int, float] = 25,
+        zpsys: str = 'AB',
+        gain: int = 1
+) -> ObservedCadence:
+    """Create a cadence object for a uniform observation cadence across multiple bands
+
+    In the resulting cadence each of the given bands is observed at every time value.
+
+    Args:
+        obs_time: Array of phase values to include
+        bands: Array of bands to include
+        zp: The zero point
+        zpsys: The zero point system
+        gain: The simulated gain
+
+    Returns:
+        An Observed Cadence instance
+    """
+
+    all_times = np.concatenate([obs_time for _ in bands])
+    band = np.concatenate([np.full_like(obs_time, b, dtype='U1000') for b in bands])
+    return ObservedCadence(
+        obs_times=all_times,
+        bands=band,
+        zp=zp,
+        zpsys=zpsys,
+        gain=gain,
+        skynoise=0
+    )

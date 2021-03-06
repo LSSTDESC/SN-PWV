@@ -2,185 +2,341 @@
 observed (or simulated) magnitudes relative to a reference star. Reference
 star fluxes are determined relative to a fiducial atmosphere with 4mm of PWV.
 
+Usage Example
+-------------
+
+The spectrum for individual spectral types can be retreived
+using the ``ReferenceStar`` class:
+
+.. doctest:: python
+
+   >>> from snat_sim import reference_stars
+
+   >>> g2_star = reference_stars.ReferenceStar('G2')
+   >>> print(g2_star.to_pandas())
+   3000.000     4.960049e+17
+   3000.006     4.659192e+17
+   3000.012     4.304657e+17
+   3000.018     3.751426e+17
+   3000.024     2.847191e+17
+                    ...
+   11999.920    1.366567e+18
+   11999.940    1.366673e+18
+   11999.960    1.366418e+18
+   11999.980    1.365863e+18
+   12000.000    1.365315e+18
+   Length: 933333, dtype: float32
+
+
+A ``ReferenceCatalog`` is used to represent a collection of stars with different
+stellar types. Catalog instances can be used to calibrate supernoca light-curves.
+
+.. code-block:: python
+
+   >>> import sncosmo
+
+   >>> light_curve = sncosmo.load_example_data()
+   >>> reference_catalog = reference_stars.ReferenceCatalog('G2', 'M5')
+   >>> print(reference_catalog.calibrate_lc(light_curve, pwv=4))
+
 Module Docs
 -----------
 """
 
 from functools import lru_cache
 from pathlib import Path
+from typing import *
 from typing import Collection
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
+from astropy.table import Table
 
-_PARENT = Path(__file__).resolve()
-_DATA_DIR = _PARENT.parent.parent / 'data'
-_STELLAR_SPECTRA_DIR = _DATA_DIR / 'stellar_spectra'
-_STELLAR_FLUX_DIR = _DATA_DIR / 'stellar_fluxes'
+from . import constants as const
+from .data_paths import paths_at_init
+from .models import PWVModel
 
-available_types = sorted(f.stem for f in _STELLAR_FLUX_DIR.glob('*.txt'))
-
-
-def _read_stellar_spectra_path(fpath):
-    """Load fits file with stellar spectrum from phoenix
-
-    Fits files can be downloaded from:
-      http://phoenix.astro.physik.uni-goettingen.de/?page_id=15
-
-    converts from egs/s/cm2/cm to phot/cm2/s/nm using
-      https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
-
-    Flux values are returned in phot/cm2/s/angstrom and are index by
-    wavelength values in Angstroms.
-
-    Args:
-        fpath  (str, Path): Path of the file to read
-
-    Returns:
-        Flux values as a pandas Series
-    """
-
-    # Load spectral data
-    with fits.open(fpath) as infile:
-        spec = infile[0].data
-
-    # Load data used to convert spectra to new units
-    # noinspection SpellCheckingInspection
-    with fits.open(fpath.parent / 'WAVE_PHOENIX-ACES-AGSS-COND-2011.fits') as infile:
-        lam = infile[0].data  # angstroms
-
-    angstroms_per_cm = 1e8
-    conversion_factor = 5.03 * 10 ** 7  # See https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
-    ergs_per_photon = conversion_factor * lam
-
-    # Evaluate unit conversion
-    spec /= angstroms_per_cm  # ergs/s/cm2/cm into ergs/s/cm2/Angstrom
-    spec *= ergs_per_photon  # into phot/cm2/s/angstrom
-
-    indices = (lam >= 3000) & (lam <= 12000)
-    return pd.Series(spec[indices], index=lam[indices])
+Numeric = Union[int, float]
 
 
-def get_stellar_spectra(spec_type):
-    """Load spectrum for given spectral type
+class ReferenceStar:
+    """Representation of spectral data from the Goettingen Spectral Library"""
 
-    Flux values are returned in phot/cm2/s/angstrom and are index by
-    wavelength values in Angstroms.
+    def __init__(self, spectral_type: str) -> None:
+        """Load a spectrum for the given spectral type
 
-    Args:
-        spec_type (str): Spectral type (e.g., G2)
+        Flux values are returned in phot/cm2/s/angstrom and are index by
+        wavelength values in Angstroms.
 
-    Returns:
-        Flux values as a pandas Series
-    """
+        Args:
+            spectral_type: Spectral type (e.g., G2)
+        """
 
-    # Load spectra for different spectral types
-    stellar_spectra_dir = _STELLAR_SPECTRA_DIR
-    path = next(stellar_spectra_dir.glob(spec_type + '*.fits'))
-    return _read_stellar_spectra_path(path)
+        self.spectral_type = spectral_type.upper()
+        if self.spectral_type not in self.get_available_types():
+            raise ValueError(f'Data for spectral type "{self.spectral_type}" is not available.')
+
+        # Load spectra for different spectral types
+        path = next(paths_at_init.stellar_spectra_dir.glob(self.spectral_type + '*.fits'))
+        self._spectrum = self._read_stellar_spectra_path(path)
+
+    def to_pandas(self) -> pd.Series:
+        """Return the spectral data as a ``pandas.Series`` object"""
+
+        return self._spectrum.copy()
+
+    @staticmethod
+    def get_available_types() -> List[str]:
+        """Return the spectral types available on disk
+
+        Returns:
+            A list fo spectral types
+        """
+
+        return sorted(f.stem.upper() for f in paths_at_init.stellar_flux_dir.glob('*.txt'))
+
+    @staticmethod
+    def _read_stellar_spectra_path(fpath: Union[str, Path]) -> pd.Series:
+        """Load fits file with stellar spectrum from phoenix
+
+        Fits files can be downloaded from:
+          http://phoenix.astro.physik.uni-goettingen.de/?page_id=15
+
+        converts from egs/s/cm2/cm to phot/cm2/s/nm using
+          https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
+
+        Flux values are returned in phot/cm2/s/angstrom and are index by
+        wavelength values in Angstroms.
+
+        Args:
+            fpath: Path of the file to read
+
+        Returns:
+            Flux values as a pandas Series
+        """
+
+        # Load spectral data
+        with fits.open(fpath) as infile:
+            spec = infile[0].data
+
+        # Load data used to convert spectra to new units
+        # noinspection SpellCheckingInspection
+        with fits.open(fpath.parent / 'WAVE_PHOENIX-ACES-AGSS-COND-2011.fits') as infile:
+            lam = infile[0].data  # angstroms
+
+        angstroms_per_cm = 1e8
+        conversion_factor = 5.03 * 10 ** 7  # See https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf
+        ergs_per_photon = conversion_factor * lam
+
+        # Evaluate unit conversion
+        spec /= angstroms_per_cm  # ergs/s/cm2/cm into ergs/s/cm2/Angstrom
+        spec *= ergs_per_photon  # into phot/cm2/s/angstrom
+
+        indices = (lam >= 3000) & (lam <= 12000)
+        return pd.Series(spec[indices], index=lam[indices])
+
+    @lru_cache()  # Cache I/O
+    def get_dataframe(self) -> pd.DataFrame:
+        """Retrieve PWV values to use as reference values
+
+        Returns:
+            A DataFrame indexed by PWV with columns for flux
+        """
+
+        rpath = paths_at_init.stellar_flux_dir / f'{self.spectral_type}.txt'
+        band_names = [f'lsst_hardware_{b}' for b in 'ugrizy']
+        column_names = ['PWV'] + band_names
+        reference_star_flux = pd.read_csv(
+            rpath,
+            sep='\\s',
+            header=None,
+            names=column_names,
+            comment='#',
+            index_col=0,
+            engine='python'
+        )
+
+        for band in band_names:
+            band_flux = reference_star_flux[f'{band}']
+            reference_star_flux[f'{band}_norm'] = band_flux / band_flux.loc[0]
+
+        return reference_star_flux
+
+    def flux(self, band: str, pwv: Union[Numeric, np.array]) -> np.ndarray:
+        """Return the reference star flux values
+
+        Args:
+            band: Band to get flux for
+            pwv: PWV values to get magnitudes for
+
+        Returns:
+            The normalized flux at the given PWV value(s)
+        """
+
+        reference_star_flux = self.get_dataframe()
+        if np.any(
+                (pwv < reference_star_flux.index.min()) |
+                (pwv > reference_star_flux.index.max())):
+            raise ValueError('PWV is out of range')
+
+        norm_flux = reference_star_flux[band]
+        return np.interp(pwv, norm_flux.index, norm_flux)
+
+    def norm_flux(self, band: str, pwv: Union[Numeric, np.array]) -> np.ndarray:
+        """Return the normalized reference star flux values
+
+        Args:
+            band: Band to get flux for
+            pwv: PWV values to get magnitudes for
+
+        Returns:
+            The normalized flux at the given PWV value(s)
+        """
+
+        reference_star_flux = self.get_dataframe()
+        if np.any(
+                (pwv < reference_star_flux.index.min()) |
+                (pwv > reference_star_flux.index.max())):
+            raise ValueError('PWV is out of range')
+
+        norm_flux = reference_star_flux[f'{band}_norm']
+        return np.interp(pwv, norm_flux.index, norm_flux)
 
 
-@lru_cache()  # Cache I/O
-def get_ref_star_dataframe(reference_type='G2'):
-    """Retrieve PWV values to use as reference values
+class ReferenceCatalog:
+    """A rudimentary implementation of a reference star catalog"""
 
-    Args:
-        reference_type (str): Type of reference star (Default 'G2')
+    def __init__(self, *spectral_types: str) -> None:
+        """Create a reference star catalog composed of the given spectral types
 
-    Returns:
-        A DataFrame indexed by PWV with columns for flux
-    """
+        Args:
+            *spectral_types: Spectral types for the catalog (e.g., 'G2', 'M5', 'K2')
+        """
 
-    rpath = _STELLAR_FLUX_DIR / f'{reference_type}.txt'
-    if not rpath.exists():
-        raise ValueError(
-            f'Data not available for specified star {reference_type}. '
-            f'Could not find: {rpath}')
+        if not spectral_types:
+            raise ValueError('Must specify at least one spectral type for the catalog.')
 
-    band_names = [f'lsst_hardware_{b}' for b in 'ugrizy']
-    column_names = ['PWV'] + band_names
-    reference_star_flux = pd.read_csv(
-        rpath,
-        sep='\\s',
-        header=None,
-        names=column_names,
-        comment='#',
-        index_col=0,
-        engine='python'
-    )
+        self.spectral_types = spectral_types
+        self.spectra = tuple(ReferenceStar(st) for st in spectral_types)
 
-    for band in band_names:
-        band_flux = reference_star_flux[f'{band}']
-        reference_star_flux[f'{band}_norm'] = band_flux / band_flux.loc[0]
+    def average_norm_flux(self, band: str, pwv: Union[Numeric, Collection, np.ndarray], ) -> np.ndarray:
+        """Return the average normalized reference star flux
 
-    return reference_star_flux
+        Args:
+            band: Band to get flux for
+            pwv: PWV values to get magnitudes for
 
+        Returns:
+            The normalized flux at the given PWV value(s)
+        """
 
-def interp_norm_flux(band, pwv, reference_type='G2'):
-    """Return normalized reference star flux values
+        return np.average([s.norm_flux(band, pwv) for s in self.spectra], axis=0)
 
-    Args:
-        band           (str): Band to get flux for
-        pwv (float, ndarray): PWV values to get magnitudes for
-        reference_type (str): Type of reference star (Default 'G2')
+    def calibrate_lc(self, lc_table: Table, pwv: Union[Numeric, np.ndarray]) -> Table:
+        """Divide normalized reference flux from a light-curve
 
-    Returns:
-        The normalized flux at the given PWV value(s)
-    """
+        Recalibrate flux values using the average change in flux of a collection of
+        reference stars.
 
-    reference_star_flux = get_ref_star_dataframe(reference_type)
-    if np.any(
-            (pwv < reference_star_flux.index.min()) |
-            (pwv > reference_star_flux.index.max())):
-        raise ValueError('PWV is out of range')
+        Args:
+            lc_table: Astropy table with columns ``flux`` and ``band``
+            pwv: PWV value to subtract reference star for
 
-    norm_flux = reference_star_flux[f'{band}_norm']
-    return np.interp(pwv, norm_flux.index, norm_flux)
+        Returns:
+            A modified copy of ``lc_table``
+        """
 
+        if isinstance(pwv, Collection):
+            if len(pwv) != len(lc_table):
+                raise ValueError('PWV must be a float or have the same length as ``lc_table``')
 
-def average_norm_flux(band, pwv, reference_types=('G2', 'M5', 'K2')):
-    """Return the average normalized reference star flux
+            pwv = np.array(pwv)
 
-    Args:
-        band                        (str): Band to get flux for
-        pwv              (float, ndarray): PWV values to get magnitudes for
-        reference_types (collection[str]): Types of reference stars to average over
+        else:
+            pwv = np.full(len(lc_table), pwv)
 
-    Returns:
-        The normalized flux at the given PWV value(s)
-    """
+        table_copy = lc_table.copy()
+        for band in set(table_copy['band']):
+            band_indices = np.where(table_copy['band'] == band)[0]
+            table_copy['flux'][band_indices] /= self.average_norm_flux(band, pwv[band_indices])
 
-    return np.average([interp_norm_flux(band, pwv, stype) for stype in reference_types], axis=0)
+        return table_copy
 
 
-def divide_ref_from_lc(lc_table, pwv, reference_types=('G2', 'M5', 'K2')):
-    """Divide reference flux from a light-curve
+class VariableCatalog:
+    """A reference star catalog that determines the time dependent PWV concentration from an underlying PWV model"""
 
-    Recalibrate flux values using the average change in flux of a collection of
-    reference stars.
+    def __init__(self, *spectral_types: str, pwv_model: PWVModel) -> None:
+        """Create a reference star catalog composed of the given spectral types and a PWV model
 
-    Args:
-        lc_table                  (Table): Astropy table with columns ``flux`` and ``band``
-        pwv  (Number, Collection[Number]): PWV value to subtract reference star for
-        reference_types (Collection[str]): Type of reference stars to use in calibration
+        Args:
+            *spectral_types: Spectral types for the catalog (e.g., 'G2', 'M5', 'K2')
+            pwv_model: The PWV model to determine the zenith PWV concentration from
+        """
 
-    Returns:
-        A modified copy of ``lc_table``
-    """
+        self.catalog = ReferenceCatalog(*spectral_types)
+        self.pwv_model = pwv_model
 
-    if isinstance(pwv, Collection):
-        if len(pwv) != len(lc_table):
-            raise ValueError('PWV must be a float or have the same length as ``lc_table``')
+    def average_norm_flux(
+            self,
+            band: str,
+            time: Union[float, np.ndarray, Collection],
+            ra: float,
+            dec: float,
+            lat: float = const.vro_latitude,
+            lon: float = const.vro_longitude,
+            alt: float = const.vro_altitude,
+            time_format: str = 'mjd'
+    ) -> np.ndarray:
+        """Return the average normalized reference star flux
 
-        pwv = np.array(pwv)
+        Args:
+            band: Band to get flux for
+            time: Time at which the target is observed
+            ra: Right Ascension of the target (Deg)
+            dec: Declination of the target (Deg)
+            lat: Latitude of the observer (Deg)
+            lon: Longitude of the observer (Deg)
+            alt: Altitude of the observer (m)
+            time_format: Astropy supported format of the time value (Default: 'mjd')
 
-    else:
-        pwv = np.full(len(lc_table), pwv)
+        Returns:
+            The normalized flux at the given PWV value(s)
+        """
 
-    table_copy = lc_table.copy()
-    for band in set(table_copy['band']):
-        band_indices = np.where(table_copy['band'] == band)[0]
-        table_copy['flux'][band_indices] /= average_norm_flux(band, pwv[band_indices], reference_types)
+        pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=time_format)
+        return self.catalog.average_norm_flux(band, pwv)
 
-    return table_copy
+    def calibrate_lc(
+            self,
+            lc_table: Table,
+            time: Union[float, np.ndarray, Collection],
+            ra: float,
+            dec: float,
+            lat: float = const.vro_latitude,
+            lon: float = const.vro_longitude,
+            alt: float = const.vro_altitude,
+            time_format: str = 'mjd'
+    ) -> Table:
+        """Divide normalized reference flux from a light-curve
+
+        Recalibrate flux values using the average change in flux of a collection of
+        reference stars.
+
+        Args:
+            lc_table: Astropy table with columns ``flux`` and ``band``
+            time: Time at which the target is observed
+            ra: Right Ascension of the target (Deg)
+            dec: Declination of the target (Deg)
+            lat: Latitude of the observer (Deg)
+            lon: Longitude of the observer (Deg)
+            alt: Altitude of the observer (m)
+            time_format: Astropy supported format of the time value (Default: 'mjd')
+
+        Returns:
+            A modified copy of ``lc_table``
+        """
+
+        pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=time_format)
+        return self.catalog.calibrate_lc(lc_table, pwv)

@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 
 from snat_sim import constants as const
-from snat_sim.fitting_pipeline import CosmologyAccessor
+from snat_sim.utils.cosmology import CosmologyAccessor
 from tests import mock
 
 

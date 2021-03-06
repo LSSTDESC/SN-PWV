@@ -1,7 +1,7 @@
 # Data files
 tests/test_data
 notebooks/cerro_tololo.ecsv
-data/plasticc/*/
+data/joblib
 results/
 
 # OS Files

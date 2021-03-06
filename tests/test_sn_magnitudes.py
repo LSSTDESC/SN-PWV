@@ -5,10 +5,8 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from snat_sim import lc_simulation, models, sn_magnitudes
-from snat_sim.filters import register_decam_filters
-
-register_decam_filters(force=True)
+from snat_sim import constants as const
+from snat_sim import models, sn_magnitudes
 
 
 class GetConfigPWVValues(TestCase):
@@ -61,7 +59,8 @@ class TestTabulateMagnitudes(TestCase):
             mag_for_pwv = []
 
             for j, z in enumerate(self.z_vals):
-                self.model.set(pwv=pwv, z=z, x0=lc_simulation.calc_x0_for_z(z, self.model.source))
+                self.model.set(pwv=pwv, z=z)
+                self.model.set_source_peakabsmag(const.betoule_abs_mb, 'standard::b', 'AB', cosmo=const.betoule_cosmo)
                 mag = self.model.bandmag(test_band, 'ab', 0)
                 mag_for_pwv.append(mag)
 
