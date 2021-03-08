@@ -1,23 +1,26 @@
 import inspect
+from typing import List, Union
 
 import numpy as np
 import pandas as pd
 from astropy.cosmology import FlatwCDM
 from iminuit import Minuit
 
+FloatOrArray = Union[float, np.ndarray]
+
 
 @pd.api.extensions.register_dataframe_accessor("snat_sim")
 class CosmologyAccessor:
     """Chi-squared minimizer for fitting a cosmology to pipeline results"""
 
-    def __init__(self, pandas_obj):
+    def __init__(self, pandas_obj: pd.Series) -> None:
         self.data = pandas_obj
 
-    def calc_distmod(self, abs_mag):
+    def calc_distmod(self, abs_mag: float) -> pd.Series:
         """Return the distance modulus for an assumed absolute magnitude
 
         Args:
-            abs_mag (float): The B-band absolute magnitude
+            abs_mag: The B-band absolute magnitude
 
         Returns:
             The distance modulus
@@ -26,19 +29,19 @@ class CosmologyAccessor:
         return self.data['mb'] - abs_mag
 
     # noinspection PyPep8Naming
-    def chisq(self, H0, Om0, abs_mag, w0, alpha, beta):
+    def chisq(self, H0: float, Om0: float, abs_mag: float, w0: float, alpha: float, beta: float) -> float:
         """Calculate the chi-squared for given cosmological parameters
 
         Args:
-            H0      (float): Hubble constant
-            Om0     (float): Matter density
-            abs_mag (float): SNe Ia intrinsic peak magnitude
-            w0      (float): Dark matter equation of state
-            alpha   (float): Stretch correction nuisance parameter
-            beta    (float): Color correction nuisance parameter
+            H0: Hubble constant
+            Om0: Matter density
+            abs_mag: SNe Ia intrinsic peak magnitude
+            w0: Dark matter equation of state
+            alpha: Stretch correction nuisance parameter
+            beta: Color correction nuisance parameter
 
         Returns:
-            The chi-squared of the resulting cosmology
+            The chi-squared of the given cosmology
         """
 
         measured_mu = self.calc_distmod(abs_mag) + alpha * self.data['x1'] - beta * self.data['c']
@@ -47,19 +50,27 @@ class CosmologyAccessor:
         modeled_mu = cosmology.distmod(self.data['z']).value
         return np.sum(((measured_mu - modeled_mu) ** 2) / (self.data['mb_err'] ** 2))
 
-    def chisq_grid(self, H0, Om0, abs_mag, w0, alpha, beta):
+    def chisq_grid(
+            self,
+            H0: FloatOrArray,
+            Om0: FloatOrArray,
+            abs_mag: FloatOrArray,
+            w0: FloatOrArray,
+            alpha: float,
+            beta: float
+    ) -> np.ndarray:
         """Calculate the chi-squared on a grid of cosmological parameters
 
         Arguments are automatically repeated along the grid so that the
         dimensions of each array match.
 
         Args:
-            H0      (float, ndarray): Hubble constant
-            Om0     (float, ndarray): Matter density
-            abs_mag (float, ndarray): SNe Ia intrinsic peak magnitude
-            w0      (float, ndarray): Dark matter equation of state
-            alpha            (float): Stretch correction nuisance parameter
-            beta             (float): Color correction nuisance parameter
+            H0: Hubble constant
+            Om0: Matter density
+            abs_mag: SNe Ia intrinsic peak magnitude
+            w0: Dark matter equation of state
+            alpha: Stretch correction nuisance parameter
+            beta: Color correction nuisance parameter
 
         Returns:
             An array of chi-squared values
@@ -69,12 +80,12 @@ class CosmologyAccessor:
         return np.vectorize(self.chisq)(*new_args)
 
     @staticmethod
-    def _match_argument_dimensions(*args):
+    def _match_argument_dimensions(*args: FloatOrArray) -> list:
         """Reshape arguments so they match the shape of the argument with the
         most dimensions.
 
         Args:
-            *args (float, ndarray): Values to cast onto the grid
+            *args: Values to cast onto the grid
 
         Returns:
             A list with each argument cast to it's new shape
@@ -86,7 +97,7 @@ class CosmologyAccessor:
         # Reshape each argument to match the dimensions from above
         return [np.full(grid_shape, arg) for arg in args]
 
-    def minimize(self, **kwargs):
+    def minimize(self, **kwargs) -> Minuit:
         """Fit cosmology to the instantiated data
 
         Kwargs:
@@ -101,15 +112,17 @@ class CosmologyAccessor:
         minimizer.migrad()
         return minimizer
 
-    def minimize_mc(self, samples, n=None, frac=None, statistic=None, **kwargs):
+    def minimize_mc(
+            self, samples: int, n: int = None, frac: float = None, statistic: callable = None, **kwargs
+    ) -> List[Minuit]:
         """Fit cosmology to the instantiated data using monte carlo resampling
 
         Args:
-            samples         (int): Number of samples to draw
-            n              (int): Size of each sample. Cannot be used with ``frac``
-            frac         (float): Fraction of data to include in each sample. Cannot be used with ``size``
-            statistic (callable): Optionally apply a statistic to the returned values
-            Accepts any iminuit style keyword arguments for parameters
+            samples: Number of samples to draw
+            n: Size of each sample. Cannot be used with ``frac``
+            frac: Fraction of data to include in each sample. Cannot be used with ``size``
+            statistic: Optionally apply a statistic to the returned values
+            **kwargs: Accepts any iminuit style keyword arguments for parameters
               ``H0``, ``Om0``, ``abs_mag``, and ``w0``.
 
         Returns:
