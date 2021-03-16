@@ -66,8 +66,10 @@ import numpy as np
 import pandas as pd
 from astropy import units as u
 
+from snat_sim import types
 
-def datetime_to_sec_in_year(date: Union[dt.datetime, Collection[dt.datetime]]) -> Union[float, np.ndarray]:
+
+def datetime_to_sec_in_year(date: types.DateColl) ->  types.NumpyLike:
     """Calculate number of seconds elapsed modulo 1 year.
 
     Accurate to within a microsecond.
@@ -101,7 +103,7 @@ def datetime_to_sec_in_year(date: Union[dt.datetime, Collection[dt.datetime]]) -
 
 
 @np.vectorize
-def datetime_to_season(date: Union[dt.datetime, Collection[dt.datetime]]) -> np.ndarray:
+def datetime_to_season(date: types.DateColl) -> np.ndarray:
     """Determine the calendar season corresponding to a given datetime
 
     Seasons are labeled as 'winter', 'spring', 'summer', or 'fall'.

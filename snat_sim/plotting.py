@@ -48,8 +48,7 @@ from pytz import utc
 
 from . import constants as const
 from . import modeling
-
-Numeric = Union[int, float]
+from .types import Numeric
 
 
 def _multi_line_plot(
@@ -125,7 +124,8 @@ def plot_delta_mag_vs_pwv(
 
 # noinspection PyUnusedLocal
 def plot_derivative_mag_vs_z(
-        pwv_arr: np.ndarray, z_arr: np.ndarray, slope_arr: np.ndarray, axis: Optional[plt.axis] = None) -> None:
+        pwv_arr: np.ndarray, z_arr: np.ndarray, slope_arr: np.ndarray, axis: Optional[plt.axis] = None
+) -> None:
     """Single panel, multi-line plot of slope in delta magnitude vs z. Color coded by PWV.
 
     Args:
@@ -398,7 +398,8 @@ def plot_fitted_params(
 
 def plot_delta_colors(
         pwv_arr: np.ndarray, z_arr: np.ndarray, mag_dict: Dict[str, np.ndarray],
-        colors: List[Tuple[str, str]], ref_pwv: Numeric = 0) -> None:
+        colors: List[Tuple[str, str]], ref_pwv: Numeric = 0
+) -> None:
     """Shows the change in color as a function of redshift. Color coded by PWV.
 
     Args:
@@ -430,7 +431,8 @@ def plot_delta_colors(
 
 # noinspection PyUnusedLocal
 def plot_delta_mu(
-        mu: np.ndarray, pwv_arr: np.ndarray, z_arr: np.ndarray, cosmo: Cosmology = const.betoule_cosmo) -> None:
+        mu: np.ndarray, pwv_arr: np.ndarray, z_arr: np.ndarray, cosmo: Cosmology = const.betoule_cosmo
+) -> None:
     """Plot the variation in fitted distance modulus as a function of redshift and PWV.
 
     Args:

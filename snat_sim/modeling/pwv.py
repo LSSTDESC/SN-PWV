@@ -157,7 +157,7 @@ class PWVModel:
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
-    def pwv_zenith(self, time: Collection[float], time_format: Optional[str]) -> np.array:
+    def pwv_zenith(self, time: types.FloatColl, time_format: types.StrColl) -> np.array:
         ...  # pragma: no cover
 
     def pwv_zenith(self, time, time_format='mjd'):
@@ -432,7 +432,7 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
         self._transmission_model = PWVTransmissionModel(transmission_res)
 
     @abc.abstractmethod
-    def assumed_pwv(self, time: types.FloatOrArray) -> types.FloatOrArray:
+    def assumed_pwv(self, time: types.FloatColl) -> types.FloatColl:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
@@ -519,7 +519,7 @@ class VariablePWVTrans(AbstractVariablePWVEffect):
 
         self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
-    def assumed_pwv(self, time: types.FloatOrArray) -> types.FloatOrArray:
+    def assumed_pwv(self, time: types.FloatColl) -> types.FloatColl:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
@@ -577,7 +577,7 @@ class SeasonalPWVTrans(AbstractVariablePWVEffect):
         self._parameters = np.array(
             [0., 0., 0., 0., 0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
-    def assumed_pwv(self, time: types.FloatOrArray) -> types.FloatOrArray:
+    def assumed_pwv(self, time: types.FloatColl) -> types.FloatColl:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:

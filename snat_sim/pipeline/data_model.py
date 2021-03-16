@@ -45,7 +45,9 @@ Module Docs
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List
+from typing import Iterable, List
+
+from .. import types
 
 
 @dataclass
@@ -53,9 +55,9 @@ class PipelineResult:
     """Class representation of internal pipeline data products"""
 
     snid: str
-    sim_params: Dict[str, float] = field(default_factory=dict)
-    fit_params: Dict[str, float] = field(default_factory=dict)
-    fit_err: Dict[str, float] = field(default_factory=dict)
+    sim_params: types.NumericalParams = field(default_factory=dict)
+    fit_params: types.NumericalParams = field(default_factory=dict)
+    fit_err: types.NumericalParams = field(default_factory=dict)
     chisq: float = -99.99
     ndof: int = -99.99
     mb: float = -99.99

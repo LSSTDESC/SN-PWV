@@ -10,7 +10,6 @@ import itertools
 from copy import copy
 from copy import deepcopy
 from functools import lru_cache
-from pathlib import Path
 from typing import *
 
 import numpy as np
@@ -21,15 +20,14 @@ from astropy.table import Table
 from tqdm import tqdm
 
 from . import constants as const
+from . import types
 from .data_paths import paths_at_init
 from .modeling import SNModel
-
-Numeric = Union[int, float]
 
 
 # Todo: Add dictionary keys to docs? - consider named tuple?
 @lru_cache()  # Cache I/O
-def get_config_pwv_vals(config_path: Union[str, Path] = paths_at_init._config_path) -> Dict[str, float]:
+def get_config_pwv_vals(config_path: types.PathLike = paths_at_init._config_path) -> types.NumericalParams:
     """Retrieve PWV values to use as reference values
 
     Returned values include:
@@ -58,8 +56,8 @@ def get_config_pwv_vals(config_path: Union[str, Path] = paths_at_init._config_pa
 
 def tabulate_mag(
         model: SNModel,
-        pwv_arr: Collection[Numeric],
-        z_arr: Collection[Numeric],
+        pwv_arr: Collection[types.Numeric],
+        z_arr: Collection[types.Numeric],
         bands: List[str],
         verbose: bool = True
 ) -> Dict[str, np.ndarray]:
@@ -110,7 +108,7 @@ def tabulate_mag(
 
 
 def tabulate_fiducial_mag(
-        model: SNModel, z_arr: np.ndarray, bands: List[str], fid_pwv_dict: Dict[str, float] = None
+        model: SNModel, z_arr: np.ndarray, bands: List[str], fid_pwv_dict: types.NumericalParams = None
 ) -> Dict[str, np.ndarray]:
     """Get SN magnitudes corresponding to the fiducial atmosphere
 
@@ -153,7 +151,7 @@ def tabulate_fiducial_mag(
 
 def correct_mag(
         model: SNModel, mag: np.ndarray, params: np.ndarray,
-        alpha: Numeric = const.betoule_alpha, beta: Numeric = const.betoule_beta
+        alpha: types.Numeric = const.betoule_alpha, beta: types.Numeric = const.betoule_beta
 ) -> np.ndarray:
     """Correct fitted supernova magnitude for stretch and color
 
@@ -186,8 +184,8 @@ def fit_mag(
         light_curves: Collection[Table],
         vparams: List[str],
         bands: Collection[str],
-        pwv_arr: Collection[Numeric] = None,
-        z_arr: Collection[Numeric] = None,
+        pwv_arr: Collection[types.Numeric] = None,
+        z_arr: Collection[types.Numeric] = None,
         **kwargs
 ) -> Tuple[Dict[str, np.ndarray], ...]:
     """Determine apparent mag by fitting simulated light-curves

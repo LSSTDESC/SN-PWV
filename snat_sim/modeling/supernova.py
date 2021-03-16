@@ -30,10 +30,10 @@ class ObservedCadence:
 
     obs_times: Collection[float]
     bands: Collection[str]
-    skynoise: types.FloatOrArray
-    zp: types.FloatOrArray
+    skynoise: types.FloatColl
+    zp: types.FloatColl
     zpsys: Union[str, Collection[str]]
-    gain: types.FloatOrArray
+    gain: types.FloatColl
 
     def __eq__(self, other: ObservedCadence) -> bool:
         attr_list = ['obs_times', 'bands', 'skynoise', 'zp', 'zpsys', 'gain']
@@ -44,7 +44,7 @@ class ObservedCadence:
         return self._skynoise.copy()
 
     @skynoise.setter
-    def skynoise(self, skynoise: types.FloatOrArray):
+    def skynoise(self, skynoise: types.FloatColl):
         self._skynoise = np.full_like(self.obs_times, skynoise)
 
     @property
@@ -52,7 +52,7 @@ class ObservedCadence:
         return self._zp.copy()
 
     @zp.setter
-    def zp(self, zp: types.FloatOrArray):
+    def zp(self, zp: types.FloatColl):
         self._zp = np.full_like(self.obs_times, zp)
 
     @property
@@ -60,7 +60,7 @@ class ObservedCadence:
         return self._zpsys.copy()
 
     @zpsys.setter
-    def zpsys(self, zpsys: types.FloatOrArray):
+    def zpsys(self, zpsys: types.FloatColl):
         self._zpsys = np.full_like(self.obs_times, zpsys, dtype='U8')
 
     @property
@@ -68,15 +68,15 @@ class ObservedCadence:
         return self._gain.copy()
 
     @gain.setter
-    def gain(self, gain: types.FloatOrArray):
+    def gain(self, gain: types.FloatColl):
         self._gain = np.full_like(self.obs_times, gain)
 
     @staticmethod
     def from_plasticc(
             light_curve: Table,
-            zp: types.FloatOrArray = None,
+            zp: types.FloatColl = None,
             drop_nondetection: bool = False
-    ) -> Tuple[types.ModelParams, ObservedCadence]:
+    ) -> Tuple[types.NumericalParams, ObservedCadence]:
         """Extract the observational cadence from a PLaSTICC light-curve
 
         The zero-point, zero point system, and gain arguments can be a
@@ -106,7 +106,7 @@ class ObservedCadence:
             'x0': light_curve.meta['SIM_SALT2x0']
         }
 
-        return cast(types.ModelParams, params), ObservedCadence(
+        return cast(types.NumericalParams, params), ObservedCadence(
             obs_times=light_curve['MJD'],
             bands=['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
             zp=zp or light_curve['ZEROPT'],
