@@ -8,7 +8,8 @@ import numpy as np
 import sncosmo
 from sncosmo.tests import test_models as sncosmo_test_models
 
-from snat_sim import models
+from snat_sim.modeling.pwv import VariablePWVTrans
+from snat_sim.modeling.supernova import SNModel
 from tests.mock import create_constant_pwv_model
 
 no_emcee_package = False
@@ -26,7 +27,7 @@ class SncosmoBaseTests(sncosmo_test_models.TestModel, TestCase):
     def setUp(self):
         # Same as the base sncosmo setup procedure, but using a ``SNModel``
         # instance instead of ``sncosmo.Model``
-        self.model = models.SNModel(
+        self.model = SNModel(
             source=sncosmo_test_models.flatsource(),
             effects=[sncosmo.CCM89Dust()],
             effect_frames=['obs'],
@@ -45,7 +46,7 @@ class BackwardsCompatibility(TestCase):
         wave = np.arange(3000, 12000)
         sncosmo_model = sncosmo.Model('salt2-extended')
         sncosmo_flux = sncosmo_model.flux(0, wave)
-        custom_model = models.SNModel(sncosmo_model.source)
+        custom_model = SNModel(sncosmo_model.source)
         custom_flux = custom_model.flux(0, wave)
         np.testing.assert_equal(custom_flux, sncosmo_flux)
 
@@ -53,29 +54,34 @@ class BackwardsCompatibility(TestCase):
         """Test the fit_lc function returns an ``SNModel`` instance for the fitted model"""
 
         data = sncosmo.load_example_data()
-        model = models.SNModel('salt2')
+        model = SNModel('salt2')
 
         with warnings.catch_warnings():
             warnings.filterwarnings('ignore')
             _, fitted_model = sncosmo.fit_lc(data, model, ['x0'])
 
-        self.assertIsInstance(fitted_model, models.SNModel)
+        self.assertIsInstance(fitted_model, SNModel)
 
     @skipIf(no_emcee_package, 'emcee package is not installed')
     def test_mcmc_lc_returns_correct_type(self):
         """Test the fit_lc function returns an ``SNModel`` instance for the fitted model"""
 
         data = sncosmo.load_example_data()
-        model = models.SNModel('salt2')
-        _, fitted_model = sncosmo.mcmc_lc(data, model, ['x0'])
-        self.assertIsInstance(fitted_model, models.SNModel)
+        model = SNModel('salt2-extended')
+
+        # Some sncosmo versions use deprecated emcee kwargs
+        with warnings.catch_warnings():
+            warnings.simplefilter('ignore')
+            _, fitted_model = sncosmo.mcmc_lc(data, model, ['x0'])
+
+        self.assertIsInstance(fitted_model, SNModel)
 
 
 class Copy(TestCase):
     """Test copying a model correctly copies the underlying class data"""
 
     def setUp(self):
-        self.model = models.SNModel(
+        self.model = SNModel(
             source=sncosmo_test_models.flatsource(),
             effects=[sncosmo.CCM89Dust()],
             effect_frames=['obs'],
@@ -87,7 +93,7 @@ class Copy(TestCase):
         """Test copied objects are of ``modeling.SNModel`` type"""
 
         copied = copy(self.model)
-        self.assertIsInstance(copied, models.SNModel)
+        self.assertIsInstance(copied, SNModel)
 
     def test_copy_copies_parameters(self):
         """Test parameter values are copied to new id values"""
@@ -112,7 +118,7 @@ class PropagationSupport(TestCase):
     def test_error_for_bad_frame(self):
         """Test an error is raised for a band reference frame name"""
 
-        model = models.SNModel(source='salt2')
+        model = SNModel(source='salt2')
         with self.assertRaises(ValueError):
             model.add_effect(effect=sncosmo.CCM89Dust(), frame='bad_frame_name', name='mw')
 
@@ -120,7 +126,7 @@ class PropagationSupport(TestCase):
         """Test effects in the ``free`` frame of reference include an added redshift parameter"""
 
         effect_name = 'freeMW'
-        model = models.SNModel(source='salt2')
+        model = SNModel(source='salt2')
         model.add_effect(effect=sncosmo.CCM89Dust(), frame='free', name=effect_name)
         self.assertIn(effect_name + 'z', model.param_names)
 
@@ -128,7 +134,7 @@ class PropagationSupport(TestCase):
     def test_variable_propagation_support():
         """Test a time variable effect can be added and called without error"""
 
-        effect = models.VariablePWVTrans(create_constant_pwv_model())
-        model = models.SNModel(sncosmo_test_models.flatsource())
+        effect = VariablePWVTrans(create_constant_pwv_model())
+        model = SNModel(sncosmo_test_models.flatsource())
         model.add_effect(effect=effect, frame='obs', name='Variable PWV')
         model.flux(time=0, wave=[4000])

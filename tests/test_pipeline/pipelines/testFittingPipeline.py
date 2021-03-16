@@ -1,6 +1,7 @@
 from unittest import TestCase
 
-from snat_sim.pipeline.pipelines import FittingPipeline, SNModel
+from snat_sim.pipeline.pipelines import FittingPipeline
+from snat_sim.modeling import SNModel
 
 
 class ValidatePipelineNodes(TestCase):

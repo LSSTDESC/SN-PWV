@@ -3,7 +3,7 @@
 import inspect
 from unittest import TestCase
 
-from snat_sim import models
+from snat_sim.modeling import pwv
 
 
 class PropagateMethodSignature(TestCase):
@@ -15,5 +15,5 @@ class PropagateMethodSignature(TestCase):
     def test_time_arg_in_signature(self):
         """Test the ``propagate`` method includes a ``time`` as the last parameter"""
 
-        params = list(inspect.signature(models.VariablePropagationEffect.propagate).parameters.keys())
+        params = list(inspect.signature(pwv.VariablePropagationEffect.propagate).parameters.keys())
         self.assertEqual(params[-1], 'time')

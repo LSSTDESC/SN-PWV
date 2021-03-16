@@ -10,9 +10,9 @@ using the ``ReferenceStar`` class:
 
 .. doctest:: python
 
-   >>> from snat_sim import reference_stars
+   >>> from snat_sim.modeling import reference_star
 
-   >>> g2_star = reference_stars.ReferenceStar('G2')
+   >>> g2_star = reference_star.ReferenceStar('G2')
    >>> print(g2_star.to_pandas())
    3000.000     4.960049e+17
    3000.006     4.659192e+17
@@ -36,7 +36,7 @@ stellar types. Catalog instances can be used to calibrate supernoca light-curves
    >>> import sncosmo
 
    >>> light_curve = sncosmo.load_example_data()
-   >>> reference_catalog = reference_stars.ReferenceCatalog('G2', 'M5')
+   >>> reference_catalog = reference_star.ReferenceCatalog('G2', 'M5')
    >>> print(reference_catalog.calibrate_lc(light_curve, pwv=4))
 
 Module Docs
@@ -53,11 +53,10 @@ import numpy as np
 import pandas as pd
 from astropy.table import Table
 
-from . import constants as const
-from .data_paths import paths_at_init
-from .models import PWVModel
-
-Numeric = Union[int, float]
+from .. import constants as const
+from ..data_paths import paths_at_init
+from .pwv import PWVModel
+from .. import types
 
 
 class ReferenceStar:
@@ -163,7 +162,7 @@ class ReferenceStar:
 
         return reference_star_flux
 
-    def flux(self, band: str, pwv: Union[Numeric, np.array]) -> np.ndarray:
+    def flux(self, band: str, pwv: Union[types.Numeric, np.array]) -> np.ndarray:
         """Return the reference star flux values
 
         Args:
@@ -183,7 +182,7 @@ class ReferenceStar:
         norm_flux = reference_star_flux[band]
         return np.interp(pwv, norm_flux.index, norm_flux)
 
-    def norm_flux(self, band: str, pwv: Union[Numeric, np.array]) -> np.ndarray:
+    def norm_flux(self, band: str, pwv: Union[types.Numeric, np.array]) -> np.ndarray:
         """Return the normalized reference star flux values
 
         Args:
@@ -220,7 +219,7 @@ class ReferenceCatalog:
         self.spectral_types = spectral_types
         self.spectra = tuple(ReferenceStar(st) for st in spectral_types)
 
-    def average_norm_flux(self, band: str, pwv: Union[Numeric, Collection, np.ndarray], ) -> np.ndarray:
+    def average_norm_flux(self, band: str, pwv: Union[types.Numeric, Collection, np.ndarray], ) -> np.ndarray:
         """Return the average normalized reference star flux
 
         Args:
@@ -233,7 +232,7 @@ class ReferenceCatalog:
 
         return np.average([s.norm_flux(band, pwv) for s in self.spectra], axis=0)
 
-    def calibrate_lc(self, lc_table: Table, pwv: Union[Numeric, np.ndarray]) -> Table:
+    def calibrate_lc(self, lc_table: Table, pwv: Union[types.Numeric, np.ndarray]) -> Table:
         """Divide normalized reference flux from a light-curve
 
         Recalibrate flux values using the average change in flux of a collection of

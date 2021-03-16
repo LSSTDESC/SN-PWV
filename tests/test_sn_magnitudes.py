@@ -5,8 +5,8 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from snat_sim import constants as const
-from snat_sim import models, sn_magnitudes
+from snat_sim import sn_magnitudes, constants as const
+from snat_sim.modeling import StaticPWVTrans
 
 
 class GetConfigPWVValues(TestCase):
@@ -37,7 +37,7 @@ class TestTabulateMagnitudes(TestCase):
 
     def setUp(self):
         self.model = sncosmo.Model('salt2-extended')
-        self.model.add_effect(models.StaticPWVTrans(), '', 'obs')
+        self.model.add_effect(StaticPWVTrans(), '', 'obs')
 
         self.pwv_vals = 0.001, 5
         self.z_vals = 0.001, .5

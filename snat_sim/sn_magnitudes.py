@@ -22,7 +22,7 @@ from tqdm import tqdm
 
 from . import constants as const
 from .data_paths import paths_at_init
-from .models import SNModel
+from .modeling import SNModel
 
 Numeric = Union[int, float]
 

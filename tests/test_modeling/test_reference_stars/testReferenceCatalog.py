@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 from astropy.table import Table
 
-from snat_sim.reference_stars import ReferenceStar, ReferenceCatalog
+from snat_sim.modeling.reference_star import ReferenceStar, ReferenceCatalog
 
 
 class InitErrors(TestCase):

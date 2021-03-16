@@ -7,7 +7,7 @@ import pandas as pd
 from pandas.testing import assert_series_equal
 
 from snat_sim.data_paths import paths_at_init
-from snat_sim.reference_stars import ReferenceStar
+from snat_sim.modeling.reference_star import ReferenceStar
 
 
 class InitErrors(TestCase):

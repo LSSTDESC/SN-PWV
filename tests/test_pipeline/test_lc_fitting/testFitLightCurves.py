@@ -6,7 +6,7 @@ import sncosmo
 from egon.mock import MockSource, MockTarget
 
 from snat_sim import constants as const
-from snat_sim.models import SNModel
+from snat_sim.modeling import SNModel
 from snat_sim.pipeline.lc_fitting import FitLightCurves
 
 

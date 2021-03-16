@@ -7,7 +7,8 @@ import numpy as np
 import pandas as pd
 from astropy.table import Table
 
-from snat_sim.models import ObservedCadence, PWVModel
+from snat_sim.modeling.supernova import ObservedCadence
+from snat_sim.modeling import PWVModel
 
 
 def create_mock_pwv_data(

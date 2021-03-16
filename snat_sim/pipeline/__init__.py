@@ -26,7 +26,7 @@ follows:
 
 .. doctest:: python
 
-   >>> from snat_sim.models import SNModel
+   >>> from snat_sim.modeling import SNModel
    >>> from snat_sim.pipeline import FittingPipeline
 
    >>> pipeline = FittingPipeline(

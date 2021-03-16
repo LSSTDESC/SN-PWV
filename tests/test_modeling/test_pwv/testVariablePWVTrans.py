@@ -3,7 +3,7 @@
 from unittest import TestCase
 
 from snat_sim import constants as const
-from snat_sim import models
+from snat_sim.modeling import pwv
 from tests.mock import create_constant_pwv_model
 from .base import PropagationEffectTests
 
@@ -12,7 +12,7 @@ class BaseTests(PropagationEffectTests, TestCase):
     @classmethod
     def setUpClass(cls):
         mock_pwv_model = create_constant_pwv_model(4)
-        cls.propagation_effect = models.VariablePWVTrans(mock_pwv_model)
+        cls.propagation_effect = pwv.VariablePWVTrans(mock_pwv_model)
 
 
 class DefaultParameterValues(TestCase):
@@ -21,7 +21,7 @@ class DefaultParameterValues(TestCase):
     @classmethod
     def setUpClass(cls):
         mock_pwv_model = create_constant_pwv_model(4)
-        cls.propagation_effect = models.VariablePWVTrans(mock_pwv_model)
+        cls.propagation_effect = pwv.VariablePWVTrans(mock_pwv_model)
 
     def test_default_location_params_match_vro(self):
         """Test the default values for the observer location match VRO"""

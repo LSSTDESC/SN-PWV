@@ -3,7 +3,7 @@ from __future__ import annotations
 from egon.connectors import Output
 from egon.nodes import Source
 
-from ..models import ObservedCadence
+from ..modeling import ObservedCadence
 from ..plasticc import PLaSTICC
 
 __all__ = ['LoadPlasticcSims']
