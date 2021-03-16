@@ -23,6 +23,8 @@ available from ``numpy`` (e.g., ``np.int8``, ``np.int16``, etc.).
 +---------------------+----------------------------------------------------------+
 | ``NumericalParams`` | ``Dict[str, Numeric]``                                   |
 +---------------------+----------------------------------------------------------+
+| ``ModelLike``       | ``Union[sncosmo.Model, SNModel]``                        |
++---------------------+----------------------------------------------------------+
 | ``NumpyLike``       | ``Union[Numeric, ndarray]``                              |
 +---------------------+----------------------------------------------------------+
 | ``PathLike``        | ``Union[str, Path]``                                     |
@@ -34,6 +36,9 @@ from pathlib import Path
 from typing import Collection, Dict, TypeVar, Union
 
 import numpy as np
+import sncosmo
+
+from snat_sim.modeling import SNModel
 
 DateColl = Union[dt.datetime, Collection[dt.datetime]]
 Numeric = Union[
@@ -48,3 +53,4 @@ NumericalParams = Dict[str, Numeric]
 NumpyLike = Union[Numeric, np.ndarray]
 PathLike = Union[str, Path]
 StrColl = Union[str, Collection[str]]
+ModelLike = Union[sncosmo.Model, SNModel]
