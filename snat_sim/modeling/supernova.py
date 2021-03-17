@@ -15,7 +15,7 @@ import sncosmo
 from astropy.table import Table
 
 from .pwv import VariablePropagationEffect
-from .. import types
+from .. import constants as const, types
 from ..utils import cov_utils as cutils
 
 
@@ -347,7 +347,7 @@ class SNFitResult(sncosmo.utils.Result):
     def covariance(self) -> pd.DataFrame:
         """The covariance matrix"""
 
-        return cutils.covariance(self['covariance'], paramNames=self.vparam_names)
+        return pd.DataFrame.cov_utils.from_array(self['covariance'], paramNames=self.vparam_names)
 
     def salt_covariance_linear(self, x0Truth: float = None) -> pd.DataFrame:
         """The covariance matrix of apparent magnitude and salt2 parameters"""
@@ -357,8 +357,8 @@ class SNFitResult(sncosmo.utils.Result):
         factor = - 2.5 / np.log(10)
         # drop other parameters like t0
         cov = self.covariance.copy()
-        cov = cutils.subcovariance(covariance=cov, paramList=['x0', 'x1', 'c'], array=False)
-        covariance = cutils.log_covariance(cov, paramName='x0', paramValue=x0, factor=factor)
+        cov = cov.cov_utils.subcovariance(paramList=['x0', 'x1', 'c'])
+        covariance = cov.cov_utils.log_covariance(paramName='x0', paramValue=x0, factor=factor)
 
         covariance.rename(columns={'x0': 'mB'}, inplace=True)
         covariance['name'] = covariance.columns
@@ -367,7 +367,7 @@ class SNFitResult(sncosmo.utils.Result):
 
         return covariance
 
-    def mu_variance_linear(self, alpha: float = 0.14, beta: float = 3.1) -> float:
+    def mu_variance_linear(self, alpha: float = const.betoule_alpha, beta: float = const.betoule_beta) -> float:
         """Calculate the variance in distance modulus
 
         Determined using the covariance matrix of apparent magnitude and
@@ -383,8 +383,8 @@ class SNFitResult(sncosmo.utils.Result):
 
         arr = np.array([1.0, alpha, -beta])
         _cov = self.salt_covariance_linear()
-        sc = cutils.subcovariance(_cov, paramList=['mB', 'x1', 'c'], array=True)
-        return cutils.expAVsquare(sc, arr)
+        sc = _cov.cov_utils.subcovariance(paramList=['mB', 'x1', 'c'])
+        return sc.cov_utils.expAVsquare(arr)
 
     def __repr__(self):
         # Extremely similar to the base representation of the parent class but
