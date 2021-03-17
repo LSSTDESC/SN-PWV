@@ -1,4 +1,4 @@
-"""The ``models`` module defines classes for modeling different
+"""The ``modeling`` module defines classes for modeling different
 physical phenomena. This includes SNe Ia light-curves, the propagation of
 light through atmospheric water vapor (with and without variation in time),
 and the seasonal variation of precipitable water vapor over time.
@@ -79,5 +79,4 @@ Module Docs
 """
 
 from .pwv import *
-from .reference_star import *
 from .supernova import *

@@ -1,3 +1,7 @@
+"""Modeling functionality for Precipitable Water Vapor (PWV) and related
+observational effects.
+"""
+
 from __future__ import annotations
 
 import abc

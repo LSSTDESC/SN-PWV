@@ -1,3 +1,7 @@
+"""Modeling functionality for the spectro-photometric time-sampling of
+supernovae.
+"""
+
 from __future__ import annotations
 
 from copy import copy

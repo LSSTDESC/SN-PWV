@@ -97,7 +97,7 @@ def datetime_to_sec_in_year(date: types.DateColl) ->  types.NumpyLike:
 
     # If the argument was a scalar, return a scalar
     if np.ndim(date) == 0:
-        seconds = np.asscalar(seconds)
+        seconds = seconds.item()
 
     return seconds
 

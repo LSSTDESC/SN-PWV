@@ -10,7 +10,7 @@ using the ``ReferenceStar`` class:
 
 .. doctest:: python
 
-   >>> from snat_sim.modeling import reference_star
+   >>> from snat_sim import reference_star
 
    >>> g2_star = reference_star.ReferenceStar('G2')
    >>> print(g2_star.to_pandas())
@@ -53,10 +53,10 @@ import numpy as np
 import pandas as pd
 from astropy.table import Table
 
-from .. import constants as const
-from ..data_paths import paths_at_init
-from .pwv import PWVModel
-from .. import types
+from snat_sim import constants as const
+from snat_sim.data_paths import paths_at_init
+from snat_sim.modeling.pwv import PWVModel
+from snat_sim import types
 
 
 class ReferenceStar:
