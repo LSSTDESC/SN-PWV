@@ -6,7 +6,7 @@ import numpy as np
 import sncosmo
 
 from snat_sim import sn_magnitudes, constants as const
-from snat_sim.modeling import StaticPWVTrans
+from snat_sim.models import StaticPWVTrans
 
 
 class GetConfigPWVValues(TestCase):

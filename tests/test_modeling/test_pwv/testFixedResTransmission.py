@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 
-from snat_sim.modeling import pwv
+from snat_sim.models import pwv
 
 
 class PWVInterpolation(TestCase):

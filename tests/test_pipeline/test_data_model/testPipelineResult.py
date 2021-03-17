@@ -3,7 +3,7 @@ from unittest import TestCase
 import numpy as np
 import sncosmo
 
-from snat_sim.modeling import SNModel
+from snat_sim.models import SNModel
 from snat_sim.pipeline.data_model import PipelineResult
 
 

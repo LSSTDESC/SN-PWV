@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from snat_sim.modeling.supernova import ObservedCadence
+from snat_sim.models.supernova import ObservedCadence
 from ...mock import create_mock_plasticc_light_curve
 
 

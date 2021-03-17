@@ -3,7 +3,7 @@
 import inspect
 from unittest import TestCase
 
-from snat_sim.modeling import pwv
+from snat_sim.models import pwv
 
 
 class PropagateMethodSignature(TestCase):

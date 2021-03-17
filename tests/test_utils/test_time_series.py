@@ -9,7 +9,7 @@ import pandas as pd
 from astropy.time import Time
 from pytz import UTC
 
-from snat_sim.modeling import PWVModel
+from snat_sim.models import PWVModel
 from snat_sim.utils import time_series
 from tests.mock import create_mock_pwv_data
 

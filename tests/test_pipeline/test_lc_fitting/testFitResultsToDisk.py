@@ -3,7 +3,7 @@ from unittest import TestCase
 
 from egon.mock import MockSource
 
-from snat_sim.modeling import SNModel
+from snat_sim.models import SNModel
 from snat_sim.pipeline.lc_fitting import FitResultsToDisk, PipelineResult
 
 
