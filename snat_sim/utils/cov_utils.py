@@ -73,7 +73,7 @@ def subcovariance(covariance: pd.DataFrame, paramList: List[str], array: bool = 
 
     """
 
-    df = covariance.ix[paramList, paramList]
+    df = covariance.loc[paramList, paramList]
     if array:
         return df.values
 

@@ -352,7 +352,7 @@ class SNFitResult(sncosmo.utils.Result):
     def salt_covariance_linear(self, x0Truth: float = None) -> pd.DataFrame:
         """The covariance matrix of apparent magnitude and salt2 parameters"""
 
-        x0 = self.parameters.ix['x0'] if x0Truth is None else x0Truth
+        x0 = self.parameters.loc['x0'] if x0Truth is None else x0Truth
 
         factor = - 2.5 / np.log(10)
         # drop other parameters like t0
