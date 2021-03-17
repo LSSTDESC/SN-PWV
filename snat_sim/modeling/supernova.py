@@ -5,10 +5,9 @@ supernovae.
 from __future__ import annotations
 
 from copy import copy
-from copy import deepcopy
 from dataclasses import dataclass
 from typing import *
-from typing import List, Optional, Union
+from typing import Optional, Union
 
 import numpy as np
 import pandas as pd
@@ -255,103 +254,39 @@ class SNModel(sncosmo.Model):
             meta=dict(zip(self.param_names, self.parameters)))
 
 
-class ResChar(object):
+class SNFitResult(sncosmo.utils.Result):
 
-    def __init__(
-            self,
-            vparam_names: List[str],
-            param_names: List[str],
-            parameters: List[float],
-            covariance: np.ndarray,
-            samples: Optional[np.ndarray] = None,
-            weights: Optional[np.array] = None,
-            sncosmoModel: types.ModelLike = None
-    ) -> None:
-        """
-        Holds results of characterizing a light curve fit. Mostly
-        this will be constructed from `sncosmo.utils.res` instances
-
-        Args:
-            vparam_names: Model parameters inferred in the characterization
-            param_names: Model parameters (complete list)
-            parameters : Values of all model parameters in same order as param_names
-            covariance : Covariance of all the varied parameters. Should be a
-                symmetric positive definite array of shape(n, n) where
-                n = len(vparam_names)
-            samples : Samples of shape(num, n) where num = number of samples, and
-                n = len(vparam_names). May not be independent
-            weights : Must have length equal to len(samples) if present. For
-                mcmc_lc, this is usually used as `np.ones`. For nest_lc
-                the weights are used to calculate quantities
-            sncosmoModel: Model returned from the sncsomo estimate
-        """
-
-        self.vparam_names = vparam_names
-        self.param_names = param_names
-        self._parameters = parameters
-        self._covariance = covariance
-        self._samples = samples
-        self.weights = weights
-        self.sncosmoModel = sncosmoModel
-        self.sample_names = deepcopy(self.vparam_names)
-
-    @classmethod
-    def fromSNCosmoRes(cls, res: sncosmo.utils.Result, model: types.ModelLike) -> ResChar:
-        """Instantiate an instance from a ``sncosmo.utils.res`` object
-
-        Args:
-            res: Sncosmo result object
-            model: Fitted sncosmo model
-
-        Returns:
-            A ``ResChar`` instance
-        """
-
-        # samples if the method was mcmc/nest_lc but not if max_lc
-        # weights makes sense for mcmc methods
-        samples = None
-        weights = None
-        if 'samples' in res.keys():
-            samples = res['samples']
-            weights = np.ones(len(samples))
-
-        # if method was nest_lc
-        if 'weights' in res.keys():
-            weights = res['weights']
-
-        return cls(
-            vparam_names=res.vparam_names,
-            param_names=res.param_names,
-            parameters=res.parameters,
-            covariance=res.covariance,
-            samples=samples,
-            weights=weights,
-            sncosmoModel=model)
+    @property
+    def param_names(self) -> List[str]:
+        return copy(self['param_names'])
 
     @property
     def parameters(self) -> pd.Series:
         """The model parameters"""
 
-        return pd.Series(self._parameters, index=self.param_names)
+        return pd.Series(self['parameters'], index=self.param_names)
 
     @property
-    def vparams(self) -> pd.Series:
+    def vparam_names(self) -> List[str]:
+        return copy(self['vparam_names'])
+
+    @property
+    def vparameters(self) -> pd.Series:
         """The values of the varied parameters"""
 
-        vparameters = [self._parameters[self.param_names.index(v)] for v in self.vparam_names]
+        vparameters = [self['parameters'][self['param_names'].index(v)] for v in self.vparam_names]
         return pd.Series(vparameters, index=self.vparam_names)
 
     @property
     def covariance(self) -> pd.DataFrame:
         """The covariance matrix"""
 
-        return cutils.covariance(self._covariance, paramNames=self.vparam_names)
+        return cutils.covariance(self['covariance'], paramNames=self.vparam_names)
 
-    def salt_covariance_linear(self, x0Truth=None):
+    def salt_covariance_linear(self, x0Truth: float = None) -> pd.DataFrame:
+        """The covariance matrix of apparent magnitude and salt2 parameters"""
 
-        x0 = self.parameters.ix['x0']
-        if x0Truth is not None:
-            x0 = x0Truth
+        x0 = self.parameters.ix['x0'] if x0Truth is None else x0Truth
 
         factor = - 2.5 / np.log(10)
         # drop other parameters like t0
@@ -366,11 +301,40 @@ class ResChar(object):
 
         return covariance
 
-    def mu_variance_linear(self, alpha=0.14, beta=3.1):
+    def mu_variance_linear(self, alpha: float = 0.14, beta: float = 3.1) -> float:
+        """Calculate the variance in distance modulus
+
+        Determined using the covariance matrix of apparent magnitude and
+        salt2 parameters (See the ``salt_covariance_linear`` method).
+
+        Args:
+            alpha: The stretch correction factor
+            beta: The color excess correction factor
+
+        Returns:
+            The variance in mu
+        """
 
         arr = np.array([1.0, alpha, -beta])
         _cov = self.salt_covariance_linear()
-        # print(_cov, A)
         sc = cutils.subcovariance(_cov, paramList=['mB', 'x1', 'c'], array=True)
-
         return cutils.expAVsquare(sc, arr)
+
+    def __repr__(self):
+        # Extremely similar to the base representation of the parent class but
+        # cleaned up so values display neatly as lined up lists instead of as arrays
+        covarience_str = '\n  '.join([str(aa.tolist()) for aa in self.covariance.values])
+        return (
+                f"     success: {self.success}\n"
+                f"     message: {self.message}\n"
+                f"       ncall: {self.ncall}\n"
+                f"        nfit: {self.nfit}\n"
+                f"       chisq: {self.chisq}\n"
+                f"        ndof: {self.ndof}\n"
+                f" param_names: {self.param_names}\n"
+                f"  parameters: {self.parameters.values.tolist()}\n"
+                f"vparam_names: {self.vparam_names}\n"
+                f"      errors: {list(self.errors.values)}"
+                f"  covariance:\n"
+                + covarience_str
+        )
