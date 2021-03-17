@@ -388,19 +388,26 @@ class SNFitResult(sncosmo.utils.Result):
 
     def __repr__(self):
         # Extremely similar to the base representation of the parent class but
-        # cleaned up so values display neatly as lined up lists instead of as arrays
-        covariance_str = '\n  '.join([str(aa.tolist()) for aa in self.covariance.values])
+        # cleaned up so values are displayed in neat rows / columns
+
+        four_spaces = '    '
+        with np.printoptions(precision=3):
+            chisq_str = str(np.array([self.chisq]))[1:-1]
+            params_str = str(self.parameters.values)
+            covariance_str = four_spaces + str(self.covariance.values).replace('\n', f'\n{four_spaces}')
+            errors_str = str(np.array(list(self.errors.values())))
+
         return (
                 f"     success: {self.success}\n"
                 f"     message: {self.message}\n"
                 f"       ncall: {self.ncall}\n"
                 f"        nfit: {self.nfit}\n"
-                f"       chisq: {self.chisq}\n"
+                f"       chisq: {chisq_str}\n"
                 f"        ndof: {self.ndof}\n"
                 f" param_names: {self.param_names}\n"
-                f"  parameters: {self.parameters.values.tolist()}\n"
+                f"  parameters: {params_str}\n"
                 f"vparam_names: {self.vparam_names}\n"
-                f"      errors: {list(self.errors.values)}"
+                f"      errors: {errors_str}\n"
                 f"  covariance:\n"
                 + covariance_str
         )
