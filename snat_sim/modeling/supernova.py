@@ -4,7 +4,7 @@ supernovae.
 
 from __future__ import annotations
 
-from copy import copy
+from copy import copy, deepcopy
 from dataclasses import dataclass
 from typing import *
 from typing import Optional, Union
@@ -253,6 +253,72 @@ class SNModel(sncosmo.Model):
             names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'),
             meta=dict(zip(self.param_names, self.parameters)))
 
+    def fit_lc(
+            self,
+            data: Table = None,
+            vparam_names: List = tuple(),
+            bounds: Dict[str: Tuple[types.Numeric, types.Numeric]] = None,
+            method: str = 'minuit',
+            guess_amplitude: bool = True,
+            guess_t0: bool = True,
+            guess_z: bool = True,
+            minsnr: float = 5.0,
+            modelcov: bool = False,
+            maxcall: int = 10000,
+            phase_range: List[types.Numeric] = None,
+            wave_range: List[types.Numeric] = None
+    ) -> Tuple[SNFitResult, SNModel]:
+        """Fit model parameters to photometric data via a chi-squared minimization
+
+        Fitting behavior:
+          - Parameters of the parent instance are not modified during the fit
+          - If ``modelcov`` is enabled, the fit is performed multiple times until convergence.
+          - The ``t0`` parameter has a default fitting boundary such that the latest
+            phase of the model lines up with the earliest data point and the earliest
+            phase of the model lines up with the latest data point.
+
+        Args:
+            data: Table of photometric data.
+            vparam_names: Model parameters to vary in the fit.
+            bounds: Bounded range for each parameter. Keys should be parameter names, values are tuples.
+            guess_amplitude: Whether or not to guess the amplitude from the data.
+            guess_t0: Whether or not to guess t0. Only has an effect when fitting t0.
+            guess_z: Whether or not to guess z (redshift). Only has an effect when fitting redshift.
+            minsnr: When guessing amplitude and t0, only use data with signal-to-noise ratio greater than this value.
+            method: Minimization method to use. Currently there is only one choice.
+            modelcov: Include model covariance when calculating chisq. Default is False.
+            maxcall: Maximum number of chi-square iterations to evaluate when fitting.
+            phase_range: If given, discard data outside this range of phases.
+            wave_range: If given, discard data with bandpass effective wavelengths outside this range.
+
+        Returns:
+            The fit result and a copy of the model set to the fitted parameters
+        """
+
+        try:
+            fit_func = {'iminuit': sncosmo.fit_lc, 'emcee': sncosmo.mcmc_lc}[method]
+
+        except KeyError:
+            raise ValueError(f'Invalid fitting method: {method}')
+
+        result, fitted_model = fit_func(
+            data=data,
+            model=deepcopy(self),
+            vparam_names=vparam_names,
+            bounds=bounds, method=method,
+            guess_amplitude=guess_amplitude,
+            guess_t0=guess_t0,
+            guess_z=guess_z,
+            minsnr=minsnr,
+            modelcov=modelcov,
+            maxcall=maxcall,
+            phase_range=phase_range,
+            wave_range=wave_range,
+            warn=False
+        )
+
+        return SNFitResult(result), SNModel(fitted_model)
+
 
 class SNFitResult(sncosmo.utils.Result):
 
@@ -323,7 +389,7 @@ class SNFitResult(sncosmo.utils.Result):
     def __repr__(self):
         # Extremely similar to the base representation of the parent class but
         # cleaned up so values display neatly as lined up lists instead of as arrays
-        covarience_str = '\n  '.join([str(aa.tolist()) for aa in self.covariance.values])
+        covariance_str = '\n  '.join([str(aa.tolist()) for aa in self.covariance.values])
         return (
                 f"     success: {self.success}\n"
                 f"     message: {self.message}\n"
@@ -336,5 +402,5 @@ class SNFitResult(sncosmo.utils.Result):
                 f"vparam_names: {self.vparam_names}\n"
                 f"      errors: {list(self.errors.values)}"
                 f"  covariance:\n"
-                + covarience_str
+                + covariance_str
         )
