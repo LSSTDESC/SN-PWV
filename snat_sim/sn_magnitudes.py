@@ -22,7 +22,7 @@ from tqdm import tqdm
 from . import constants as const
 from . import types
 from .data_paths import paths_at_init
-from .modeling import SNModel
+from .models import SNModel
 
 
 # Todo: Add dictionary keys to docs? - consider named tuple?

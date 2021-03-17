@@ -15,8 +15,8 @@ from egon.nodes import Node, Source, Target
 
 from .data_model import PipelineResult
 from .. import constants as const
-from ..modeling import AbstractVariablePWVEffect, ObservedCadence, PWVModel, SNModel, StaticPWVTrans
-from ..reference_star import VariableCatalog
+from ..models import AbstractVariablePWVEffect, ObservedCadence, PWVModel, SNModel, StaticPWVTrans
+from ..reference_stars import VariableCatalog
 
 __all__ = ['SimulateLightCurves', 'SimulationToDisk', 'SimulationFromDisk']
 

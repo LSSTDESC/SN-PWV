@@ -5,11 +5,6 @@ dealing with atmospheric / weather data.
 Usage Example
 -------------
 
-Importing the ``snat_sim`` package will automatically register methods of
-the ``TSUAccessor`` class with the ``pandas`` package. This means the methods
-can be called directly on ``pandas.Series`` objects using the ``tsu`` accessor
-attribute.
-
 As an example, we create a ``pandas.Series`` object with missing data and
 fill in the missing data using the ``periodic_interpolation`` method.
 

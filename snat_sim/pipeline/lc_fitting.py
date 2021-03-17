@@ -13,7 +13,7 @@ from egon.nodes import Node, Target
 
 from .data_model import PipelineResult
 from .. import constants as const
-from ..modeling import SNModel
+from ..models import SNModel
 
 __all__ = ['FitLightCurves', 'FitResultsToDisk']
 warnings.simplefilter('ignore', category=DeprecationWarning)

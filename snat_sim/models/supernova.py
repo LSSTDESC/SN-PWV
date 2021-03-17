@@ -15,8 +15,7 @@ import sncosmo
 from astropy.table import Table
 
 from .pwv import VariablePropagationEffect
-from .. import constants as const, types
-from ..utils import cov_utils as cutils
+from .. import types
 
 
 @dataclass
@@ -157,6 +156,18 @@ class ObservedCadence:
 class SNModel(sncosmo.Model):
     """An observer-frame supernova model composed of a Source and zero or more effects"""
 
+    @staticmethod
+    def from_sncosmo(model: sncosmo.Model) -> SNModel:
+
+        new_model = SNModel(
+            model.source,
+            effects=model.effects,
+            effect_names=model.effect_names,
+            effect_frames=model._effect_frames)
+
+        new_model.update({p: model[p] for p in new_model.param_names})
+        return new_model
+
     # Same as parent except allows duck-typing of ``effect`` arg
     def _add_effect_partial(self, effect, name, frame) -> None:
         """Like 'add effect', but don't sync parameter arrays"""
@@ -285,7 +296,7 @@ class SNModel(sncosmo.Model):
             guess_t0: Whether or not to guess t0. Only has an effect when fitting t0.
             guess_z: Whether or not to guess z (redshift). Only has an effect when fitting redshift.
             minsnr: When guessing amplitude and t0, only use data with signal-to-noise ratio greater than this value.
-            method: Minimization method to use. Currently there is only one choice.
+            method: Minimization method to use. Either "minuit" or "emcee"
             modelcov: Include model covariance when calculating chisq. Default is False.
             maxcall: Maximum number of chi-square iterations to evaluate when fitting.
             phase_range: If given, discard data outside this range of phases.
@@ -296,7 +307,7 @@ class SNModel(sncosmo.Model):
         """
 
         try:
-            fit_func = {'iminuit': sncosmo.fit_lc, 'emcee': sncosmo.mcmc_lc}[method]
+            fit_func = {'minuit': sncosmo.fit_lc, 'emcee': sncosmo.mcmc_lc}[method]
 
         except KeyError:
             raise ValueError(f'Invalid fitting method: {method}')
@@ -317,7 +328,7 @@ class SNModel(sncosmo.Model):
             warn=False
         )
 
-        return SNFitResult(result), SNModel(fitted_model)
+        return SNFitResult(result), SNModel.from_sncosmo(fitted_model)
 
 
 class SNFitResult(sncosmo.utils.Result):
@@ -344,13 +355,19 @@ class SNFitResult(sncosmo.utils.Result):
         return pd.Series(vparameters, index=self.vparam_names)
 
     @property
-    def covariance(self) -> pd.DataFrame:
+    def covariance(self) -> Optional[pd.DataFrame]:
         """The covariance matrix"""
+
+        if self['covariance'] is None:
+            return None
 
         return pd.DataFrame.cov_utils.from_array(self['covariance'], paramNames=self.vparam_names)
 
     def salt_covariance_linear(self, x0Truth: float = None) -> pd.DataFrame:
         """The covariance matrix of apparent magnitude and salt2 parameters"""
+
+        if not self.success:
+            raise RuntimeError('Cannot calculate variance for a failed fit.')
 
         x0 = self.parameters.loc['x0'] if x0Truth is None else x0Truth
 
@@ -367,7 +384,7 @@ class SNFitResult(sncosmo.utils.Result):
 
         return covariance
 
-    def mu_variance_linear(self, alpha: float = const.betoule_alpha, beta: float = const.betoule_beta) -> float:
+    def mu_variance_linear(self, alpha: float, beta: float) -> float:
         """Calculate the variance in distance modulus
 
         Determined using the covariance matrix of apparent magnitude and
@@ -381,6 +398,9 @@ class SNFitResult(sncosmo.utils.Result):
             The variance in mu
         """
 
+        if not self.success:
+            raise RuntimeError('Cannot calculate variance for a failed fit.')
+
         arr = np.array([1.0, alpha, -beta])
         _cov = self.salt_covariance_linear()
         sc = _cov.cov_utils.subcovariance(paramList=['mB', 'x1', 'c'])
@@ -390,24 +410,27 @@ class SNFitResult(sncosmo.utils.Result):
         # Extremely similar to the base representation of the parent class but
         # cleaned up so values are displayed in neat rows / columns
 
-        four_spaces = '    '
         with np.printoptions(precision=3):
             chisq_str = str(np.array([self.chisq]))[1:-1]
             params_str = str(self.parameters.values)
-            covariance_str = four_spaces + str(self.covariance.values).replace('\n', f'\n{four_spaces}')
             errors_str = str(np.array(list(self.errors.values())))
+            if self.covariance is not None:
+                four_spaces = '\n    '
+                covariance_str = four_spaces + str(self.covariance.values).replace('\n', f'{four_spaces}')
+
+            else:
+                covariance_str = 'None'
 
         return (
-                f"     success: {self.success}\n"
-                f"     message: {self.message}\n"
-                f"       ncall: {self.ncall}\n"
-                f"        nfit: {self.nfit}\n"
-                f"       chisq: {chisq_str}\n"
-                f"        ndof: {self.ndof}\n"
-                f" param_names: {self.param_names}\n"
-                f"  parameters: {params_str}\n"
-                f"vparam_names: {self.vparam_names}\n"
-                f"      errors: {errors_str}\n"
-                f"  covariance:\n"
-                + covariance_str
+            f"     success: {self.success}\n"
+            f"     message: {self.message}\n"
+            f"       ncall: {self.ncall}\n"
+            f"        nfit: {self.nfit}\n"
+            f"       chisq: {chisq_str}\n"
+            f"        ndof: {self.ndof}\n"
+            f" param_names: {self.param_names}\n"
+            f"  parameters: {params_str}\n"
+            f"vparam_names: {self.vparam_names}\n"
+            f"      errors: {errors_str}\n"
+            f"  covariance: {covariance_str}"
         )

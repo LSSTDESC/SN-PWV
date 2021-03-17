@@ -10,9 +10,9 @@ using the ``ReferenceStar`` class:
 
 .. doctest:: python
 
-   >>> from snat_sim import reference_star
+   >>> from snat_sim import reference_stars
 
-   >>> g2_star = reference_star.ReferenceStar('G2')
+   >>> g2_star = reference_stars.ReferenceStar('G2')
    >>> print(g2_star.to_pandas())
    3000.000     4.960049e+17
    3000.006     4.659192e+17
@@ -36,7 +36,7 @@ stellar types. Catalog instances can be used to calibrate supernoca light-curves
    >>> import sncosmo
 
    >>> light_curve = sncosmo.load_example_data()
-   >>> reference_catalog = reference_star.ReferenceCatalog('G2', 'M5')
+   >>> reference_catalog = reference_stars.ReferenceCatalog('G2', 'M5')
    >>> print(reference_catalog.calibrate_lc(light_curve, pwv=4))
 
 Module Docs
@@ -55,7 +55,7 @@ from astropy.table import Table
 
 from snat_sim import constants as const
 from snat_sim.data_paths import paths_at_init
-from snat_sim.modeling.pwv import PWVModel
+from snat_sim.models.pwv import PWVModel
 from snat_sim import types
 
 

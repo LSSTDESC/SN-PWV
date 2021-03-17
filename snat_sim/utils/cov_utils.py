@@ -1,10 +1,52 @@
-"""A number of utility functions to conveniently deal with covariances
+"""The ``cov_utils`` module extends ``pandas.DataFrame`` objects to include
+covariance calculations relevant to processing supernova fit results.
 
-Ported from https://github.com/rbiswas4/AnalyzeSN/ under the MIT License.
-For more information see the provenance section of the documentation.
+Usage Example
+-------------
+
+The ``cov_utils`` accessor provides a constructor method for converting
+covariance data from ``numpy`` type objects into a ``pandas.DataFrame``
+instance:
+
+.. doctest::
+
+   >>> import numpy as np
+   >>> import pandas as pd
+   >>> import snat_sim
+
+   >>> parameter_names = ['z', 't0', 'x0', 'x1', 'c']
+   >>> example_covariance = np.array([
+   ...     [ 2.19e-04,  9.70e-04,  1.46e-09, -9.15e-04, -3.38e-04],
+   ...     [ 9.70e-04,  1.75e-01, -2.75e-08,  4.74e-02, -6.88e-04],
+   ...     [ 1.46e-09, -2.75e-08,  1.53e-13, -7.58e-08, -9.63e-09],
+   ...     [-9.15e-04,  4.74e-02, -7.58e-08,  1.04e-01,  2.85e-03],
+   ...     [-3.38e-04, -6.88e-04, -9.63e-09,  2.85e-03,  1.33e-03]
+   ... ])
+   >>> covariance_df = pd.DataFrame.cov_utils.from_array(example_covariance, parameter_names)
+   >>> covariance_df
+                  z            t0            x0            x1             c
+   z   2.190000e-04  9.700000e-04  1.460000e-09 -9.150000e-04 -3.380000e-04
+   t0  9.700000e-04  1.750000e-01 -2.750000e-08  4.740000e-02 -6.880000e-04
+   x0  1.460000e-09 -2.750000e-08  1.530000e-13 -7.580000e-08 -9.630000e-09
+   x1 -9.150000e-04  4.740000e-02 -7.580000e-08  1.040000e-01  2.850000e-03
+   c  -3.380000e-04 -6.880000e-04 -9.630000e-09  2.850000e-03  1.330000e-03
+
+From a given dataframe, you can easily extract a subset of the covariance data
+using the ``subcovariance`` method:
+
+.. doctest::
+
+   >>> covariance_df.cov_utils.subcovariance(['x1', 'c'])
+            x1        c
+   x1  0.10400  0.00285
+   c   0.00285  0.00133
+
+Module Docs
+-----------
 """
 
 from typing import Collection, List, cast, overload
+from warnings import warn
 
 import numpy as np
 import pandas as pd
@@ -30,11 +72,11 @@ class CovarianceAccessor:
     def from_array(
             cls, covArray: np.ndarray, paramNames: Collection[str] = None, normalized: bool = False
     ) -> pd.DataFrame:
-        """
-        converts a covariance matrix from a `numpy.ndarray` to a
-        `pandas.DataFrame`. If paramNames is not None, then the dataframe
-        is indexed by the parameter names, and has columns corresponding
-        to the parameter names enabling easy access by index or names.
+        """Instantiates a Dataframe covariance matrix using data from a `numpy.ndarray` object.
+
+        If paramNames is not None, then the dataframe is indexed by the
+        parameter names, and has columns corresponding to the parameter names
+        enabling easy access by index or names.
 
         Args:
             covArray: Array of the covariance
@@ -87,13 +129,13 @@ class CovarianceAccessor:
         factor * np.log(param) everywhere, and its true value is paramValue,
         assuming linear propagation
 
-        The ``factor`` parameter is used to define the logarithm. For example,
-        if the relevant transformation is going from 'f' to -2.5 log10(f),
-        the factor should be -2.5 /np.log(10)
+        The ``factor`` parameter is used to scale the logarithm. For example,
+        if the relevant transformation is going from ``f`` to ``-2.5 * log10(f)``,
+        the factor should be ``-2.5 / np.log(10)``
 
         Args:
-            paramName: Integer or parameter name specifying the position of the variable whose logarithm must be taken
-            paramValue: True/estimated value of the variable itself
+            paramName: Parameter name or integer index specifying the position of the desired variable
+            paramValue: True or estimated value of the variable itself
             factor: Factor multiplying the natural logarithm
         """
 
@@ -102,6 +144,7 @@ class CovarianceAccessor:
             cov = covariance_df.values
             cov[:, paramName] = factor * cov[:, paramName] / paramValue
             cov[paramName, :] = factor * cov[paramName, :] / paramValue
+            warn('parameter name specified as index. Returning covariance as numpy array.')
             return cov
 
         covariance_df[paramName] = factor * covariance_df[paramName] / paramValue
@@ -125,9 +168,8 @@ class CovarianceAccessor:
         return self._obj.loc[paramList, paramList]
 
     def expAVsquare(self, A: np.array) -> float:
-        """
-        Return the expectation of (A^T V)^2 where A is a constant vector and V is
-        a random vector V ~ N(0., covV) by computing A^T * covV * A
+        """The expectation of ``(A^T * V) ** 2`` where A is a constant vector and V is
+        a random vector ``V ~ N(0., covV)`` by computing ``A^T * covV * A``
 
         Args:
             A: Vector of constants.

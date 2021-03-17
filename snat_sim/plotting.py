@@ -47,7 +47,7 @@ from pwv_kpno.defaults import v1_transmission
 from pytz import utc
 
 from . import constants as const
-from . import modeling
+from . import models
 from .types import Numeric
 
 
@@ -272,7 +272,7 @@ def plot_spectral_template(
         gridspec_kw={'height_ratios': [4, 1.75]})
 
     # Plot spectral template at given redshifts
-    model = modeling.SNModel(source)
+    model = models.SNModel(source)
     flux_scale = 1e-13
     for i, z in enumerate(reversed(z_arr)):
         color = f'C{len(z_arr) - i - 1}'
@@ -657,8 +657,8 @@ def plot_residuals_on_sky(
 
 
 def compare_prop_effects(
-        pwv_data: pd.Series, static: modeling.StaticPWVTrans,
-        seasonal: modeling.SeasonalPWVTrans, variable: modeling.VariablePWVTrans
+        pwv_data: pd.Series, static: models.StaticPWVTrans,
+        seasonal: models.SeasonalPWVTrans, variable: models.VariablePWVTrans
 ) -> Tuple[plt.figure, plt.Axes]:
     """Compare the Zenith PWV assumed by different propagation effects
 
@@ -756,8 +756,8 @@ def plot_flux_variation(
     low_pwv = min(pwv1, pwv2)
     high_pwv = max(pwv1, pwv2)
 
-    model = modeling.SNModel('salt2-extended')
-    model.add_effect(modeling.StaticPWVTrans(transmission_res=resolution), '', 'obs')
+    model = models.SNModel('salt2-extended')
+    model.add_effect(models.StaticPWVTrans(transmission_res=resolution), '', 'obs')
 
     wave = np.arange(wave_min, wave_max)
     model.set(z=z, pwv=low_pwv)
@@ -792,8 +792,8 @@ def plot_delta_sn_flux(pwv: float = 4, wave_min: float = 6500, wave_max: float =
         The matplotlib figure and and array of matplotlib axes
     """
 
-    model = modeling.SNModel('salt2-extended')
-    model.add_effect(modeling.StaticPWVTrans(transmission_res=10), '', 'obs')
+    model = models.SNModel('salt2-extended')
+    model.add_effect(models.StaticPWVTrans(transmission_res=10), '', 'obs')
 
     delta_flux = []
     wave = np.arange(wave_min, wave_max)

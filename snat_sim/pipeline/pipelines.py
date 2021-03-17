@@ -10,8 +10,8 @@ from egon.pipeline import Pipeline
 from .lc_fitting import FitLightCurves, FitResultsToDisk
 from .lc_simulation import SimulateLightCurves, SimulationToDisk
 from .plasticc_io import LoadPlasticcSims
-from ..modeling import SNModel
-from ..reference_star import VariableCatalog
+from ..models import SNModel
+from ..reference_stars import VariableCatalog
 
 
 class FittingPipeline(Pipeline):
