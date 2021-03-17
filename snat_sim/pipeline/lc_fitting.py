@@ -67,9 +67,9 @@ class FitLightCurves(Node):
         model = copy(self.sn_model)
         model.update({k: v for k, v in light_curve.meta.items() if k in self.sn_model.param_names})
 
-        return sncosmo.fit_lc(
-            light_curve, model, self.vparams, bounds=self.bounds,
-            guess_t0=False, guess_amplitude=False, guess_z=False, warn=False)
+        return model.fit_lc(
+            light_curve, self.vparams, bounds=self.bounds,
+            guess_t0=False, guess_amplitude=False, guess_z=False)
 
     def action(self) -> None:
         """Fit light-curves"""
