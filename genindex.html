@@ -120,6 +120,7 @@
  | <a href="#A"><strong>A</strong></a>
  | <a href="#C"><strong>C</strong></a>
  | <a href="#D"><strong>D</strong></a>
+ | <a href="#E"><strong>E</strong></a>
  | <a href="#F"><strong>F</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
@@ -141,19 +142,19 @@
       <li><a href="api/data_paths.html#snat_sim.data_paths.DataPaths.__init__">__init__() (snat_sim.data_paths.DataPaths method)</a>
 
       <ul>
-        <li><a href="api/models.html#snat_sim.models.AbstractVariablePWVEffect.__init__">(snat_sim.models.AbstractVariablePWVEffect method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.AbstractVariablePWVEffect.__init__">(snat_sim.models.pwv.AbstractVariablePWVEffect method)</a>
 </li>
-        <li><a href="api/models.html#snat_sim.models.FixedResTransmission.__init__">(snat_sim.models.FixedResTransmission method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.PWVModel.__init__">(snat_sim.models.pwv.PWVModel method)</a>
 </li>
-        <li><a href="api/models.html#snat_sim.models.ObservedCadence.__init__">(snat_sim.models.ObservedCadence method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.PWVTransmissionModel.__init__">(snat_sim.models.pwv.PWVTransmissionModel method)</a>
 </li>
-        <li><a href="api/models.html#snat_sim.models.PWVModel.__init__">(snat_sim.models.PWVModel method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.SeasonalPWVTrans.__init__">(snat_sim.models.pwv.SeasonalPWVTrans method)</a>
 </li>
-        <li><a href="api/models.html#snat_sim.models.SeasonalPWVTrans.__init__">(snat_sim.models.SeasonalPWVTrans method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.StaticPWVTrans.__init__">(snat_sim.models.pwv.StaticPWVTrans method)</a>
 </li>
-        <li><a href="api/models.html#snat_sim.models.StaticPWVTrans.__init__">(snat_sim.models.StaticPWVTrans method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.VariablePWVTrans.__init__">(snat_sim.models.pwv.VariablePWVTrans method)</a>
 </li>
-        <li><a href="api/models.html#snat_sim.models.VariablePWVTrans.__init__">(snat_sim.models.VariablePWVTrans method)</a>
+        <li><a href="api/models.html#snat_sim.models.supernova.ObservedCadence.__init__">(snat_sim.models.supernova.ObservedCadence method)</a>
 </li>
         <li><a href="api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelineResult.__init__">(snat_sim.pipeline.data_model.PipelineResult method)</a>
 </li>
@@ -171,6 +172,8 @@
 </li>
         <li><a href="api/utils/caching.html#snat_sim.utils.caching.MemoryCache.__init__">(snat_sim.utils.caching.MemoryCache method)</a>
 </li>
+        <li><a href="api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.__init__">(snat_sim.utils.cov_utils.CovarianceAccessor method)</a>
+</li>
         <li><a href="api/utils/time_series.html#snat_sim.utils.time_series.TSUAccessor.__init__">(snat_sim.utils.time_series.TSUAccessor method)</a>
 </li>
       </ul></li>
@@ -180,14 +183,14 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/models.html#snat_sim.models.AbstractVariablePWVEffect">AbstractVariablePWVEffect (class in snat_sim.models)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.AbstractVariablePWVEffect">AbstractVariablePWVEffect (class in snat_sim.models.pwv)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.AbstractVariablePWVEffect.assumed_pwv">assumed_pwv() (snat_sim.models.AbstractVariablePWVEffect method)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.AbstractVariablePWVEffect.assumed_pwv">assumed_pwv() (snat_sim.models.pwv.AbstractVariablePWVEffect method)</a>
 
       <ul>
-        <li><a href="api/models.html#snat_sim.models.SeasonalPWVTrans.assumed_pwv">(snat_sim.models.SeasonalPWVTrans method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.SeasonalPWVTrans.assumed_pwv">(snat_sim.models.pwv.SeasonalPWVTrans method)</a>
 </li>
-        <li><a href="api/models.html#snat_sim.models.VariablePWVTrans.assumed_pwv">(snat_sim.models.VariablePWVTrans method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.VariablePWVTrans.assumed_pwv">(snat_sim.models.pwv.VariablePWVTrans method)</a>
 </li>
       </ul></li>
   </ul></td>
@@ -206,7 +209,7 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/utils/caching.html#snat_sim.utils.caching.Cache">Cache (class in snat_sim.utils.caching)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.PWVModel.calc_airmass">calc_airmass() (snat_sim.models.PWVModel static method)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.PWVModel.calc_airmass">calc_airmass() (snat_sim.models.pwv.PWVModel static method)</a>
 </li>
       <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_calibration_factor_for_params">calc_calibration_factor_for_params() (in module snat_sim.sn_magnitudes)</a>
 </li>
@@ -216,10 +219,10 @@
 </li>
       <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.calc_mu_for_params">calc_mu_for_params() (in module snat_sim.sn_magnitudes)</a>
 </li>
+      <li><a href="api/models.html#snat_sim.models.pwv.PWVTransmissionModel.calc_transmission">calc_transmission() (snat_sim.models.pwv.PWVTransmissionModel method)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/models.html#snat_sim.models.FixedResTransmission.calc_transmission">calc_transmission() (snat_sim.models.FixedResTransmission method)</a>
-</li>
       <li><a href="api/reference_stars.html#snat_sim.reference_stars.ReferenceCatalog.calibrate_lc">calibrate_lc() (snat_sim.reference_stars.ReferenceCatalog method)</a>
 
       <ul>
@@ -233,6 +236,10 @@
       <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.correct_mag">correct_mag() (in module snat_sim.sn_magnitudes)</a>
 </li>
       <li><a href="api/plasticc.html#snat_sim.plasticc.PLaSTICC.count_light_curves">count_light_curves() (snat_sim.plasticc.PLaSTICC method)</a>
+</li>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNFitResult.covariance">covariance() (snat_sim.models.supernova.SNFitResult property)</a>
+</li>
+      <li><a href="api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor">CovarianceAccessor (class in snat_sim.utils.cov_utils)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -249,9 +256,19 @@
   </ul></td>
 </tr></table>
 
+<h2 id="E">E</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.expAVsquare">expAVsquare() (snat_sim.utils.cov_utils.CovarianceAccessor method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="F">F</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNModel.fit_lc">fit_lc() (snat_sim.models.supernova.SNModel method)</a>
+</li>
       <li><a href="api/sn_magnitudes.html#snat_sim.sn_magnitudes.fit_mag">fit_mag() (in module snat_sim.sn_magnitudes)</a>
 </li>
       <li><a href="api/pipeline/nodes.html#snat_sim.pipeline.nodes.FitLightCurves">FitLightCurves (class in snat_sim.pipeline.nodes)</a>
@@ -260,19 +277,19 @@
 </li>
       <li><a href="api/pipeline/pipeline.html#snat_sim.pipeline.FittingPipeline">FittingPipeline (class in snat_sim.pipeline)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.FixedResTransmission">FixedResTransmission (class in snat_sim.models)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/reference_stars.html#snat_sim.reference_stars.ReferenceStar.flux">flux() (snat_sim.reference_stars.ReferenceStar method)</a>
 </li>
       <li><a href="api/plasticc.html#snat_sim.plasticc.PLaSTICC.format_data_to_sncosmo">format_data_to_sncosmo() (snat_sim.plasticc.PLaSTICC static method)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.ObservedCadence.from_plasticc">from_plasticc() (snat_sim.models.ObservedCadence static method)</a>
+      <li><a href="api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.from_array">from_array() (snat_sim.utils.cov_utils.CovarianceAccessor class method)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.SeasonalPWVTrans.from_pwv_model">from_pwv_model() (snat_sim.models.SeasonalPWVTrans static method)</a>
+      <li><a href="api/models.html#snat_sim.models.supernova.ObservedCadence.from_plasticc">from_plasticc() (snat_sim.models.supernova.ObservedCadence static method)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.PWVModel.from_suominet_receiver">from_suominet_receiver() (snat_sim.models.PWVModel static method)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.SeasonalPWVTrans.from_pwv_model">from_pwv_model() (snat_sim.models.pwv.SeasonalPWVTrans static method)</a>
+</li>
+      <li><a href="api/models.html#snat_sim.models.pwv.PWVModel.from_suominet_receiver">from_suominet_receiver() (snat_sim.models.pwv.PWVModel static method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -321,6 +338,10 @@
       <li><a href="api/pipeline/nodes.html#snat_sim.pipeline.nodes.LoadPlasticcSims">LoadPlasticcSims (class in snat_sim.pipeline.nodes)</a>
 </li>
   </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance">log_covariance() (snat_sim.utils.cov_utils.CovarianceAccessor method)</a>
+</li>
+  </ul></td>
 </tr></table>
 
 <h2 id="M">M</h2>
@@ -337,6 +358,10 @@
         <li><a href="api/data_paths.html#module-snat_sim.data_paths">snat_sim.data_paths</a>
 </li>
         <li><a href="api/models.html#module-snat_sim.models">snat_sim.models</a>
+</li>
+        <li><a href="api/models.html#module-snat_sim.models.pwv">snat_sim.models.pwv</a>
+</li>
+        <li><a href="api/models.html#module-snat_sim.models.supernova">snat_sim.models.supernova</a>
 </li>
         <li><a href="api/pipeline/pipeline.html#module-snat_sim.pipeline">snat_sim.pipeline</a>
 </li>
@@ -356,11 +381,17 @@
 </li>
         <li><a href="api/utils/caching.html#module-snat_sim.utils.caching">snat_sim.utils.caching</a>
 </li>
+        <li><a href="api/utils/cov_utils.html#module-snat_sim.utils.cov_utils">snat_sim.utils.cov_utils</a>
+</li>
         <li><a href="api/utils/filters.html#module-snat_sim.utils.filters">snat_sim.utils.filters</a>
 </li>
         <li><a href="api/utils/time_series.html#module-snat_sim.utils.time_series">snat_sim.utils.time_series</a>
 </li>
       </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNFitResult.mu_variance_linear">mu_variance_linear() (snat_sim.models.supernova.SNFitResult method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -375,7 +406,7 @@
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/models.html#snat_sim.models.ObservedCadence">ObservedCadence (class in snat_sim.models)</a>
+      <li><a href="api/models.html#snat_sim.models.supernova.ObservedCadence">ObservedCadence (class in snat_sim.models.supernova)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -383,6 +414,8 @@
 <h2 id="P">P</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNFitResult.parameters">parameters() (snat_sim.models.supernova.SNFitResult property)</a>
+</li>
       <li><a href="api/utils/time_series.html#snat_sim.utils.time_series.TSUAccessor.periodic_interpolation">periodic_interpolation() (snat_sim.utils.time_series.TSUAccessor method)</a>
 </li>
       <li><a href="api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelineResult">PipelineResult (class in snat_sim.pipeline.data_model)</a>
@@ -421,19 +454,21 @@
 </li>
       <li><a href="api/plotting.html#snat_sim.plotting.plot_year_pwv_vs_time">plot_year_pwv_vs_time() (in module snat_sim.plotting)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.AbstractVariablePWVEffect.propagate">propagate() (snat_sim.models.AbstractVariablePWVEffect method)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.AbstractVariablePWVEffect.propagate">propagate() (snat_sim.models.pwv.AbstractVariablePWVEffect method)</a>
 
       <ul>
-        <li><a href="api/models.html#snat_sim.models.StaticPWVTrans.propagate">(snat_sim.models.StaticPWVTrans method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.StaticPWVTrans.propagate">(snat_sim.models.pwv.StaticPWVTrans method)</a>
 </li>
-        <li><a href="api/models.html#snat_sim.models.VariablePropagationEffect.propagate">(snat_sim.models.VariablePropagationEffect method)</a>
+        <li><a href="api/models.html#snat_sim.models.pwv.VariablePropagationEffect.propagate">(snat_sim.models.pwv.VariablePropagationEffect method)</a>
 </li>
       </ul></li>
-      <li><a href="api/models.html#snat_sim.models.PWVModel.pwv_los">pwv_los() (snat_sim.models.PWVModel method)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.PWVModel.pwv_los">pwv_los() (snat_sim.models.pwv.PWVModel method)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.PWVModel.pwv_zenith">pwv_zenith() (snat_sim.models.PWVModel method)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.PWVModel.pwv_zenith">pwv_zenith() (snat_sim.models.pwv.PWVModel method)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.PWVModel">PWVModel (class in snat_sim.models)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.PWVModel">PWVModel (class in snat_sim.models.pwv)</a>
+</li>
+      <li><a href="api/models.html#snat_sim.models.pwv.PWVTransmissionModel">PWVTransmissionModel (class in snat_sim.models.pwv)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -461,15 +496,17 @@
 <h2 id="S">S</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNFitResult.salt_covariance_linear">salt_covariance_linear() (snat_sim.models.supernova.SNFitResult method)</a>
+</li>
       <li><a href="api/plotting.html#snat_sim.plotting.sci_notation">sci_notation() (in module snat_sim.plotting)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.PWVModel.seasonal_averages">seasonal_averages() (snat_sim.models.PWVModel method)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.PWVModel.seasonal_averages">seasonal_averages() (snat_sim.models.pwv.PWVModel method)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.SeasonalPWVTrans">SeasonalPWVTrans (class in snat_sim.models)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.SeasonalPWVTrans">SeasonalPWVTrans (class in snat_sim.models.pwv)</a>
 </li>
       <li><a href="api/utils/utils.html#snat_sim.utils.setup_environment">setup_environment() (in module snat_sim.utils)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.SNModel.simulate_lc">simulate_lc() (snat_sim.models.SNModel method)</a>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNModel.simulate_lc">simulate_lc() (snat_sim.models.supernova.SNModel method)</a>
 </li>
       <li><a href="api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulateLightCurves">SimulateLightCurves (class in snat_sim.pipeline.nodes)</a>
 </li>
@@ -496,6 +533,20 @@
 
       <ul>
         <li><a href="api/models.html#module-snat_sim.models">module</a>
+</li>
+      </ul></li>
+      <li>
+    snat_sim.models.pwv
+
+      <ul>
+        <li><a href="api/models.html#module-snat_sim.models.pwv">module</a>
+</li>
+      </ul></li>
+      <li>
+    snat_sim.models.supernova
+
+      <ul>
+        <li><a href="api/models.html#module-snat_sim.models.supernova">module</a>
 </li>
       </ul></li>
       <li>
@@ -564,6 +615,13 @@
 </li>
       </ul></li>
       <li>
+    snat_sim.utils.cov_utils
+
+      <ul>
+        <li><a href="api/utils/cov_utils.html#module-snat_sim.utils.cov_utils">module</a>
+</li>
+      </ul></li>
+      <li>
     snat_sim.utils.filters
 
       <ul>
@@ -577,13 +635,17 @@
         <li><a href="api/utils/time_series.html#module-snat_sim.utils.time_series">module</a>
 </li>
       </ul></li>
-      <li><a href="api/models.html#snat_sim.models.SNModel">SNModel (class in snat_sim.models)</a>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNFitResult">SNFitResult (class in snat_sim.models.supernova)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.StaticPWVTrans">StaticPWVTrans (class in snat_sim.models)</a>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNModel">SNModel (class in snat_sim.models.supernova)</a>
+</li>
+      <li><a href="api/models.html#snat_sim.models.pwv.StaticPWVTrans">StaticPWVTrans (class in snat_sim.models.pwv)</a>
 </li>
       <li><a href="api/data_paths.html#snat_sim.data_paths.DataPaths.stellar_flux_dir">stellar_flux_dir() (snat_sim.data_paths.DataPaths property)</a>
 </li>
       <li><a href="api/data_paths.html#snat_sim.data_paths.DataPaths.stellar_spectra_dir">stellar_spectra_dir() (snat_sim.data_paths.DataPaths property)</a>
+</li>
+      <li><a href="api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance">subcovariance() (snat_sim.utils.cov_utils.CovarianceAccessor method)</a>
 </li>
       <li><a href="api/utils/time_series.html#snat_sim.utils.time_series.TSUAccessor.supplemented_data">supplemented_data() (snat_sim.utils.time_series.TSUAccessor method)</a>
 </li>
@@ -605,9 +667,9 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/reference_stars.html#snat_sim.reference_stars.ReferenceStar.to_pandas">to_pandas() (snat_sim.reference_stars.ReferenceStar method)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.ObservedCadence.to_sncosmo">to_sncosmo() (snat_sim.models.ObservedCadence method)</a>
+      <li><a href="api/models.html#snat_sim.models.supernova.ObservedCadence.to_sncosmo">to_sncosmo() (snat_sim.models.supernova.ObservedCadence method)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.StaticPWVTrans.transmission_res">transmission_res() (snat_sim.models.StaticPWVTrans property)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.StaticPWVTrans.transmission_res">transmission_res() (snat_sim.models.pwv.StaticPWVTrans property)</a>
 </li>
       <li><a href="api/utils/time_series.html#snat_sim.utils.time_series.TSUAccessor">TSUAccessor (class in snat_sim.utils.time_series)</a>
 </li>
@@ -619,11 +681,13 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/reference_stars.html#snat_sim.reference_stars.VariableCatalog">VariableCatalog (class in snat_sim.reference_stars)</a>
 </li>
+      <li><a href="api/models.html#snat_sim.models.pwv.VariablePropagationEffect">VariablePropagationEffect (class in snat_sim.models.pwv)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/models.html#snat_sim.models.VariablePropagationEffect">VariablePropagationEffect (class in snat_sim.models)</a>
+      <li><a href="api/models.html#snat_sim.models.pwv.VariablePWVTrans">VariablePWVTrans (class in snat_sim.models.pwv)</a>
 </li>
-      <li><a href="api/models.html#snat_sim.models.VariablePWVTrans">VariablePWVTrans (class in snat_sim.models)</a>
+      <li><a href="api/models.html#snat_sim.models.supernova.SNFitResult.vparameters">vparameters() (snat_sim.models.supernova.SNFitResult property)</a>
 </li>
   </ul></td>
 </tr></table>

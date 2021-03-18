@@ -406,8 +406,9 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">snat_sim._data_paths</span> <span class="kn">import</span> <span class="n">data_paths</span>
-<span class="n">data_paths</span><span class="o">.</span><span class="n">get_plasticc_dir</span><span class="p">()</span>
+<span></span><span class="kn">from</span> <span class="nn">snat_sim.data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
+<span class="n">paths_at_init</span><span class="o">.</span><span class="n">get_plasticc_dir</span><span class="p">()</span>
+
 </pre></div>
 </div>
 </div>
@@ -417,7 +418,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-PosixPath(&#39;/mnt/md0/bulk/sn-sims&#39;)
+PosixPath(&#39;/home/djperrefort/Github/SN-PWV/data/plasticc&#39;)
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -449,7 +450,7 @@ PosixPath(&#39;/mnt/md0/bulk/sn-sims&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&#39;kraken_2044&#39;, &#39;alt_sched_rolling&#39;, &#39;alt_sched&#39;, &#39;kraken_2026&#39;]
+[&#39;alt_sched&#39;]
 </pre></div></div>
 </div>
 <p>Simulated light-curves are written in the SNANA file format and are distributed across multiple files. We load a light-curve from one of these files and demonstrate the data model below. Each cadence includes simulations run with multiple supernova models. In this notebook we only need simulations for normal SNe (Model 11).</p>
@@ -469,7 +470,7 @@ PosixPath(&#39;/mnt/md0/bulk/sn-sims&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Available Light-curves:  4737479
+Available Light-curves:  115
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -508,7 +509,7 @@ Available Light-curves:  4737479
 <div class="output_area docutils container">
 <div class="highlight"><pre>
 Params:
-{&#39;t0&#39;: 61480.12109375, &#39;x1&#39;: -0.6282458305358887, &#39;c&#39;: -0.02218671888113022, &#39;z&#39;: 0.7469527125358582, &#39;x0&#39;: 4.628982424037531e-06}
+{&#39;t0&#39;: 61999.68359375, &#39;x1&#39;: -0.7346711158752441, &#39;c&#39;: 0.05709853768348694, &#39;z&#39;: 0.43570369482040405, &#39;x0&#39;: 1.3367582141654566e-05}
 </pre></div></div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -516,31 +517,31 @@ Params:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
-<i>Table length=205</i>
-<table id="table139862320380128" class="table-striped table-bordered table-condensed">
+<i>Table length=191</i>
+<table id="table140488321129248" class="table-striped table-bordered table-condensed">
 <thead><tr><th>MJD</th><th>FLT</th><th>FIELD</th><th>PHOTFLAG</th><th>PHOTPROB</th><th>FLUXCAL</th><th>FLUXCALERR</th><th>PSF_SIG1</th><th>SKY_SIG</th><th>ZEROPT</th><th>SIM_MAGOBS</th></tr></thead>
 <thead><tr><th>float64</th><th>str2</th><th>str12</th><th>int32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th><th>float32</th></tr></thead>
-<tr><td>61387.3365</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>4.7668333</td><td>4.6751437</td><td>2.01</td><td>24.21</td><td>31.49</td><td>98.93107</td></tr>
-<tr><td>61389.3355</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-2.588817</td><td>12.943774</td><td>1.91</td><td>43.79</td><td>30.94</td><td>98.96006</td></tr>
-<tr><td>61389.3544</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>35.501144</td><td>46.115395</td><td>1.81</td><td>70.9</td><td>30.02</td><td>98.96628</td></tr>
-<tr><td>61390.3328</td><td>u</td><td>NULL</td><td>0</td><td>0.0</td><td>-2.244006</td><td>7.831321</td><td>1.64</td><td>2.94</td><td>28.48</td><td>98.87183</td></tr>
-<tr><td>61390.3514</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-52.145115</td><td>33.700497</td><td>1.47</td><td>64.44</td><td>30.03</td><td>98.96628</td></tr>
-<tr><td>61392.2299</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>5.403219</td><td>7.8971477</td><td>1.85</td><td>34.28</td><td>31.19</td><td>98.94777</td></tr>
-<tr><td>61394.3293</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>1.3313534</td><td>3.1216543</td><td>1.38</td><td>23.79</td><td>31.5</td><td>98.93107</td></tr>
-<tr><td>61394.3507</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>15.543685</td><td>27.063326</td><td>1.34</td><td>56.71</td><td>30.03</td><td>98.96628</td></tr>
-<tr><td>61405.2879</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>6.803223</td><td>5.417797</td><td>1.88</td><td>31.7</td><td>31.55</td><td>98.93107</td></tr>
-<tr><td>61405.3097</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>10.470747</td><td>7.061696</td><td>1.69</td><td>35.72</td><td>31.26</td><td>98.94777</td></tr>
+<tr><td>61954.3306</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>15.283731</td><td>20.61587</td><td>2.75</td><td>47.32</td><td>30.89</td><td>98.98417</td></tr>
+<tr><td>61954.3496</td><td>g</td><td>NULL</td><td>0</td><td>0.0</td><td>3.0582032</td><td>4.2619643</td><td>2.78</td><td>13.68</td><td>31.29</td><td>98.96046</td></tr>
+<tr><td>61958.423</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-34.665913</td><td>24.074171</td><td>1.89</td><td>74.22</td><td>30.8</td><td>98.98663</td></tr>
+<tr><td>61960.3473</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>-2.3959112</td><td>10.888871</td><td>1.54</td><td>83.51</td><td>31.58</td><td>98.97268</td></tr>
+<tr><td>61960.3667</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>-11.10509</td><td>10.491764</td><td>1.49</td><td>64.03</td><td>31.29</td><td>98.9793</td></tr>
+<tr><td>61962.3822</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>0.25858268</td><td>12.420084</td><td>2.32</td><td>65.6</td><td>31.62</td><td>98.97268</td></tr>
+<tr><td>61962.4021</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>15.907692</td><td>15.589854</td><td>1.98</td><td>53.47</td><td>30.97</td><td>98.98417</td></tr>
+<tr><td>61965.4071</td><td>i</td><td>NULL</td><td>0</td><td>0.0</td><td>5.3211513</td><td>9.46272</td><td>1.99</td><td>43.6</td><td>31.3</td><td>98.9793</td></tr>
+<tr><td>61965.4287</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>2.6012752</td><td>13.66771</td><td>1.95</td><td>47.65</td><td>30.97</td><td>98.98417</td></tr>
+<tr><td>61974.3513</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>0.15049838</td><td>4.9526896</td><td>2.35</td><td>22.49</td><td>31.47</td><td>98.97268</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>61875.0115</td><td>u</td><td>NULL</td><td>0</td><td>0.0</td><td>10.29389</td><td>6.694741</td><td>1.39</td><td>2.86</td><td>28.5</td><td>98.87183</td></tr>
-<tr><td>61875.0305</td><td>g</td><td>NULL</td><td>0</td><td>0.0</td><td>-0.39340433</td><td>2.0522623</td><td>1.33</td><td>14.95</td><td>31.44</td><td>33.831097</td></tr>
-<tr><td>61878.978</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-1.6844352</td><td>29.669317</td><td>1.58</td><td>51.82</td><td>30.01</td><td>29.617575</td></tr>
-<tr><td>61878.9958</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-7.0402</td><td>13.692554</td><td>2.06</td><td>42.95</td><td>30.94</td><td>30.014353</td></tr>
-<tr><td>61881.9734</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-46.466133</td><td>29.61527</td><td>1.48</td><td>55.73</td><td>30.02</td><td>29.642986</td></tr>
-<tr><td>61881.9871</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>3.6633909</td><td>3.5757632</td><td>1.54</td><td>24.37</td><td>31.5</td><td>31.70918</td></tr>
-<tr><td>61883.9747</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-6.228678</td><td>31.823051</td><td>1.72</td><td>51.53</td><td>30.02</td><td>29.659918</td></tr>
-<tr><td>61883.992</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>3.5952897</td><td>4.650464</td><td>2.02</td><td>23.98</td><td>31.49</td><td>31.731249</td></tr>
-<tr><td>61885.9702</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-5.892972</td><td>20.891136</td><td>2.7</td><td>50.46</td><td>30.95</td><td>30.077633</td></tr>
-<tr><td>61885.9872</td><td>g</td><td>NULL</td><td>0</td><td>0.0</td><td>-6.8839006</td><td>4.450736</td><td>2.8</td><td>14.98</td><td>31.41</td><td>33.95182</td></tr>
+<tr><td>62460.0252</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>11.420037</td><td>14.9348345</td><td>1.51</td><td>67.81</td><td>30.98</td><td>30.547194</td></tr>
+<tr><td>62460.0414</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>-0.52240676</td><td>10.964314</td><td>1.55</td><td>89.11</td><td>31.65</td><td>30.144915</td></tr>
+<tr><td>62461.0267</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>-113.93512</td><td>69.27011</td><td>3.41</td><td>58.24</td><td>30.03</td><td>31.165585</td></tr>
+<tr><td>62461.0445</td><td>z</td><td>NULL</td><td>0</td><td>0.0</td><td>-15.905042</td><td>23.246475</td><td>2.57</td><td>62.08</td><td>30.98</td><td>30.558609</td></tr>
+<tr><td>62463.0275</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>47.730938</td><td>29.80475</td><td>1.63</td><td>52.77</td><td>30.04</td><td>31.19087</td></tr>
+<tr><td>62463.0456</td><td>u</td><td>NULL</td><td>0</td><td>0.0</td><td>-6.670953</td><td>11.205029</td><td>1.9</td><td>6.76</td><td>29.07</td><td>33.9238</td></tr>
+<tr><td>62466.0279</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>17.758373</td><td>33.12478</td><td>1.77</td><td>54.11</td><td>30.04</td><td>31.228773</td></tr>
+<tr><td>62466.0447</td><td>r</td><td>NULL</td><td>0</td><td>0.0</td><td>3.4169402</td><td>3.4735596</td><td>1.71</td><td>22.0</td><td>31.49</td><td>30.2049</td></tr>
+<tr><td>62468.0277</td><td>Y</td><td>NULL</td><td>0</td><td>0.0</td><td>6.5977235</td><td>42.13687</td><td>2.19</td><td>56.18</td><td>30.05</td><td>31.254023</td></tr>
+<tr><td>62468.0439</td><td>g</td><td>NULL</td><td>0</td><td>0.0</td><td>1.3531196</td><td>3.310382</td><td>2.46</td><td>13.3</td><td>31.4</td><td>33.24203</td></tr>
 </table></div>
 </div>
 <p>Here we reformat the data to be compatible with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> so we can easily visualize the light-curve.</p>
@@ -595,31 +596,31 @@ Params:
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
-<i>Table length=205</i>
-<table id="table139861523166496" class="table-striped table-bordered table-condensed">
+<i>Table length=191</i>
+<table id="table140485269657440" class="table-striped table-bordered table-condensed">
 <thead><tr><th>time</th><th>band</th><th>flux</th><th>fluxerr</th><th>zp</th><th>zpsys</th></tr></thead>
 <thead><tr><th>float64</th><th>str15</th><th>float64</th><th>float64</th><th>float64</th><th>str8</th></tr></thead>
-<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>-36.18417685286991</td><td>24.209999084472656</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>-81.44789659193381</td><td>43.790000915527344</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>-56.36072191411337</td><td>70.9000015258789</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>1.8641101743718074</td><td>2.940000057220459</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>117.97532537687275</td><td>64.44000244140625</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>-26.22287265488026</td><td>34.279998779296875</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61394.3293</td><td>lsst_hardware_r</td><td>-0.480894668240527</td><td>23.790000915527344</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61394.3507</td><td>lsst_hardware_y</td><td>-109.10362368099632</td><td>56.709999084472656</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61405.2879</td><td>lsst_hardware_r</td><td>-39.54378033805916</td><td>31.700000762939453</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61405.3097</td><td>lsst_hardware_i</td><td>-87.10985337536336</td><td>35.720001220703125</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61954.3306</td><td>lsst_hardware_z</td><td>-10.475242055536253</td><td>47.31999969482422</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61954.3496</td><td>lsst_hardware_g</td><td>4.036796093720155</td><td>13.680000305175781</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61958.423</td><td>lsst_hardware_y</td><td>45.029317446163965</td><td>74.22000122070312</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61960.3473</td><td>lsst_hardware_r</td><td>-10.866835468815877</td><td>83.51000213623047</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61960.3667</td><td>lsst_hardware_i</td><td>-80.46388950337786</td><td>64.02999877929688</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61962.3822</td><td>lsst_hardware_r</td><td>7.908405088416057</td><td>65.5999984741211</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61962.4021</td><td>lsst_hardware_z</td><td>10.1667058513041</td><td>53.470001220703125</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61965.4071</td><td>lsst_hardware_i</td><td>-67.14360738913874</td><td>43.599998474121094</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61965.4287</td><td>lsst_hardware_z</td><td>20.9634804573942</td><td>47.650001525878906</td><td>30.0</td><td>AB</td></tr>
+<tr><td>61974.3513</td><td>lsst_hardware_r</td><td>10.494994446278051</td><td>22.526463024740462</td><td>30.0</td><td>AB</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>61875.0115</td><td>lsst_hardware_u</td><td>-2.5757706142083308</td><td>2.859999895095825</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61875.0305</td><td>lsst_hardware_g</td><td>-8.893751534996861</td><td>14.949999809265137</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61878.978</td><td>lsst_hardware_y</td><td>1.1488054923012592</td><td>51.81999969482422</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61878.9958</td><td>lsst_hardware_z</td><td>18.484513094948735</td><td>42.95000076293945</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>32.72222936017294</td><td>55.72999954223633</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>5.335716140262142</td><td>24.3700008392334</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>-50.49090105891955</td><td>51.529998779296875</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61883.992</td><td>lsst_hardware_r</td><td>36.031133712661365</td><td>23.979999542236328</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>34.65369840427042</td><td>50.459999084472656</td><td>30.0</td><td>AB</td></tr>
-<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>5.623162929815328</td><td>14.979999542236328</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62460.0252</td><td>lsst_hardware_z</td><td>148.39101420798204</td><td>67.80999755859375</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62460.0414</td><td>lsst_hardware_r</td><td>134.34110754164374</td><td>89.11000061035156</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62461.0267</td><td>lsst_hardware_y</td><td>43.55973264245659</td><td>58.2400016784668</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62461.0445</td><td>lsst_hardware_z</td><td>11.0468535342248</td><td>62.08000183105469</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62463.0275</td><td>lsst_hardware_y</td><td>-37.708400271837796</td><td>52.77000045776367</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62463.0456</td><td>lsst_hardware_u</td><td>-5.038874546761092</td><td>6.760000228881836</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62466.0279</td><td>lsst_hardware_y</td><td>4.631701119244818</td><td>54.11000061035156</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62466.0447</td><td>lsst_hardware_r</td><td>-45.355882477558794</td><td>22.0</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62468.0277</td><td>lsst_hardware_y</td><td>-90.50204834800789</td><td>56.18000030517578</td><td>30.0</td><td>AB</td></tr>
+<tr><td>62468.0439</td><td>lsst_hardware_g</td><td>2.9850104065763365</td><td>13.300000190734863</td><td>30.0</td><td>AB</td></tr>
 </table></div>
 </div>
 <p>When comparing our own “duplicated” light-curves with the original PLaSTICC simulations, we care about three things: 1. Do the light-curves have the same time sampling? 2. Do the light-curves have the same parameters (except for x0 which depends on the spectral template and cosmology)? 3. Do the light-curves have a similar SNR?</p>
@@ -658,11 +659,11 @@ Params:
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-{&#39;z&#39;: 0.7469527125358582,
- &#39;t0&#39;: 61480.12109375,
- &#39;x0&#39;: 3.089103659315635e-06,
- &#39;x1&#39;: -0.6282458305358887,
- &#39;c&#39;: -0.02218671888113022}
+{&#39;z&#39;: 0.43570369482040405,
+ &#39;t0&#39;: 61999.68359375,
+ &#39;x0&#39;: 1.1405574385929165e-05,
+ &#39;x1&#39;: -0.7346711158752441,
+ &#39;c&#39;: 0.05709853768348694}
 </pre></div></div>
 </div>
 <p>For the SNR it is more informative to look at a distribution over many light-curves:</p>

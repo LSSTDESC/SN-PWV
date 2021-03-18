@@ -131,6 +131,7 @@
 <span class="sd">   :nosignatures:</span>
 
 <span class="sd">   caching</span>
+<span class="sd">   cov_utils</span>
 <span class="sd">   filters</span>
 <span class="sd">   time_series</span>
 
@@ -144,6 +145,7 @@
 <div class="viewcode-block" id="setup_environment"><a class="viewcode-back" href="../../api/utils/utils.html#snat_sim.utils.setup_environment">[docs]</a><span class="k">def</span> <span class="nf">setup_environment</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Register package integrations with third party dependencies&quot;&quot;&quot;</span>
 
+    <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">cov_utils</span>
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">time_series</span>
     <span class="kn">from</span> <span class="nn">.filters</span> <span class="kn">import</span> <span class="n">register_lsst_filters</span><span class="p">,</span> <span class="n">register_decam_filters</span>
 

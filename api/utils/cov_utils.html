@@ -1,0 +1,292 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.utils.cov_utils &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/clipboard.min.js"></script>
+    <script src="../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.utils.cov_utils</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/integrations.html">Package Integrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview/command_line.html">Command Line Interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../data_paths.html">snat_sim.data_paths</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference_stars.html">snat_sim.reference_stars</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">snat_sim.utils</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <div class="section" id="module-snat_sim.utils.cov_utils">
+<span id="snat-sim-utils-cov-utils"></span><h1>snat_sim.utils.cov_utils<a class="headerlink" href="#module-snat_sim.utils.cov_utils" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">cov_utils</span></code> module extends <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> objects to include
+covariance calculations relevant to processing supernova fit results.</p>
+<div class="section" id="usage-example">
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">cov_utils</span></code> accessor provides a constructor method for converting
+covariance data from <code class="docutils literal notranslate"><span class="pre">numpy</span></code> type objects into a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>
+instance:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">snat_sim</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">parameter_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">,</span> <span class="s1">&#39;t0&#39;</span><span class="p">,</span> <span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_covariance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+<span class="gp">... </span>    <span class="p">[</span> <span class="mf">2.19e-04</span><span class="p">,</span>  <span class="mf">9.70e-04</span><span class="p">,</span>  <span class="mf">1.46e-09</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.15e-04</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.38e-04</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span> <span class="mf">9.70e-04</span><span class="p">,</span>  <span class="mf">1.75e-01</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.75e-08</span><span class="p">,</span>  <span class="mf">4.74e-02</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.88e-04</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span> <span class="mf">1.46e-09</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.75e-08</span><span class="p">,</span>  <span class="mf">1.53e-13</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.58e-08</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.63e-09</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="o">-</span><span class="mf">9.15e-04</span><span class="p">,</span>  <span class="mf">4.74e-02</span><span class="p">,</span> <span class="o">-</span><span class="mf">7.58e-08</span><span class="p">,</span>  <span class="mf">1.04e-01</span><span class="p">,</span>  <span class="mf">2.85e-03</span><span class="p">],</span>
+<span class="gp">... </span>    <span class="p">[</span><span class="o">-</span><span class="mf">3.38e-04</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.88e-04</span><span class="p">,</span> <span class="o">-</span><span class="mf">9.63e-09</span><span class="p">,</span>  <span class="mf">2.85e-03</span><span class="p">,</span>  <span class="mf">1.33e-03</span><span class="p">]</span>
+<span class="gp">... </span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">covariance_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">cov_utils</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="n">example_covariance</span><span class="p">,</span> <span class="n">parameter_names</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">covariance_df</span>
+<span class="go">               z            t0            x0            x1             c</span>
+<span class="go">z   2.190000e-04  9.700000e-04  1.460000e-09 -9.150000e-04 -3.380000e-04</span>
+<span class="go">t0  9.700000e-04  1.750000e-01 -2.750000e-08  4.740000e-02 -6.880000e-04</span>
+<span class="go">x0  1.460000e-09 -2.750000e-08  1.530000e-13 -7.580000e-08 -9.630000e-09</span>
+<span class="go">x1 -9.150000e-04  4.740000e-02 -7.580000e-08  1.040000e-01  2.850000e-03</span>
+<span class="go">c  -3.380000e-04 -6.880000e-04 -9.630000e-09  2.850000e-03  1.330000e-03</span>
+</pre></div>
+</div>
+<p>From a given dataframe, you can easily extract a subset of the covariance data
+using the <code class="docutils literal notranslate"><span class="pre">subcovariance</span></code> method:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">covariance_df</span><span class="o">.</span><span class="n">cov_utils</span><span class="o">.</span><span class="n">subcovariance</span><span class="p">([</span><span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
+<span class="go">         x1        c</span>
+<span class="go">x1  0.10400  0.00285</span>
+<span class="go">c   0.00285  0.00133</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="module-docs">
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="snat_sim.utils.cov_utils.CovarianceAccessor">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.utils.cov_utils.</span></code><code class="sig-name descname"><span class="pre">CovarianceAccessor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Pandas DataFrame accessor for covariance calculations</p>
+<dl class="py method">
+<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extends <code class="docutils literal notranslate"><span class="pre">pandas</span></code> support for time series data</p>
+<p>DO NOT USE THIS CLASS DIRECTLY! This class is registered as a pandas accessor.
+See the module level usage example for more information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pandas_obj</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Dataframe representing the covariance matrix</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.from_array">
+<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">covArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.from_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.from_array" title="Permalink to this definition">¶</a></dt>
+<dd><p>Instantiates a Dataframe covariance matrix using data from a <cite>numpy.ndarray</cite> object.</p>
+<p>If paramNames is not None, then the dataframe is indexed by the
+parameter names, and has columns corresponding to the parameter names
+enabling easy access by index or names.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>covArray</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of the covariance</p></li>
+<li><p><strong>paramNames</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – Collection of strings</p></li>
+<li><p><strong>normalized</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to return the normalized covariance matrix</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A <cite>pandas.DataFrame</cite> with column names and indexes given by the parameter
+names. If paramNames is None, the return is a DataFrame with indexes and
+column names chosen by pandas.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance">
+<code class="sig-name descname"><span class="pre">log_covariance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramName</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramValue</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.log_covariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance" title="Permalink to this definition">¶</a></dt>
+<dt>
+<code class="sig-name descname"><span class="pre">log_covariance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramName</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramValue</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span></dt>
+<dd><p>Covariance of the parameters with parameter paramName replaced by
+factor * np.log(param) everywhere, and its true value is paramValue,
+assuming linear propagation</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">factor</span></code> parameter is used to scale the logarithm. For example,
+if the relevant transformation is going from <code class="docutils literal notranslate"><span class="pre">f</span></code> to <code class="docutils literal notranslate"><span class="pre">-2.5</span> <span class="pre">*</span> <span class="pre">log10(f)</span></code>,
+the factor should be <code class="docutils literal notranslate"><span class="pre">-2.5</span> <span class="pre">/</span> <span class="pre">np.log(10)</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>paramName</strong> – Parameter name or integer index specifying the position of the desired variable</p></li>
+<li><p><strong>paramValue</strong> – True or estimated value of the variable itself</p></li>
+<li><p><strong>factor</strong> – Factor multiplying the natural logarithm</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance">
+<code class="sig-name descname"><span class="pre">subcovariance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.subcovariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the covariance of a subset of parameters in a covariance dataFrame.</p>
+<p>The set of parameters in paramList must be a subset of the columns and
+indices of covariance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>paramList</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – List of parameters for which the subCovariance matrix is desired</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The covariance of the given parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.expAVsquare">
+<code class="sig-name descname"><span class="pre">expAVsquare</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.expAVsquare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.expAVsquare" title="Permalink to this definition">¶</a></dt>
+<dd><p>The expectation of <code class="docutils literal notranslate"><span class="pre">(A^T</span> <span class="pre">*</span> <span class="pre">V)</span> <span class="pre">**</span> <span class="pre">2</span></code> where A is a constant vector and V is
+a random vector <code class="docutils literal notranslate"><span class="pre">V</span> <span class="pre">~</span> <span class="pre">N(0.,</span> <span class="pre">covV)</span></code> by computing <code class="docutils literal notranslate"><span class="pre">A^T</span> <span class="pre">*</span> <span class="pre">covV</span> <span class="pre">*</span> <span class="pre">A</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>A</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Vector of constants.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The variance as a scalar value</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">SNAT-SIM</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.utils.cov_utils</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

@@ -168,6 +168,7 @@
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">.data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">types</span>
 
 
 <div class="viewcode-block" id="PLaSTICC"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLaSTICC">[docs]</a><span class="k">class</span> <span class="nc">PLaSTICC</span><span class="p">:</span>
@@ -230,7 +231,7 @@
         <span class="k">return</span> <span class="n">total_lc</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Path</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over light-curves from a given header file</span>
 
 <span class="sd">        Files are expected to be written in pairs of a header file </span>

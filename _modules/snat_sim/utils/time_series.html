@@ -122,11 +122,6 @@
 <span class="sd">Usage Example</span>
 <span class="sd">-------------</span>
 
-<span class="sd">Importing the ``snat_sim`` package will automatically register methods of</span>
-<span class="sd">the ``TSUAccessor`` class with the ``pandas`` package. This means the methods</span>
-<span class="sd">can be called directly on ``pandas.Series`` objects using the ``tsu`` accessor</span>
-<span class="sd">attribute.</span>
-
 <span class="sd">As an example, we create a ``pandas.Series`` object with missing data and</span>
 <span class="sd">fill in the missing data using the ``periodic_interpolation`` method.</span>
 
@@ -183,8 +178,10 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
+<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">types</span>
 
-<div class="viewcode-block" id="datetime_to_sec_in_year"><a class="viewcode-back" href="../../../api/utils/time_series.html#snat_sim.utils.time_series.datetime_to_sec_in_year">[docs]</a><span class="k">def</span> <span class="nf">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="datetime_to_sec_in_year"><a class="viewcode-back" href="../../../api/utils/time_series.html#snat_sim.utils.time_series.datetime_to_sec_in_year">[docs]</a><span class="k">def</span> <span class="nf">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">date</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">DateColl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">NumpyLike</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Calculate number of seconds elapsed modulo 1 year.</span>
 
 <span class="sd">    Accurate to within a microsecond.</span>
@@ -212,13 +209,13 @@
 
     <span class="c1"># If the argument was a scalar, return a scalar</span>
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">date</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">seconds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asscalar</span><span class="p">(</span><span class="n">seconds</span><span class="p">)</span>
+        <span class="n">seconds</span> <span class="o">=</span> <span class="n">seconds</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">seconds</span></div>
 
 
 <span class="nd">@np</span><span class="o">.</span><span class="n">vectorize</span>
-<span class="k">def</span> <span class="nf">datetime_to_season</span><span class="p">(</span><span class="n">date</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="n">dt</span><span class="o">.</span><span class="n">datetime</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">datetime_to_season</span><span class="p">(</span><span class="n">date</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">DateColl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine the calendar season corresponding to a given datetime</span>
 
 <span class="sd">    Seasons are labeled as &#39;winter&#39;, &#39;spring&#39;, &#39;summer&#39;, or &#39;fall&#39;.</span>

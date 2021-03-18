@@ -126,7 +126,6 @@
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">deepcopy</span>
 <span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">lru_cache</span>
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -137,15 +136,14 @@
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">types</span>
 <span class="kn">from</span> <span class="nn">.data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">SNModel</span>
-
-<span class="n">Numeric</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span>
 
 
 <span class="c1"># Todo: Add dictionary keys to docs? - consider named tuple?</span>
 <div class="viewcode-block" id="get_config_pwv_vals"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.get_config_pwv_vals">[docs]</a><span class="nd">@lru_cache</span><span class="p">()</span>  <span class="c1"># Cache I/O</span>
-<span class="k">def</span> <span class="nf">get_config_pwv_vals</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">paths_at_init</span><span class="o">.</span><span class="n">_config_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="k">def</span> <span class="nf">get_config_pwv_vals</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">paths_at_init</span><span class="o">.</span><span class="n">_config_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve PWV values to use as reference values</span>
 
 <span class="sd">    Returned values include:</span>
@@ -174,8 +172,8 @@
 
 <div class="viewcode-block" id="tabulate_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.tabulate_mag">[docs]</a><span class="k">def</span> <span class="nf">tabulate_mag</span><span class="p">(</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
-        <span class="n">pwv_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">],</span>
-        <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">],</span>
+        <span class="n">pwv_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">],</span>
+        <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">],</span>
         <span class="n">bands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
@@ -226,7 +224,7 @@
 
 
 <div class="viewcode-block" id="tabulate_fiducial_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.tabulate_fiducial_mag">[docs]</a><span class="k">def</span> <span class="nf">tabulate_fiducial_mag</span><span class="p">(</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">bands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">fid_pwv_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">bands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">fid_pwv_dict</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Get SN magnitudes corresponding to the fiducial atmosphere</span>
 
@@ -269,7 +267,7 @@
 
 <div class="viewcode-block" id="correct_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.correct_mag">[docs]</a><span class="k">def</span> <span class="nf">correct_mag</span><span class="p">(</span>
         <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">mag</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-        <span class="n">alpha</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="n">Numeric</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_beta</span>
+        <span class="n">alpha</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">Numeric</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">Numeric</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_beta</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Correct fitted supernova magnitude for stretch and color</span>
 
@@ -302,8 +300,8 @@
         <span class="n">light_curves</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Table</span><span class="p">],</span>
         <span class="n">vparams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
         <span class="n">bands</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-        <span class="n">pwv_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">pwv_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Determine apparent mag by fitting simulated light-curves</span>
