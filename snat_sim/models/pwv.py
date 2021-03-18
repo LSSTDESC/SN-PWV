@@ -1,81 +1,5 @@
-"""The ``models`` module defines classes for modeling different
-physical phenomena. This includes SNe Ia light-curves, the propagation of
-light through atmospheric water vapor (with and without variation in time),
-and the seasonal variation of precipitable water vapor over time.
-
-Model Summaries
----------------
-
-A summary of the available models is provided below:
-
-.. autosummary::
-   :nosignatures:
-
-   FixedResTransmission
-   PWVModel
-   SNModel
-
-Supernova models (``SNModel``) are designed to closely resemble the behavior
-of the ``sncosmo`` package. However, unlike ``sncosmo.Model`` objects, the
-``snat_sim.SNModel`` class provides support for propogation effects that vary
-with time. A summary of propagation effects provided by the ``snat_sim``
-package is listed below:
-
-.. autosummary::
-   :nosignatures:
-
-   StaticPWVTrans
-   SeasonalPWVTrans
-   VariablePWVTrans
-
-Usage Example
--------------
-
-To ensure backwards compatibility and ease of use, supernovae modeling with the
-``snat_sim`` package follows (but also extends) the same
-`design pattern <https://sncosmo.readthedocs.io/en/stable/models.html>`_
-as the ``sncosmo`` package. Models are instantiated for a given spectral
-template and various propagation effects can be added to the model. In the
-following example, atmospheric propagation effects due to precipitable water
-vapor are added to a Salt2 supernova model.
-
-.. doctest:: python
-
-   >>> from snat_sim import models
-
-   >>> # Create a supernova model
-   >>> supernova_model = models.SNModel('salt2')
-
-   >>> # Create a model for the atmosphere
-   >>> atm_transmission = models.StaticPWVTrans()
-   >>> atm_transmission.set(pwv=4)
-   >>> supernova_model.add_effect(effect=atm_transmission, name='Atmosphere', frame='obs')
-
-
-To simulate a light-curve, you must first establish the desired light-curve
-cadence (i.e., how the light-curve should be sampled in time):
-
-.. doctest:: python
-
-   >>> cadence = models.ObservedCadence(
-   ...     obs_times=[-1, 0, 1],
-   ...     bands=['sdssr', 'sdssr', 'sdssr'],
-   ...     zp=25, zpsys='AB', skynoise=0, gain=1
-   ... )
-
-Light-curves can then be simulated directly from the model:
-
-.. doctest:: python
-
-   >>> # Here we simulate a light-curve with statistical noise
-   >>> light_curve = supernova_model.simulate_lc(cadence)
-
-   >>> # Here we simulate a light-curve with a fixed signal to noise ratio
-   >>> light_curve_fixed_snr = supernova_model.simulate_lc(cadence, fixed_snr=5)
-
-
-Module Docs
------------
+"""Modeling functionality for Precipitable Water Vapor (PWV) and related
+observational effects.
 """
 
 from __future__ import annotations
@@ -83,8 +7,6 @@ from __future__ import annotations
 import abc
 import os
 import warnings
-from copy import copy
-from dataclasses import dataclass
 from datetime import datetime
 from typing import *
 
@@ -94,7 +16,6 @@ import pandas as pd
 import sncosmo
 from astropy import units as u
 from astropy.coordinates import AltAz, EarthLocation, SkyCoord
-from astropy.table import Table
 from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
 from pwv_kpno.gps_pwv import GPSReceiver
@@ -103,226 +24,16 @@ from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
 
 from snat_sim.utils.caching import Cache
-from . import constants as const
-from .data_paths import paths_at_init
-from .utils import time_series as tsu
-
-Numeric = Union[float, int]
-ModelParams = Dict[str, Numeric]
-FloatOrArray = TypeVar('FloatOrArray', Numeric, Collection[Numeric], np.ndarray)
+from .. import constants as const
+from .. import types
+from ..data_paths import paths_at_init
+from ..utils import time_series as tsu
 
 # Todo: These were picked ad-hock and are likely too big.
 #  They should be set to a reasonable number further along in development
 PWV_CACHE_SIZE = 500_000
 TRANSMISSION_CACHE_SIZE = 500_00
 AIRMASS_CACHE_SIZE = 250_000
-
-
-@dataclass
-class ObservedCadence:
-    """The observational sampling of an astronomical light-curve
-
-    The zero-point, zero point system, and gain arguments can be a
-    collection of values (one per ``obs_time`` value), or a single value
-    to apply at all observation times.
-
-    Args:
-        obs_times: Array of observation times for the light-curve
-        bands: Array of bands for each observation
-        zp: The zero-point or an array of zero-points for each observation
-        zpsys: The zero-point system or an array of zero-point systems
-        gain: The simulated gain or an array of gain values
-    """
-
-    obs_times: Collection[float]
-    bands: Collection[str]
-    skynoise: FloatOrArray
-    zp: FloatOrArray
-    zpsys: Union[str, Collection[str]]
-    gain: FloatOrArray
-
-    def __eq__(self, other: ObservedCadence) -> bool:
-        attr_list = ['obs_times', 'bands', 'skynoise', 'zp', 'zpsys', 'gain']
-        return np.all(np.equal(getattr(self, attr), getattr(other, attr)) for attr in attr_list)
-
-    @property
-    def skynoise(self) -> np.array:
-        return self._skynoise.copy()
-
-    @skynoise.setter
-    def skynoise(self, skynoise: FloatOrArray):
-        self._skynoise = np.full_like(self.obs_times, skynoise)
-
-    @property
-    def zp(self) -> np.array:
-        return self._zp.copy()
-
-    @zp.setter
-    def zp(self, zp: FloatOrArray):
-        self._zp = np.full_like(self.obs_times, zp)
-
-    @property
-    def zpsys(self) -> np.array:
-        return self._zpsys.copy()
-
-    @zpsys.setter
-    def zpsys(self, zpsys: FloatOrArray):
-        self._zpsys = np.full_like(self.obs_times, zpsys, dtype='U8')
-
-    @property
-    def gain(self) -> np.array:
-        return self._gain.copy()
-
-    @gain.setter
-    def gain(self, gain: FloatOrArray):
-        self._gain = np.full_like(self.obs_times, gain)
-
-    @staticmethod
-    def from_plasticc(
-            light_curve: Table,
-            zp: FloatOrArray = None,
-            drop_nondetection: bool = False
-    ) -> Tuple[ModelParams, ObservedCadence]:
-        """Extract the observational cadence from a PLaSTICC light-curve
-
-        The zero-point, zero point system, and gain arguments can be a
-        collection of values (one per phase value), or a single value to
-        apply at all obs_times.
-
-        Args:
-            light_curve: Astropy table with PLaSTICC light-curve data
-            zp: Optionally overwrite the PLaSTICC zero-point with this value(s)
-            drop_nondetection: Drop data with PHOTFLAG == 0
-
-        Returns:
-            An ``ObservedCadence`` instance
-        """
-
-        if drop_nondetection:
-            light_curve = light_curve[light_curve['PHOTFLAG'] != 0]
-
-        params = {
-            'SNID': light_curve.meta['SNID'].strip(),
-            'ra': light_curve.meta['RA'],
-            'dec': light_curve.meta['DECL'],
-            't0': light_curve.meta['SIM_PEAKMJD'],
-            'x1': light_curve.meta['SIM_SALT2x1'],
-            'c': light_curve.meta['SIM_SALT2c'],
-            'z': light_curve.meta['SIM_REDSHIFT_CMB'],
-            'x0': light_curve.meta['SIM_SALT2x0']
-        }
-
-        return params, ObservedCadence(
-            obs_times=light_curve['MJD'],
-            bands=['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
-            zp=zp or light_curve['ZEROPT'],
-            zpsys='AB',
-            gain=1,
-            skynoise=light_curve['SKY_SIG']
-        )
-
-    def to_sncosmo(self) -> Table:
-        """Return the observational cadence as an ``astropy.Table``
-
-        The returned table of observations is formatted for use with with
-        the ``sncosmo`` package.
-
-        Returns:
-            An astropy table representing the observational cadence in ``sncosmo`` format
-        """
-
-        observations = Table(
-            {
-                'time': self.obs_times,
-                'band': self.bands,
-                'gain': self.gain,
-                'skynoise': self.skynoise,
-                'zp': self.zp,
-                'zpsys': self.zpsys
-            },
-            dtype=[float, 'U1000', float, float, float, 'U100']
-        )
-
-        observations.sort('time')
-        return observations
-
-    def __repr__(self) -> str:  # pragma: no cover
-        repr_list = self.to_sncosmo().__repr__().split('\n')
-        repr_list[0] = super(ObservedCadence, self).__repr__()
-        repr_list.pop(2)
-        return '\n'.join(repr_list)
-
-
-###############################################################################
-# Core models for physical phenomena
-###############################################################################
-
-class FixedResTransmission:
-    """Models atmospheric transmission due to PWV at a fixed resolution"""
-
-    def __init__(self, resolution: float = None) -> None:
-        """Instantiate a PWV transmission model at the given resolution
-
-        Transmission values are determined using the ``v1_transmission`` model
-        from the ``pwv_kpno`` package.
-
-        Args:
-            resolution: Resolution to bin the atmospheric model to
-        """
-
-        self.norm_pwv = 2
-        self.eff_exp = 0.6
-        self.samp_pwv = np.arange(0, 60.25, .25)
-        self.samp_wave = v1_transmission.samp_wave
-        self.samp_transmission = v1_transmission(
-            pwv=self.samp_pwv,
-            wave=self.samp_wave,
-            res=resolution).values.T
-
-        self._interpolator = RegularGridInterpolator(
-            points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
-
-        self.calc_transmission = Cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
-
-    # noinspection PyMissingOrEmptyDocstring
-    @overload
-    def calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
-        ...  # pragma: no cover
-
-    # noinspection PyMissingOrEmptyDocstring
-    @overload
-    def calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
-        ...  # pragma: no cover
-
-    def calc_transmission(self, pwv, wave=None):
-        """Evaluate transmission model at given wavelengths
-
-        Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
-        object if ``pwv`` is an array. Wavelengths are expected in angstroms.
-
-        Args:
-            pwv: Line of sight PWV to interpolate for
-            wave: Wavelengths to evaluate transmission (Defaults to ``samp_wave`` attribute)
-
-        Returns:
-            The interpolated transmission at the given wavelengths / resolution
-        """
-
-        wave = self.samp_wave if wave is None else wave
-        pwv_eff = calc_pwv_eff(pwv, norm_pwv=self.norm_pwv, eff_exp=self.eff_exp)
-
-        if np.isscalar(pwv_eff):
-            xi = [[pwv_eff, w] for w in wave]
-            return pd.Series(self._interpolator(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
-
-        else:
-            # Equivalent to [[[pwv_val, w] for pwv_val in pwv_eff] for w in wave]
-            xi = np.empty((len(wave), len(pwv_eff), 2))
-            xi[:, :, 0] = pwv_eff
-            xi[:, :, 1] = np.array(wave)[:, None]
-
-            names = list(map('{} mm'.format, np.round(pwv, 4).astype(float)))
-            return pd.DataFrame(self._interpolator(xi), columns=names)
 
 
 class PWVModel:
@@ -450,7 +161,7 @@ class PWVModel:
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
-    def pwv_zenith(self, time: Collection[float], time_format: Optional[str]) -> np.array:
+    def pwv_zenith(self, time: types.FloatColl, time_format: types.StrColl) -> np.array:
         ...  # pragma: no cover
 
     def pwv_zenith(self, time, time_format='mjd'):
@@ -562,109 +273,72 @@ class PWVModel:
         }
 
 
-class SNModel(sncosmo.Model):
-    """An observer-frame supernova model composed of a Source and zero or more effects"""
+class PWVTransmissionModel:
+    """Models atmospheric transmission due to PWV at a fixed resolution"""
 
-    # Same as parent except allows duck-typing of ``effect`` arg
-    def _add_effect_partial(self, effect, name, frame) -> None:
-        """Like 'add effect', but don't sync parameter arrays"""
+    def __init__(self, resolution: float = None) -> None:
+        """Instantiate a PWV transmission model at the given resolution
 
-        if frame not in ['rest', 'obs', 'free']:
-            raise ValueError("frame must be one of: {'rest', 'obs', 'free'}")
-
-        self._effects.append(copy(effect))
-        self._effect_names.append(name)
-        self._effect_frames.append(frame)
-
-        # for 'free' effects, add a redshift parameter
-        if frame == 'free':
-            self._param_names.append(name + 'z')
-            self.param_names_latex.append('{\\rm ' + name + '}\\,z')
-
-        # add all of this effect's parameters
-        for param_name in effect.param_names:
-            self._param_names.append(name + param_name)
-            self.param_names_latex.append('{\\rm ' + name + '}\\,' + param_name)
-
-    # Same as parent except adds support for ``VariablePropagationEffect`` effects
-    def _flux(self, time, wave) -> np.ndarray:
-        """Array flux function."""
-
-        a = 1. / (1. + self._parameters[0])
-        phase = (time - self._parameters[1]) * a
-        restwave = wave * a
-
-        # Note that below we multiply by the scale factor to conserve
-        # bolometric luminosity.
-        f = a * self._source._flux(phase, restwave)
-
-        # Pass the flux through the PropagationEffects.
-        for effect, frame, zindex in zip(self._effects, self._effect_frames, self._effect_zindicies):
-            if frame == 'obs':
-                effect_wave = wave
-
-            elif frame == 'rest':
-                effect_wave = restwave
-
-            else:  # frame == 'free'
-                effect_a = 1. / (1. + self._parameters[zindex])
-                effect_wave = wave * effect_a
-
-            # This code block is new to the child class
-            if isinstance(effect, VariablePropagationEffect):
-                f = effect.propagate(effect_wave, f, time)
-
-            else:
-                f = effect.propagate(effect_wave, f)
-
-        return f
-
-    # Parent class copy enforces return is a parent class instance
-    # Allow child classes to return copies of their own type
-    def __copy__(self) -> SNModel:
-        """Like a normal shallow copy, but makes an actual copy of the
-        parameter array."""
-
-        new_model = type(self)(self.source, self.effects, self.effect_names, self._effect_frames)
-        new_model.update(dict(zip(self.param_names, self.parameters)))
-        return new_model
-
-    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True, fixed_snr: Optional[float] = None) -> Table:
-        """Simulate a SN light-curve
-
-        If ``scatter`` is ``True``, then simulated flux values include an added
-        random component drawn from a normal distribution with a standard deviation
-        equal to the error of the observation.
+        Transmission values are determined using the ``v1_transmission`` model
+        from the ``pwv_kpno`` package.
 
         Args:
-            cadence: Observational cadence to evaluate the light-curve with
-            scatter: Whether to add random noise to the flux values
-            fixed_snr: Optionally simulate the light-curve using a fixed signal to noise ratio
-
-        Returns:
-            The simulated light-curve as an astropy table in the ``sncosmo`` format
+            resolution: Resolution to bin the atmospheric model to
         """
 
-        flux = self.bandflux(cadence.bands, cadence.obs_times, zp=cadence.zp, zpsys=cadence.zpsys)
+        self.norm_pwv = 2
+        self.eff_exp = 0.6
+        self.samp_pwv = np.arange(0, 60.25, .25)
+        self.samp_wave = v1_transmission.samp_wave
+        self.samp_transmission = v1_transmission(
+            pwv=self.samp_pwv,
+            wave=self.samp_wave,
+            res=resolution).values.T
 
-        if fixed_snr:
-            fluxerr = flux / fixed_snr
+        self._interpolator = RegularGridInterpolator(
+            points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
+
+        self.calc_transmission = Cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
+
+    # noinspection PyMissingOrEmptyDocstring
+    @overload
+    def calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
+        ...  # pragma: no cover
+
+    # noinspection PyMissingOrEmptyDocstring
+    @overload
+    def calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
+        ...  # pragma: no cover
+
+    def calc_transmission(self, pwv, wave=None):
+        """Evaluate transmission model at given wavelengths
+
+        Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
+        object if ``pwv`` is an array. Wavelengths are expected in angstroms.
+
+        Args:
+            pwv: Line of sight PWV to interpolate for
+            wave: Wavelengths to evaluate transmission (Defaults to ``samp_wave`` attribute)
+
+        Returns:
+            The interpolated transmission at the given wavelengths / resolution
+        """
+
+        wave = self.samp_wave if wave is None else wave
+        pwv_eff = calc_pwv_eff(pwv, norm_pwv=self.norm_pwv, eff_exp=self.eff_exp)
+
+        if np.isscalar(pwv_eff):
+            xi = [[pwv_eff, w] for w in wave]
+            return pd.Series(self._interpolator(xi), index=wave, name=f'{float(np.round(pwv, 4))} mm')
 
         else:
-            fluxerr = np.sqrt(cadence.skynoise ** 2 + np.abs(flux) / cadence.gain)
+            # Equivalent to [[[pwv_val, w] for pwv_val in pwv_eff] for w in wave]
+            xi = np.empty((len(wave), len(pwv_eff), 2))
+            xi[:, :, 0] = pwv_eff
+            xi[:, :, 1] = np.array(wave)[:, None]
 
-        if scatter:
-            flux = np.atleast_1d(np.random.normal(flux, fluxerr))
-
-        return Table(
-            data=[cadence.obs_times, cadence.bands, flux, fluxerr, cadence.zp, cadence.zpsys],
-            names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'),
-            meta=dict(zip(self.param_names, self.parameters)))
-
-
-###############################################################################
-# Propagation effects
-###############################################################################
+            names = list(map('{} mm'.format, np.round(pwv, 4).astype(float)))
+            return pd.DataFrame(self._interpolator(xi), columns=names)
 
 
 class VariablePropagationEffect(sncosmo.PropagationEffect):
@@ -714,7 +388,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
         self._param_names = ['pwv']
         self.param_names_latex = ['PWV']
         self._parameters = np.array([0.])
-        self._transmission_model = FixedResTransmission(transmission_res)
+        self._transmission_model = PWVTransmissionModel(transmission_res)
 
     @property
     def transmission_res(self) -> float:
@@ -759,10 +433,10 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
         self._param_names = ['pwv']
         self.param_names_latex = ['PWV']
         self._parameters = np.array([0.])
-        self._transmission_model = FixedResTransmission(transmission_res)
+        self._transmission_model = PWVTransmissionModel(transmission_res)
 
     @abc.abstractmethod
-    def assumed_pwv(self, time: FloatOrArray) -> FloatOrArray:
+    def assumed_pwv(self, time: types.FloatColl) -> types.FloatColl:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
@@ -849,7 +523,7 @@ class VariablePWVTrans(AbstractVariablePWVEffect):
 
         self._parameters = np.array([0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
-    def assumed_pwv(self, time: FloatOrArray) -> FloatOrArray:
+    def assumed_pwv(self, time: types.FloatColl) -> types.FloatColl:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
@@ -907,7 +581,7 @@ class SeasonalPWVTrans(AbstractVariablePWVEffect):
         self._parameters = np.array(
             [0., 0., 0., 0., 0., 0., const.vro_latitude, const.vro_longitude, const.vro_altitude])
 
-    def assumed_pwv(self, time: FloatOrArray) -> FloatOrArray:
+    def assumed_pwv(self, time: types.FloatColl) -> types.FloatColl:
         """The PWV concentration used by the propagation effect at a given time
 
         Args:

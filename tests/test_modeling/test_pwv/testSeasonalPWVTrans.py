@@ -4,7 +4,7 @@ from unittest import TestCase
 
 import numpy as np
 
-from snat_sim import models
+from snat_sim.models import pwv
 from . import testVariablePWVTrans
 from .base import PropagationEffectTests
 
@@ -13,7 +13,7 @@ class BaseTests(PropagationEffectTests, TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.propagation_effect = models.SeasonalPWVTrans()
+        cls.propagation_effect = pwv.SeasonalPWVTrans()
         cls.pwv = 7
         cls.propagation_effect['winter'] = cls.pwv
         cls.propagation_effect['spring'] = cls.pwv
@@ -25,7 +25,7 @@ class BaseTests(PropagationEffectTests, TestCase):
 
         # Get the expected transmission
         wave = np.arange(4000, 5000)
-        transmission_model = models.FixedResTransmission(resolution=self.propagation_effect._transmission_res)
+        transmission_model = pwv.PWVTransmissionModel(resolution=self.propagation_effect._transmission_res)
         transmission = transmission_model.calc_transmission(pwv=self.pwv, wave=wave)
 
         # Get the returned flux
@@ -38,7 +38,7 @@ class DefaultParameterValues(testVariablePWVTrans.DefaultParameterValues):
 
     @classmethod
     def setUpClass(cls):
-        cls.propagation_effect = models.SeasonalPWVTrans()
+        cls.propagation_effect = pwv.SeasonalPWVTrans()
 
     def test_default_seasonal_values_are_zero(self):
         """Test the default values for the observer location match VRO"""

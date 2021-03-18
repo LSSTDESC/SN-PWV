@@ -52,6 +52,7 @@ from astropy.table import Table
 from tqdm import tqdm
 
 from .data_paths import paths_at_init
+from . import types
 
 
 class PLaSTICC:
@@ -114,7 +115,7 @@ class PLaSTICC:
         return total_lc
 
     @staticmethod
-    def _iter_lc_for_header(header_path: Union[Path, str], verbose: bool = True):
+    def _iter_lc_for_header(header_path: types.PathLike, verbose: bool = True):
         """Iterate over light-curves from a given header file
 
         Files are expected to be written in pairs of a header file 

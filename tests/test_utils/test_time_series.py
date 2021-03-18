@@ -9,7 +9,7 @@ import pandas as pd
 from astropy.time import Time
 from pytz import UTC
 
-from snat_sim import models
+from snat_sim.models import PWVModel
 from snat_sim.utils import time_series
 from tests.mock import create_mock_pwv_data
 
@@ -202,7 +202,7 @@ class BuildPWVModel(TestCase):
         """Build a linear PWV interpolation model"""
 
         cls.test_data = create_mock_pwv_data()
-        cls.pwv_model = models.PWVModel(cls.test_data)
+        cls.pwv_model = PWVModel(cls.test_data)
 
     def test_return_matches_input_on_grid_points(self) -> None:
         """Test the interpolation function returns the original

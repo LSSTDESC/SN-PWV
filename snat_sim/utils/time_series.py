@@ -5,11 +5,6 @@ dealing with atmospheric / weather data.
 Usage Example
 -------------
 
-Importing the ``snat_sim`` package will automatically register methods of
-the ``TSUAccessor`` class with the ``pandas`` package. This means the methods
-can be called directly on ``pandas.Series`` objects using the ``tsu`` accessor
-attribute.
-
 As an example, we create a ``pandas.Series`` object with missing data and
 fill in the missing data using the ``periodic_interpolation`` method.
 
@@ -66,8 +61,10 @@ import numpy as np
 import pandas as pd
 from astropy import units as u
 
+from snat_sim import types
 
-def datetime_to_sec_in_year(date: Union[dt.datetime, Collection[dt.datetime]]) -> Union[float, np.ndarray]:
+
+def datetime_to_sec_in_year(date: types.DateColl) -> types.NumpyLike:
     """Calculate number of seconds elapsed modulo 1 year.
 
     Accurate to within a microsecond.
@@ -95,13 +92,13 @@ def datetime_to_sec_in_year(date: Union[dt.datetime, Collection[dt.datetime]]) -
 
     # If the argument was a scalar, return a scalar
     if np.ndim(date) == 0:
-        seconds = np.asscalar(seconds)
+        seconds = seconds.item()
 
     return seconds
 
 
 @np.vectorize
-def datetime_to_season(date: Union[dt.datetime, Collection[dt.datetime]]) -> np.ndarray:
+def datetime_to_season(date: types.DateColl) -> np.ndarray:
     """Determine the calendar season corresponding to a given datetime
 
     Seasons are labeled as 'winter', 'spring', 'summer', or 'fall'.

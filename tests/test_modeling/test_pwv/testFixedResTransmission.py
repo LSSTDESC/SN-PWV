@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 import pandas as pd
 
-from snat_sim import models
+from snat_sim.models import pwv
 
 
 class PWVInterpolation(TestCase):
@@ -14,7 +14,7 @@ class PWVInterpolation(TestCase):
     def setUp(self):
         """Create a dummy ``Transmission`` object"""
 
-        self.transmission = models.FixedResTransmission(4)
+        self.transmission = pwv.PWVTransmissionModel(4)
 
     def test_interpolation_on_grid_point(self):
         """Test interpolation result matches sampled values at the grid points"""
@@ -41,7 +41,7 @@ class FunctionDefaults(TestCase):
     def setUp(self):
         """Create a dummy ``Transmission`` object"""
 
-        self.transmission = models.FixedResTransmission(4)
+        self.transmission = pwv.PWVTransmissionModel(4)
 
     def test_default_wavelengths_match_sampled_wavelengths(self):
         """Test return values are index by sample wavelengths by default"""
@@ -55,7 +55,7 @@ class VectorPWVSupport(TestCase):
     def setUp(self):
         """Create a dummy ``Transmission`` object"""
 
-        self.transmission = models.FixedResTransmission(4)
+        self.transmission = pwv.PWVTransmissionModel(4)
 
     def test_scalar_pwv_returns_series(self):
         """Test passing a scalar PWV value returns a pandas Series object"""
