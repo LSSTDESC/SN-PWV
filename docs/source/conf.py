@@ -68,13 +68,14 @@ html_sidebars = {
     '**': ['logo-text.html', 'searchbox.html', 'globaltoc.html']
 }
 
-# Download sncosmo data ahead of time so download messages don't interfere
-# with doctests later on
+# Download sncosmo filter data ahead of time so download messages don't
+# interfere with doctests later on
 sncosmo.get_source('salt2')
 sncosmo.get_bandpass('sdssu')
 sncosmo.get_bandpass('sdssg')
 sncosmo.get_bandpass('sdssr')
 sncosmo.get_bandpass('sdssi')
+sncosmo.get_bandpass('sdssz')
 sncosmo.get_bandpass('standard::b')
 
 
