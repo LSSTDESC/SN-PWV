@@ -419,7 +419,7 @@ class SNFitResult(sncosmo.utils.Result):
                 covariance_str = four_spaces + str(self.covariance.values).replace('\n', f'{four_spaces}')
 
             else:
-                covariance_str = 'None'
+                covariance_str = ' None'
 
         return (
             f"     success: {self.success}\n"
@@ -432,5 +432,5 @@ class SNFitResult(sncosmo.utils.Result):
             f"  parameters: {params_str}\n"
             f"vparam_names: {self.vparam_names}\n"
             f"      errors: {errors_str}\n"
-            f"  covariance: {covariance_str}"
+            f"  covariance:{covariance_str}"
         )

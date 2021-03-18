@@ -128,7 +128,6 @@ to fit results as floats or ``pandas`` objects (e.g., ``pandas.Series`` or
         [-6.461e-08  1.010e-01  1.223e-03]
         [-7.622e-09  1.223e-03  8.189e-04]]
 
-
 Fit result objects are also capable of calculating the variance in the
 distance modulus given the alpha/beta standerdization parameters:
 
@@ -138,8 +137,9 @@ distance modulus given the alpha/beta standerdization parameters:
 
    >>> alpha = const.betoule_alpha
    >>> beta = const.betoule_beta
-   >>> print(fit_result.mu_variance_linear(alpha, beta))
-   0.007349313991235279
+   >>> mu_variance = fit_result.mu_variance_linear(alpha, beta)
+   >>> print(f'{mu_variance: .5f}')
+    0.00735
 
 Module Docs
 -----------
