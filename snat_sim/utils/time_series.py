@@ -64,7 +64,7 @@ from astropy import units as u
 from snat_sim import types
 
 
-def datetime_to_sec_in_year(date: types.DateColl) ->  types.NumpyLike:
+def datetime_to_sec_in_year(date: types.DateColl) -> types.NumpyLike:
     """Calculate number of seconds elapsed modulo 1 year.
 
     Accurate to within a microsecond.

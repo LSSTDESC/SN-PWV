@@ -89,12 +89,12 @@ class CovarianceAccessor:
             column names chosen by pandas.
         """
 
-        l, w = np.shape(covArray)
-        if l != w:  # Check for the covariance matrix being square, not checking for symmetry
+        length, width = np.shape(covArray)
+        if length != width:  # Check for the covariance matrix being square, not checking for symmetry
             raise ValueError('The covariance matrix is not square; length!=width')
 
         if paramNames is not None:
-            if len(paramNames) != w:
+            if len(paramNames) != width:
                 raise ValueError('The number of parameters must match the length of the covariance matrix')
 
             cov = pd.DataFrame(covArray, columns=paramNames, index=paramNames)
