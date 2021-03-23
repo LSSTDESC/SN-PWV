@@ -50,7 +50,7 @@ import pandas as pd
 import sncosmo
 from astropy.table import Table
 
-from snat_sim.data_paths import paths_at_init
+from ..data_paths import paths_at_init
 
 
 def register_sncosmo_filter(wave: np.array, trans: np.array, name: str, force: bool = False) -> None:

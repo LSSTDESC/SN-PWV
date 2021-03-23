@@ -38,7 +38,7 @@ from typing import Collection, Dict, TypeVar, Union
 import numpy as np
 import sncosmo
 
-from snat_sim.models import SNModel
+from .models import SNModel
 
 DateColl = Union[dt.datetime, Collection[dt.datetime]]
 Numeric = Union[

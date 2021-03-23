@@ -9,8 +9,7 @@ from typing import Dict, List
 from egon.pipeline import Pipeline
 from tables import NaturalNameWarning
 
-from snat_sim.pipeline.nodes import FitLightCurves, SimulateLightCurves, WritePipelinePacket
-from snat_sim.pipeline.nodes import LoadPlasticcCadence
+from .nodes import FitLightCurves, LoadPlasticcCadence, SimulateLightCurves, WritePipelinePacket
 from ..models import SNModel
 from ..reference_stars import VariableCatalog
 
