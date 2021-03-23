@@ -11,8 +11,8 @@ the fitted model.
 
 .. doctest::
 
-   >>> from snat_sim.pipeline.data_model import PipelineResult
-   >>> data_obj = PipelineResult(
+   >>> from snat_sim.pipeline.data_model import PipelinePacket
+   >>> data_obj = PipelinePacket(
    ... snid='1234567',
    ... sim_params={'x0': 1, 'x1': .1, 'c': .5},
    ... fit_params={'x0': .9, 'x1': .12, 'c': .51},
@@ -44,81 +44,55 @@ Module Docs
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Iterable, List
+from dataclasses import dataclass
+from typing import Optional
 
+import pandas as pd
+
+from .. import constants as const
 from .. import types
+from ..models import ObservedCadence, SNFitResult, SNModel
 
 
 @dataclass
-class PipelineResult:
+class PipelinePacket:
     """Class representation of internal pipeline data products"""
 
     snid: str
-    sim_params: types.NumericalParams = field(default_factory=dict)
-    fit_params: types.NumericalParams = field(default_factory=dict)
-    fit_err: types.NumericalParams = field(default_factory=dict)
-    chisq: float = -99.99
-    ndof: int = -99.99
-    mb: float = -99.99
-    abs_mag: float = -99.99
-    message: str = ''
+    sim_params: Optional[types.NumericalParams] = None
+    cadence: Optional[ObservedCadence] = None
+    light_curve: Optional[pd.DataFrame] = None
+    sim_data: Optional[pd.DataFrame] = None
+    fit_result: Optional[SNFitResult] = None
+    fitted_model: Optional[SNModel] = None
+    message: Optional[str] = None
 
-    def to_csv(self, sim_params: Iterable[str], fit_params: Iterable[str]) -> str:
-        """Combine light-curve fit results into single row matching the output table file format
-
-        Args:
-            sim_params: The simulated parameter values to include int the output
-            fit_params: The fitted parameter values to include in the output
-
-        Returns:
-            A string with data in CSV format
-        """
-
-        out_list = self.to_list(sim_params, fit_params)
-        return ','.join(map(str, out_list)) + '\n'
-
-    def to_list(self, sim_params, fit_params) -> List[str, float]:
-        """Return class data as a list with missing values masked as -99.99
-
-        Args:
-            sim_params: The order of the simulated parameter values in the return
-            fit_params: The order of the fitted parameter values in the return
-
-        Returns:
-            A list of strings and floats
-        """
-
-        out_list = [self.snid]
-        out_list.extend(self.sim_params.get(param, -99.99) for param in sim_params)
-        out_list.extend(self.fit_params.get(param, -99.99) for param in fit_params)
-        out_list.extend(self.fit_err.get(param, -99.99) for param in fit_params)
-        out_list.append(self.chisq)
-        out_list.append(self.ndof)
-        out_list.append(self.mb)
-        out_list.append(self.abs_mag)
-        out_list.append(self.message)
-        return out_list
-
-    @staticmethod
-    def column_names(sim_params: Iterable[str], fit_params: Iterable[str]) -> List[str]:
-        """Return a list of column names matching the data model used by ``PipelineResult.to_csv``
-
-        Args:
-            sim_params: The simulated parameter values to include int the output
-            fit_params: The fitted parameter values to include in the output
-
-        Returns:
-            List of column names as strings
-        """
-
+    def fit_result_to_pandas(self) -> pd.DataFrame:
         col_names = ['snid']
-        col_names.extend('sim_' + param for param in sim_params)
-        col_names.extend('fit_' + param for param in fit_params)
-        col_names.extend('err_' + param for param in fit_params)
+        col_names.extend('fit_' + param for param in self.sim_params)
+        col_names.extend('err_' + param for param in self.sim_params)
         col_names.append('chisq')
         col_names.append('ndof')
         col_names.append('mb')
         col_names.append('abs_mag')
         col_names.append('message')
-        return col_names
+
+        data_list = [self.snid]
+        if None not in (self.sim_params, self.fit_result, self.fitted_model):
+            data_list.extend(self.fit_result.parameters)
+            data_list.extend(self.fit_result.errors.get(p, -99.99) for p in self.sim_params)
+            data_list.append(self.fit_result.chisq)
+            data_list.append(self.fit_result.ndof)
+            data_list.append(self.fitted_model.source.bandmag('bessellb', 'ab', phase=0))
+            data_list.append(self.fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
+            data_list.append(self.message)
+
+        else:
+            non_snid_columns = 2 * len(self.sim_params) + 4
+            data_list.extend(-99.99 for _ in range(non_snid_columns))
+            data_list.append("")
+        print('---------\n\n\n', pd.DataFrame(pd.Series(data_list, index=col_names)).T, '\n\n\n---------')
+        return pd.DataFrame(pd.Series(data_list, index=col_names)).T
+
+    def sim_params_to_pandas(self)-> pd.DataFrame:
+        return pd.DataFrame(pd.Series(self.sim_params)).T

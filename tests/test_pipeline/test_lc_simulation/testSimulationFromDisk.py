@@ -7,7 +7,7 @@ import sncosmo
 from astropy.io.misc.hdf5 import write_table_hdf5
 from egon.mock import MockTarget
 
-from snat_sim.pipeline.lc_simulation import SimulationFromDisk
+from snat_sim.pipeline.nodes.lc_simulation import SimulationFromDisk
 
 
 class InputDataMatchesDisk(TestCase):
@@ -29,7 +29,7 @@ class InputDataMatchesDisk(TestCase):
         # Set up a mock pipeline
         node = SimulationFromDisk(cls.temp_out_file, num_processes=0)
         cls.accumulator = MockTarget()
-        node.simulation_output.connect(cls.accumulator.input)
+        node.success_output.connect(cls.accumulator.input)
 
         # Write the data to disk
         node.execute()

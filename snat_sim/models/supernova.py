@@ -266,7 +266,7 @@ class SNModel(sncosmo.Model):
 
     def fit_lc(
             self,
-            data: Table = None,
+            data: Union[Table, pd.DataFrame] = None,
             vparam_names: List = tuple(),
             bounds: Dict[str: Tuple[types.Numeric, types.Numeric]] = None,
             method: str = 'minuit',
@@ -305,6 +305,9 @@ class SNModel(sncosmo.Model):
         Returns:
             The fit result and a copy of the model set to the fitted parameters
         """
+
+        if isinstance(data, pd.DataFrame):
+            data = Table.from_pandas(data)
 
         try:
             fit_func = {'minuit': sncosmo.fit_lc, 'emcee': sncosmo.mcmc_lc}[method]

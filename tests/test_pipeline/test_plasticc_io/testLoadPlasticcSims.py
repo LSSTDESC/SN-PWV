@@ -5,7 +5,7 @@ from unittest import TestCase
 from egon.mock import MockTarget
 
 from snat_sim.models import ObservedCadence
-from snat_sim.pipeline.plasticc_io import LoadPlasticcSims
+from snat_sim.pipeline.nodes import LoadPlasticcCadence
 from snat_sim.plasticc import PLaSTICC
 
 
@@ -14,7 +14,7 @@ class LoadsPlasticcTable(TestCase):
 
     def setUp(self) -> None:
         self.cadence = PLaSTICC('alt_sched', 11)
-        self.load_action = LoadPlasticcSims('alt_sched', iter_lim=1, num_processes=0)
+        self.load_action = LoadPlasticcCadence('alt_sched', iter_lim=1, num_processes=0)
         self.mock_target = MockTarget()
 
         self.load_action.output.connect(self.mock_target.input)

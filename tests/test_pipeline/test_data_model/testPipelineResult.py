@@ -4,7 +4,7 @@ import numpy as np
 import sncosmo
 
 from snat_sim.models import SNModel
-from snat_sim.pipeline.data_model import PipelineResult
+from snat_sim.pipeline.data_model import PipelinePacket
 
 
 class ToList(TestCase):
@@ -19,7 +19,7 @@ class ToList(TestCase):
         demo_params = sncosmo.load_example_data().meta
         fit_params = {k: v * 1.1 for k, v in demo_params.items()}
         fit_errors = {k: v * .1 for k, v in fit_params.items()}
-        cls.result = PipelineResult(
+        cls.result = PipelinePacket(
             'snid_value', demo_params, fit_params, fit_errors,
             chisq=1.5, ndof=6, mb=6, abs_mag=-19.5, message='Exit Message')
 
@@ -103,7 +103,7 @@ class MaskedListCreation(TestCase):
         """Create a masked table entry"""
 
         cls.param_names = SNModel('salt2').param_names
-        cls.result = PipelineResult('snid_value', message='A status message')
+        cls.result = PipelinePacket('snid_value', message='A status message')
         cls.result_list = cls.result.to_list(cls.param_names, cls.param_names)
 
     def test_mask_value_is_neg_99(self) -> None:
@@ -128,5 +128,5 @@ class ToCsv(TestCase):
     def test_ends_with_new_line(self) -> None:
         """Test the returned string ends with a newline character"""
 
-        string = PipelineResult('snid_value', message='A status message').to_csv([], [])
+        string = PipelinePacket('snid_value', message='A status message').to_csv([], [])
         self.assertEqual('\n', string[-1])

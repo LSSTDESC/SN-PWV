@@ -4,7 +4,7 @@ from unittest import TestCase
 from egon.mock import MockSource
 
 from snat_sim.models import SNModel
-from snat_sim.pipeline.lc_fitting import FitResultsToDisk, PipelineResult
+from snat_sim.pipeline.nodes.lc_fitting import FitResultsToDisk, PipelineDataObject
 
 
 class WritesHeaderOnSetup(TestCase):
@@ -28,7 +28,7 @@ class WritesHeaderOnSetup(TestCase):
 
         # Check the output file for a csv header
         model_parameters = sn_model.param_names
-        column_names = PipelineResult.column_names(model_parameters, model_parameters)
+        column_names = PipelineDataObject.column_names(model_parameters, model_parameters)
         expected_header = ','.join(column_names) + '\n'
         self.assertEqual(expected_header, self.out_file.readline())
 
@@ -41,11 +41,11 @@ class ResultsWrittenToFile(TestCase):
 
         self.sn_model = SNModel('salt2')
         self.out_file = NamedTemporaryFile('w+')
-        self.result = PipelineResult('snid_val')
+        self.result = PipelineDataObject('snid_val')
 
         source = MockSource([self.result], 0)
         self.node = FitResultsToDisk(self.sn_model, self.sn_model, self.out_file.name, 0)
-        source.output.connect(self.node.fit_results_input)
+        source.output.connect(self.node.data_input)
 
         source.execute()
         self.node.execute()

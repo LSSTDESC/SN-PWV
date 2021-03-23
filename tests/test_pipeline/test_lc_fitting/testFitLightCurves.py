@@ -7,7 +7,7 @@ from egon.mock import MockSource, MockTarget
 
 from snat_sim import constants as const
 from snat_sim.models import SNModel
-from snat_sim.pipeline.lc_fitting import FitLightCurves
+from snat_sim.pipeline.nodes.lc_fitting import FitLightCurves
 
 
 class GenericSetup:
@@ -29,7 +29,7 @@ class GenericSetup:
         target = MockTarget()
 
         source.output.connect(cls.node.light_curves_input)
-        cls.node.fit_results_output.connect(target.input)
+        cls.node.success_output.connect(target.input)
         for mock_node in (source, cls.node, target):
             mock_node.execute()
             sleep(2)

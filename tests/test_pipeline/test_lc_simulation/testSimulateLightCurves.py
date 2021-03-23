@@ -5,7 +5,7 @@ import numpy as np
 from egon.mock import MockSource, MockTarget
 
 from snat_sim.models import ObservedCadence, SNModel
-from snat_sim.pipeline.lc_simulation import SimulateLightCurves
+from snat_sim.pipeline.nodes.lc_simulation import SimulateLightCurves
 from tests.mock import create_mock_plasticc_light_curve
 
 
@@ -82,9 +82,9 @@ class ResultRouting(TestCase):
         self.simulation_target = MockTarget()
         self.failure_target = MockTarget()
 
-        self.source.output.connect(self.node.plasticc_data_input)
-        self.node.simulation_output.connect(self.simulation_target.input)
-        self.node.failure_result_output.connect(self.failure_target.input)
+        self.source.output.connect(self.node.cadence_data_input)
+        self.node.success_output.connect(self.simulation_target.input)
+        self.node.failure_output.connect(self.failure_target.input)
 
     def run_nodes(self) -> None:
         """Execute all nodes in the correct order"""
