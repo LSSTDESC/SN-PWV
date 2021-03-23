@@ -265,22 +265,26 @@ class WritePipelinePacket(Target):
         self.data_input = Input('Writing To Disk Input')
         super().__init__(num_processes=1)
 
+    def write_packet(self, packet):
+        # We are taking the simulated parameters as guaranteed to exist
+        packet.sim_params_to_pandas().to_hdf(self.out_path, f'simulation/params', format='Table', append=True)
+
+        if packet.light_curve is not None:  # else: simulation failed
+            packet.light_curve.to_hdf(self.out_path, f'simulation/lcs/{packet.snid}', format='Table')
+
+        if packet.covariance is not None:  # else: fit failed
+            packet.fit_result.covariance.to_hdf(self.out_path, f'fitting/covariance/{packet.snid}', format='Table')
+
+        if packet.fit_result is not None:
+            packet.fitted_params_to_pandas().to_hdf(self.out_path, f'fitting/params', format='Table', append=True)
+
     def action(self) -> None:
         """Write data from the input connector to disk"""
 
         for packet in self.data_input.iter_get():
-            # We are taking the simulated parameters as guaranteed to exist
-            packet.sim_params_to_pandas().to_hdf(self.out_path, f'simulation/params/{packet.snid}')
+            try:
+                self.write_packet(packet)
 
-            fit_data = packet.fit_result_to_pandas()  # This will be a masked dataframe if fit results are not available
-            fit_data.to_hdf(self.out_path, f'simulation/params', format='Table', append=True)
-
-            if packet.light_curve is not None:
-                packet.light_curve.to_hdf(self.out_path, f'simulation/lcs/{packet.snid}')
-
-                # If the simulation failed then there is nothing to write
-                # so we maintain the same indented scope for the next calculation.
-                # The covariance need to be calculated before being written
-                if packet.fit_result is not None:
-                    covariance = packet.fit_result.salt_covariance_linear()
-                    covariance.to_hdf(self.out_path, f'fitting/covariance/{packet.snid}')
+            except Exception as e:
+                # Just in case something really unexpected goes wrong
+                warnings.warn(str(e))

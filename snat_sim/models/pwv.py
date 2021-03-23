@@ -49,15 +49,8 @@ class PWVModel:
         self.pwv_model_data = pwv_series.tsu.resample_data_across_year().tsu.periodic_interpolation()
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
+        self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
         self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
-
-        cache_type = int(os.environ.get('SNAT_SIM_CACHE_TYPE', 1))
-        if cache_type == 1:
-            self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
-
-        elif cache_type == 2:
-            memory = joblib.Memory(str(paths_at_init.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
-            self.calc_airmass = memory.cache(self.calc_airmass)
 
     @staticmethod
     def from_suominet_receiver(receiver: GPSReceiver, year: int, supp_years: Collection[int] = None) -> PWVModel:
@@ -113,7 +106,7 @@ class PWVModel:
         ...  # pragma: no cover
 
     @staticmethod
-    def calc_airmass(
+    def _calc_airmass(
             time, ra, dec, lat=const.vro_latitude, lon=const.vro_longitude, alt=const.vro_altitude,
             time_format='mjd', raise_below_horizon=True
     ):
@@ -298,19 +291,19 @@ class PWVTransmissionModel:
         self._interpolator = RegularGridInterpolator(
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
-        self.calc_transmission = Cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
+        self.calc_transmission = Cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self._calc_transmission)
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
-    def calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
+    def _calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
         ...  # pragma: no cover
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
-    def calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
+    def _calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
         ...  # pragma: no cover
 
-    def calc_transmission(self, pwv, wave=None):
+    def _calc_transmission(self, pwv, wave=None):
         """Evaluate transmission model at given wavelengths
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``

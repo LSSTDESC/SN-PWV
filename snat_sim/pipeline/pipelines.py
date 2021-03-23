@@ -22,7 +22,6 @@ class FittingPipeline(Pipeline):
             fit_model: SNModel,
             vparams: List[str],
             out_path: Union[str, Path],
-            sim_path: Union[str, Path] = None,
             fitting_pool: int = 1,
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
@@ -30,7 +29,8 @@ class FittingPipeline(Pipeline):
             iter_lim: int = float('inf'),
             catalog: VariableCatalog = None,
             add_scatter: bool = True,
-            fixed_snr: Optional[float] = None
+            fixed_snr: Optional[float] = None,
+            overwrite: bool = False
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -41,16 +41,16 @@ class FittingPipeline(Pipeline):
             vparams: List of parameter names to vary in the fit
             bounds: Bounds to impose on ``fit_model`` parameters when fitting light-curves
             out_path: Path to write results to
-            sim_path: Optionally write simulated light-curves to disk
             fitting_pool: Number of child processes allocated to simulating light-curves
             simulation_pool: Number of child processes allocated to fitting light-curves
             max_queue: Maximum number of light-curves to store in pipeline at once
             iter_lim: Limit number of processed light-curves (Useful for profiling)
             catalog: Reference star catalog to calibrate simulated supernova with
             add_scatter: Add randomly generated scatter to simulated light-curve points
+            overwrite: Whether to overwrite an existing output file
         """
 
-        if out_path.exists() or (sim_path and sim_path.exists()):
+        if (not overwrite) and out_path.exists():
             raise FileExistsError(f'Cannot overwrite existing results: {out_path}')
 
         out_path.parent.mkdir(exist_ok=True)
