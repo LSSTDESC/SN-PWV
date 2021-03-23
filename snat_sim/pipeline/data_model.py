@@ -65,7 +65,7 @@ class PipelinePacket:
     sim_data: Optional[pd.DataFrame] = None
     fit_result: Optional[SNFitResult] = None
     fitted_model: Optional[SNModel] = None
-    message: Optional[str] = None
+    message: Optional[str] = ""
 
     def fit_result_to_pandas(self) -> pd.DataFrame:
         col_names = ['snid']
@@ -90,8 +90,8 @@ class PipelinePacket:
         else:
             non_snid_columns = 2 * len(self.sim_params) + 4
             data_list.extend(-99.99 for _ in range(non_snid_columns))
-            data_list.append("")
-        print('---------\n\n\n', pd.DataFrame(pd.Series(data_list, index=col_names)).T, '\n\n\n---------')
+            data_list.append(self.message)
+
         return pd.DataFrame(pd.Series(data_list, index=col_names)).T
 
     def sim_params_to_pandas(self)-> pd.DataFrame:

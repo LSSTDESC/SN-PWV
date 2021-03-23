@@ -208,11 +208,11 @@ class FitLightCurves(Node):
         self.failure_output = Output('Fitting Failure')
         super(FitLightCurves, self).__init__(num_processes)
 
-    def fit_lc(self, light_curve: Table):
+    def fit_lc(self, packet: PipelinePacket):
         """Fit the given light-curve
 
         Args:
-            A light-curve in ``sncosmo`` format
+            packet: A pipeline data packet
 
         Returns:
             - The optimization result represented as a ``Result`` object
@@ -221,10 +221,10 @@ class FitLightCurves(Node):
 
         # Use the true light-curve parameters as the initial guess
         model = copy(self.sn_model)
-        model.update({k: v for k, v in light_curve.meta.items() if k in self.sn_model.param_names})
+        model.update({k: v for k, v in packet.sim_params.items() if k in self.sn_model.param_names})
 
         return model.fit_lc(
-            light_curve, self.vparams, bounds=self.bounds,
+            packet.light_curve, self.vparams, bounds=self.bounds,
             guess_t0=False, guess_amplitude=False, guess_z=False)
 
     def action(self) -> None:
@@ -232,7 +232,7 @@ class FitLightCurves(Node):
 
         for packet in self.light_curves_input.iter_get():
             try:
-                packet.fit_result, packet.fitted_model = self.fit_lc(packet.light_curve)
+                packet.fit_result, packet.fitted_model = self.fit_lc(packet)
 
             except Exception as excep:
                 packet.message = f'{self.__class__.__name__}: {excep}'
@@ -270,8 +270,7 @@ class WritePipelinePacket(Target):
             # We are taking the simulated parameters as guaranteed to exist
             packet.sim_params_to_pandas().to_hdf(self.out_path, f'simulation/params/{packet.snid}')
 
-            fit_data = packet.fit_result_to_pandas()
-            # This will be a padded/masked dataframe if fit results are not available
+            fit_data = packet.fit_result_to_pandas()  # This will be a masked dataframe if fit results are not available
             fit_data.to_hdf(self.out_path, f'simulation/params', format='Table', append=True)
 
             if packet.light_curve is not None:
