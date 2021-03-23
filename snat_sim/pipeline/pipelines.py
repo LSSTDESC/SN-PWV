@@ -1,19 +1,15 @@
 from __future__ import annotations
 
-import warnings
 from numbers import Number
 from pathlib import Path
 from typing import *
 from typing import Dict, List
 
 from egon.pipeline import Pipeline
-from tables import NaturalNameWarning
 
 from .nodes import FitLightCurves, LoadPlasticcCadence, SimulateLightCurves, WritePipelinePacket
 from ..models import SNModel
 from ..reference_stars import VariableCatalog
-
-warnings.filterwarnings('ignore', category=NaturalNameWarning)
 
 
 class FittingPipeline(Pipeline):

@@ -19,6 +19,7 @@ from astropy.cosmology.core import Cosmology
 from astropy.table import Table
 from egon.connectors import Input, Output
 from egon.nodes import Node, Source, Target
+from tables import NaturalNameWarning
 
 from .. import constants as const
 from ..models import AbstractVariablePWVEffect, ObservedCadence, PWVModel, SNModel, StaticPWVTrans
@@ -27,6 +28,7 @@ from ..plasticc import PLaSTICC
 from ..reference_stars import VariableCatalog
 
 warnings.simplefilter('ignore', category=DeprecationWarning)
+warnings.filterwarnings('ignore', category=NaturalNameWarning)
 
 
 class LoadPlasticcCadence(Source):
