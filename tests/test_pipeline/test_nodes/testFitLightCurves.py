@@ -3,12 +3,11 @@ from typing import List
 from unittest import TestCase
 
 import numpy as np
-import sncosmo
 from egon.mock import MockSource, MockTarget
 
 from snat_sim.models import SNModel
-from snat_sim.pipeline.data_model import PipelinePacket
 from snat_sim.pipeline.nodes import FitLightCurves
+from tests.mock import create_mock_pipeline_packet
 
 
 class GenericSetup:
@@ -22,9 +21,7 @@ class GenericSetup:
             vparams: Parameters to vary in the fit
         """
 
-        # Create a mock pipeline data packet
-        data = sncosmo.load_example_data()
-        cls.packet = PipelinePacket(123, light_curve=data, sim_params=data.meta)
+        cls.packet = create_mock_pipeline_packet(include_fit=False)
 
         # Create a mock pipeline for fitting the packet's light-curve
         source = MockSource([cls.packet])

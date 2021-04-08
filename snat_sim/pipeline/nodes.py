@@ -38,7 +38,7 @@ class LoadPlasticcCadence(Source):
         output: Emits cadence data for individual SN simulations as ``ObservedCadence`` objects
     """
 
-    def __init__(self, cadence: str, model: int = 11, iter_lim: int = float('inf')) -> None:
+    def __init__(self, cadence: str, model: int = 11, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
         """Source node for loading PLaSTICC cadence data from disk
 
         This node can only be run using a single process.
@@ -47,7 +47,11 @@ class LoadPlasticcCadence(Source):
             cadence: Cadence name to load from disk
             model: The PLaSTICC supernova model to load simulation for (Default is model 11 - Normal SNe)
             iter_lim: Exit after loading the given number of light-curves
+            num_processes: Number of processes to allocate to the node (must be 0 or 1 for this node)
         """
+
+        if num_processes not in (0, 1):
+            raise RuntimeError('Number of processes for ``LoadPlasticcCadence`` must be 0 or 1.')
 
         self.cadence = PLaSTICC(cadence, model)
         self.iter_lim = iter_lim

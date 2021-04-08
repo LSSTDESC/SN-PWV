@@ -232,7 +232,8 @@ class SNModel(sncosmo.Model):
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
 
-    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True, fixed_snr: Optional[float] = None) -> Table:
+    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True,
+                    fixed_snr: Optional[float] = None) -> pd.DataFrame:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -259,10 +260,14 @@ class SNModel(sncosmo.Model):
         if scatter:
             flux = np.atleast_1d(np.random.normal(flux, fluxerr))
 
-        return Table(
-            data=[cadence.obs_times, cadence.bands, flux, fluxerr, cadence.zp, cadence.zpsys],
-            names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'),
-            meta=dict(zip(self.param_names, self.parameters)))
+        return pd.DataFrame(dict(
+            time=cadence.obs_times,
+            band=cadence.bands,
+            flux=flux,
+            fluxerr=fluxerr,
+            zp=cadence.zp,
+            zpsys=cadence.zpsys
+        ))
 
     def fit_lc(
             self,

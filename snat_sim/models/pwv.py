@@ -455,14 +455,16 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
         if isinstance(transmission, pd.DataFrame):  # PWV is a vector and transmission is a DataFrame
             return flux * transmission.values.T
 
-        else:  # Assume PWV is scalar and transmission is Series-like
-            if np.ndim(flux) == 1:
-                return flux * transmission
+        # Assume PWV is scalar and transmission is Series-like
+        elif np.ndim(flux) == 1:
+            return flux * transmission
 
-            if np.ndim(flux) == 2:
-                return flux * np.atleast_2d(transmission)
+        elif np.ndim(flux) == 2:
+            return flux * np.atleast_2d(transmission)
 
-        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
+        # We don't actually expect this to ever be raised. The above conditionals should be sufficient.
+        # However, we put it here just in case the function is called in some creative un-anticipated fashion.
+        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')  # pragma: no cover
 
     def propagate(self, wave: np.ndarray, flux: np.ndarray, time: Union[float, np.ndarray]) -> np.ndarray:
         """Propagate the flux through the atmosphere
