@@ -1,132 +1,109 @@
 from unittest import TestCase
 
 import numpy as np
+import pandas as pd
 import sncosmo
 
 from snat_sim.models import SNModel
-from snat_sim.pipeline.data_model import PipelinePacket
+from snat_sim.pipeline.data_model import MASK_VALUE, PipelinePacket
 
 
-class ToList(TestCase):
-    """Test values are converted to a list in the order matching the output header"""
+class Base:
+    """Generic setup tasks for testing PipelinePacket objects"""
 
     @classmethod
     def setUpClass(cls) -> None:
         """Run a light-curve fit and format results as a table entry"""
 
-        # Build dictionaries of mock s parameter values
-        # Ensure the values are all a little different
-        demo_params = sncosmo.load_example_data().meta
-        fit_params = {k: v * 1.1 for k, v in demo_params.items()}
-        fit_errors = {k: v * .1 for k, v in fit_params.items()}
-        cls.result = PipelinePacket(
-            'snid_value', demo_params, fit_params, fit_errors,
-            chisq=1.5, ndof=6, mb=6, abs_mag=-19.5, message='Exit Message')
+        cls.data = sncosmo.load_example_data()
+        cls.model_to_fit = SNModel('Salt2')
+        cls.model_to_fit.update(cls.data.meta)
 
-        cls.param_names = list(demo_params.keys())
-        cls.result_list = cls.result.to_list(cls.param_names, cls.param_names)
-        cls.column_names = cls.result.column_names(cls.param_names, cls.param_names)
-
-    def test_object_id_position(self) -> None:
-        """Test position of SNID in output list"""
-
-        position = self.column_names.index('snid')
-        self.assertEqual(self.result.snid, self.result_list[position])
-
-    def test_simulated_param_positions(self) -> None:
-        """Test position of simulated parameter values in output list"""
-
-        # Get expected index of first parameter from the column names
-        # Assume parameter values are contiguous in the array
-        first_param = self.param_names[0]
-        param_values_start = self.column_names.index('sim_' + first_param)
-        num_parameters = len(self.param_names)
-
-        np.testing.assert_array_equal(
-            list(self.result.sim_params.values()),
-            self.result_list[param_values_start: num_parameters + param_values_start]
+        cls.params_to_fit = ['x1', 'c']
+        fit_result, fitted_model = cls.model_to_fit.fit_lc(cls.data, cls.params_to_fit)
+        cls.packet = PipelinePacket(
+            snid=1234,
+            sim_params=cls.data.meta,
+            light_curve=cls.data,
+            fit_result=fit_result,
+            fitted_model=fitted_model,
         )
 
-    def test_fitted_param_positions(self) -> None:
-        """Test position of fitted parameter values in output list"""
 
-        first_param = self.param_names[0]
-        param_values_start = self.column_names.index('fit_' + first_param)
-        num_parameters = len(self.param_names)
+class SimParamsToPandas(Base, TestCase):
+    """Test the casting of simulated parameters to a pandas object"""
 
-        np.testing.assert_array_equal(
-            list(self.result.fit_params.values()),
-            self.result_list[param_values_start: num_parameters + param_values_start]
-        )
+    def test_return_is_dataframe(self) -> None:
+        """Test the returned object is a dataframe"""
 
-    def test_error_value_positions(self) -> None:
-        """Test position of parameter errors in output list"""
+        test_data = self.packet.sim_params_to_pandas()
+        self.assertIsInstance(test_data, pd.DataFrame)
+        self.assertEqual(1, len(test_data))
 
-        first_param = self.param_names[0]
-        param_values_start = self.column_names.index('err_' + first_param)
-        num_parameters = len(self.param_names)
+    def test_colnames_match_param_names(self) -> None:
+        """Test the column names in the returned dataframe match simulated parameters"""
 
-        np.testing.assert_array_equal(
-            list(self.result.fit_err.values()),
-            self.result_list[param_values_start: num_parameters + param_values_start]
-        )
+        sim_params = list(self.packet.sim_params.keys()) + ['SNID']
+        columns = self.packet.sim_params_to_pandas().columns
+        np.testing.assert_array_equal(sim_params, columns)
 
-    def test_chisq_position(self) -> None:
-        """Test position of chi-squared and degrees of freedom in output list"""
+    def test_values_match_params(self) -> None:
+        """Test the values of the returned dataframe match simulated parameters"""
 
-        chisq_index = self.column_names.index('chisq')
-        self.assertEqual(self.result.chisq, self.result_list[chisq_index])
+        returned_param_vals = dict(self.packet.sim_params_to_pandas().iloc[0])
+        expected_vals = dict(self.packet.sim_params)
+        expected_vals['SNID'] = self.packet.snid
 
-        dof_index = self.column_names.index('ndof')
-        self.assertEqual(self.result.ndof, self.result_list[dof_index])
-
-    def test_magnitude_position(self) -> None:
-        """Test position of magnitude values in output list"""
-
-        mb_index = self.column_names.index('mb')
-        self.assertEqual(self.result.mb, self.result_list[mb_index])
-
-        abs_mag_index = self.column_names.index('abs_mag')
-        self.assertEqual(self.result.abs_mag, self.result_list[abs_mag_index])
-
-    def test_output_length_matches_column_names(self) -> None:
-        """Test the number of output values match the number of columns names"""
-
-        self.assertEqual(len(self.column_names), len(self.result_list))
+        self.assertDictEqual(returned_param_vals, expected_vals)
 
 
-class MaskedListCreation(TestCase):
-    """Tests for the creation of masked list entries"""
+class FittedParamsToPandas(Base, TestCase):
+    """Test the casting of fitted parameters to a pandas object"""
 
-    @classmethod
-    def setUpClass(cls) -> None:
-        """Create a masked table entry"""
+    def test_return_is_dataframe(self) -> None:
+        """Test the returned object is a dataframe"""
 
-        cls.param_names = SNModel('salt2').param_names
-        cls.result = PipelinePacket('snid_value', message='A status message')
-        cls.result_list = cls.result.to_list(cls.param_names, cls.param_names)
+        test_data = self.packet.fitted_params_to_pandas()
+        self.assertIsInstance(test_data, pd.DataFrame)
+        self.assertEqual(1, len(test_data))
 
-    def test_mask_value_is_neg_99(self) -> None:
-        """Test -99.99 is used to represent masked values"""
+    def test_colnames_match_param_names(self) -> None:
+        """Test the column names in the returned dataframe match simulated parameters"""
 
-        np.testing.assert_array_equal(self.result_list[1:-2], -99.99)
+        fit_params = ['snid']
+        fit_params.extend('fit_' + param for param in self.model_to_fit.param_names)
+        fit_params.extend('err_' + param for param in self.model_to_fit.param_names)
+        fit_params.extend(('chisq', 'ndof', 'mb', 'abs_mag', 'message'))
+        columns = self.packet.fitted_params_to_pandas().columns
+        np.testing.assert_array_equal(fit_params, columns)
 
-    def test_unmasked_snid(self) -> None:
-        """Test the SNID value is not masked"""
+    def test_values_match_params(self) -> None:
+        """Test the values of the returned dataframe match simulated parameters"""
 
-        self.assertEqual(self.result.snid, self.result_list[0])
+        returned_data = self.packet.fitted_params_to_pandas().iloc[0]
 
-    def test_unmasked_message(self) -> None:
-        """Test the failure message is not masked"""
+        self.assertEqual(self.packet.snid, returned_data['snid'], 'Incorrect SNID')
+        self.assertEqual(self.packet.fit_result.chisq, returned_data['chisq'], 'Incorrect chisq')
+        self.assertEqual(self.packet.fit_result.ndof, returned_data['ndof'], 'Incorrect ndof')
+        self.assertEqual(self.packet.message, returned_data['message'], 'Incorrect result message')
 
-        self.assertEqual(self.result.message, self.result_list[-1])
+        for param in self.model_to_fit.param_names:
+            fit_result = self.packet.fitted_model[param]
+            return_val = returned_data[f'fit_{param}']
+            self.assertEqual(fit_result, return_val, f'Incorrect fit value for {param}')
 
+            fit_err = self.packet.fit_result.errors.get(param, MASK_VALUE)
+            return_err = returned_data[f'err_{param}']
+            self.assertEqual(fit_err, return_err, f'Incorrect error value for {param}')
 
-class ToCsv(TestCase):
-    """Test the conversion of ``PipelineResult`` instances to a CSV string"""
+    def test_values_are_masked_for_no_fit(self) -> None:
+        """Test returned values are masked when no fit results are stored in the packet"""
 
-    def test_ends_with_new_line(self) -> None:
-        """Test the returned string ends with a newline character"""
+        # Create a packet with no fit results.  
+        packet = PipelinePacket(snid=1234, sim_params=self.data.meta, light_curve=self.data, message='dummy message')
+        masked_values = packet.fitted_params_to_pandas().iloc[0].values
 
-        string = PipelinePacket('snid_value', message='A status message').to_csv([], [])
-        self.assertEqual('\n', string[-1])
+        # All values should be masked other than the SNID and message
+        self.assertEqual(packet.snid, masked_values[0])
+        np.testing.assert_array_equal(MASK_VALUE, masked_values[1:-1])
+        self.assertEqual(packet.message, masked_values[-1])
