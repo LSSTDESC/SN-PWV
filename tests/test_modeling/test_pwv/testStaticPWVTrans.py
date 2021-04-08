@@ -1,4 +1,4 @@
-"""Tests for the ``StaticPWVTrans`` class"""
+"""Tests for the ``snat_sim.modeling.pwv.StaticPWVTrans`` class"""
 
 from unittest import TestCase
 
@@ -9,9 +9,12 @@ from .base import PropagationEffectTests
 
 
 class BaseTests(PropagationEffectTests, TestCase):
+    """Extends base tests used for all propagation effects"""
 
     @classmethod
     def setUpClass(cls):
+        """Create an instance of the propagation effect for testing"""
+
         cls.propagation_effect = pwv.StaticPWVTrans()
 
     def test_propagation_includes_pwv_transmission(self):

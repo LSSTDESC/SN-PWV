@@ -1,4 +1,4 @@
-"""Tests for the ``_data_paths`` module"""
+"""Tests for the ``snat_sim.data_paths.DataPaths`` class"""
 
 import os
 from pathlib import Path

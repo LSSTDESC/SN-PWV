@@ -5,7 +5,7 @@ import numpy as np
 from egon.mock import MockSource, MockTarget
 
 from snat_sim.models import ObservedCadence, SNModel
-from snat_sim.pipeline.nodes.lc_simulation import SimulateLightCurves
+from snat_sim.pipeline.nodes import SimulateLightCurves
 from tests.mock import create_mock_plasticc_light_curve
 
 

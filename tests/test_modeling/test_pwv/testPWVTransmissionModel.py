@@ -1,4 +1,4 @@
-"""Tests for the ``FixedResTransmission`` class"""
+"""Tests for the ``snat_sim.modeling.pwv.FixedResTransmission`` class"""
 
 from unittest import TestCase
 
@@ -19,6 +19,7 @@ class PWVInterpolation(TestCase):
     def test_interpolation_on_grid_point(self):
         """Test interpolation result matches sampled values at the grid points"""
 
+        # get the grid coordinates and corresponding transmission values from the model
         test_pwv = self.transmission.samp_pwv[1]
         expected_transmission = self.transmission.samp_transmission[1]
 

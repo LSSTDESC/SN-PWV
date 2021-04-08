@@ -134,11 +134,10 @@ class Cache(MemoryCache):
 
             key = tuple(kwargs_for_key.items())
             try:
-                out = self[key]
+                return self[key]
 
             except KeyError:
-                out = self[key] = function(*args, **kwargs)
-
-            return out
+                self[key] = function(*args, **kwargs)
+                return self[key]
 
         return wrapped

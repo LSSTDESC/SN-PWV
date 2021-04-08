@@ -1,4 +1,4 @@
-"""Tests for the ``ObservedCadence`` class"""
+"""Tests for the ``snat_sim.models.supernova.ObservedCadence`` class"""
 
 from unittest import TestCase
 
@@ -9,13 +9,15 @@ from ...mock import create_mock_plasticc_light_curve
 
 
 class SncosmoFormatting(TestCase):
+    """Tests for the ``to_sncosmo`` method"""
 
     def setUp(self) -> None:
-        obs_times = np.arange(-5, 5)
+        """"Create an example cadence and export the data to sncosmo format"""
 
+        observation_times = np.arange(-5, 5)
         self.cadence = ObservedCadence(
-            obs_times,
-            bands=np.full_like(obs_times, 'sdssr', dtype='U5'),
+            observation_times,
+            bands=np.full_like(observation_times, 'sdssr', dtype='U5'),
             zp=25,
             zpsys='AB',
             skynoise=0,
@@ -27,8 +29,7 @@ class SncosmoFormatting(TestCase):
     def test_correct_table_values(self) -> None:
         """Test the correct zero point and zero-point system were used"""
 
-        np.testing.assert_array_equal(self.sncosmo_cadence['time'], self.cadence.obs_times,
-                                      'Incorrect observation times')
+        np.testing.assert_array_equal(self.sncosmo_cadence['time'], self.cadence.obs_times, 'Incorrect observation times')
         np.testing.assert_array_equal(self.sncosmo_cadence['band'], self.cadence.bands, 'Incorrect band names')
         np.testing.assert_array_equal(self.sncosmo_cadence['zp'], self.cadence.zp, 'Incorrect zero point')
         np.testing.assert_array_equal(self.sncosmo_cadence['zpsys'], self.cadence.zpsys, 'Incorrect zero point system')
@@ -53,6 +54,8 @@ class ExtractCadenceData(TestCase):
     """Tests for the ``extract_cadence_data`` function"""
 
     def setUp(self) -> None:
+        """Load mock PLaSTiCC data and convert to a ``ObservedCadence`` object"""
+
         self.plasticc_lc = create_mock_plasticc_light_curve()
         _, self.extracted_cadence = ObservedCadence.from_plasticc(self.plasticc_lc)
 

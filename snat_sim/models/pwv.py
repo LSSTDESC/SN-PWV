@@ -5,12 +5,10 @@ observational effects.
 from __future__ import annotations
 
 import abc
-import os
 import warnings
 from datetime import datetime
 from typing import *
 
-import joblib
 import numpy as np
 import pandas as pd
 import sncosmo
@@ -26,7 +24,6 @@ from scipy.interpolate import RegularGridInterpolator
 from snat_sim.utils.caching import Cache
 from .. import constants as const
 from .. import types
-from ..data_paths import paths_at_init
 from ..utils import time_series as tsu
 
 # Todo: These were picked ad-hock and are likely too big.
@@ -106,7 +103,7 @@ class PWVModel:
         ...  # pragma: no cover
 
     @staticmethod
-    def _calc_airmass(
+    def calc_airmass(
             time, ra, dec, lat=const.vro_latitude, lon=const.vro_longitude, alt=const.vro_altitude,
             time_format='mjd', raise_below_horizon=True
     ):
@@ -235,7 +232,15 @@ class PWVModel:
         """
 
         return (self.pwv_zenith(time, time_format) *
-                self.calc_airmass(time, ra, dec, lat, lon, alt, time_format))
+                self.calc_airmass(
+                    time=time,
+                    ra=ra,
+                    dec=dec,
+                    lat=lat,
+                    lon=lon,
+                    alt=alt,
+                    time_format=time_format)
+                )
 
     def seasonal_averages(self) -> Dict[str, float]:
         """Calculate the average PWV in each season
@@ -527,7 +532,7 @@ class VariablePWVTrans(AbstractVariablePWVEffect):
         """
 
         return self._pwv_model.pwv_los(
-            time,
+            time=time,
             ra=self['ra'],
             dec=self['dec'],
             lat=self['lat'],

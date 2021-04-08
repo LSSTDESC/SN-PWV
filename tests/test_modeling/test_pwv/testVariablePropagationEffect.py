@@ -1,4 +1,4 @@
-"""Tests for the ``VariablePropagationEffect`` class"""
+"""Tests for the ``snat_sim.modeling.pwv.VariablePropagationEffect`` class"""
 
 import inspect
 from unittest import TestCase
@@ -13,7 +13,10 @@ class PropagateMethodSignature(TestCase):
     """
 
     def test_time_arg_in_signature(self):
-        """Test the ``propagate`` method includes a ``time`` as the last parameter"""
+        """Test the ``propagate`` method includes ``time`` as the LAST parameter
+
+        This is important for maintaining reverse compatibility with the sncosmo package.
+        """
 
         params = list(inspect.signature(pwv.VariablePropagationEffect.propagate).parameters.keys())
         self.assertEqual(params[-1], 'time')

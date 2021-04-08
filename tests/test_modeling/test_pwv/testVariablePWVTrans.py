@@ -1,4 +1,4 @@
-"""Tests for the ``VariablePWVTrans`` class"""
+"""Tests for the ``snat_sim.modeling.pwv.VariablePWVTrans`` class"""
 
 from unittest import TestCase
 
@@ -9,8 +9,15 @@ from .base import PropagationEffectTests
 
 
 class BaseTests(PropagationEffectTests, TestCase):
+    """Extends base tests used for all propagation effects"""
+
     @classmethod
     def setUpClass(cls):
+        """Create an instance of the propagation effect for testing
+
+        PWV concentration for the underlying model is set as a constant.
+        """
+
         mock_pwv_model = create_constant_pwv_model(4)
         cls.propagation_effect = pwv.VariablePWVTrans(mock_pwv_model)
 
@@ -20,6 +27,8 @@ class DefaultParameterValues(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        """Create an instance of the propagation effect for testing"""
+
         mock_pwv_model = create_constant_pwv_model(4)
         cls.propagation_effect = pwv.VariablePWVTrans(mock_pwv_model)
 

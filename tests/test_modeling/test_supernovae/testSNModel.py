@@ -1,4 +1,4 @@
-"""Tests for the ``SNModel`` class"""
+"""Tests for the ``snat_sim.models.supernova.SNModel`` class"""
 
 import warnings
 from copy import copy

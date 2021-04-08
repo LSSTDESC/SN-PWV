@@ -336,6 +336,16 @@ class SNModel(sncosmo.Model):
 
 class SNFitResult(sncosmo.utils.Result):
 
+    def __eq__(self, other):
+
+        if isinstance(other, self.__class__) and (self.keys() == other.keys()):
+            for key, val in self.items():
+                if not np.array_equal(val, other[key]):
+                    return False
+
+            return True
+        return False
+
     @property
     def param_names(self) -> List[str]:
         return copy(self['param_names'])

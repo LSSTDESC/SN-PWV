@@ -241,7 +241,7 @@ class FitLightCurves(Node):
                 self.failure_output.put(packet)
 
             else:
-                packet.message = packet.fit_result.message
+                packet.message = f'{self.__class__.__name__}: {packet.fit_result.message}'
                 self.success_output.put(packet)
 
 

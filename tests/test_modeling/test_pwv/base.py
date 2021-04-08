@@ -1,5 +1,5 @@
-"""A collection of test cases that are generally applicable to multiple
-object types.
+"""A collection of reusable base tests that are generally applicable to
+multiple classes in the `snat_sim.modeling.pwv`` module.
 """
 
 import numpy as np

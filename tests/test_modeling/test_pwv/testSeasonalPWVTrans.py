@@ -1,4 +1,4 @@
-"""Tests for the ``SeasonalPWVTrans`` class"""
+"""Tests for the ``snat_sim.modeling.pwv.SeasonalPWVTrans`` class"""
 
 from unittest import TestCase
 
@@ -10,9 +10,15 @@ from .base import PropagationEffectTests
 
 
 class BaseTests(PropagationEffectTests, TestCase):
+    """Extends base tests used for all propagation effects"""
 
     @classmethod
     def setUpClass(cls):
+        """Create an instance of the propagation effect for testing
+
+        Set all seasonal PWV values to the same PWV concentration.
+        """
+
         cls.propagation_effect = pwv.SeasonalPWVTrans()
         cls.pwv = 7
         cls.propagation_effect['winter'] = cls.pwv
@@ -21,7 +27,7 @@ class BaseTests(PropagationEffectTests, TestCase):
         cls.propagation_effect['fall'] = cls.pwv
 
     def test_propagation_includes_pwv_transmission(self):
-        """Test the ``propagate`` method applies PWV absorption"""
+        """Test that the ``propagate`` method applies PWV absorption"""
 
         # Get the expected transmission
         wave = np.arange(4000, 5000)
@@ -38,6 +44,8 @@ class DefaultParameterValues(testVariablePWVTrans.DefaultParameterValues):
 
     @classmethod
     def setUpClass(cls):
+        """Create an instance of the propagation effect for testing"""
+
         cls.propagation_effect = pwv.SeasonalPWVTrans()
 
     def test_default_seasonal_values_are_zero(self):
