@@ -51,7 +51,8 @@ class FittingPipeline(Pipeline):
             overwrite: Whether to overwrite an existing output file
         """
 
-        if (not overwrite) and Path(out_path).exists():
+        out_path = Path(out_path)
+        if (not overwrite) and out_path.exists():
             raise FileExistsError(f'Cannot overwrite existing results: {out_path}')
 
         out_path.parent.mkdir(exist_ok=True)
