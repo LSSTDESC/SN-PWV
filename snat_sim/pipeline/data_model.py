@@ -41,12 +41,12 @@ Missing numerical data is masked using the value ``-99.99``.
    >>> include_fit_params = ['x0', 'c']
    >>>
    >>> packet.sim_params_to_pandas()
-       x1    c    z        x0       t0    SNID
-   0  0.5  0.2  0.5  0.000012  55100.0  1234.0
+       x1    c    z        x0       t0    SNID                  message
+   0  0.5  0.2  0.5  0.000012  55100.0  1234.0  This fit was a success!
 
-   >>> packet.fitted_params_to_pandas()
-      snid fit_z   fit_t0    fit_x0    fit_x1     fit_c  err_z err_t0 err_x0   err_x1     err_c      chisq ndof        mb    abs_mag                  message
-   0  1234   0.5  55100.0  0.000012  0.359913  0.209899 -99.99 -99.99 -99.99  0.26414  0.020136  36.071269   38  22.80058 -19.467872  This fit was a success!
+   >>> packet.fitted_params_to_pandas()  # doctest: +ELLIPSIS
+      snid fit_z   fit_t0  ...        mb    abs_mag                  message
+   0  1234   0.5  55100.0  ...  22.80058 -19.467872  This fit was a success!
 
 Module Docs
 -----------
