@@ -38,14 +38,13 @@ class LoadPlasticcCadence(Source):
         output: Emits cadence data for individual SN simulations as ``ObservedCadence`` objects
     """
 
-    def __init__(self, cadence: str, model: int = 11, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
+    def __init__(self, plasticc_dao: PLaSTICC, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
         """Source node for loading PLaSTICC cadence data from disk
 
         This node can only be run using a single process.
 
         Args:
-            cadence: Cadence name to load from disk
-            model: The PLaSTICC supernova model to load simulation for (Default is model 11 - Normal SNe)
+            plasticc_dao: A PLaSTICC data access object
             iter_lim: Exit after loading the given number of light-curves
             num_processes: Number of processes to allocate to the node (must be 0 or 1 for this node)
         """
@@ -53,12 +52,12 @@ class LoadPlasticcCadence(Source):
         if num_processes not in (0, 1):
             raise RuntimeError('Number of processes for ``LoadPlasticcCadence`` must be 0 or 1.')
 
-        self.cadence = PLaSTICC(cadence, model)
+        self.cadence = plasticc_dao
         self.iter_lim = iter_lim
 
         # Node connectors
         self.output = Output('Loading Cadence Output')
-        super().__init__(num_processes=1)
+        super().__init__(num_processes=num_processes)
 
     def action(self) -> None:
         """Load PLaSTICC cadence data from disk"""
@@ -170,7 +169,7 @@ class SimulateLightCurves(Node):
             try:
                 packet.light_curve = self.duplicate_plasticc_lc(
                     packet.sim_params, packet.cadence
-                ).to_pandas()
+                )
 
             except Exception as e:
                 packet.message = f'{self.__class__.__name__}: {e}'
@@ -270,6 +269,8 @@ class WritePipelinePacket(Target):
         super().__init__(num_processes=1)
 
     def write_packet(self, packet):
+        """Write a pipeline packet to the output file"""
+
         # We are taking the simulated parameters as guaranteed to exist
         packet.sim_params_to_pandas().to_hdf(self.out_path, f'simulation/params', format='Table', append=True)
 

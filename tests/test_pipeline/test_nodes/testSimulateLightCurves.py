@@ -69,7 +69,7 @@ class LightCurveSimulation(TestCase):
         """Test the zero-point of the simulated light_curve is overwritten as a constant"""
 
         expected_zp = 30
-        np.testing.assert_equal(expected_zp, self.duplicated_lc['zp'])
+        np.testing.assert_equal(expected_zp, self.duplicated_lc['zp'].values)
 
 
 class ResultRouting(TestCase):

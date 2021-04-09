@@ -58,9 +58,7 @@ class SuccessfulFitOutput(TestCase, GenericSetup):
         self.assertEqual(self.packet.sim_params, pipeline_result.sim_params)
         self.assertEqual(fitted_result, pipeline_result.fit_result)
         np.testing.assert_array_equal(fitted_model.parameters, pipeline_result.fitted_model.parameters)
-        self.assertEqual(
-            'FitLightCurves: Minimization exited successfully.',
-            pipeline_result.message)
+        self.assertEqual('FitLightCurves: Minimization exited successfully.', pipeline_result.message)
 
 
 class FailedFitOutput(TestCase, GenericSetup):
@@ -81,6 +79,4 @@ class FailedFitOutput(TestCase, GenericSetup):
         self.assertEqual(self.packet.sim_params, pipeline_result.sim_params)
         self.assertIsNone(pipeline_result.fit_result)
         self.assertIsNone(pipeline_result.fitted_model)
-        self.assertEqual(
-            'FitLightCurves: z must be bounded if fit.',
-            pipeline_result.message)
+        self.assertEqual('FitLightCurves: z must be bounded if fit.', pipeline_result.message)
