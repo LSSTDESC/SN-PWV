@@ -76,7 +76,6 @@ class PipelinePacket:
         cadence: The observational cadence used to simulate the light-curve
         light_curve: The simulated light-curve
         fit_result: Fit result from fitting the light-curve
-        covariance: Covariance from the fit result
         fitted_model: Model used to fit the light-curve
         message: Status message
     """
@@ -86,7 +85,6 @@ class PipelinePacket:
     cadence: Optional[ObservedCadence] = None
     light_curve: Optional[pd.DataFrame] = None
     fit_result: Optional[SNFitResult] = None
-    covariance: Optional[pd.DataFrame] = None
     fitted_model: Optional[SNModel] = None
     message: Optional[str] = ""
 
@@ -97,9 +95,10 @@ class PipelinePacket:
             Parameters used in the simulation of light-curves
         """
 
-        out_data = self.sim_params.copy()
+        out_data = pd.Series(self.sim_params)
         out_data['SNID'] = self.snid
-        return pd.DataFrame(pd.Series(out_data)).T
+        out_data['message'] = self.message
+        return pd.DataFrame(out_data).T
 
     def fitted_params_to_pandas(self) -> pd.DataFrame:
         """Return fitted parameters as a pandas Dataframe
@@ -108,11 +107,12 @@ class PipelinePacket:
             Parameters recovered from fitting a light-curve
         """
 
-        param_names = self.fit_result.param_names
+        if None in (self.fit_result, self.fitted_model):
+            raise ValueError('Fit results are not stored in the data packet.')
 
         col_names = ['snid']
-        col_names.extend('fit_' + param for param in param_names)
-        col_names.extend('err_' + param for param in param_names)
+        col_names.extend('fit_' + param for param in self.fit_result.param_names)
+        col_names.extend('err_' + param for param in self.fit_result.param_names)
         col_names.append('chisq')
         col_names.append('ndof')
         col_names.append('mb')
@@ -120,18 +120,11 @@ class PipelinePacket:
         col_names.append('message')
 
         data_list = [self.snid]
-        if None not in (self.fit_result, self.fitted_model):
-            data_list.extend(self.fit_result.parameters)
-            data_list.extend(self.fit_result.errors.get(p, MASK_VALUE) for p in param_names)
-            data_list.append(self.fit_result.chisq)
-            data_list.append(self.fit_result.ndof)
-            data_list.append(self.fitted_model.source.bandmag('bessellb', 'ab', phase=0))
-            data_list.append(self.fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
-            data_list.append(self.message)
-
-        else:
-            num_columns_to_mask = len(col_names) - 2
-            data_list.extend(MASK_VALUE for _ in range(num_columns_to_mask))
-            data_list.append(self.message)
-
+        data_list.extend(self.fit_result.parameters)
+        data_list.extend(self.fit_result.errors.get(p, MASK_VALUE) for p in self.fit_result.param_names)
+        data_list.append(self.fit_result.chisq)
+        data_list.append(self.fit_result.ndof)
+        data_list.append(self.fitted_model.source.bandmag('bessellb', 'ab', phase=0))
+        data_list.append(self.fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
+        data_list.append(self.message)
         return pd.DataFrame(pd.Series(data_list, index=col_names)).T

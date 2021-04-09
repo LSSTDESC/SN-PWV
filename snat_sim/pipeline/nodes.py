@@ -233,7 +233,6 @@ class FitLightCurves(Node):
         for packet in self.light_curves_input.iter_get():
             try:
                 packet.fit_result, packet.fitted_model = self.fit_lc(packet)
-                packet.covariance = packet.fit_result.salt_covariance_linear()
 
             except Exception as excep:
                 packet.message = f'{self.__class__.__name__}: {excep}'
@@ -268,16 +267,14 @@ class WritePipelinePacket(Target):
         """Write a pipeline packet to the output file"""
 
         # We are taking the simulated parameters as guaranteed to exist
-        packet.sim_params_to_pandas().to_hdf(self.out_path, f'simulation/params', format='Table', append=True)
+        packet.sim_params_to_pandas().to_hdf(self.out_path, 'simulation/params', format='Table', append=True)
 
         if packet.light_curve is not None:  # else: simulation failed
-            packet.light_curve.to_hdf(self.out_path, f'simulation/lcs/{packet.snid}', format='Table')
+            packet.light_curve.to_hdf(self.out_path, f'simulation/lcs/{packet.snid}')
 
-        if packet.covariance is not None:  # else: fit failed
-            packet.fit_result.covariance.to_hdf(self.out_path, f'fitting/covariance/{packet.snid}', format='Table')
-
-        if packet.fit_result is not None:
-            packet.fitted_params_to_pandas().to_hdf(self.out_path, f'fitting/params', format='Table', append=True)
+        if packet.fit_result is not None:  # else: fit failed
+            packet.fit_result.covariance.to_hdf(self.out_path, f'fitting/covariance/{packet.snid}')
+            packet.fitted_params_to_pandas().to_hdf(self.out_path, 'fitting/params', format='Table', append=True)
 
     def action(self) -> None:
         """Write data from the input connector to disk"""
