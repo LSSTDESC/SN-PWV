@@ -18,6 +18,7 @@ from .pwv import VariablePropagationEffect
 from .. import types
 
 
+# noinspection PyAttributeOutsideInit,PyUnresolvedReferences
 @dataclass
 class ObservedCadence:
     """The observational sampling of an astronomical light-curve
@@ -197,8 +198,8 @@ class SNModel(sncosmo.Model):
         phase = (time - self._parameters[1]) * a
         restwave = wave * a
 
-        # Note that below we multiply by the scale factor to conserve
-        # bolometric luminosity.
+        # Note that below we multiply by the scale factor to conserve bolometric luminosity.
+        # noinspection PyProtectedMember
         f = a * self._source._flux(phase, restwave)
 
         # Pass the flux through the PropagationEffects.

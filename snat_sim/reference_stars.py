@@ -10,7 +10,7 @@ using the ``ReferenceStar`` class:
 
 .. doctest:: python
 
-   >>> from . import reference_stars
+   >>> from snat_sim import reference_stars
 
    >>> g2_star = reference_stars.ReferenceStar('G2')
    >>> print(g2_star.to_pandas())
@@ -54,9 +54,9 @@ import pandas as pd
 from astropy.table import Table
 
 from . import constants as const
+from . import types
 from .data_paths import paths_at_init
 from .models import PWVModel
-from . import types
 
 
 class ReferenceStar:
@@ -100,7 +100,7 @@ class ReferenceStar:
         """Load fits file with stellar spectrum from phoenix
 
         Fits files can be downloaded from:
-          http://phoenix.astro.physik.uni-goettingen.de/?page_id=15
+          https://phoenix.astro.physik.uni-goettingen.de/?page_id=15
 
         converts from egs/s/cm2/cm to phot/cm2/s/nm using
           https://hea-www.harvard.edu/~pgreen/figs/Conversions.pdf

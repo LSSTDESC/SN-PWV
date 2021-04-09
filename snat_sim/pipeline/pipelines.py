@@ -9,8 +9,9 @@ from egon.pipeline import Pipeline
 
 from .nodes import FitLightCurves, LoadPlasticcCadence, SimulateLightCurves, WritePipelinePacket
 from ..models import SNModel
-from ..reference_stars import VariableCatalog
 from ..plasticc import PLaSTICC
+from ..reference_stars import VariableCatalog
+
 
 class FittingPipeline(Pipeline):
     """Pipeline of parallel processes for simulating and fitting light-curves"""

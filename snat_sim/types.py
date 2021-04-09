@@ -48,7 +48,7 @@ Numeric = Union[
     np.longlong, np.ulonglong
 ]
 
-FloatColl = TypeVar('FloatLike', Numeric, Collection[Numeric], np.ndarray)
+FloatColl = TypeVar('FloatColl', Numeric, Collection[Numeric], np.ndarray)
 NumericalParams = Dict[str, Numeric]
 NumpyLike = Union[Numeric, np.ndarray]
 PathLike = Union[str, Path]

@@ -140,7 +140,7 @@ class CovarianceAccessor:
         """
 
         covariance_df = self._obj
-        if isinstance(paramName, np.int):
+        if isinstance(paramName, int):
             cov = covariance_df.values
             cov[:, paramName] = factor * cov[:, paramName] / paramValue
             cov[paramName, :] = factor * cov[paramName, :] / paramValue

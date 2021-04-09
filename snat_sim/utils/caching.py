@@ -42,7 +42,8 @@ as follows:
    ...     def __init__(self):
    ...         self.add = Cache('x', 'y', cache_size=1000)(self.add)
    ...
-   ...     def add(self, x, y):
+   ...     @staticmethod
+   ...     def add( x, y):
    ...         return x + y
    ...
 

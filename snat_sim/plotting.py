@@ -144,6 +144,7 @@ def plot_derivative_mag_vs_z(
     axis.set_ylabel(r'$\frac{\Delta \, m}{\Delta \, PWV} |_{PWV = 4 mm}$', fontsize=20)
 
 
+# noinspection PyUnboundLocalVariable
 def plot_pwv_mag_effects(
         pwv_arr: np.ndarray,
         z_arr: np.ndarray,
@@ -314,6 +315,7 @@ def plot_spectral_template(
     return fig, np.array([top_ax, bottom_ax])
 
 
+# noinspection PyUnboundLocalVariable
 def plot_magnitude(
         mags: Dict[str, np.ndarray], pwv: np.ndarray, z: np.ndarray, figsize: Tuple[Numeric, Numeric] = (9, 6)
 ) -> Tuple[plt.figure, plt.Axes]:
@@ -396,6 +398,7 @@ def plot_fitted_params(
     return fig, axes
 
 
+# noinspection PyUnboundLocalVariable
 def plot_delta_colors(
         pwv_arr: np.ndarray, z_arr: np.ndarray, mag_dict: Dict[str, np.ndarray],
         colors: List[Tuple[str, str]], ref_pwv: Numeric = 0
@@ -723,7 +726,7 @@ def plot_transmission_variation(
     axis.fill_between(wave, low_transmission, high_transmission, label=f'PWV = {high_pwv} mm', alpha=.75)
 
     axis.set_title(r'Change in atmospheric PWV transmission flux due to $\Delta$PWV')
-    axis.set_xlabel('Wavelength ($\AA$)')
+    axis.set_xlabel(r'Wavelength ($\AA$)')
     axis.set_ylabel('PWV Transmission')
     axis.set_xlim(wave_min, wave_max)
     axis.set_ylim(.5, 1)
@@ -771,7 +774,7 @@ def plot_flux_variation(
     axis.fill_between(wave, low_pwv_flux, high_pwv_flux, label=f'PWV = {high_pwv} mm', alpha=.75)
 
     axis.set_title(r'Change in SN Ia flux due to $\Delta$PWV')
-    axis.set_xlabel('Wavelength ($\AA$)')
+    axis.set_xlabel(r'Wavelength ($\AA$)')
     axis.set_ylabel('SN Ia Flux')
     axis.set_xlim(wave_min, wave_max)
     axis.legend(framealpha=1)

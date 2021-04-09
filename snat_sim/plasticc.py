@@ -51,8 +51,8 @@ from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
-from .data_paths import paths_at_init
 from . import types
+from .data_paths import paths_at_init
 
 
 class PLaSTICC:
@@ -158,7 +158,7 @@ class PLaSTICC:
 
                 yield lc
 
-    def iter_lc(self, iter_lim: int = None, verbose: bool = True) -> Iterable[Table]:
+    def iter_lc(self, iter_lim: int = None, verbose: bool = True) -> Iterator[Table]:
         """Iterate over simulated light-curves  for a given cadence
 
         Args:

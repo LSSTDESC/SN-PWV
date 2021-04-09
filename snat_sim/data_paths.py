@@ -71,7 +71,7 @@ class DataPaths:
         return Path(data_path)
 
     @property
-    def _config_path(self) -> Path:
+    def pwv_config_path(self) -> Path:
         """The path of the PWV configuration file"""
 
         return self.data_dir / 'defaults' / 'ref_pwv.yaml'

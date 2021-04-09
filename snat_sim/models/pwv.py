@@ -464,7 +464,7 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
 
         # We don't actually expect this to ever be raised. The above conditionals should be sufficient.
         # However, we put it here just in case the function is called in some creative un-anticipated fashion.
-        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')  # pragma: no cover
+        raise NotImplementedError('Could not match dimensions of atmospheric model to source flux.')  # pragma: no cover
 
     def propagate(self, wave: np.ndarray, flux: np.ndarray, time: Union[float, np.ndarray]) -> np.ndarray:
         """Propagate the flux through the atmosphere
