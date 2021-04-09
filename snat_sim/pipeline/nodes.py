@@ -267,14 +267,14 @@ class WritePipelinePacket(Target):
         """Write a pipeline packet to the output file"""
 
         # We are taking the simulated parameters as guaranteed to exist
-        packet.sim_params_to_pandas().to_hdf(self.out_path, 'simulation/params', format='Table', append=True)
+        packet.sim_params_to_pandas().astype(str).to_hdf(self.out_path, 'simulation/params', append=True)
 
         if packet.light_curve is not None:  # else: simulation failed
             packet.light_curve.to_hdf(self.out_path, f'simulation/lcs/{packet.snid}')
 
         if packet.fit_result is not None:  # else: fit failed
-            packet.fit_result.covariance.to_hdf(self.out_path, f'fitting/covariance/{packet.snid}')
-            packet.fitted_params_to_pandas().to_hdf(self.out_path, 'fitting/params', format='Table', append=True)
+            packet.fitted_params_to_pandas().astype(str).to_hdf(self.out_path, 'fitting/params', append=True)
+            packet.fit_result.salt_covariance_linear().to_hdf(self.out_path, f'fitting/covariance/{packet.snid}')
 
     def action(self) -> None:
         """Write data from the input connector to disk"""
