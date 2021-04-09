@@ -1,4 +1,4 @@
-"""Tests for the ``plasticc`` module"""
+"""Tests for the ``snat_sim.plasticc.PLaSTICC`` class"""
 
 from unittest import TestCase
 

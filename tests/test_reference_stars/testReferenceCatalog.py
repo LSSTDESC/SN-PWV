@@ -1,4 +1,4 @@
-"""Tests for the ``ReferenceCatalog`` class"""
+"""Tests for the ``snat_sim.reference_stars.ReferenceCatalog`` class"""
 
 from unittest import TestCase
 
@@ -91,8 +91,10 @@ class DivideRefFromLc(TestCase):
         self.assert_returned_flux_is_scaled(pwv=pwv_array)
         self.assert_returned_flux_is_scaled(pwv=pwv_array.tolist())
 
+
     def test_error_on_mismatched_arg_length(self) -> None:
         """Test a value error is raised when argument lengths are not the same"""
 
         with self.assertRaises(ValueError):
+            # noinspection PyTypeChecker
             self.catalog.calibrate_lc(self.test_table, pwv=[1])

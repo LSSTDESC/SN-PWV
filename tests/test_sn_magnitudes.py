@@ -1,4 +1,4 @@
-"""Tests for the ``sn_magnitudes`` module"""
+"""Tests for the ``snat_sim.sn_magnitudes`` module"""
 
 from unittest import TestCase
 

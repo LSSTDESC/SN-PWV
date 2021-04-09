@@ -1,4 +1,4 @@
-"""Tests for the ``caching`` module"""
+"""Tests for the ``snat_sim.utils.caching`` module"""
 
 import sys
 from unittest import TestCase
@@ -51,8 +51,9 @@ class NumpyCache(TestCase):
         foo()
         self.assertEqual(call_count, 1)
 
-    def test_supports_numpy_args(self) -> None:
-        """Test the caching implimentation can handle numpy array arguments"""
+    @staticmethod
+    def test_supports_numpy_args() -> None:
+        """Test the caching implementation can handle numpy array arguments"""
 
         @Cache('x', 'y', cache_size=1000)
         def add(x: np.array, y: np.array) -> np.array:
@@ -82,4 +83,5 @@ class InitErrors(TestCase):
         """Test an error is raise when instantiating a MemoryCache with a float"""
 
         with self.assertRaises(ValueError):
+            # noinspection PyTypeChecker
             MemoryCache(max_size=1.2)

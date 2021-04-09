@@ -1,4 +1,4 @@
-"""Tests for the ``LoadPlasticcSims`` class"""
+"""Tests for the ``snat_sim.pipeline.nodes.LoadPlasticcCadence`` class"""
 
 from unittest import TestCase
 

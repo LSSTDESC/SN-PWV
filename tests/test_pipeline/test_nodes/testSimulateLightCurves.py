@@ -1,3 +1,5 @@
+"""Tests for the ``snat_sim.pipeline.nodes.LightCurveSimulation`` class"""
+
 from copy import copy
 from unittest import TestCase
 
@@ -78,7 +80,7 @@ class ResultRouting(TestCase):
     def setUp(self) -> None:
         """Set up mock nodes for feeding/accumulating a ``SimulateLightCurves`` instance"""
 
-        # Set up seperate target node for each of the ``SimulateLightCurves`` output connectors
+        # Set up separate target node for each of the ``SimulateLightCurves`` output connectors
         self.source = MockSource()
         self.node = SimulateLightCurves(SNModel('salt2-extended'), num_processes=0)
         self.success_target = MockTarget()

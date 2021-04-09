@@ -1,4 +1,4 @@
-"""Tests for the ``filters`` module"""
+"""Tests for the ``snat_sim.utils.filters`` module"""
 
 from unittest import TestCase
 

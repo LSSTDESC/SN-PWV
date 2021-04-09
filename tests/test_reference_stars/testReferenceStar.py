@@ -1,4 +1,4 @@
-"""Tests for the ``ReferenceStar`` class"""
+"""Tests for the ``snat_sim.reference_stars.ReferenceStar`` class"""
 
 from unittest import TestCase
 

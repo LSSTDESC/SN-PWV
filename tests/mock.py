@@ -1,4 +1,4 @@
-"""Mock objects used when evaluating the test suite"""
+"""Functions for building objects used by the test suite"""
 
 from datetime import datetime, timedelta
 from typing import *
@@ -116,7 +116,20 @@ def create_mock_cadence(
     )
 
 
-def create_mock_pipeline_packet(snid=123456, include_lc=True, include_fit=True):
+def create_mock_pipeline_packet(
+        snid: int = 123456, include_lc: bool = True, include_fit: bool = True
+) -> PipelinePacket:
+    """Create a ``PipelinePacket`` instance with mock data
+
+    Args:
+        snid: The unique id value for the pipeline packet
+        include_lc: Include a simulated light_curve in the packet
+        include_fit: Include fit results for the simulated light_curve
+
+    Returns:
+        A ``PipelinePacket`` instance
+    """
+
     sim_params, cadence = ObservedCadence.from_plasticc(create_mock_plasticc_light_curve())
     packet = PipelinePacket(snid, cadence=cadence, sim_params=sim_params)
 

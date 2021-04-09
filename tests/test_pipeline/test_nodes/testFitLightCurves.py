@@ -1,3 +1,5 @@
+"""Tests for the ``snat_sim.pipeline.nodes.FitLightCurves`` class"""
+
 from time import sleep
 from typing import List
 from unittest import TestCase

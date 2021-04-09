@@ -1,4 +1,4 @@
-"""Tests for the ``time_series_utils`` module"""
+"""Tests for the ``snat_sim.utils.time_series`` module"""
 
 from datetime import datetime, timedelta
 from typing import Collection

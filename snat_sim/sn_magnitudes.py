@@ -55,7 +55,7 @@ def get_config_pwv_vals(config_path: types.PathLike = paths_at_init.pwv_config_p
 
 
 def tabulate_mag(
-        model: SNModel,
+        model: Union[SNModel, sncosmo.Model],
         pwv_arr: Collection[types.Numeric],
         z_arr: Collection[types.Numeric],
         bands: List[str],

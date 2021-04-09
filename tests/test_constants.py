@@ -1,4 +1,4 @@
-"""Tests for the ``constants`` module"""
+"""Tests for the ``snat_sim.constants`` module"""
 
 from unittest import TestCase
 

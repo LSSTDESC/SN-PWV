@@ -1,3 +1,5 @@
+"""Tests for the ``snat_sim.pipeline.pipelines.FittingPipeline`` class"""
+
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import TestCase

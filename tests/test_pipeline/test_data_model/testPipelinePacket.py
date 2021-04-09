@@ -1,3 +1,5 @@
+"""Tests for the ``snat_sim.pipeline.data_model.PipelinePacket`` class"""
+
 from unittest import TestCase
 
 import numpy as np
