@@ -1,22 +1,12 @@
+from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import TestCase
 
-import numpy as np
-from astropy.io.misc.hdf5 import read_table_hdf5
-from astropy.table import Table
+import pandas as pd
+from egon.mock import MockSource
 
+from snat_sim.pipeline.nodes import WritePipelinePacket
 from tests.mock import create_mock_pipeline_packet
-
-
-def read_h5(*args, **kwargs) -> Table:
-    """Wrapper for astropy ``read_table_hdf5`` function that automatically decodes bytes into strings"""
-
-    data = read_table_hdf5(*args, **kwargs)
-    cols_to_cast = [c for c, cdata in data.columns.items() if cdata.dtype.type == np.bytes_]
-    for column in cols_to_cast:
-        data[column] = data[column].astype(str)
-
-    return data
 
 
 class InputDataMatchesDisk(TestCase):
@@ -28,6 +18,13 @@ class InputDataMatchesDisk(TestCase):
 
         cls.packet = create_mock_pipeline_packet()
         cls.temp_dir = TemporaryDirectory()
+        cls.temp_path = Path(cls.temp_dir.name) / 'temp.h5'
+        moc_source = MockSource([cls.packet])
+        node = WritePipelinePacket(cls.temp_path)
+        moc_source.output.connect(node.data_input)
+
+        moc_source.execute()
+        node.execute()
 
     @classmethod
     def tearDownClass(cls) -> None:
@@ -35,9 +32,17 @@ class InputDataMatchesDisk(TestCase):
 
         cls.temp_dir.cleanup()
 
-    def test_table_matches_input_lc(self) -> None:
+    def test_table_data_matches_input_packet(self) -> None:
         """Test the data written to disk matches the input data"""
 
-        snid = self.demo_lc.meta['SNID']
-        data = read_h5(self.temp_out_file, snid)
-        np.testing.assert_array_equal(self.demo_lc, data)
+        sim_params = pd.read_hdf(self.temp_path, 'simulation/params').iloc[0]
+        self.assertEqual(self.packet.sim_params, dict(sim_params))
+
+        light_curve = pd.read_hdf(self.temp_path, f'simulation/lcs/{self.packet.snid}')
+        pd.testing.assert_frame_equal(self.packet.light_curve, light_curve)
+
+        covariance = pd.read_hdf(self.temp_path, f'fitting/covariance/{self.packet.snid}')
+        pd.testing.assert_frame_equal(self.packet.covariance, covariance)
+
+        fit_params = pd.read_hdf(self.temp_path, 'fitting/params').iloc[0]
+        self.assertEqual(self.packet.fitted_params_to_pandas(), dict(fit_params))

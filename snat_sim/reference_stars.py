@@ -232,7 +232,7 @@ class ReferenceCatalog:
 
         return np.average([s.norm_flux(band, pwv) for s in self.spectra], axis=0)
 
-    def calibrate_lc(self, lc_table: Table, pwv: Union[types.Numeric, np.ndarray]) -> Table:
+    def calibrate_lc(self, lc_table: Union[Table, pd.DataFrame], pwv: Union[types.Numeric, np.ndarray]) -> Table:
         """Divide normalized reference flux from a light-curve
 
         Recalibrate flux values using the average change in flux of a collection of
@@ -309,7 +309,7 @@ class VariableCatalog:
 
     def calibrate_lc(
             self,
-            lc_table: Table,
+            lc_table: Union[Table, pd.DataFrame],
             time: Union[float, np.ndarray, Collection],
             ra: float,
             dec: float,

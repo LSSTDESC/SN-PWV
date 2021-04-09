@@ -64,13 +64,25 @@ MASK_VALUE = -99.99
 
 @dataclass
 class PipelinePacket:
-    """Class representation of internal pipeline data products"""
+    """Class representation of internal pipeline data products
+
+    Fields:
+        snid: Unique identifier for the data packet
+        sim_params: Parameters used to simulate the light-curve
+        cadence: The observational cadence used to simulate the light-curve
+        light_curve: The simulated light-curve
+        fit_result: Fit result from fitting the light-curve
+        covariance: Covariance from the fit result
+        fitted_model: Model used to fit the light-curve
+        message: Status message
+    """
 
     snid: int
     sim_params: Optional[types.NumericalParams] = None
     cadence: Optional[ObservedCadence] = None
     light_curve: Optional[pd.DataFrame] = None
     fit_result: Optional[SNFitResult] = None
+    covariance: Optional[pd.DataFrame] = None
     fitted_model: Optional[SNModel] = None
     message: Optional[str] = ""
 

@@ -126,6 +126,7 @@ def create_mock_pipeline_packet(snid=123456, include_lc=True, include_fit=True):
         packet.light_curve = model.simulate_lc(cadence)
 
         if include_fit:
-            packet.fit_result, packet.fitted_model = model.fit_lc(packet.light_curve, ['x0', 'c'])
+            packet.fit_result, packet.fitted_model = model.fit_lc(packet.light_curve, ['x0', 'x1', 'c'])
+            packet.covariance = packet.fit_result.salt_covariance_linear()
 
     return packet

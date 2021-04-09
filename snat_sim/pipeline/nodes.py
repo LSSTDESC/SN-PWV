@@ -19,16 +19,12 @@ from astropy.cosmology.core import Cosmology
 from astropy.table import Table
 from egon.connectors import Input, Output
 from egon.nodes import Node, Source, Target
-from tables import NaturalNameWarning
 
 from .. import constants as const
 from ..models import AbstractVariablePWVEffect, ObservedCadence, PWVModel, SNModel, StaticPWVTrans
 from ..pipeline.data_model import PipelinePacket
 from ..plasticc import PLaSTICC
 from ..reference_stars import VariableCatalog
-
-warnings.simplefilter('ignore', category=DeprecationWarning)
-warnings.filterwarnings('ignore', category=NaturalNameWarning)
 
 
 class LoadPlasticcCadence(Source):
@@ -131,8 +127,7 @@ class SimulateLightCurves(Node):
 
         # Rescale the light-curve using the reference star catalog if provided
         if self.catalog is not None:
-            duplicated = self.catalog.calibrate_lc(
-                duplicated, duplicated['time'], ra=params['ra'], dec=params['dec'])
+            duplicated = self.catalog.calibrate_lc(duplicated, duplicated['time'], ra=params['ra'], dec=params['dec'])
 
         # Add the simulated PWV concentration if there is a variable PWV transmission effect.
         if self.include_pwv_col:
@@ -238,6 +233,7 @@ class FitLightCurves(Node):
         for packet in self.light_curves_input.iter_get():
             try:
                 packet.fit_result, packet.fitted_model = self.fit_lc(packet)
+                packet.covariance = packet.fit_result.salt_covariance_linear()
 
             except Exception as excep:
                 packet.message = f'{self.__class__.__name__}: {excep}'
