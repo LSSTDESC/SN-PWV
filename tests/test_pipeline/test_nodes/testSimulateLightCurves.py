@@ -21,7 +21,7 @@ class ResultRouting(TestCase):
         self.success_target = MockTarget()
         self.failure_target = MockTarget()
 
-        self.source.output.connect(self.node.cadence_data_input)
+        self.source.output.connect(self.node.input)
         self.node.success_output.connect(self.success_target.input)
         self.node.failure_output.connect(self.failure_target.input)
 

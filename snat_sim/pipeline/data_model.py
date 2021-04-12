@@ -11,23 +11,25 @@ and the cadence used in the simulation.
 .. doctest::
 
    >>> import sncosmo
-   >>> from snat_sim.models import SNModel
+   >>> from snat_sim.models import SNModel, LightCurve
    >>> from snat_sim.pipeline.data_model import PipelinePacket
    
    >>> # Load example data and an example supernova model
-   >>> data = sncosmo.load_example_data()
+   >>> example_data = sncosmo.load_example_data()
+   >>> light_curve = LightCurve.from_sncosmo(example_data)
+   >>> model_parameters = example_data.meta
    >>> sn_model = SNModel('Salt2')
 
    >>> # Set an initial guess for fitting the model parameters
-   >>> sn_model.update(data.meta)
+   >>> sn_model.update(model_parameters)
 
-   >>> fit_result, fitted_model = sn_model.fit_lc(data, vparam_names=['x1', 'c'])
+   >>> fit_result, fitted_model = sn_model.fit_lc(light_curve, vparam_names=['x0', 'x1', 'c'])
    >>> packet = PipelinePacket(
-   ...     snid=1234,                  # Unique SN identifier
-   ...     sim_params=data.meta,       # Parameters used to simulate the light-curve
-   ...     light_curve=data,           # The simulated light-curve
-   ...     fit_result=fit_result,      # ``SNFitResult`` object
-   ...     fitted_model=fitted_model,  # The fitted model (set to best fit parameter values)
+   ...     snid=1234,                    # Unique SN identifier
+   ...     sim_params=model_parameters,  # Parameters used to simulate the light-curve
+   ...     light_curve=light_curve,      # The simulated light-curve
+   ...     fit_result=fit_result,        # ``SNFitResult`` object
+   ...     fitted_model=fitted_model,    # The fitted model (set to best fit parameter values)
    ...     message='This fit was a success!'
    ... )
 

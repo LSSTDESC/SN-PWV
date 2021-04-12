@@ -31,13 +31,14 @@ class LoadPlasticcCadence(Source):
     """Pipeline node for loading PLaSTICC cadence data from disk
 
     Connectors:
-        output: Emits cadence data for individual SN simulations as ``ObservedCadence`` objects
+        output: Emits a pipeline packet decorated with the snid, simulation parameters, and cadence
     """
 
     def __init__(self, plasticc_dao: PLaSTICC, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
         """Source node for loading PLaSTICC cadence data from disk
 
-        This node can only be run using a single process.
+        This node can only be run using a single process. This can be the main
+        process (``num_processes=0``) or a single forked process (``num_processes=1``.)
 
         Args:
             plasticc_dao: A PLaSTICC data access object
@@ -66,8 +67,9 @@ class SimulateLightCurves(Node):
     """Pipeline node for simulating light-curves based on PLaSTICC cadences
 
     Connectors:
-        cadence_data_input: PLaSTICC light-curves as ``astropy.Table`` objects
-        simulation_output: Simulated light-curves as  ``astropy.Table`` objects
+        input: A Pipeline Packet
+        success_output: Emits pipeline packets successfully decorated with a simulated light-curve
+        failure_output: Emits pipeline packets for cases where the simulation procedure failed
     """
 
     def __init__(
@@ -98,7 +100,7 @@ class SimulateLightCurves(Node):
         self.cosmo = cosmo
 
         # Node connectors
-        self.cadence_data_input = Input('Simulation Cadence Input')
+        self.input = Input('Simulation Cadence Input')
         self.success_output = Output('Simulation Success')
         self.failure_output = Output('Simulation Failure')
         super().__init__(num_processes)
@@ -128,7 +130,7 @@ class SimulateLightCurves(Node):
     def action(self) -> None:
         """Simulate light-curves with atmospheric effects"""
 
-        for packet in self.cadence_data_input.iter_get():
+        for packet in self.input.iter_get():
             try:
                 packet.light_curve = self.duplicate_plasticc_lc(
                     packet.sim_params, packet.cadence
@@ -146,8 +148,9 @@ class FitLightCurves(Node):
     """Pipeline node for fitting simulated light-curves
 
     Connectors:
-        light_curves_input: Light-curves to fit
-        fit_results_output: Fit results as a list
+        input: A Pipeline Packet
+        success_output: Emits pipeline packets with successful fit results
+        failure_output: Emits pipeline packets for cases where the fitting procedure failed
     """
 
     def __init__(
@@ -167,7 +170,7 @@ class FitLightCurves(Node):
         self.bounds = bounds
 
         # Node Connectors
-        self.light_curves_input = Input('Fitting Light-Curve Input')
+        self.input = Input('Fitting Light-Curve Input')
         self.success_output = Output('Fitting Success')
         self.failure_output = Output('Fitting Failure')
         super(FitLightCurves, self).__init__(num_processes)
@@ -176,11 +179,12 @@ class FitLightCurves(Node):
         """Fit the given light-curve
 
         Args:
-            packet: A pipeline data packet
+            light_curve: The light-curve to fit
+            initial_guess: Parameters to use as the initial guess in the chi-squared minimization
 
         Returns:
-            - The optimization result represented as a ``Result`` object
-            - A copy of ``self.model`` with parameter values set to optimize the chi-square
+            - The optimization result
+            - A copy of the model with parameter values set to minimize the chi-square
         """
 
         # Use the true light-curve parameters as the initial guess
@@ -194,7 +198,7 @@ class FitLightCurves(Node):
     def action(self) -> None:
         """Fit light-curves"""
 
-        for packet in self.light_curves_input.iter_get():
+        for packet in self.input.iter_get():
             try:
                 packet.fit_result, packet.fitted_model = self.fit_lc(packet.light_curve, packet.sim_params)
 
@@ -208,24 +212,28 @@ class FitLightCurves(Node):
 
 
 class WritePipelinePacket(Target):
-    """Pipeline node for writing pandas objects to disk in HDF5 format
+    """Pipeline node for writing pipeline packets to disk
 
     Connectors:
-        fit_results_input: Expects a tuple with the HDF5 key and the data to write to that key
+        input: A pipeline packet
     """
 
-    def __init__(self, out_path: Union[str, Path]) -> None:
+    def __init__(self, out_path: Union[str, Path], num_processes=1) -> None:
         """Output node for writing HDF5 data to disk
 
-        This node can only be run using a single process.
+        This node can only be run using a single process. This can be the main
+        process (``num_processes=0``) or a single forked process (``num_processes=1``.)
 
         Args:
             out_path: Path to write data to in HDF5 format
         """
 
+        if num_processes not in (0, 1):
+            raise RuntimeError('Number of processes for ``LoadPlasticcCadence`` must be 0 or 1.')
+
         self.out_path = Path(out_path)
-        self.data_input = Input('Writing To Disk Input')
-        super().__init__(num_processes=1)
+        self.input = Input('Writing To Disk Input')
+        super().__init__(num_processes)
 
     def write_packet(self, packet):
         """Write a pipeline packet to the output file"""
@@ -243,7 +251,7 @@ class WritePipelinePacket(Target):
     def action(self) -> None:
         """Write data from the input connector to disk"""
 
-        for packet in self.data_input.iter_get():
+        for packet in self.input.iter_get():
             try:
                 self.write_packet(packet)
 

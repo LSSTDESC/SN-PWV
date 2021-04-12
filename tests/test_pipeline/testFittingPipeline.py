@@ -34,4 +34,4 @@ class ValidatePipelineNodes(TestCase):
     def test_limit_on_input_simulations(self) -> None:
         """Test a finite limit is imposed on the number of input PLaSTICC simulations"""
 
-        self.assertLess(self.pipeline.simulate_light_curves.cadence_data_input.maxsize, float('inf'))
+        self.assertLess(self.pipeline.simulate_light_curves.input.maxsize, float('inf'))

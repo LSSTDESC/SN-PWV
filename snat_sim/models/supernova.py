@@ -116,6 +116,14 @@ class SNModel(sncosmo.Model):
 
     @staticmethod
     def from_sncosmo(model: sncosmo.Model) -> SNModel:
+        """Create an `SNModel`` instance from a ``sncosmo.Model`` instance
+
+        Args:
+            model: The sncosmo model to build from
+
+        Returns:
+            An ``SNModel`` object
+        """
 
         new_model = SNModel(
             model.source,
@@ -128,7 +136,7 @@ class SNModel(sncosmo.Model):
 
     # Same as parent except allows duck-typing of ``effect`` arg
     def _add_effect_partial(self, effect, name, frame) -> None:
-        """Like 'add effect', but don't sync parameter arrays"""
+        """Like ``add effect``, but don't sync parameter arrays"""
 
         if frame not in ['rest', 'obs', 'free']:
             raise ValueError("frame must be one of: {'rest', 'obs', 'free'}")
@@ -190,8 +198,9 @@ class SNModel(sncosmo.Model):
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
 
-    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True,
-                    fixed_snr: Optional[float] = None) -> LightCurve:
+    def simulate_lc(
+            self, cadence: ObservedCadence, scatter: bool = True, fixed_snr: Optional[float] = None
+    ) -> LightCurve:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -295,6 +304,7 @@ class SNModel(sncosmo.Model):
 
 
 class SNFitResult(sncosmo.utils.Result):
+    """Represents results from a ``SNModel`` being fit to a ``LightCurve``"""
 
     def __eq__(self, other):
 
@@ -308,6 +318,8 @@ class SNFitResult(sncosmo.utils.Result):
 
     @property
     def param_names(self) -> List[str]:
+        """The names of the model parameters"""
+
         return copy(self['param_names'])
 
     @property
@@ -318,6 +330,8 @@ class SNFitResult(sncosmo.utils.Result):
 
     @property
     def vparam_names(self) -> List[str]:
+        """List of parameter names varied in the fit"""
+
         return copy(self['vparam_names'])
 
     @property
@@ -336,13 +350,23 @@ class SNFitResult(sncosmo.utils.Result):
 
         return pd.DataFrame.cov_utils.from_array(self['covariance'], paramNames=self.vparam_names)
 
-    def salt_covariance_linear(self, x0Truth: float = None) -> pd.DataFrame:
-        """The covariance matrix of apparent magnitude and salt2 parameters"""
+    def salt_covariance_linear(self, x0_truth: float = None) -> pd.DataFrame:
+        """The covariance matrix of apparent magnitude and salt2 parameters
+
+        Will raise an error if the `x0`, `x1` and `c` parameters are not
+        varied in the fit.
+
+        Args:
+            x0_truth: Optionally assert an alternative x0 value
+
+        Returns:
+            The covariance matrix asd a pandas ``DataFrame``
+        """
 
         if not self.success:
             raise RuntimeError('Cannot calculate variance for a failed fit.')
 
-        x0 = self.parameters.loc['x0'] if x0Truth is None else x0Truth
+        x0 = self.parameters.loc['x0'] if x0_truth is None else x0_truth
 
         factor = - 2.5 / np.log(10)
         # drop other parameters like t0

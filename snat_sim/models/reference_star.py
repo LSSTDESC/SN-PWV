@@ -1,46 +1,6 @@
-"""The ``reference_stars`` module includes utilities for calibrating
-observed (or simulated) magnitudes relative to a reference star. Reference
-star fluxes are determined relative to a fiducial atmosphere with 4mm of PWV.
+"""Models for the spectro-photometric flux of stars and their combination into
+reference catalogs.
 
-Usage Example
--------------
-
-The spectrum for individual spectral types can be retreived
-using the ``ReferenceStar`` class:
-
-.. doctest:: python
-
-   >>> from snat_sim.models import reference_star
-
-   >>> g2_star = reference_star.ReferenceStar('G2')
-   >>> print(g2_star.to_pandas())
-   3000.000     4.960049e+17
-   3000.006     4.659192e+17
-   3000.012     4.304657e+17
-   3000.018     3.751426e+17
-   3000.024     2.847191e+17
-                    ...
-   11999.920    1.366567e+18
-   11999.940    1.366673e+18
-   11999.960    1.366418e+18
-   11999.980    1.365863e+18
-   12000.000    1.365315e+18
-   Length: 933333, dtype: float32
-
-
-A ``ReferenceCatalog`` is used to represent a collection of stars with different
-stellar types. Catalog instances can be used to calibrate supernoca light-curves.
-
-.. code-block:: python
-
-   >>> import sncosmo
-
-   >>> light_curve = sncosmo.load_example_data()
-   >>> reference_catalog = reference_star.ReferenceCatalog('G2', 'M5')
-   >>> print(reference_catalog.calibrate_lc(light_curve, pwv=4))
-
-Module Docs
------------
 """
 
 from __future__ import annotations

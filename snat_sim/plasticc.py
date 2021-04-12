@@ -1,12 +1,11 @@
-"""The ``plasticc`` module provides data access for PLaSTICC light-curve
+"""The ``plasticc`` module provides data access for PLaSTICC cadence
 simulations stored on the local machine. Data is accessible by specifying
-the cadence and model used in a given simulation.
+the cadence name and model number used in a given simulation.
 
 Usage Example
 -------------
 
-The ``PLaSTICC`` class is responsible to handling data access for
-simulated light-curve data:
+The ``PLaSTICC`` class is responsible for handling data access:
 
 .. doctest:: python
 
@@ -23,7 +22,7 @@ simulated light-curve data:
 The class provides **basic** data access via the construction of an iterator
 over the observed cadence for each simulated light-curve. You should
 expect the first evaluation of the iterator to be slow since it has to load
-light-curve data into memory as chunks.
+data into memory as chunks.
 
 .. code-block:: python
 
@@ -46,16 +45,19 @@ from tqdm import tqdm
 from . import types
 from .data_paths import paths_at_init
 from .models import ObservedCadence
+from .types import NumericalParams
+
+YieldedData = Tuple[int, NumericalParams, ObservedCadence]
 
 
 class PLaSTICC:
     """Data access object for PLaSTICC simulation data"""
 
     def __init__(self, cadence: str, model: int) -> None:
-        """Data access object for PLaSTICC light-curve simulations performed using a given cadence and SN model
+        """Data access object for PLaSTICC simulations performed using a given cadence and SN model
 
         Args:
-            cadence: The cadence to load simulations for
+            cadence: The cadence to load data for
             model: The numerical identifier of the PLaSTICC SN model used in the simulation
         """
 
@@ -64,7 +66,7 @@ class PLaSTICC:
 
     @staticmethod
     def get_available_cadences() -> List[str]:
-        """Return a list of all available cadences available in the working environment"""
+        """Return a list of all cadences available in the working environment"""
 
         return [p.name for p in paths_at_init.get_plasticc_dir().glob('*') if p.is_dir()]
 
@@ -84,8 +86,8 @@ class PLaSTICC:
         return total_lc
 
     @staticmethod
-    def _iter_cadence_for_header(header_path: types.PathLike, verbose: bool = True):
-        """Iterate over light-curves from a given header file
+    def _iter_cadence_for_header(header_path: types.PathLike, verbose: bool = True) -> Iterator[YieldedData]:
+        """Iterate over cadence data from a given header file
 
         Files are expected to be written in pairs of a header file 
         (`*HEAD.fits`) that stores target meta data and a photometry file 
@@ -96,7 +98,9 @@ class PLaSTICC:
             verbose: Display a progress bar
 
         Yields:
-            An Astropy table with the MJD and filter for each observation
+            - The supernova identifier (SNID)
+            - The parameters used in the simulation
+            - The cadence of the simulation
         """
 
         # Load meta data from the header file
@@ -145,15 +149,17 @@ class PLaSTICC:
 
                 yield int(meta['SNID'].strip()), params, cadence
 
-    def iter_cadence(self, iter_lim: int = None, verbose: bool = True) -> Iterator[Table]:
-        """Iterate over simulated light-curves  for a given cadence
+    def iter_cadence(self, iter_lim: int = None, verbose: bool = True) -> Iterator[YieldedData]:
+        """Iterate over available cadence data for each supernova
 
         Args:
             iter_lim: Limit the number of iterated light-curves
             verbose: Display a progress bar
 
         Yields:
-            An Astropy table with simulated light-curve data
+            - The supernova identifier (SNID)
+            - The parameters used in the simulation
+            - The cadence of the simulation
         """
 
         max_lc = self.count_light_curves()

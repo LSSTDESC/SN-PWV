@@ -1,26 +1,4 @@
-"""Abstract representations of astronomical time-series data
-
-The ``LightCurve`` class represents astronomical light-curves and
-provides an easy interface for casting the data into other object
-commonly used object types.
-
-.. doctest:: python
-
-   >>> from snat_sim.models import LightCurve
-
-   >>> light_curve = LightCurve(
-   ... time=[55070.000000, 55072.051282, 55074.102564, 55076.153846],
-   ... band=['sdssg', 'sdssr', 'sdssi', 'sdssz'],
-   ... flux=[0.363512, -0.200801,  0.307494,  1.087761],
-   ... fluxerr=[0.672844, 0.672844, 0.672844, 0.672844],
-   ... zp=[25.0, 25.0, 25.0, 25.0],
-   ... zpsys=['ab', 'ab', 'ab', 'ab'])
-
-   >>> light_curve.to_pandas()
-
-   >>> light_curve.to_astropy()
-
-"""
+"""Abstract representations of astronomical time-series data."""
 
 from __future__ import annotations
 
@@ -58,7 +36,7 @@ class LightCurve:
             fluxerr: The error in each flux value
             zp: The zero-point of each observation
             zpsys: The zero-point system of each observation
-            phot_flag: Flag for the photometric observation
+            phot_flag: Optional flag for each photometric observation
         """
 
         phot_flag = np.full_like(time, 0) if phot_flag is None else phot_flag
@@ -70,20 +48,47 @@ class LightCurve:
         self.zpsys = pd.Series(zpsys, name='zpsys', index=self.time)
         self.phot_flag = pd.Series(phot_flag, name='phot_flag', index=self.time)
 
-    def to_astropy(self) -> Table:
-        """Return the light-curve data as a Table formatted for use with sncosmo
+    @staticmethod
+    def from_sncosmo(data: Table) -> LightCurve:
+        """Create a ``LightCurve`` instance from an astropy table in the SNCosmo format
+
+        Args:
+            data: A table in the sncosmo format
 
         Returns:
-            A table formatted for use with sncosmo
+            A ``LightCurve`` instance
+        """
+
+        try:
+            phot_flag = data['phot_flag']
+
+        except KeyError:
+            phot_flag = None
+
+        return LightCurve(
+            time=data['time'],
+            band=data['band'],
+            flux=data['flux'],
+            fluxerr=data['fluxerr'],
+            zp=data['zp'],
+            zpsys=data['zpsys'],
+            phot_flag=phot_flag
+        )
+
+    def to_astropy(self) -> Table:
+        """Return the light-curve data as an astropy ``Table`` formatted for use with sncosmo
+
+        Returns:
+            An ``Table`` instance formatted for use with sncosmo
         """
 
         return Table.from_pandas(self.to_pandas().reset_index())
 
     def to_pandas(self) -> pd.DataFrame:
-        """Return the light-curve data as a pandas DataFrame
+        """Return the light-curve data as a pandas ``DataFrame``
 
         Returns:
-            A ``pandas.DataFrame`` instance with the light-curve data
+            A ``DataFrame`` instance with the light-curve data
         """
 
         return pd.DataFrame(dict(
@@ -96,6 +101,8 @@ class LightCurve:
         ))
 
     def __len__(self) -> int:
+        """The number of observations in the light-curve"""
+
         return len(self.band)
 
     def copy(self) -> LightCurve:
@@ -104,4 +111,6 @@ class LightCurve:
         return copy(self)
 
     def __eq__(self, other: LightCurve):
+        """Check whether both objects have the same observations and the same values"""
+
         return self.to_pandas().equals(other.to_pandas())

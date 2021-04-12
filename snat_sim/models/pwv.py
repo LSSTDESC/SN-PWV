@@ -34,10 +34,10 @@ AIRMASS_CACHE_SIZE = 250_000
 
 
 class PWVModel:
-    """Model for interpolating the atmospheric water vapor at a given time and time"""
+    """Model for interpolating the atmospheric water vapor at a given date and time"""
 
     def __init__(self, pwv_series: pd.Series) -> None:
-        """Build a model for time variable PWV by drawing from a given PWV time series
+        """Build a model for time variable PWV by interpolating from a given PWV time series
 
         Args:
             pwv_series: PWV values with a datetime index
@@ -370,7 +370,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
     _maxwave = 12000.0
 
     def __init__(self, transmission_res: float = 5) -> None:
-        """Time independent atmospheric transmission due to PWV
+        """Time independent atmospheric transmission effect due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
         highest available transmission model available.
@@ -413,9 +413,10 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 
 
 class AbstractVariablePWVEffect(VariablePropagationEffect):
+    """Base class for building time-variable PWV propagation effects"""
 
     def __init__(self, transmission_res: float = 5) -> None:
-        """Time independent atmospheric transmission due to PWV
+        """Time variable atmospheric transmission effect due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
         highest available transmission model available.
@@ -424,7 +425,7 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
             pwv: Atmospheric concentration of PWV along line of sight in mm
 
         Args:
-            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
+            transmission_res: Reduce the underlying transmission model by binning to the given resolution
         """
 
         self._transmission_res = transmission_res
@@ -438,7 +439,7 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
-            time): Time to get the PWV concentration for
+            time: Time to get the PWV concentration for
 
         Returns:
             An array of PWV values in units of mm
@@ -527,7 +528,7 @@ class VariablePWVTrans(AbstractVariablePWVEffect):
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
-            time): Time to get the PWV concentration for
+            time: Time to get the PWV concentration for
 
         Returns:
             An array of PWV values in units of mm

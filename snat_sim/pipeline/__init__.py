@@ -5,16 +5,15 @@ light-curves with atmospheric effects.
 SubModules
 ----------
 
-Although the ``pipeline`` module provides prebuilt data analysis pipelines,
-you can also build customized pipelines using any of the nodes used in the
-prebuilt pipelines. Relevant documentation can be found in the following
-pages:
+Although the ``pipeline`` module provides a prebuilt data analysis pipeline,
+you can also build customized pipelines using any of the included nodes.
+Relevant documentation can be found in the following pages:
 
 .. autosummary::
    :nosignatures:
 
-   nodes
    data_model
+   nodes
 
 Usage Example
 -------------
@@ -85,14 +84,15 @@ class FittingPipeline(Pipeline):
             sim_model: Model to use when simulating light-curves
             fit_model: Model to use when fitting light-curves
             vparams: List of parameter names to vary in the fit
-            bounds: Bounds to impose on ``fit_model`` parameters when fitting light-curves
             out_path: Path to write results to
             fitting_pool: Number of child processes allocated to simulating light-curves
             simulation_pool: Number of child processes allocated to fitting light-curves
+            bounds: Bounds to impose on ``fit_model`` parameters when fitting light-curves
             max_queue: Maximum number of light-curves to store in pipeline at once
             iter_lim: Limit number of processed light-curves (Useful for profiling)
             catalog: Reference star catalog to calibrate simulated supernova with
             add_scatter: Add randomly generated scatter to simulated light-curve points
+            fixed_snr: Simulate light-curves with a fixed signal to noise ratio
             overwrite: Whether to overwrite an existing output file
         """
 
@@ -122,11 +122,11 @@ class FittingPipeline(Pipeline):
             num_processes=fitting_pool)
 
         # Connect pipeline nodes together
-        self.load_plastic.output.connect(self.simulate_light_curves.cadence_data_input)
-        self.simulate_light_curves.success_output.connect(self.fit_light_curves.light_curves_input)
-        self.simulate_light_curves.failure_output.connect(self.write_to_disk.data_input)
-        self.fit_light_curves.success_output.connect(self.write_to_disk.data_input)
-        self.fit_light_curves.failure_output.connect(self.write_to_disk.data_input)
+        self.load_plastic.output.connect(self.simulate_light_curves.input)
+        self.simulate_light_curves.success_output.connect(self.fit_light_curves.input)
+        self.simulate_light_curves.failure_output.connect(self.write_to_disk.input)
+        self.fit_light_curves.success_output.connect(self.write_to_disk.input)
+        self.fit_light_curves.failure_output.connect(self.write_to_disk.input)
 
         if max_queue:  # Limit the number of light-curves fed into the pipeline
-            self.simulate_light_curves.cadence_data_input.maxsize = max_queue
+            self.simulate_light_curves.input.maxsize = max_queue

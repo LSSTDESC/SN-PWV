@@ -31,7 +31,7 @@ class GenericSetup:
         cls.success_target = MockTarget()
         cls.failure_target = MockTarget()
 
-        source.output.connect(cls.node.light_curves_input)
+        source.output.connect(cls.node.input)
         cls.node.success_output.connect(cls.success_target.input)
         cls.node.failure_output.connect(cls.failure_target.input)
 

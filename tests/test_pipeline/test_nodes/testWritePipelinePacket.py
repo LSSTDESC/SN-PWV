@@ -25,7 +25,7 @@ class InputDataMatchesDisk(TestCase):
 
         moc_source = MockSource(cls.packets)
         node = WritePipelinePacket(cls.temp_path)
-        moc_source.output.connect(node.data_input)
+        moc_source.output.connect(node.input)
 
         moc_source.execute()
         node.execute()
