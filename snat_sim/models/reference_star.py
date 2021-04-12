@@ -10,9 +10,9 @@ using the ``ReferenceStar`` class:
 
 .. doctest:: python
 
-   >>> from snat_sim import reference_stars
+   >>> from snat_sim.models import reference_star
 
-   >>> g2_star = reference_stars.ReferenceStar('G2')
+   >>> g2_star = reference_star.ReferenceStar('G2')
    >>> print(g2_star.to_pandas())
    3000.000     4.960049e+17
    3000.006     4.659192e+17
@@ -36,27 +36,27 @@ stellar types. Catalog instances can be used to calibrate supernoca light-curves
    >>> import sncosmo
 
    >>> light_curve = sncosmo.load_example_data()
-   >>> reference_catalog = reference_stars.ReferenceCatalog('G2', 'M5')
+   >>> reference_catalog = reference_star.ReferenceCatalog('G2', 'M5')
    >>> print(reference_catalog.calibrate_lc(light_curve, pwv=4))
 
 Module Docs
 -----------
 """
 
+from __future__ import annotations
 from functools import lru_cache
 from pathlib import Path
 from typing import *
-from typing import Collection
 
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
 from astropy.table import Table
 
-from . import constants as const
-from . import types
-from .data_paths import paths_at_init
-from .models import PWVModel
+from .. import constants as const
+from .. import types
+from ..data_paths import paths_at_init
+from .pwv import PWVModel
 
 
 class ReferenceStar:
@@ -136,8 +136,8 @@ class ReferenceStar:
         return pd.Series(spec[indices], index=lam[indices])
 
     @lru_cache()  # Cache I/O
-    def get_dataframe(self) -> pd.DataFrame:
-        """Retrieve PWV values to use as reference values
+    def flux_scaling_dataframe(self) -> pd.DataFrame:
+        """Retrieve pre-tabulated scale factors uses when calibrating flux values for PWV absorption
 
         Returns:
             A DataFrame indexed by PWV with columns for flux
@@ -173,7 +173,7 @@ class ReferenceStar:
             The normalized flux at the given PWV value(s)
         """
 
-        reference_star_flux = self.get_dataframe()
+        reference_star_flux = self.flux_scaling_dataframe()
         if np.any(
                 (pwv < reference_star_flux.index.min()) |
                 (pwv > reference_star_flux.index.max())):
@@ -193,7 +193,7 @@ class ReferenceStar:
             The normalized flux at the given PWV value(s)
         """
 
-        reference_star_flux = self.get_dataframe()
+        reference_star_flux = self.flux_scaling_dataframe()
         if np.any(
                 (pwv < reference_star_flux.index.min()) |
                 (pwv > reference_star_flux.index.max())):
@@ -232,7 +232,7 @@ class ReferenceCatalog:
 
         return np.average([s.norm_flux(band, pwv) for s in self.spectra], axis=0)
 
-    def calibrate_lc(self, lc_table: Union[Table, pd.DataFrame], pwv: Union[types.Numeric, np.ndarray]) -> Table:
+    def calibrate_lc(self, lc_table: Union[Table, pd.DataFrame], pwv: Union[types.Numeric, np.ndarray]) -> pd.DataFrame:
         """Divide normalized reference flux from a light-curve
 
         Recalibrate flux values using the average change in flux of a collection of
@@ -246,6 +246,9 @@ class ReferenceCatalog:
             A modified copy of ``lc_table``
         """
 
+        if isinstance(lc_table, Table):
+            lc_table = lc_table.to_pandas()
+
         if isinstance(pwv, Collection):
             if len(pwv) != len(lc_table):
                 raise ValueError('PWV must be a float or have the same length as ``lc_table``')
@@ -258,7 +261,7 @@ class ReferenceCatalog:
         table_copy = lc_table.copy()
         for band in set(table_copy['band']):
             band_indices = np.where(table_copy['band'] == band)[0]
-            table_copy['flux'][band_indices] /= self.average_norm_flux(band, pwv[band_indices])
+            table_copy.iloc[band_indices, 'flux'] /= self.average_norm_flux(band, pwv[band_indices])
 
         return table_copy
 

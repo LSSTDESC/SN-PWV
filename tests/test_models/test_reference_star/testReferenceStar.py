@@ -1,4 +1,4 @@
-"""Tests for the ``snat_sim.reference_stars.ReferenceStar`` class"""
+"""Tests for the ``snat_sim.models.reference_star.ReferenceStar`` class"""
 
 from unittest import TestCase
 
@@ -7,7 +7,7 @@ import pandas as pd
 from pandas.testing import assert_series_equal
 
 from snat_sim.data_paths import paths_at_init
-from snat_sim.reference_stars import ReferenceStar
+from snat_sim.models import ReferenceStar
 
 
 class InitErrors(TestCase):
@@ -64,11 +64,11 @@ class StellarSpectraParsing(TestCase):
 
 
 class GetReferenceStarDataframe(TestCase):
-    """Tests for the ``get_dataframe`` function"""
+    """Tests for the ``flux_scaling_dataframe`` function"""
 
     @classmethod
     def setUpClass(cls):
-        cls.ref_star_dataframe = ReferenceStar('G2').get_dataframe()
+        cls.ref_star_dataframe = ReferenceStar('G2').flux_scaling_dataframe()
 
     def test_includes_unnormalized_flux(self) -> None:
         """Tests band flux columns are included in the dataframe"""

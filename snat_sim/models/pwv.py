@@ -46,7 +46,7 @@ class PWVModel:
         self.pwv_model_data = pwv_series.tsu.resample_data_across_year().tsu.periodic_interpolation()
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
+        #self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
         self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
     @staticmethod

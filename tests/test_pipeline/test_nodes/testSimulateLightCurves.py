@@ -1,14 +1,13 @@
 """Tests for the ``snat_sim.pipeline.nodes.LightCurveSimulation`` class"""
 
-from copy import copy
 from unittest import TestCase
 
 import numpy as np
 from egon.mock import MockSource, MockTarget
 
 from snat_sim.models import ObservedCadence, SNModel
-from snat_sim.pipeline.nodes import SimulateLightCurves
 from snat_sim.pipeline.data_model import PipelinePacket
+from snat_sim.pipeline.nodes import SimulateLightCurves
 from tests.mock import create_mock_plasticc_light_curve
 
 
@@ -24,48 +23,6 @@ class LightCurveSimulation(TestCase):
 
         cls.sim_params, cls.sim_cadence = ObservedCadence.from_plasticc(cls.plasticc_lc)
         cls.duplicated_lc = cls.test_node.duplicate_plasticc_lc(cls.sim_params, cls.sim_cadence)
-
-    def test_lc_meta_matches_params(self) -> None:
-        """Test parameters in returned meta data match the input plasticc light_curve"""
-
-        param_mapping = {  # Maps sncosmo param names to plasticc names
-            't0': 'SIM_PEAKMJD',
-            'x1': 'SIM_SALT2x1',
-            'c': 'SIM_SALT2c',
-            'z': 'SIM_REDSHIFT_CMB',
-            'ra': 'RA',
-            'dec': 'DECL'
-            # The x0 param should be overwritten during the simulation
-            # 'x0': 'SIM_SALT2x0'
-        }
-
-        for sncosmo_param, plasticc_param in param_mapping.items():
-            self.assertEqual(
-                self.duplicated_lc.meta[sncosmo_param], self.plasticc_lc.meta[plasticc_param],
-                f'Incorrect parameter `{sncosmo_param}` in meta (PLaSTICC parameter name `{plasticc_param}`).'
-            )
-
-    def test_all_sim_params_in_meta(self) -> None:
-        """Test all simulation parameters are copied into the simulated metadata"""
-
-        # The x0 param should be overwritten during the simulation
-        # See the ``test_x0_overwritten_by_cosmo_arg`` test
-        sim_params = self.sim_params.copy()
-        sim_params.pop('x0')
-
-        for param, val in sim_params.items():
-            self.assertIn(param, self.duplicated_lc.meta, f'Parameter {param} missing in meta.')
-            self.assertEqual(val, self.duplicated_lc.meta[param], f'Incorrect value for {param} parameter in meta.')
-
-    def test_x0_overwritten_by_cosmo_arg(self) -> None:
-        """Test the x0 parameter is overwritten according to the given cosmology"""
-
-        params, _ = ObservedCadence.from_plasticc(self.plasticc_lc)
-
-        model = copy(self.test_node.sim_model)
-        model.update({p: v for p, v in params.items() if p in model.param_names})
-        model.set_source_peakabsmag(self.test_node.abs_mb, 'standard::b', 'AB', cosmo=self.test_node.cosmo)
-        self.assertEqual(model['x0'], self.duplicated_lc.meta['x0'])
 
     def test_zp_is_overwritten_with_constant(self) -> None:
         """Test the zero-point of the simulated light_curve is overwritten as a constant"""

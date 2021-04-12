@@ -1,11 +1,11 @@
-"""Tests for the ``snat_sim.reference_stars.ReferenceCatalog`` class"""
+"""Tests for the ``snat_sim.models.reference_star.ReferenceCatalog`` class"""
 
 from unittest import TestCase
 
 import numpy as np
 from astropy.table import Table
 
-from snat_sim.reference_stars import ReferenceStar, ReferenceCatalog
+from snat_sim.models import ReferenceStar, ReferenceCatalog
 
 
 class InitErrors(TestCase):

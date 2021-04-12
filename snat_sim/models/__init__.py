@@ -147,3 +147,4 @@ Module Docs
 
 from .pwv import *
 from .supernova import *
+from .reference_star import *

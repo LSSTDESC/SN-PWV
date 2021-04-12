@@ -21,10 +21,9 @@ from egon.connectors import Input, Output
 from egon.nodes import Node, Source, Target
 
 from .. import constants as const
-from ..models import AbstractVariablePWVEffect, ObservedCadence, PWVModel, SNModel, StaticPWVTrans
+from ..models import AbstractVariablePWVEffect, ObservedCadence, PWVModel, SNModel, StaticPWVTrans,VariableCatalog
 from ..pipeline.data_model import PipelinePacket
 from ..plasticc import PLaSTICC
-from ..reference_stars import VariableCatalog
 
 
 class LoadPlasticcCadence(Source):
@@ -122,8 +121,6 @@ class SimulateLightCurves(Node):
 
         # Simulate the light-curve. Make sure to include model parameters as meta data
         duplicated = model_for_sim.simulate_lc(cadence, scatter=self.add_scatter, fixed_snr=self.fixed_snr)
-        duplicated.meta = params
-        duplicated.meta.update(dict(zip(model_for_sim.param_names, model_for_sim.parameters)))
 
         # Rescale the light-curve using the reference star catalog if provided
         if self.catalog is not None:
