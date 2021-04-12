@@ -16,12 +16,13 @@ from pathlib import Path
 from typing import *
 
 from astropy.cosmology.core import Cosmology
-from astropy.table import Table
 from egon.connectors import Input, Output
 from egon.nodes import Node, Source, Target
 
 from .. import constants as const
-from ..models import AbstractVariablePWVEffect, ObservedCadence, PWVModel, SNModel, StaticPWVTrans,VariableCatalog
+from ..models import (
+    LightCurve, ObservedCadence, SNFitResult, SNModel, VariableCatalog
+)
 from ..pipeline.data_model import PipelinePacket
 from ..plasticc import PLaSTICC
 
@@ -57,10 +58,8 @@ class LoadPlasticcCadence(Source):
     def action(self) -> None:
         """Load PLaSTICC cadence data from disk"""
 
-        for light_curve in self.cadence.iter_lc(iter_lim=self.iter_lim):
-            params, cadence = ObservedCadence.from_plasticc(light_curve)
-            packet = PipelinePacket(light_curve.meta['SNID'], params, cadence)
-            self.output.put(packet)
+        for snid, params, cadence in self.cadence.iter_cadence(iter_lim=self.iter_lim):
+            self.output.put(PipelinePacket(snid, params, cadence))
 
 
 class SimulateLightCurves(Node):
@@ -79,8 +78,7 @@ class SimulateLightCurves(Node):
             add_scatter: bool = True,
             fixed_snr: Optional[float] = None,
             abs_mb: float = const.betoule_abs_mb,
-            cosmo: Cosmology = const.betoule_cosmo,
-            include_pwv: bool = True
+            cosmo: Cosmology = const.betoule_cosmo
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -98,7 +96,6 @@ class SimulateLightCurves(Node):
         self.fixed_snr = fixed_snr
         self.abs_mb = abs_mb
         self.cosmo = cosmo
-        self.include_pwv_col = include_pwv
 
         # Node connectors
         self.cadence_data_input = Input('Simulation Cadence Input')
@@ -106,7 +103,7 @@ class SimulateLightCurves(Node):
         self.failure_output = Output('Simulation Failure')
         super().__init__(num_processes)
 
-    def duplicate_plasticc_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> Table:
+    def duplicate_plasticc_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> LightCurve:
         """Duplicate a plastic light-curve using the simulation model
 
         Args:
@@ -124,35 +121,9 @@ class SimulateLightCurves(Node):
 
         # Rescale the light-curve using the reference star catalog if provided
         if self.catalog is not None:
-            duplicated = self.catalog.calibrate_lc(duplicated, duplicated['time'], ra=params['ra'], dec=params['dec'])
-
-        # Add the simulated PWV concentration if there is a variable PWV transmission effect.
-        if self.include_pwv_col:
-            self.add_pwv_columns_to_table(duplicated, model_for_sim, ra=params['ra'], dec=params['dec'])
+            duplicated = self.catalog.calibrate_lc(duplicated, ra=params['ra'], dec=params['dec'])
 
         return duplicated
-
-    @staticmethod
-    def add_pwv_columns_to_table(light_curve: Table, model_for_sim: SNModel, ra: float, dec: float) -> None:
-        """Add columns for PWV and Airmass to a light-curve table
-
-        Args:
-            light_curve: The simulated light-curve table
-            model_for_sim: The model used to simulate the light-curve
-            ra: The Right Ascension of the supernova
-            dec: The declination  of the supernova
-        """
-
-        for effect in model_for_sim.effects:
-            if isinstance(effect, AbstractVariablePWVEffect):
-                light_curve['pwv'] = effect.assumed_pwv(light_curve['time'])
-                light_curve['airmass'] = PWVModel.calc_airmass(light_curve['time'], ra=ra, dec=dec)
-                break
-
-            if isinstance(effect, StaticPWVTrans):
-                light_curve['pwv'] = effect['pwv']
-                light_curve['airmass'] = 1
-                break
 
     def action(self) -> None:
         """Simulate light-curves with atmospheric effects"""
@@ -180,11 +151,7 @@ class FitLightCurves(Node):
     """
 
     def __init__(
-            self,
-            sn_model: SNModel,
-            vparams: List[str],
-            bounds: Dict = None,
-            num_processes: int = 1
+            self, sn_model: SNModel, vparams: List[str], bounds: Dict = None, num_processes: int = 1
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -205,7 +172,7 @@ class FitLightCurves(Node):
         self.failure_output = Output('Fitting Failure')
         super(FitLightCurves, self).__init__(num_processes)
 
-    def fit_lc(self, packet: PipelinePacket):
+    def fit_lc(self, light_curve: LightCurve, initial_guess: Dict[str, float]) -> Tuple[SNFitResult, SNModel]:
         """Fit the given light-curve
 
         Args:
@@ -218,10 +185,10 @@ class FitLightCurves(Node):
 
         # Use the true light-curve parameters as the initial guess
         model = copy(self.sn_model)
-        model.update({k: v for k, v in packet.sim_params.items() if k in self.sn_model.param_names})
+        model.update({k: v for k, v in initial_guess.items() if k in self.sn_model.param_names})
 
         return model.fit_lc(
-            packet.light_curve, self.vparams, bounds=self.bounds,
+            light_curve, self.vparams, bounds=self.bounds,
             guess_t0=False, guess_amplitude=False, guess_z=False)
 
     def action(self) -> None:
@@ -229,7 +196,7 @@ class FitLightCurves(Node):
 
         for packet in self.light_curves_input.iter_get():
             try:
-                packet.fit_result, packet.fitted_model = self.fit_lc(packet)
+                packet.fit_result, packet.fitted_model = self.fit_lc(packet.light_curve, packet.sim_params)
 
             except Exception as excep:
                 packet.message = f'{self.__class__.__name__}: {excep}'
@@ -267,7 +234,7 @@ class WritePipelinePacket(Target):
         packet.sim_params_to_pandas().astype(str).to_hdf(self.out_path, 'simulation/params', append=True)
 
         if packet.light_curve is not None:  # else: simulation failed
-            packet.light_curve.to_hdf(self.out_path, f'simulation/lcs/{packet.snid}')
+            packet.light_curve.to_pandas().to_hdf(self.out_path, f'simulation/lcs/{packet.snid}')
 
         if packet.fit_result is not None:  # else: fit failed
             packet.fitted_params_to_pandas().astype(str).to_hdf(self.out_path, 'fitting/params', append=True)

@@ -14,6 +14,7 @@ import pandas as pd
 import sncosmo
 from astropy.table import Table
 
+from . import LightCurve
 from .pwv import VariablePropagationEffect
 from .. import types
 
@@ -77,50 +78,6 @@ class ObservedCadence:
     @gain.setter
     def gain(self, gain: types.FloatColl):
         self._gain = np.full_like(self.obs_times, gain)
-
-    @staticmethod
-    def from_plasticc(
-            light_curve: Table,
-            zp: types.FloatColl = None,
-            drop_nondetection: bool = False
-    ) -> Tuple[types.NumericalParams, ObservedCadence]:
-        """Extract the observational cadence from a PLaSTICC light-curve
-
-        The zero-point, zero point system, and gain arguments can be a
-        collection of values (one per phase value), or a single value to
-        apply at all obs_times.
-
-        Args:
-            light_curve: Astropy table with PLaSTICC light-curve data
-            zp: Optionally overwrite the PLaSTICC zero-point with this value(s)
-            drop_nondetection: Drop data with PHOTFLAG == 0
-
-        Returns:
-            An ``ObservedCadence`` instance
-        """
-
-        if drop_nondetection:
-            light_curve = light_curve[light_curve['PHOTFLAG'] != 0]
-
-        params = {
-            'SNID': int(light_curve.meta['SNID'].strip()),
-            'ra': light_curve.meta['RA'],
-            'dec': light_curve.meta['DECL'],
-            't0': light_curve.meta['SIM_PEAKMJD'],
-            'x1': light_curve.meta['SIM_SALT2x1'],
-            'c': light_curve.meta['SIM_SALT2c'],
-            'z': light_curve.meta['SIM_REDSHIFT_CMB'],
-            'x0': light_curve.meta['SIM_SALT2x0']
-        }
-
-        return cast(types.NumericalParams, params), ObservedCadence(
-            obs_times=light_curve['MJD'],
-            bands=['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
-            zp=zp or light_curve['ZEROPT'],
-            zpsys='AB',
-            gain=1,
-            skynoise=light_curve['SKY_SIG']
-        )
 
     def to_sncosmo(self) -> Table:
         """Return the observational cadence as an ``astropy.Table``
@@ -234,7 +191,7 @@ class SNModel(sncosmo.Model):
         return new_model
 
     def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True,
-                    fixed_snr: Optional[float] = None) -> pd.DataFrame:
+                    fixed_snr: Optional[float] = None) -> LightCurve:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -247,7 +204,7 @@ class SNModel(sncosmo.Model):
             fixed_snr: Optionally simulate the light-curve using a fixed signal to noise ratio
 
         Returns:
-            The simulated light-curve as an astropy table in the ``sncosmo`` format
+            The simulated light-curve
         """
 
         flux = self.bandflux(cadence.bands, cadence.obs_times, zp=cadence.zp, zpsys=cadence.zpsys)
@@ -261,18 +218,18 @@ class SNModel(sncosmo.Model):
         if scatter:
             flux = np.atleast_1d(np.random.normal(flux, fluxerr))
 
-        return pd.DataFrame(dict(
+        return LightCurve(
             time=cadence.obs_times,
             band=cadence.bands,
             flux=flux,
             fluxerr=fluxerr,
             zp=cadence.zp,
             zpsys=cadence.zpsys
-        ))
+        )
 
     def fit_lc(
             self,
-            data: Union[Table, pd.DataFrame] = None,
+            data: LightCurve = None,
             vparam_names: List = tuple(),
             bounds: Dict[str: Tuple[types.Numeric, types.Numeric]] = None,
             method: str = 'minuit',
@@ -312,9 +269,6 @@ class SNModel(sncosmo.Model):
             The fit result and a copy of the model set to the fitted parameters
         """
 
-        if isinstance(data, pd.DataFrame):
-            data = Table.from_pandas(data)
-
         try:
             fit_func = {'minuit': sncosmo.fit_lc, 'emcee': sncosmo.mcmc_lc}[method]
 
@@ -322,7 +276,7 @@ class SNModel(sncosmo.Model):
             raise ValueError(f'Invalid fitting method: {method}')
 
         result, fitted_model = fit_func(
-            data=data,
+            data=data.to_astropy(),
             model=deepcopy(self),
             vparam_names=vparam_names,
             bounds=bounds, method=method,

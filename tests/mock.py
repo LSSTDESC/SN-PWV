@@ -5,9 +5,9 @@ from typing import *
 
 import numpy as np
 import pandas as pd
-from astropy.table import Table
+import sncosmo
 
-from snat_sim.models import PWVModel
+from snat_sim.models import LightCurve, PWVModel
 from snat_sim.models.supernova import ObservedCadence, SNModel
 from snat_sim.pipeline.data_model import PipelinePacket
 
@@ -35,7 +35,7 @@ def create_mock_pwv_data(
     return pd.Series(pwv, index=index)
 
 
-def create_constant_pwv_model(constant_pwv_value=4):
+def create_mock_pwv_model(constant_pwv_value=4):
     """Create a ``PWVModel`` instance that returns a constant PWV at zenith
 
     Args:
@@ -49,37 +49,6 @@ def create_constant_pwv_model(constant_pwv_value=4):
     pwv = np.full(len(date_sampling), constant_pwv_value)
     model_data = pd.Series(pwv, index=pd.to_datetime(date_sampling))
     return PWVModel(model_data)
-
-
-def create_mock_plasticc_light_curve():
-    """Create a mock light-curve in the PLaSTICC data format
-
-    Returns:
-        An astropy table
-    """
-
-    time_values = np.arange(-20, 52)
-    return Table(
-        data={
-            'MJD': time_values,
-            'FLT': list('ugrizY') * (len(time_values) // 6),
-            'FLUXCAL': np.ones_like(time_values),
-            'FLUXCALERR': np.full_like(time_values, .2),
-            'ZEROPT': np.full_like(time_values, 30),
-            'PHOTFLAG': [0] * 10 + [6144] + [4096] * 61,
-            'SKY_SIG': np.full_like(time_values, 80)
-        },
-        meta={
-            'SNID': '123456',
-            'RA': 10,
-            'DECL': -5,
-            'SIM_PEAKMJD': 0,
-            'SIM_SALT2x1': .1,
-            'SIM_SALT2c': .2,
-            'SIM_REDSHIFT_CMB': .5,
-            'SIM_SALT2x0': 1
-        }
-    )
 
 
 def create_mock_cadence(
@@ -116,6 +85,19 @@ def create_mock_cadence(
     )
 
 
+def create_mock_light_curve():
+    data = sncosmo.load_example_data()
+    data['band'] = [b.replace('sdss', 'lsst_hardware_') for b in data['band']]
+    return LightCurve(
+        time=data['time'],
+        band=data['band'],
+        flux=data['flux'],
+        fluxerr=data['fluxerr'],
+        zp=data['zp'],
+        zpsys=data['zpsys']
+    )
+
+
 def create_mock_pipeline_packet(
         snid: int = 123456, include_lc: bool = True, include_fit: bool = True
 ) -> PipelinePacket:
@@ -130,7 +112,16 @@ def create_mock_pipeline_packet(
         A ``PipelinePacket`` instance
     """
 
-    sim_params, cadence = ObservedCadence.from_plasticc(create_mock_plasticc_light_curve())
+    sim_params = {'SNID': 123456, 'ra': 10, 'dec': -5, 't0': 0, 'x1': .1, 'c': .2, 'z': .5, 'x0': 1}
+    time_values = np.arange(-20, 52)
+    cadence = ObservedCadence(
+        obs_times=np.arange(-20, 52),
+        bands=[f'lsst_hardware_{b}' for b in 'ugrizY'] * (len(time_values) // 6),
+        skynoise=np.full_like(time_values, 0),
+        zp=np.full_like(time_values, 30),
+        zpsys=np.full_like(time_values, 'ab', dtype='U2'),
+        gain=np.full_like(time_values, 1),
+    )
     packet = PipelinePacket(snid, cadence=cadence, sim_params=sim_params)
 
     if include_lc:

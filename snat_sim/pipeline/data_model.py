@@ -61,7 +61,7 @@ import pandas as pd
 
 from .. import constants as const
 from .. import types
-from ..models import ObservedCadence, SNFitResult, SNModel
+from ..models import LightCurve, ObservedCadence, SNFitResult, SNModel
 
 MASK_VALUE = -99.99
 
@@ -83,7 +83,7 @@ class PipelinePacket:
     snid: int
     sim_params: Optional[types.NumericalParams] = None
     cadence: Optional[ObservedCadence] = None
-    light_curve: Optional[pd.DataFrame] = None
+    light_curve: Optional[LightCurve] = None
     fit_result: Optional[SNFitResult] = None
     fitted_model: Optional[SNModel] = None
     message: Optional[str] = ""

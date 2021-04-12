@@ -52,7 +52,7 @@ class SuccessfulFitOutput(TestCase, GenericSetup):
         """Check each individual output value from the fitting node"""
 
         # Calculate expected values
-        fitted_result, fitted_model = self.node.fit_lc(self.packet)
+        fitted_result, fitted_model = self.node.fit_lc(self.packet.light_curve, self.packet.sim_params)
 
         # Compare those results against actual values
         pipeline_result = self.success_target.accumulated_data[0]

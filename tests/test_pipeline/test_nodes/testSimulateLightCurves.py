@@ -2,33 +2,11 @@
 
 from unittest import TestCase
 
-import numpy as np
 from egon.mock import MockSource, MockTarget
 
-from snat_sim.models import ObservedCadence, SNModel
-from snat_sim.pipeline.data_model import PipelinePacket
+from snat_sim.models import SNModel
 from snat_sim.pipeline.nodes import SimulateLightCurves
-from tests.mock import create_mock_plasticc_light_curve
-
-
-class LightCurveSimulation(TestCase):
-    """Tests for the ``duplicate_plasticc_sncosmo`` function"""
-
-    @classmethod
-    def setUpClass(cls) -> None:
-        """Set up mock nodes for feeding/accumulating a ``SimulateLightCurves`` instance"""
-
-        cls.plasticc_lc = create_mock_plasticc_light_curve()
-        cls.test_node = SimulateLightCurves(SNModel('salt2-extended'), num_processes=0)
-
-        cls.sim_params, cls.sim_cadence = ObservedCadence.from_plasticc(cls.plasticc_lc)
-        cls.duplicated_lc = cls.test_node.duplicate_plasticc_lc(cls.sim_params, cls.sim_cadence)
-
-    def test_zp_is_overwritten_with_constant(self) -> None:
-        """Test the zero-point of the simulated light_curve is overwritten as a constant"""
-
-        expected_zp = 30
-        np.testing.assert_equal(expected_zp, self.duplicated_lc['zp'].values)
+from tests.mock import create_mock_pipeline_packet
 
 
 class ResultRouting(TestCase):
@@ -56,8 +34,7 @@ class ResultRouting(TestCase):
     def test_success_routed_to_simulation_output(self) -> None:
         """Test successful simulations are sent to the ``simulation_output`` connector"""
 
-        params, cadence = ObservedCadence.from_plasticc(create_mock_plasticc_light_curve())
-        packet = PipelinePacket(123456, sim_params=params, cadence=cadence)
+        packet = create_mock_pipeline_packet(include_lc=False)
         self.source.load_data.append(packet)
         self.run_nodes()
 
@@ -67,9 +44,10 @@ class ResultRouting(TestCase):
     def test_failure_routed_to_failure_result_output(self) -> None:
         """Test failed simulations are sent to the ``failure_result_output`` connector"""
 
-        params, cadence = ObservedCadence.from_plasticc(create_mock_plasticc_light_curve())
-        params['z'] = 1000  # Pick a crazy redshift so the simulation fails
-        packet = PipelinePacket(123456, sim_params=params, cadence=cadence)
+        # Pick a crazy redshift so the simulation fails
+        packet = create_mock_pipeline_packet(include_lc=False)
+        packet.sim_params['z'] = 1000
+
         self.source.load_data.append(packet)
         self.run_nodes()
 

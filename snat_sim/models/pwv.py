@@ -46,7 +46,7 @@ class PWVModel:
         self.pwv_model_data = pwv_series.tsu.resample_data_across_year().tsu.periodic_interpolation()
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        #self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
+        self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
         self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
 
     @staticmethod
@@ -59,7 +59,7 @@ class PWVModel:
             supp_years: Years to supplement data with when missing from ``year``
 
         Returns:
-            An interpolation function that accepts ``time`` and ``format`` arguments
+            A PWV model that interpolates from data taken by the given receiver
         """
 
         all_years = [year]
@@ -213,7 +213,7 @@ class PWVModel:
             alt=const.vro_altitude,
             time_format='mjd'
     ) -> Union[float, np.array]:
-        """Interpolate the PWV along the line of sight as a function of time
+        """Interpolate the PWV along the line of sight for the given time
 
         The ``time_format`` argument can be set to ``None`` when passing datetime
         objects instead of numerical values for ``time``.
@@ -309,7 +309,7 @@ class PWVTransmissionModel:
         ...  # pragma: no cover
 
     def _calc_transmission(self, pwv, wave=None):
-        """Evaluate transmission model at given wavelengths
+        """Evaluate the transmission model at the given wavelengths
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
         object if ``pwv`` is an array. Wavelengths are expected in angstroms.

@@ -10,7 +10,7 @@ from sncosmo.tests import test_models as sncosmo_test_models
 
 from snat_sim.models.pwv import VariablePWVTrans
 from snat_sim.models.supernova import SNModel
-from tests.mock import create_constant_pwv_model
+from tests.mock import create_mock_pwv_model
 
 no_emcee_package = False
 
@@ -134,7 +134,7 @@ class PropagationSupport(TestCase):
     def test_variable_propagation_support():
         """Test a time variable effect can be added and called without error"""
 
-        effect = VariablePWVTrans(create_constant_pwv_model())
+        effect = VariablePWVTrans(create_mock_pwv_model())
         model = SNModel(sncosmo_test_models.flatsource())
         model.add_effect(effect=effect, frame='obs', name='Variable PWV')
         model.flux(time=0, wave=[4000])

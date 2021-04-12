@@ -44,6 +44,7 @@ Module Docs
 """
 
 from __future__ import annotations
+
 from functools import lru_cache
 from pathlib import Path
 from typing import *
@@ -51,12 +52,12 @@ from typing import *
 import astropy.io.fits as fits
 import numpy as np
 import pandas as pd
-from astropy.table import Table
 
+from . import LightCurve
+from .pwv import PWVModel
 from .. import constants as const
 from .. import types
 from ..data_paths import paths_at_init
-from .pwv import PWVModel
 
 
 class ReferenceStar:
@@ -81,7 +82,7 @@ class ReferenceStar:
         self._spectrum = self._read_stellar_spectra_path(path)
 
     def to_pandas(self) -> pd.Series:
-        """Return the spectral data as a ``pandas.Series`` object"""
+        """Return the spectral template as a ``pandas.Series`` object"""
 
         return self._spectrum.copy()
 
@@ -232,38 +233,35 @@ class ReferenceCatalog:
 
         return np.average([s.norm_flux(band, pwv) for s in self.spectra], axis=0)
 
-    def calibrate_lc(self, lc_table: Union[Table, pd.DataFrame], pwv: Union[types.Numeric, np.ndarray]) -> pd.DataFrame:
+    def calibrate_lc(self, light_curve: LightCurve, pwv: Union[types.Numeric, np.ndarray]) -> LightCurve:
         """Divide normalized reference flux from a light-curve
 
         Recalibrate flux values using the average change in flux of a collection of
         reference stars.
 
         Args:
-            lc_table: Astropy table with columns ``flux`` and ``band``
+            light_curve: Light curve to calibrate
             pwv: PWV value to subtract reference star for
 
         Returns:
-            A modified copy of ``lc_table``
+            A modified copy of the ``light_curve`` argument
         """
 
-        if isinstance(lc_table, Table):
-            lc_table = lc_table.to_pandas()
-
         if isinstance(pwv, Collection):
-            if len(pwv) != len(lc_table):
+            if len(pwv) != len(light_curve):
                 raise ValueError('PWV must be a float or have the same length as ``lc_table``')
 
             pwv = np.array(pwv)
 
         else:
-            pwv = np.full(len(lc_table), pwv)
+            pwv = np.full(len(light_curve), pwv)
 
-        table_copy = lc_table.copy()
-        for band in set(table_copy['band']):
-            band_indices = np.where(table_copy['band'] == band)[0]
-            table_copy.iloc[band_indices, 'flux'] /= self.average_norm_flux(band, pwv[band_indices])
+        light_curve = light_curve.copy()
+        for band in set(light_curve.band):
+            band_indices = np.where(light_curve.band == band)[0]
+            light_curve.flux.iloc[band_indices] /= self.average_norm_flux(band, pwv[band_indices])
 
-        return table_copy
+        return light_curve
 
 
 class VariableCatalog:
@@ -312,23 +310,21 @@ class VariableCatalog:
 
     def calibrate_lc(
             self,
-            lc_table: Union[Table, pd.DataFrame],
-            time: Union[float, np.ndarray, Collection],
+            light_curve: LightCurve,
             ra: float,
             dec: float,
             lat: float = const.vro_latitude,
             lon: float = const.vro_longitude,
             alt: float = const.vro_altitude,
             time_format: str = 'mjd'
-    ) -> Table:
+    ) -> LightCurve:
         """Divide normalized reference flux from a light-curve
 
         Recalibrate flux values using the average change in flux of a collection of
         reference stars.
 
         Args:
-            lc_table: Astropy table with columns ``flux`` and ``band``
-            time: Time at which the target is observed
+            light_curve: Yhr light-curve to calibrate
             ra: Right Ascension of the target (Deg)
             dec: Declination of the target (Deg)
             lat: Latitude of the observer (Deg)
@@ -337,8 +333,8 @@ class VariableCatalog:
             time_format: Astropy supported format of the time value (Default: 'mjd')
 
         Returns:
-            A modified copy of ``lc_table``
+            A modified copy of the ``light_curve`` argument
         """
 
-        pwv = self.pwv_model.pwv_los(time, ra, dec, lat, lon, alt, time_format=time_format)
-        return self.catalog.calibrate_lc(lc_table, pwv)
+        pwv = self.pwv_model.pwv_los(light_curve.time, ra, dec, lat, lon, alt, time_format=time_format)
+        return self.catalog.calibrate_lc(light_curve, pwv)

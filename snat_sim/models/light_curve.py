@@ -2,7 +2,7 @@
 
 The ``LightCurve`` class represents astronomical light-curves and
 provides an easy interface for casting the data into other object
-types commonly used in third party astronomical and data-analysis software.
+commonly used object types.
 
 .. doctest:: python
 
@@ -16,15 +16,24 @@ types commonly used in third party astronomical and data-analysis software.
    ... zp=[25.0, 25.0, 25.0, 25.0],
    ... zpsys=['ab', 'ab', 'ab', 'ab'])
 
+   >>> light_curve.to_pandas()
+
+   >>> light_curve.to_astropy()
+
 """
 
+from __future__ import annotations
+
+from copy import copy
 from typing import *
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
 from astropy.table import Table
 
-from ..types import Numeric
+if TYPE_CHECKING:
+    from ..types import Numeric
 
 
 class LightCurve:
@@ -37,7 +46,8 @@ class LightCurve:
             flux: Collection[Numeric],
             fluxerr: Collection[Numeric],
             zp: Collection[Numeric],
-            zpsys: Collection[str]
+            zpsys: Collection[str],
+            phot_flag: Optional[Collection[int]] = None
     ) -> None:
         """An astronomical light-curve
 
@@ -48,41 +58,26 @@ class LightCurve:
             fluxerr: The error in each flux value
             zp: The zero-point of each observation
             zpsys: The zero-point system of each observation
+            phot_flag: Flag for the photometric observation
         """
 
-        self.time = time
-        self.band = band
-        self.flux = flux
-        self.fluxerr = fluxerr
-        self.zp = zp
-        self.zpsys = zpsys
+        phot_flag = np.full_like(time, 0) if phot_flag is None else phot_flag
+        self.time = pd.Index(time, name='time')
+        self.band = pd.Series(band, name='band', index=self.time)
+        self.flux = pd.Series(flux, name='flux', index=self.time)
+        self.fluxerr = pd.Series(fluxerr, name='fluxerr', index=self.time)
+        self.zp = pd.Series(zp, name='zp', index=self.time)
+        self.zpsys = pd.Series(zpsys, name='zpsys', index=self.time)
+        self.phot_flag = pd.Series(phot_flag, name='phot_flag', index=self.time)
 
-        if np.diff([len(attr) for attr in (time, band, flux, fluxerr, zp, zpsys)]).any():
-            raise ValueError('Argument lengths are not all the same.')
-
-    def to_dict(self):
-        """Return the light_curve data as a dictionary of it's attributes
-
-        Returns:
-            A dictionary with the light-curve data
-        """
-
-        return {
-            'time': self.time,
-            'band': self.band,
-            'flux': self.flux,
-            'zp': self.zp,
-            'zpsys': self.zpsys
-        }
-
-    def to_sncosmo(self) -> Table:
+    def to_astropy(self) -> Table:
         """Return the light-curve data as a Table formatted for use with sncosmo
 
         Returns:
             A table formatted for use with sncosmo
         """
 
-        return Table(self.to_dict())
+        return Table.from_pandas(self.to_pandas().reset_index())
 
     def to_pandas(self) -> pd.DataFrame:
         """Return the light-curve data as a pandas DataFrame
@@ -91,4 +86,22 @@ class LightCurve:
             A ``pandas.DataFrame`` instance with the light-curve data
         """
 
-        return pd.DataFrame(self.to_dict())
+        return pd.DataFrame(dict(
+            band=self.band,
+            flux=self.flux,
+            fluxerr=self.fluxerr,
+            zp=self.zp,
+            zpsys=self.zpsys,
+            phot_flag=self.phot_flag
+        ))
+
+    def __len__(self) -> int:
+        return len(self.band)
+
+    def copy(self) -> LightCurve:
+        """Return a copy of the instance"""
+
+        return copy(self)
+
+    def __eq__(self, other: LightCurve):
+        return self.to_pandas().equals(other.to_pandas())

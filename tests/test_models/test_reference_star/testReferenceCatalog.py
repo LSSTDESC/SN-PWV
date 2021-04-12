@@ -3,9 +3,9 @@
 from unittest import TestCase
 
 import numpy as np
-from astropy.table import Table
 
-from snat_sim.models import ReferenceStar, ReferenceCatalog
+from snat_sim.models import ReferenceCatalog, ReferenceStar
+from tests.mock import create_mock_light_curve
 
 
 class InitErrors(TestCase):
@@ -44,57 +44,49 @@ class AverageNormFlux(TestCase):
         np.testing.assert_array_equal(avg_flux, np.average((g2_flux, m5_flux), axis=0))
 
 
-class DivideRefFromLc(TestCase):
+class CalibrateLc(TestCase):
     """Tests for the ``calibrate_lc`` function"""
 
     def setUp(self) -> None:
-        # Create a dummy table. We don't care that the flux values
-        # are non-physical for this set of tests
-        self.test_table = Table()
-        self.test_table['flux'] = np.arange(10, 26, dtype='float')
-        self.test_table['band'] = 'lsst_hardware_z'
-        self.test_table['zp'] = 25
-        self.test_table['zpsys'] = 'ab'
-
+        self.light_curve = create_mock_light_curve()
         self.catalog = ReferenceCatalog('G2', 'M5')
 
     def test_no_argument_mutation(self) -> None:
         """Test argument table is not mutated"""
 
-        original_table = self.test_table.copy()
-        self.catalog.calibrate_lc(self.test_table, pwv=15)
-        self.assertTrue(all(original_table == self.test_table))
-
-    def assert_returned_flux_is_scaled(self, pwv):
-        """Test returned table has scaled flux"""
-
-        # Scale the flux values manually
-        test_band = self.test_table['band'][0]
-        scale_factor = self.catalog.average_norm_flux(test_band, pwv)
-        expected_flux = np.divide(self.test_table['flux'], scale_factor)
-
-        # Scale the flux values with ``calibrate_lc`` and check they
-        # match manual results
-        scaled_table = self.catalog.calibrate_lc(self.test_table, pwv=pwv)
-        returned_flux = list(scaled_table['flux'])
-        np.testing.assert_array_equal(expected_flux, returned_flux)
+        original_data = self.light_curve.copy()
+        self.catalog.calibrate_lc(self.light_curve, pwv=15)
+        self.assertTrue(original_data == self.light_curve)
 
     def test_flux_is_scaled_for_pwv_float(self) -> None:
         """Test flux values are scaled according to a scalar PWV value"""
 
-        self.assert_returned_flux_is_scaled(pwv=15)
+        pwv = 15
+
+        # Scale the flux values manually
+        scale_factor = [self.catalog.average_norm_flux(b, pwv) for b in self.light_curve.band]
+        expected_flux = np.divide(self.light_curve.flux, scale_factor)
+
+        # Scale the flux values with ``calibrate_lc`` and check they match manual results
+        scaled_table = self.catalog.calibrate_lc(self.light_curve, pwv=pwv)
+        np.testing.assert_array_equal(expected_flux, scaled_table.flux)
 
     def test_flux_is_scaled_for_pwv_vector(self) -> None:
         """Test flux values are scaled according to a vector of PWV values"""
 
-        pwv_array = np.full(len(self.test_table), 15)
-        self.assert_returned_flux_is_scaled(pwv=pwv_array)
-        self.assert_returned_flux_is_scaled(pwv=pwv_array.tolist())
+        pwv = np.full(len(self.light_curve), 15)
 
+        # Scale the flux values manually
+        scale_factor = [self.catalog.average_norm_flux(b, p) for b, p in zip(self.light_curve.band, pwv)]
+        expected_flux = np.divide(self.light_curve.flux, scale_factor)
+
+        # Scale the flux values with ``calibrate_lc`` and check they match manual results
+        scaled_table = self.catalog.calibrate_lc(self.light_curve, pwv=pwv)
+        np.testing.assert_array_equal(expected_flux, scaled_table.flux)
 
     def test_error_on_mismatched_arg_length(self) -> None:
         """Test a value error is raised when argument lengths are not the same"""
 
         with self.assertRaises(ValueError):
             # noinspection PyTypeChecker
-            self.catalog.calibrate_lc(self.test_table, pwv=[1])
+            self.catalog.calibrate_lc(self.light_curve, pwv=[1])

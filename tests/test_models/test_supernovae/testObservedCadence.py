@@ -5,11 +5,10 @@ from unittest import TestCase
 import numpy as np
 
 from snat_sim.models.supernova import ObservedCadence
-from ...mock import create_mock_plasticc_light_curve
 
 
 class SncosmoFormatting(TestCase):
-    """Tests for the ``to_sncosmo`` method"""
+    """Tests the ``to_astropy`` method enforces the sncosmo data model"""
 
     def setUp(self) -> None:
         """"Create an example cadence and export the data to sncosmo format"""
@@ -29,7 +28,7 @@ class SncosmoFormatting(TestCase):
     def test_correct_table_values(self) -> None:
         """Test the correct zero point and zero-point system were used"""
 
-        np.testing.assert_array_equal(self.sncosmo_cadence['time'], self.cadence.obs_times, 'Incorrect observation times')
+        np.testing.assert_array_equal(self.sncosmo_cadence['time'], self.cadence.obs_times,'Incorrect observation times')
         np.testing.assert_array_equal(self.sncosmo_cadence['band'], self.cadence.bands, 'Incorrect band names')
         np.testing.assert_array_equal(self.sncosmo_cadence['zp'], self.cadence.zp, 'Incorrect zero point')
         np.testing.assert_array_equal(self.sncosmo_cadence['zpsys'], self.cadence.zpsys, 'Incorrect zero point system')
@@ -48,35 +47,3 @@ class SncosmoFormatting(TestCase):
             ('zpsys', '<U100')])
 
         self.assertEqual(expected_dtype, self.sncosmo_cadence.dtype)
-
-
-class ExtractCadenceData(TestCase):
-    """Tests for the ``extract_cadence_data`` function"""
-
-    def setUp(self) -> None:
-        """Load mock PLaSTiCC data and convert to a ``ObservedCadence`` object"""
-
-        self.plasticc_lc = create_mock_plasticc_light_curve()
-        _, self.extracted_cadence = ObservedCadence.from_plasticc(self.plasticc_lc)
-
-    def test_zp_is_overwritten(self) -> None:
-        """Test the zero_point in the returned table is overwritten with a constant"""
-
-        np.testing.assert_array_equal(self.plasticc_lc['ZEROPT'], self.extracted_cadence.zp)
-
-    def test_filter_names_are_formatted(self) -> None:
-        """Test filter names are formatted for use with sncosmo"""
-
-        is_lower = all(f.islower() for f in self.extracted_cadence.bands)
-        self.assertTrue(is_lower, 'Filter names include uppercase letters')
-
-        is_prefixed = all(f.startswith('lsst_hardware_') for f in self.extracted_cadence.bands)
-        self.assertTrue(is_prefixed, 'Filter names do not start with ``lsst_hardware_``')
-
-    def test_drop_nondetection(self) -> None:
-        """Test ``drop_nondetection=True`` removes non detections"""
-
-        params, extracted_cadence = ObservedCadence.from_plasticc(self.plasticc_lc, drop_nondetection=True)
-        returned_dates = extracted_cadence.obs_times
-        expected_dates = self.plasticc_lc[self.plasticc_lc['PHOTFLAG'] != 0]['MJD']
-        np.testing.assert_array_equal(returned_dates, expected_dates)

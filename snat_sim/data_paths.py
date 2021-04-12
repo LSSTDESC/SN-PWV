@@ -122,7 +122,7 @@ class DataPaths:
         return plasticc_directory
 
 
-# Prebuilt object representing the ``data_dir`` as determined at package init
+# Represents the data locations as determined at package init
 # Objects instantiated later on may have a different ``data_dir`` if the variables
 # in the working environment change during runtime
 paths_at_init = DataPaths()

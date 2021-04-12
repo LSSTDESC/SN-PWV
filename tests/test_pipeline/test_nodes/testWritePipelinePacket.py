@@ -62,7 +62,7 @@ class InputDataMatchesDisk(TestCase):
 
         packet = self.packets[0]
         light_curve = pd.read_hdf(self.temp_path, f'simulation/lcs/{packet.snid}')
-        pd.testing.assert_frame_equal(packet.light_curve, light_curve)
+        pd.testing.assert_frame_equal(packet.light_curve.to_pandas(), light_curve)
 
     def test_all_light_curves_written(self) -> None:
         """Test all light-curves were written to disk"""

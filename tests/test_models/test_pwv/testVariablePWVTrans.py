@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from snat_sim import constants as const
 from snat_sim.models import pwv
-from tests.mock import create_constant_pwv_model
+from tests.mock import create_mock_pwv_model
 from .base import PropagationEffectTests
 
 
@@ -18,7 +18,7 @@ class BaseTests(PropagationEffectTests, TestCase):
         PWV concentration for the underlying model is set as a constant.
         """
 
-        mock_pwv_model = create_constant_pwv_model(4)
+        mock_pwv_model = create_mock_pwv_model(4)
         cls.propagation_effect = pwv.VariablePWVTrans(mock_pwv_model)
 
 
@@ -29,7 +29,7 @@ class DefaultParameterValues(TestCase):
     def setUpClass(cls):
         """Create an instance of the propagation effect for testing"""
 
-        mock_pwv_model = create_constant_pwv_model(4)
+        mock_pwv_model = create_mock_pwv_model(4)
         cls.propagation_effect = pwv.VariablePWVTrans(mock_pwv_model)
 
     def test_default_location_params_match_vro(self):
