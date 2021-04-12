@@ -145,6 +145,7 @@ Module Docs
 -----------
 """
 
+from .light_curve import *
 from .pwv import *
-from .supernova import *
 from .reference_star import *
+from .supernova import *
