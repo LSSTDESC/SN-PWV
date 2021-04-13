@@ -5,6 +5,7 @@ h5py
 matplotlib
 numpy
 pandas
+pwv_kpno==2.0.0.dev6
 pytz
 pyyaml
 scipy
