@@ -60,17 +60,6 @@ class DataPaths:
             self._plasticc_directory = self.data_dir / 'plasticc'
 
     @property
-    def joblib_path(self) -> Path:
-        """Directory to store function calls cached by joblib"""
-
-        data_path = os.environ.get(
-            'SNAT_SIM_CACHE',
-            self.data_dir / 'joblib'
-        )
-
-        return Path(data_path)
-
-    @property
     def pwv_config_path(self) -> Path:
         """The path of the PWV configuration file"""
 

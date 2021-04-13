@@ -79,3 +79,11 @@ class InputDataMatchesDisk(TestCase):
         available_ids = list(file_obj['fitting/covariance'].keys())
         expected_ids = [str(p.snid) for p in self.packets]
         self.assertListEqual(expected_ids, available_ids)
+
+
+class NumProcessesLimitedToOne(TestCase):
+    """Test the number of allocated processes is limited to one"""
+
+    def runTest(self):
+        with self.assertRaises(RuntimeError):
+            WritePipelinePacket('temp.h5', num_processes=2)

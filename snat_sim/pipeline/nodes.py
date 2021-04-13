@@ -20,9 +20,7 @@ from egon.connectors import Input, Output
 from egon.nodes import Node, Source, Target
 
 from .. import constants as const
-from ..models import (
-    LightCurve, ObservedCadence, SNFitResult, SNModel, VariableCatalog
-)
+from ..models import LightCurve, ObservedCadence, SNFitResult, SNModel, VariableCatalog
 from ..pipeline.data_model import PipelinePacket
 from ..plasticc import PLaSTICC
 
@@ -136,8 +134,8 @@ class SimulateLightCurves(Node):
                     packet.sim_params, packet.cadence
                 )
 
-            except Exception as e:
-                packet.message = f'{self.__class__.__name__}: {e}'
+            except Exception as excep:
+                packet.message = f'{self.__class__.__name__}: {repr(excep)}'
                 self.failure_output.put(packet)
 
             else:
@@ -203,7 +201,7 @@ class FitLightCurves(Node):
                 packet.fit_result, packet.fitted_model = self.fit_lc(packet.light_curve, packet.sim_params)
 
             except Exception as excep:
-                packet.message = f'{self.__class__.__name__}: {excep}'
+                packet.message = f'{self.__class__.__name__}: {repr(excep)}'
                 self.failure_output.put(packet)
 
             else:
@@ -255,6 +253,5 @@ class WritePipelinePacket(Target):
             try:
                 self.write_packet(packet)
 
-            except Exception as e:
-                # Just in case something really unexpected goes wrong
-                warnings.warn(str(e))
+            except Exception as excep:
+                warnings.warn(f'{self.__class__.__name__}: {repr(excep)}')

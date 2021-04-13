@@ -136,4 +136,5 @@ class Cache(MemoryCache):
             return self[key]
 
     def __reduce__(self):
+        # Ensures instances can be pickled
         return self.__class__, (self.function, self.cache_size, *self.numpy_args)

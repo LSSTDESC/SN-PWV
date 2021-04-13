@@ -117,11 +117,11 @@ class CovarianceAccessor:
 
     @overload
     def log_covariance(self, paramName: int, paramValue: float, factor: float = 1.) -> np.ndarray:
-        ...
+        ...  # pragma: no cover
 
     @overload
     def log_covariance(self, paramName: str, paramValue: float, factor: float = 1.) -> pd.DataFrame:
-        ...
+        ...  # pragma: no cover
 
     def log_covariance(self, paramName, paramValue, factor=1.):
         """
@@ -144,7 +144,7 @@ class CovarianceAccessor:
             cov = covariance_df.values
             cov[:, paramName] = factor * cov[:, paramName] / paramValue
             cov[paramName, :] = factor * cov[paramName, :] / paramValue
-            warn('parameter name specified as index. Returning covariance as numpy array.')
+            warn('Parameter name specified as index. Returning covariance as numpy array.')
             return cov
 
         covariance_df[paramName] = factor * covariance_df[paramName] / paramValue

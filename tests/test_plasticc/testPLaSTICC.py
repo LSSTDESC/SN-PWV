@@ -3,7 +3,6 @@
 from unittest import TestCase
 
 from snat_sim.plasticc import PLaSTICC
-from tests.mock import create_mock_light_curve
 
 
 class SetUp:
@@ -26,7 +25,7 @@ class GetAvailableCadences(TestCase):
 
 
 class GetModelHeaders(SetUp, TestCase):
-    """Tests for the collection of header files"""
+    """Tests the collection of header files matches data included with the package"""
 
     def runTest(self) -> None:
         header_paths = self.dao.get_model_headers()
@@ -43,11 +42,12 @@ class CountLightCurves(SetUp, TestCase):
         returned_light_curves = len(list(self.dao.iter_cadence(verbose=False)))
         self.assertEqual(returned_light_curves, counted_light_curves)
 
-class IterLcForCadenceModel(SetUp, TestCase):
-    """Tests for the iteration of light-curves"""
 
-    def test_lc_count_matches_count_light_curves_func(self) -> None:
-        """Test returned light curve count matches the values returned by ``count_light_curves``"""
+class IterLcForCadenceModel(SetUp, TestCase):
+    """Tests for the iteration of cadence data"""
+
+    def test_iter_count_matches_count_light_curves_func(self) -> None:
+        """Test the number of iterations matches the values returned by ``count_light_curves``"""
 
         total_lc_count = sum(1 for _ in self.dao.iter_cadence(verbose=False))
         expected_count = self.dao.count_light_curves()

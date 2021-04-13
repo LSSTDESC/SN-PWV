@@ -31,11 +31,10 @@ class ResultRouting(TestCase):
         for node in (self.source, self.node, self.success_target, self.failure_target):
             node.execute()
 
-    def test_success_routed_to_simulation_output(self) -> None:
+    def test_simulation_routed_to_success_output(self) -> None:
         """Test successful simulations are sent to the ``simulation_output`` connector"""
 
-        packet = create_mock_pipeline_packet(include_lc=False)
-        self.source.load_data.append(packet)
+        self.source.load_data.append(create_mock_pipeline_packet(include_lc=False))
         self.run_nodes()
 
         self.assertTrue(self.success_target.accumulated_data)

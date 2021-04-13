@@ -8,10 +8,16 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 import pandas as pd
+import sncosmo.photdata
 from astropy.table import Table
 
-if TYPE_CHECKING:
+if TYPE_CHECKING:  # pragma: no cover
     from ..types import Numeric
+
+SNCOSMO_ALIASES = dict()
+for column_name, alias_set in sncosmo.photdata.PHOTDATA_ALIASES.items():
+    for alias in alias_set:
+        SNCOSMO_ALIASES[alias] = column_name
 
 
 class LightCurve:
@@ -65,15 +71,11 @@ class LightCurve:
         except KeyError:
             phot_flag = None
 
-        return LightCurve(
-            time=data['time'],
-            band=data['band'],
-            flux=data['flux'],
-            fluxerr=data['fluxerr'],
-            zp=data['zp'],
-            zpsys=data['zpsys'],
-            phot_flag=phot_flag
-        )
+        # The sncosmo data format uses flexible column names
+        # E.g., 'time', 'date', 'jd', 'mjd', 'mjdobs', and 'mjd_obs' are all equivalent
+        # Here we map those column names onto the kwarg names for the parent class
+        kwargs = {SNCOSMO_ALIASES[col]: data[col] for col in data.colnames}
+        return LightCurve(**kwargs, phot_flag=phot_flag)
 
     def to_astropy(self) -> Table:
         """Return the light-curve data as an astropy ``Table`` formatted for use with sncosmo
@@ -98,7 +100,7 @@ class LightCurve:
             zp=self.zp,
             zpsys=self.zpsys,
             phot_flag=self.phot_flag
-        ))
+        ), index=self.time)
 
     def __len__(self) -> int:
         """The number of observations in the light-curve"""
