@@ -55,7 +55,6 @@ Module API
 import inspect
 import sys
 from collections import OrderedDict
-from functools import wraps
 from typing import Any, Callable, Hashable
 
 import numpy as np
@@ -98,7 +97,7 @@ class MemoryCache(OrderedDict):
 class Cache(MemoryCache):
     """Memoization function wrapper"""
 
-    def __init__(self, *numpy_args: str, cache_size: int = None) -> None:
+    def __init__(self, function: callable, cache_size: int, *numpy_args: str) -> None:
         """Memoization decorator supporting ``numpy`` arrays.
 
         Args:
@@ -109,10 +108,12 @@ class Cache(MemoryCache):
             A callable function decorator
         """
 
+        self.function = function
+        self.cache_size = cache_size
         self.numpy_args = numpy_args
         super(Cache, self).__init__(max_size=cache_size)
 
-    def __call__(self, function: Callable) -> Callable:
+    def __call__(self, *args: Any, **kwargs: Any) -> Callable:
         """Cache return values of the given function
 
         Args:
@@ -122,23 +123,17 @@ class Cache(MemoryCache):
             The wrapped function
         """
 
-        @wraps(function)
-        def wrapped(*args: Any, **kwargs: Any) -> Any:
-            """Wrapped version of the given function.
+        kwargs_for_key = inspect.getcallargs(self.function, *args, **kwargs)
+        for arg_to_cast in self.numpy_args:
+            kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tobytes()
 
-            Arguments and returns are the same as ``function``
-            """
+        key = tuple(kwargs_for_key.items())
+        try:
+            return self[key]
 
-            kwargs_for_key = inspect.getcallargs(function, *args, **kwargs)
-            for arg_to_cast in self.numpy_args:
-                kwargs_for_key[arg_to_cast] = np.array(kwargs_for_key[arg_to_cast]).tobytes()
+        except KeyError:
+            self[key] = self.function(*args, **kwargs)
+            return self[key]
 
-            key = tuple(kwargs_for_key.items())
-            try:
-                return self[key]
-
-            except KeyError:
-                self[key] = function(*args, **kwargs)
-                return self[key]
-
-        return wrapped
+    def __reduce__(self):
+        return self.__class__, (self.function, self.cache_size, *self.numpy_args)

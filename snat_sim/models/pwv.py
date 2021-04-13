@@ -46,8 +46,8 @@ class PWVModel:
         self.pwv_model_data = pwv_series.tsu.resample_data_across_year().tsu.periodic_interpolation()
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
-        self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
+        self.calc_airmass = Cache(self.calc_airmass, TRANSMISSION_CACHE_SIZE, 'time')
+        self.pwv_los = Cache(self.pwv_los, PWV_CACHE_SIZE, 'time')
 
     @staticmethod
     def from_suominet_receiver(receiver: GPSReceiver, year: int, supp_years: Collection[int] = None) -> PWVModel:
@@ -293,10 +293,9 @@ class PWVTransmissionModel:
             wave=self.samp_wave,
             res=resolution).values.T
 
-        self._interpolator = RegularGridInterpolator(
-            points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
+        self._interpolator = RegularGridInterpolator(points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
 
-        self.calc_transmission = Cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self._calc_transmission)
+        self.calc_transmission = Cache(self._calc_transmission, TRANSMISSION_CACHE_SIZE, 'pwv', 'wave')
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
