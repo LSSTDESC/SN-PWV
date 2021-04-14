@@ -70,7 +70,7 @@ class FittingPipeline(Pipeline):
             fitting_pool: int = 1,
             simulation_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
-            max_queue: int = 200,
+            max_queue: int = 100,
             iter_lim: int = float('inf'),
             catalog: VariableCatalog = None,
             add_scatter: bool = True,

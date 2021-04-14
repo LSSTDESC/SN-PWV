@@ -206,6 +206,7 @@ class FitLightCurves(Node):
         for packet in self.input.iter_get():
             try:
                 packet.fit_result, packet.fitted_model = self.fit_lc(packet.light_curve, packet.sim_params)
+                packet.covariance = packet.fit_result.salt_covariance_linear()
 
             except Exception as excep:
                 packet.message = f'{self.__class__.__name__}: {repr(excep)}'
@@ -257,8 +258,8 @@ class WritePipelinePacket(Target):
         if packet.fit_result is not None:  # else: fit failed
             self.file_store.append('fitting/params', packet.fitted_params_to_pandas())
 
-            if packet.fit_result.success:
-                self.file_store.put(f'fitting/covariance/{packet.snid}', packet.fit_result.salt_covariance_linear())
+        if packet.covariance is not None:
+            self.file_store.put(f'fitting/covariance/{packet.snid}', packet.covariance)
 
     def setup(self) -> None:
         """Open a file accessor object"""
