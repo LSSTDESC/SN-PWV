@@ -99,7 +99,7 @@ class PipelinePacket:
 
         out_data = pd.Series(self.sim_params)
         out_data['SNID'] = self.snid
-        out_data['message'] = self.message
+        # out_data['message'] = self.message
         return pd.DataFrame(out_data).T
 
     def fitted_params_to_pandas(self) -> pd.DataFrame:
@@ -119,7 +119,7 @@ class PipelinePacket:
         col_names.append('ndof')
         col_names.append('mb')
         col_names.append('abs_mag')
-        col_names.append('message')
+        # col_names.append('message')
 
         data_list = [self.snid]
         data_list.extend(self.fit_result.parameters)
@@ -128,5 +128,15 @@ class PipelinePacket:
         data_list.append(self.fit_result.ndof)
         data_list.append(self.fitted_model.source.bandmag('bessellb', 'ab', phase=0))
         data_list.append(self.fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
-        data_list.append(self.message)
+        # data_list.append(self.message)
         return pd.DataFrame(pd.Series(data_list, index=col_names)).T
+
+    def message_to_pandas(self) -> pd.DataFrame:
+        """Return the packet status message as a pandas ``DataFrame``
+
+        Return:
+            Dataframe with the snid, fit success status, and result message
+        """
+
+        success = self.fit_result.success if self.fit_result else False
+        return pd.DataFrame({'snid': [self.snid], 'success': [success], 'message': [self.message]})

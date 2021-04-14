@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import *
 
 import numpy as np
+import pandas as pd
 from astropy.cosmology.core import Cosmology
 from egon.connectors import Input, Output
 from egon.nodes import Node, Source, Target
@@ -235,22 +236,40 @@ class WritePipelinePacket(Target):
         if num_processes not in (0, 1):
             raise RuntimeError('Number of processes for ``LoadPlasticcCadence`` must be 0 or 1.')
 
+        # Make true to raise errors instead of converting them to warnings
+        self.debug = False
+
         self.out_path = Path(out_path)
         self.input = Input('Writing To Disk Input')
+        self.file_store: Optional[pd.HDFStore] = None
         super().__init__(num_processes)
 
     def write_packet(self, packet):
         """Write a pipeline packet to the output file"""
 
         # We are taking the simulated parameters as guaranteed to exist
-        packet.sim_params_to_pandas().astype(str).to_hdf(self.out_path, 'simulation/params', append=True)
+        self.file_store.append('simulation/params', packet.sim_params_to_pandas())
+        self.file_store.append('message', packet.message_to_pandas().astype(str), min_itemsize={'message': 250})
 
         if packet.light_curve is not None:  # else: simulation failed
-            packet.light_curve.to_pandas().to_hdf(self.out_path, f'simulation/lcs/{packet.snid}')
+            self.file_store.put(f'simulation/lcs/{packet.snid}', packet.light_curve.to_pandas())
 
         if packet.fit_result is not None:  # else: fit failed
-            packet.fitted_params_to_pandas().astype(str).to_hdf(self.out_path, 'fitting/params', append=True)
-            packet.fit_result.salt_covariance_linear().to_hdf(self.out_path, f'fitting/covariance/{packet.snid}')
+            self.file_store.append('fitting/params', packet.fitted_params_to_pandas())
+
+            if packet.fit_result.success:
+                self.file_store.put(f'fitting/covariance/{packet.snid}', packet.fit_result.salt_covariance_linear())
+
+    def setup(self) -> None:
+        """Open a file accessor object"""
+
+        self.file_store = pd.HDFStore(self.out_path, mode='w')
+
+    def teardown(self) -> None:
+        """Close any open file accessors"""
+
+        self.file_store.close()
+        self.file_store = None
 
     def action(self) -> None:
         """Write data from the input connector to disk"""
@@ -260,4 +279,7 @@ class WritePipelinePacket(Target):
                 self.write_packet(packet)
 
             except Exception as excep:
+                if self.debug:
+                    raise
+
                 warnings.warn(f'{self.__class__.__name__}: {repr(excep)}')

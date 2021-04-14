@@ -23,8 +23,9 @@ class InputDataMatchesDisk(TestCase):
         cls.temp_dir = TemporaryDirectory()
         cls.temp_path = Path(cls.temp_dir.name) / 'tempfile.h5'
 
-        moc_source = MockSource(cls.packets)
         node = WritePipelinePacket(cls.temp_path)
+        node.debug = True
+        moc_source = MockSource(cls.packets)
         moc_source.output.connect(node.input)
 
         moc_source.execute()
