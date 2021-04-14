@@ -52,6 +52,7 @@ import numpy as np
 import pandas as pd
 
 
+# noinspection PyPep8Naming
 @pd.api.extensions.register_dataframe_accessor('cov_utils')
 class CovarianceAccessor:
     """Pandas DataFrame accessor for covariance calculations"""

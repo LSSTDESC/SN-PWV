@@ -48,6 +48,8 @@ class CalibrateLc(TestCase):
     """Tests for the ``calibrate_lc`` function"""
 
     def setUp(self) -> None:
+        """Create a mock light-curve and a stellar reference catalog"""
+
         self.light_curve = create_mock_light_curve()
         self.catalog = ReferenceCatalog('G2', 'M5')
 

@@ -53,7 +53,7 @@ class IterLcForCadenceModel(SetUp, TestCase):
         expected_count = self.dao.count_light_curves()
         self.assertEqual(expected_count, total_lc_count)
 
-    def test_iter_limit(self):
+    def test_iter_limit(self) -> None:
         """Test the number of returned light-curves is limited by the ``iter_lim`` argument"""
 
         total_lc_count = sum(1 for _ in self.dao.iter_cadence(iter_lim=5, verbose=False))

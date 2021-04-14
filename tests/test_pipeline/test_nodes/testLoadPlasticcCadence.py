@@ -47,7 +47,7 @@ class LoadsCorrectSimulationData(TestCase):
 
         self.assertEqual(self.cadence, self.packet.cadence, 'Observational cadence does not match.')
 
-    def test_zero_point_is_overwritten(self):
+    def test_zero_point_is_overwritten(self) -> None:
         """Test the zero point of the loaded cadence is overwritten"""
 
         expected_zp = 30
@@ -57,7 +57,7 @@ class LoadsCorrectSimulationData(TestCase):
 class NumProcessesLimitedToOne(TestCase):
     """Test the number of allocated processes is limited to one"""
 
-    def runTest(self):
+    def runTest(self) -> None:
         cadence = PLaSTICC('alt_sched', 11)
         with self.assertRaises(RuntimeError):
             LoadPlasticcCadence(cadence, num_processes=2)

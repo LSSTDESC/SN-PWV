@@ -65,7 +65,7 @@ class InputDataMatchesDisk(TestCase):
         light_curve = pd.read_hdf(self.temp_path, f'simulation/lcs/{packet.snid}')
         pd.testing.assert_frame_equal(packet.light_curve.to_pandas(), light_curve)
 
-    def test_status_matches_packet(self):
+    def test_status_matches_packet(self) -> None:
         """Test the status messages written to disk match the packet data"""
 
         # This table contains mixed data types, so the output node

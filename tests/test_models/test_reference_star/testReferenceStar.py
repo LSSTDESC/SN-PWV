@@ -37,7 +37,9 @@ class StellarSpectraParsing(TestCase):
     """
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
+        """Define the file names for spectral types known to be included in the packaged data"""
+
         cls.file_names = [
             'F5_lte07000-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
             'G2_lte05800-4.50-0.0.PHOENIX-ACES-AGSS-COND-2011-HiRes.fits',
@@ -67,7 +69,9 @@ class GetReferenceStarDataframe(TestCase):
     """Tests for the ``flux_scaling_dataframe`` function"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
+        """Retrieve tabulated reference star fluxes"""
+
         cls.ref_star_dataframe = ReferenceStar('G2').flux_scaling_dataframe()
 
     def test_includes_unnormalized_flux(self) -> None:
@@ -103,7 +107,9 @@ class InterpNormFlux(TestCase):
     """Tests for the flux calculation"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
+        """Define a reference star for testing"""
+
         cls.ref_star = ReferenceStar('G2')
         cls.test_band = 'lsst_hardware_z'
 
@@ -131,7 +137,9 @@ class NormFlux(TestCase):
     """Tests for the calculation of the normalized flux"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
+        """Define a reference star for testing"""
+
         cls.ref_star = ReferenceStar('G2')
         cls.test_band = 'lsst_hardware_z'
 

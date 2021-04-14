@@ -245,7 +245,7 @@ class WritePipelinePacket(Target):
         self.file_store: Optional[pd.HDFStore] = None
         super().__init__(num_processes)
 
-    def write_packet(self, packet):
+    def write_packet(self, packet: PipelinePacket) -> None:
         """Write a pipeline packet to the output file"""
 
         # We are taking the simulated parameters as guaranteed to exist

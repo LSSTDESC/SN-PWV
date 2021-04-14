@@ -82,13 +82,13 @@ object:
 .. doctest:: python
 
    >>> # Here we simulate a light-curve with statistical noise
-   >>> light_curve = supernova_model.simulate_lc(cadence)
-   >>> print(type(light_curve))
+   >>> light_curve_with_noise = supernova_model.simulate_lc(cadence)
+   >>> print(type(light_curve_with_noise))
    <class 'snat_sim.models.light_curve.LightCurve'>
 
    >>> # Here we simulate a light-curve with a fixed signal to noise ratio
    >>> light_curve_fixed_snr = supernova_model.simulate_lc(cadence, fixed_snr=5)
-    >>> print(type(light_curve))
+    >>> print(type(light_curve_fixed_snr))
    <class 'snat_sim.models.light_curve.LightCurve'>
 
 The ``LightCurve`` class represents astronomical light-curves and provides an
@@ -98,7 +98,7 @@ easy interface for casting the data into other commonly used object types.
 
    >>> from snat_sim.models import LightCurve
 
-   >>> light_curve = LightCurve(
+   >>> light_curve_data = LightCurve(
    ... time=[55070.000000, 55072.051282, 55074.102564, 55076.153846],
    ... band=['sdssg', 'sdssr', 'sdssi', 'sdssz'],
    ... flux=[0.363512, -0.200801,  0.307494,  1.087761],
@@ -106,7 +106,7 @@ easy interface for casting the data into other commonly used object types.
    ... zp=[25.0, 25.0, 25.0, 25.0],
    ... zpsys=['ab', 'ab', 'ab', 'ab'])
 
-   >>> light_curve.to_pandas()
+   >>> light_curve_data.to_pandas()
                   band      flux   fluxerr    zp zpsys  phot_flag
    time
    55070.000000  sdssg  0.363512  0.672844  25.0    ab        0.0
@@ -115,7 +115,7 @@ easy interface for casting the data into other commonly used object types.
    55076.153846  sdssz  1.087761  0.672844  25.0    ab        0.0
 
 
-   >>> light_curve.to_astropy()
+   >>> light_curve_data.to_astropy()
        time      band    flux   fluxerr     zp   zpsys phot_flag
      float64     str5  float64  float64  float64  str2  float64
    ------------ ----- --------- -------- ------- ----- ---------

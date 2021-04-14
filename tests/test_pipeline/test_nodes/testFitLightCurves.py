@@ -46,7 +46,9 @@ class SuccessfulFitOutput(TestCase, GenericSetup):
 
     @classmethod
     def setUpClass(cls) -> None:
-        cls.generic_setup(['x0'])
+        """Set up mock nodes for feeding/accumulating a mock pipeline"""
+
+        cls.generic_setup(['x0', 'x1', 'c'])
 
     def runTest(self) -> None:
         """Check each individual output value from the fitting node"""

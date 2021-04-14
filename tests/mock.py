@@ -12,10 +12,11 @@ from snat_sim.pipeline.data_model import PipelinePacket
 
 
 def create_mock_pwv_data(
-        start_time=datetime(2020, 1, 1),
-        end_time=datetime(2020, 12, 31),
-        delta=timedelta(days=1),
-        offset=timedelta(hours=0)):
+        start_time: datetime = datetime(2020, 1, 1),
+        end_time: datetime = datetime(2020, 12, 31),
+        delta: timedelta = timedelta(days=1),
+        offset: timedelta = timedelta(hours=0)
+) -> pd.Series:
     """Return a ``Series`` of mock PWV values that alternate between .5 and 1
 
     Args:
@@ -25,7 +26,7 @@ def create_mock_pwv_data(
         offset    (timedelta): Apply a linear offset to the returned values
 
     Returns:
-        A pandas ``Series`` object
+        Pwv values with a datetime index
     """
 
     index = np.arange(start_time, end_time, delta).astype(datetime) + offset
@@ -34,7 +35,7 @@ def create_mock_pwv_data(
     return pd.Series(pwv, index=index)
 
 
-def create_mock_pwv_model(constant_pwv_value=4):
+def create_mock_pwv_model(constant_pwv_value: float = 4) -> PWVModel:
     """Create a ``PWVModel`` instance that returns a constant PWV at zenith
 
     Args:
@@ -53,7 +54,7 @@ def create_mock_pwv_model(constant_pwv_value=4):
 def create_mock_cadence(
         obs_time: Collection[float] = range(-20, 51),
         bands: Collection[str] = ('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
-        zp: Union[int, float] = 25,
+        zp: Union[int, float] = 30,
         zpsys: str = 'AB',
         gain: int = 1
 ) -> ObservedCadence:
@@ -84,7 +85,13 @@ def create_mock_cadence(
     )
 
 
-def create_mock_light_curve():
+def create_mock_light_curve() -> LightCurve:
+    """Create a mock light-curve
+
+    Returns:
+        A LightCurve instance filled with dummy data
+    """
+
     data = sncosmo.load_example_data()
     data['band'] = [b.replace('sdss', 'lsst_hardware_') for b in data['band']]
     return LightCurve(

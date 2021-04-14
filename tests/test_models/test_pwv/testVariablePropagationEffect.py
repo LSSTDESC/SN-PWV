@@ -12,7 +12,7 @@ class PropagateMethodSignature(TestCase):
     A correct signature is required to maintain compatibility with ``sncosmo``.
     """
 
-    def test_time_arg_in_signature(self):
+    def test_time_arg_in_signature(self) -> None:
         """Test the ``propagate`` method includes ``time`` as the LAST parameter
 
         This is important for maintaining reverse compatibility with the sncosmo package.

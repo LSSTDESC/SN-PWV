@@ -13,6 +13,8 @@ class ValidatePipeline(TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
+        """Initialize an instance of the pipeline"""
+
         cls.temp_dir = TemporaryDirectory()
         cls.pipeline = FittingPipeline(
             cadence='alt_sched',
@@ -24,6 +26,8 @@ class ValidatePipeline(TestCase):
 
     @classmethod
     def tearDownClass(cls) -> None:
+        """Clean up any temporary files"""
+
         cls.temp_dir.cleanup()
 
     def test_auto_validation(self) -> None:
@@ -40,7 +44,7 @@ class ValidatePipeline(TestCase):
 class OverwriteProtection(TestCase):
     """Test the class will not overwrite existing files by default"""
 
-    def runTest(self):
+    def runTest(self) -> None:
         with NamedTemporaryFile() as temp_file:
             path = Path(temp_file.name)
             path.touch()

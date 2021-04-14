@@ -11,12 +11,12 @@ from snat_sim.models import pwv
 class PWVInterpolation(TestCase):
     """Test the interpolation of PWV values from the underlying data"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Create a dummy ``Transmission`` object"""
 
         self.transmission = pwv.PWVTransmissionModel(4)
 
-    def test_interpolation_on_grid_point(self):
+    def test_interpolation_on_grid_point(self) -> None:
         """Test interpolation result matches sampled values at the grid points"""
 
         # get the grid coordinates and corresponding transmission values from the model
@@ -26,7 +26,7 @@ class PWVInterpolation(TestCase):
         returned_trans = self.transmission.calc_transmission(test_pwv)
         np.testing.assert_equal(expected_transmission, returned_trans)
 
-    def test_interpolates_for_given_wavelengths(self):
+    def test_interpolates_for_given_wavelengths(self) -> None:
         """Test an interpolation is performed for specified wavelengths when given"""
 
         test_pwv = self.transmission.samp_pwv[1]
@@ -39,12 +39,12 @@ class PWVInterpolation(TestCase):
 class FunctionDefaults(TestCase):
     """Test the transmission evaluations default to values specified at innit"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Create a dummy ``Transmission`` object"""
 
         self.transmission = pwv.PWVTransmissionModel(4)
 
-    def test_default_wavelengths_match_sampled_wavelengths(self):
+    def test_default_wavelengths_match_sampled_wavelengths(self) -> None:
         """Test return values are index by sample wavelengths by default"""
 
         np.testing.assert_equal(self.transmission.calc_transmission(4).index.to_numpy(), self.transmission.samp_wave)
@@ -53,19 +53,19 @@ class FunctionDefaults(TestCase):
 class VectorPWVSupport(TestCase):
     """Test the handling of list-like PWV arguments"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         """Create a dummy ``Transmission`` object"""
 
         self.transmission = pwv.PWVTransmissionModel(4)
 
-    def test_scalar_pwv_returns_series(self):
+    def test_scalar_pwv_returns_series(self) -> None:
         """Test passing a scalar PWV value returns a pandas Series object"""
 
         transmission = self.transmission.calc_transmission(4)
         self.assertIsInstance(transmission, pd.Series)
         self.assertEqual(transmission.name, f'4.0 mm')
 
-    def test_vector_pwv_returns_dataframe(self):
+    def test_vector_pwv_returns_dataframe(self) -> None:
         """Test passing a vector of PWV values returns a pandas DataFrame"""
 
         transmission = self.transmission.calc_transmission([4, 5])

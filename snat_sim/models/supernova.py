@@ -5,19 +5,16 @@ supernovae.
 from __future__ import annotations
 
 from copy import copy, deepcopy
-from dataclasses import dataclass
 from typing import *
-from typing import Optional, Union
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 import sncosmo
-from astropy.table import Table
 
-from . import LightCurve
+from .light_curve import LightCurve, ObservedCadence
 from .pwv import VariablePropagationEffect
 from .. import types
-
 
 
 class SNModel(sncosmo.Model):

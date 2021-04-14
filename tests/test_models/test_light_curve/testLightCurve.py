@@ -12,7 +12,8 @@ from snat_sim.models.light_curve import LightCurve
 class ParsingFromSncosmo(TestCase):
     """Test instance attributes match table data"""
 
-    def runTest(self):
+    @staticmethod
+    def runTest() -> None:
         data = sncosmo.load_example_data()
         light_curve = LightCurve.from_sncosmo(data)
 
@@ -29,7 +30,7 @@ class Casting(TestCase):
     """Tests for the casting of ``LightCurve`` instances to other data types"""
 
     @staticmethod
-    def test_to_astropy():
+    def test_to_astropy() -> None:
         """Test data returned by ``to_astropy`` matches data used to build the LightCurve"""
 
         data = sncosmo.load_example_data()
@@ -48,7 +49,7 @@ class Casting(TestCase):
         np.testing.assert_array_equal(data, light_curve.to_astropy())
 
     @staticmethod
-    def test_to_pandas():
+    def test_to_pandas() -> None:
         """Test data returned by ``to_pandas`` matches data used to build the LightCurve"""
 
         data = sncosmo.load_example_data().to_pandas('time')

@@ -94,7 +94,7 @@ class FittedParamsToPandas(TestCase):
 class PacketStatusToPandas(TestCase):
     """Tests for the compilation of packet status indicators into a DataFrame"""
 
-    def test_df_matches_packet_on_successful_fit(self):
+    def test_df_matches_packet_on_successful_fit(self) -> None:
         """Test the returned dataframe matches data from a picket with a successful fit result"""
 
         packet = create_mock_pipeline_packet()
@@ -104,7 +104,7 @@ class PacketStatusToPandas(TestCase):
         self.assertEqual(packet.message, df_data['message'])
         self.assertEqual(packet.fit_result.success, df_data['success'])
 
-    def test_df_matches_packet_on_missing_fit(self):
+    def test_df_matches_packet_on_missing_fit(self) -> None:
         """Test the returned dataframe matches data from a picket with a failed fit result"""
 
         packet = create_mock_pipeline_packet(include_fit=False)

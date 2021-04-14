@@ -13,7 +13,7 @@ class BaseTests(PropagationEffectTests, TestCase):
     """Extends base tests used for all propagation effects"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """Create an instance of the propagation effect for testing
 
         Set all seasonal PWV values to the same PWV concentration.
@@ -26,7 +26,7 @@ class BaseTests(PropagationEffectTests, TestCase):
         cls.propagation_effect['summer'] = cls.pwv
         cls.propagation_effect['fall'] = cls.pwv
 
-    def test_propagation_includes_pwv_transmission(self):
+    def test_propagation_includes_pwv_transmission(self) -> None:
         """Test that the ``propagate`` method applies PWV absorption"""
 
         # Get the expected transmission
@@ -43,12 +43,12 @@ class DefaultParameterValues(testVariablePWVTrans.DefaultParameterValues):
     """Tests for the value of default model parameters"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """Create an instance of the propagation effect for testing"""
 
         cls.propagation_effect = pwv.SeasonalPWVTrans()
 
-    def test_default_seasonal_values_are_zero(self):
+    def test_default_seasonal_values_are_zero(self) -> None:
         """Test the default values for the observer location match VRO"""
 
         self.assertEqual(0, self.propagation_effect['winter'])

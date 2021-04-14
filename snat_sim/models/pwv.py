@@ -293,7 +293,9 @@ class PWVTransmissionModel:
             wave=self.samp_wave,
             res=resolution).values.T
 
-        self._interpolator = RegularGridInterpolator(points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
+        self._interpolator = RegularGridInterpolator(
+            points=(calc_pwv_eff(self.samp_pwv), self.samp_wave),
+            values=self.samp_transmission)
 
         self.calc_transmission = Cache(self._calc_transmission, TRANSMISSION_CACHE_SIZE, 'pwv', 'wave')
 

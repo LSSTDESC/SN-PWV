@@ -32,7 +32,7 @@ class ResultRouting(TestCase):
             node.execute()
 
     def test_simulation_routed_to_success_output(self) -> None:
-        """Test successful simulations are sent to the ``simulation_output`` connector"""
+        """Test successful simulations are sent to the ``success_output`` connector"""
 
         self.source.load_data.append(create_mock_pipeline_packet(include_lc=False))
         self.run_nodes()
@@ -40,8 +40,8 @@ class ResultRouting(TestCase):
         self.assertTrue(self.success_target.accumulated_data)
         self.assertFalse(self.failure_target.accumulated_data)
 
-    def test_failure_routed_to_failure_result_output(self) -> None:
-        """Test failed simulations are sent to the ``failure_result_output`` connector"""
+    def test_failure_routed_to_failure_output(self) -> None:
+        """Test failed simulations are sent to the ``failure_output`` connector"""
 
         # Pick a crazy redshift so the simulation fails
         packet = create_mock_pipeline_packet(include_lc=False)

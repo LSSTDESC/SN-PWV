@@ -6,7 +6,7 @@ from unittest import TestCase
 
 import numpy as np
 import pandas as pd
-from pytz import UTC
+from pytz import utc
 
 from snat_sim.utils import time_series
 from tests.mock import create_mock_pwv_data
@@ -152,10 +152,10 @@ class ResampleDataAcrossYear(TestCase):
         # Assigning the timezone before resampling should be the same as
         # assigning it afterword
         test_series_with_tz = self.test_series.copy()
-        test_series_with_tz.index = test_series_with_tz.index.tz_localize(UTC)
+        test_series_with_tz.index = test_series_with_tz.index.tz_localize(utc)
 
         resampled_series_with_tz = self.resampled_series.copy()
-        resampled_series_with_tz.index = resampled_series_with_tz.index.tz_localize(UTC)
+        resampled_series_with_tz.index = resampled_series_with_tz.index.tz_localize(utc)
 
         pd.testing.assert_series_equal(
             resampled_series_with_tz,

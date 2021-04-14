@@ -12,12 +12,12 @@ class BaseTests(PropagationEffectTests, TestCase):
     """Extends base tests used for all propagation effects"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """Create an instance of the propagation effect for testing"""
 
         cls.propagation_effect = pwv.StaticPWVTrans()
 
-    def test_propagation_includes_pwv_transmission(self):
+    def test_propagation_includes_pwv_transmission(self) -> None:
         """Test the ``propagate`` method applies PWV absorption"""
 
         # Get the expected transmission
@@ -36,10 +36,12 @@ class DefaultParameterValues(TestCase):
     """Tests for the value of default model parameters"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
+        """Define a propagation effect for testing"""
+        
         cls.propagation_effect = pwv.StaticPWVTrans()
 
-    def test_default_pwv_is_zero(self):
+    def test_default_pwv_is_zero(self) -> None:
         """Test the default ``pwv`` parameter is 0"""
 
         self.assertEqual(0, self.propagation_effect['pwv'])

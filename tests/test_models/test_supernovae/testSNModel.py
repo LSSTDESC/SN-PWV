@@ -15,6 +15,7 @@ from tests.mock import create_mock_pwv_model
 no_emcee_package = False
 
 try:
+    # noinspection PyPackageRequirements
     import emcee
 
 except ImportError:
@@ -24,7 +25,7 @@ except ImportError:
 class SncosmoBaseTests(sncosmo_test_models.TestModel, TestCase):
     """Includes all tests written for the ``sncosmo.Model`` class."""
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Same as the base sncosmo setup procedure, but using a ``SNModel``
         # instance instead of ``sncosmo.Model``
         self.model = SNModel(
@@ -40,7 +41,7 @@ class BackwardsCompatibility(TestCase):
     """Test backwards compatibility with ``sncosmo.Model`` objects"""
 
     @staticmethod
-    def test_sed_matches_sncosmo_model():
+    def test_sed_matches_sncosmo_model() -> None:
         """Test the SED returned by the ``modeling.SNModel`` class matches the ``sncosmo.Model`` class"""
 
         wave = np.arange(3000, 12000)
@@ -50,7 +51,7 @@ class BackwardsCompatibility(TestCase):
         custom_flux = custom_model.flux(0, wave)
         np.testing.assert_equal(custom_flux, sncosmo_flux)
 
-    def test_fit_lc_returns_correct_type(self):
+    def test_fit_lc_returns_correct_type(self) -> None:
         """Test the fit_lc function returns an ``SNModel`` instance for the fitted model"""
 
         data = sncosmo.load_example_data()
@@ -63,7 +64,7 @@ class BackwardsCompatibility(TestCase):
         self.assertIsInstance(fitted_model, SNModel)
 
     @skipIf(no_emcee_package, 'emcee package is not installed')
-    def test_mcmc_lc_returns_correct_type(self):
+    def test_mcmc_lc_returns_correct_type(self) -> None:
         """Test the fit_lc function returns an ``SNModel`` instance for the fitted model"""
 
         data = sncosmo.load_example_data()
@@ -80,7 +81,7 @@ class BackwardsCompatibility(TestCase):
 class Copy(TestCase):
     """Test copying a model correctly copies the underlying class data"""
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.model = SNModel(
             source=sncosmo_test_models.flatsource(),
             effects=[sncosmo.CCM89Dust()],
@@ -89,13 +90,13 @@ class Copy(TestCase):
 
         self.model.set(z=0.0001)
 
-    def test_copy_returns_correct_type(self):
+    def test_copy_returns_correct_type(self) -> None:
         """Test copied objects are of ``modeling.SNModel`` type"""
 
         copied = copy(self.model)
         self.assertIsInstance(copied, SNModel)
 
-    def test_copy_copies_parameters(self):
+    def test_copy_copies_parameters(self) -> None:
         """Test parameter values are copied to new id values"""
 
         copied = copy(self.model)
@@ -103,7 +104,7 @@ class Copy(TestCase):
             self.assertNotEqual(id(original_param), id(copied_param))
             self.assertEqual(original_param, copied_param)
 
-    def test_copied_parameters_are_not_linked(self):
+    def test_copied_parameters_are_not_linked(self) -> None:
         """Test parameters of a copied model are independent from the original model"""
 
         old_params = copy(self.model.parameters)
@@ -115,14 +116,14 @@ class Copy(TestCase):
 class PropagationSupport(TestCase):
     """Tests for the handling of propagation effects"""
 
-    def test_error_for_bad_frame(self):
+    def test_error_for_bad_frame(self) -> None:
         """Test an error is raised for a band reference frame name"""
 
         model = SNModel(source='salt2')
         with self.assertRaises(ValueError):
             model.add_effect(effect=sncosmo.CCM89Dust(), frame='bad_frame_name', name='mw')
 
-    def test_free_effect_adds_z_parameter(self):
+    def test_free_effect_adds_z_parameter(self) -> None:
         """Test effects in the ``free`` frame of reference include an added redshift parameter"""
 
         effect_name = 'freeMW'
@@ -131,7 +132,7 @@ class PropagationSupport(TestCase):
         self.assertIn(effect_name + 'z', model.param_names)
 
     @staticmethod
-    def test_variable_propagation_support():
+    def test_variable_propagation_support() -> None:
         """Test a time variable effect can be added and called without error"""
 
         effect = VariablePWVTrans(create_mock_pwv_model())
