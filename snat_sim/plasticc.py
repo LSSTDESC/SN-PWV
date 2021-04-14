@@ -44,7 +44,7 @@ from tqdm import tqdm
 
 from . import types
 from .data_paths import paths_at_init
-from .models import ObservedCadence
+from .models import LightCurve, ObservedCadence
 from .types import NumericalParams
 
 YieldedData = Tuple[int, NumericalParams, ObservedCadence]
@@ -86,7 +86,7 @@ class PLaSTICC:
         return total_lc
 
     @staticmethod
-    def _iter_cadence_for_header(header_path: types.PathLike, verbose: bool = True) -> Iterator[YieldedData]:
+    def _iter_cadence_for_header(header_path: types.PathLike, include_lc=False) -> Iterator[YieldedData]:
         """Iterate over cadence data from a given header file
 
         Files are expected to be written in pairs of a header file 
@@ -95,7 +95,7 @@ class PLaSTICC:
 
         Args:
             header_path: Path of the header file
-            verbose: Display a progress bar
+            include_lc: Include the PLAsTICC simulated light-curve with iterator outputs
 
         Yields:
             - The supernova identifier (SNID)
@@ -118,42 +118,55 @@ class PLaSTICC:
         # for key, val in phot_data.iteritems():
         #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 
-        with tqdm(meta_data.iterrows(), total=len(meta_data), disable=not verbose) as pbar:
-            for idx, meta in pbar:
-                # Select the individual light-curve by it's indices
-                lc_start = int(meta['PTROBS_MIN']) - 1
-                lc_end = int(meta['PTROBS_MAX'])
-                lc_data = phot_data[lc_start: lc_end]
+        for idx, meta in meta_data.iterrows():
+            # Select the individual light-curve by it's indices
+            lc_start = int(meta['PTROBS_MIN']) - 1
+            lc_end = int(meta['PTROBS_MAX'])
+            lc_data = phot_data[lc_start: lc_end]
 
-                params = {
-                    'ra': meta['RA'],
-                    'dec': meta['DECL'],
-                    't0': meta['SIM_PEAKMJD'],
-                    'x1': meta['SIM_SALT2x1'],
-                    'c': meta['SIM_SALT2c'],
-                    'z': meta['SIM_REDSHIFT_CMB'],
-                    'x0': meta['SIM_SALT2x0']
-                }
+            params = {
+                'ra': meta['RA'],
+                'dec': meta['DECL'],
+                't0': meta['SIM_PEAKMJD'],
+                'x1': meta['SIM_SALT2x1'],
+                'c': meta['SIM_SALT2c'],
+                'z': meta['SIM_REDSHIFT_CMB'],
+                'x0': meta['SIM_SALT2x0']
+            }
 
-                cadence = ObservedCadence(
-                    obs_times=lc_data['MJD'],
-                    bands=['lsst_hardware_' + f.lower().strip() for f in lc_data['FLT']],
-                    zp=lc_data['ZEROPT'],
+            times = lc_data['MJD']
+            bands = ['lsst_hardware_' + f.lower().strip() for f in lc_data['FLT']]
+            zero_point = lc_data['ZEROPT']
+            cadence = ObservedCadence(
+                obs_times=times,
+                bands=bands,
+                zp=zero_point,
+                zpsys='AB',
+                gain=1,
+                skynoise=lc_data['SKY_SIG']
+            )
+
+            if include_lc:
+                lc = LightCurve(
+                    time=times,
+                    band=bands,
+                    flux=lc_data['FLUXCAL'],
+                    fluxerr=lc_data['FLUXCALERR'],
+                    zp=zero_point,
                     zpsys='AB',
-                    gain=1,
-                    skynoise=lc_data['SKY_SIG']
+                    phot_flag=lc_data['PHOTFLAG']
                 )
 
-                pbar.update()
-                pbar.refresh()
+                yield int(meta['SNID'].strip()), params, cadence, lc
 
-                yield int(meta['SNID'].strip()), params, cadence
+            yield int(meta['SNID'].strip()), params, cadence
 
-    def iter_cadence(self, iter_lim: int = None, verbose: bool = True) -> Iterator[YieldedData]:
+    def iter_cadence(self, iter_lim: int = None, include_lc=False, verbose: bool = True) -> Iterator[YieldedData]:
         """Iterate over available cadence data for each supernova
 
         Args:
             iter_lim: Limit the number of iterated light-curves
+            include_lc: Include the PLAsTICC simulated light-curve with iterator outputs
             verbose: Display a progress bar
 
         Yields:
@@ -168,7 +181,7 @@ class PLaSTICC:
         i = 0
         with tqdm(self.get_model_headers(), desc=self.cadence, total=total, disable=not verbose) as pbar:
             for header_path in pbar:
-                for chunk in self._iter_cadence_for_header(header_path, verbose=False):
+                for chunk in self._iter_cadence_for_header(header_path, include_lc=include_lc):
                     pbar.update()
                     pbar.refresh()
                     yield chunk
