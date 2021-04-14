@@ -1,10 +1,10 @@
-astropy
+astropy>=4.0
 bokeh
 egon
 h5py
-iminuit
+iminuit<2.0.0
 matplotlib
-numpy
+numpy>=1.16.0
 pandas
 pwv_kpno==2.0.0.dev6
 pytz

@@ -1,10 +1,10 @@
-"""Tests for the ``snat_sim.models.supernova.ObservedCadence`` class"""
+"""Tests for the ``snat_sim.models.light_curve.ObservedCadence`` class"""
 
 from unittest import TestCase
 
 import numpy as np
 
-from snat_sim.models.supernova import ObservedCadence
+from snat_sim.models import ObservedCadence
 
 
 class SncosmoFormatting(TestCase):

@@ -7,8 +7,7 @@ import numpy as np
 import pandas as pd
 import sncosmo
 
-from snat_sim.models import LightCurve, PWVModel
-from snat_sim.models.supernova import ObservedCadence, SNModel
+from snat_sim.models import LightCurve, ObservedCadence, PWVModel, SNModel
 from snat_sim.pipeline.data_model import PipelinePacket
 
 
