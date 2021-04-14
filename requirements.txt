@@ -2,6 +2,7 @@ astropy
 bokeh
 egon
 h5py
+iminuit
 matplotlib
 numpy
 pandas
