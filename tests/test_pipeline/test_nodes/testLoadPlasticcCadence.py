@@ -2,14 +2,15 @@
 
 from unittest import TestCase
 
+import numpy as np
 from egon.mock import MockTarget
 
 from snat_sim.pipeline.nodes import LoadPlasticcCadence
 from snat_sim.plasticc import PLaSTICC
 
 
-class LoadsPlasticcTable(TestCase):
-    """Test the loading of PLaSTICC data into the test_pipeline"""
+class LoadsCorrectSimulationData(TestCase):
+    """Test the loading of PLaSTICC data into a test pipeline"""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -45,6 +46,12 @@ class LoadsPlasticcTable(TestCase):
         """Test the cadence data matches the PLaSTICC iterator"""
 
         self.assertEqual(self.cadence, self.packet.cadence, 'Observational cadence does not match.')
+
+    def test_zero_point_is_overwritten(self):
+        """Test the zero point of the loaded cadence is overwritten"""
+
+        expected_zp = 30
+        np.testing.assert_array_equal(self.packet.cadence.zp, expected_zp)
 
 
 class NumProcessesLimitedToOne(TestCase):

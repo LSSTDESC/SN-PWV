@@ -15,6 +15,7 @@ from copy import copy
 from pathlib import Path
 from typing import *
 
+import numpy as np
 from astropy.cosmology.core import Cosmology
 from egon.connectors import Input, Output
 from egon.nodes import Node, Source, Target
@@ -32,7 +33,9 @@ class LoadPlasticcCadence(Source):
         output: Emits a pipeline packet decorated with the snid, simulation parameters, and cadence
     """
 
-    def __init__(self, plasticc_dao: PLaSTICC, iter_lim: int = float('inf'), num_processes: int = 1) -> None:
+    def __init__(
+            self, plasticc_dao: PLaSTICC, iter_lim: int = float('inf'), override_zp: float = 30, num_processes: int = 1
+    ) -> None:
         """Source node for loading PLaSTICC cadence data from disk
 
         This node can only be run using a single process. This can be the main
@@ -41,6 +44,7 @@ class LoadPlasticcCadence(Source):
         Args:
             plasticc_dao: A PLaSTICC data access object
             iter_lim: Exit after loading the given number of light-curves
+            override_zp: Overwrite the zero-point used by plasticc with this number
             num_processes: Number of processes to allocate to the node (must be 0 or 1 for this node)
         """
 
@@ -49,6 +53,7 @@ class LoadPlasticcCadence(Source):
 
         self.cadence = plasticc_dao
         self.iter_lim = iter_lim
+        self.override_zp = override_zp
 
         # Node connectors
         self.output = Output('Loading Cadence Output')
@@ -58,6 +63,7 @@ class LoadPlasticcCadence(Source):
         """Load PLaSTICC cadence data from disk"""
 
         for snid, params, cadence in self.cadence.iter_cadence(iter_lim=self.iter_lim):
+            cadence.zp = np.full_like(cadence.zp, self.override_zp)
             self.output.put(PipelinePacket(snid, params, cadence))
 
 
