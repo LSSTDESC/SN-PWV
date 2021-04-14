@@ -65,17 +65,10 @@ class LightCurve:
             A ``LightCurve`` instance
         """
 
-        try:
-            phot_flag = data['phot_flag']
-
-        except KeyError:
-            phot_flag = None
-
         # The sncosmo data format uses flexible column names
         # E.g., 'time', 'date', 'jd', 'mjd', 'mjdobs', and 'mjd_obs' are all equivalent
         # Here we map those column names onto the kwarg names for the parent class
-        kwargs = {SNCOSMO_ALIASES[col]: data[col] for col in data.colnames}
-        return LightCurve(**kwargs, phot_flag=phot_flag)
+        return LightCurve(**{SNCOSMO_ALIASES.get(col, col): data[col] for col in data.colnames})
 
     def to_astropy(self) -> Table:
         """Return the light-curve data as an astropy ``Table`` formatted for use with sncosmo
