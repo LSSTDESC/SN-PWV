@@ -249,7 +249,7 @@ class WritePipelinePacket(Target):
 
         # We are taking the simulated parameters as guaranteed to exist
         self.file_store.append('simulation/params', packet.sim_params_to_pandas())
-        self.file_store.append('message', packet.message_to_pandas().astype(str), min_itemsize={'message': 250})
+        self.file_store.append('message', packet.packet_status_to_pandas().astype(str), min_itemsize={'message': 250})
 
         if packet.light_curve is not None:  # else: simulation failed
             self.file_store.put(f'simulation/lcs/{packet.snid}', packet.light_curve.to_pandas())

@@ -131,7 +131,7 @@ class PipelinePacket:
         # data_list.append(self.message)
         return pd.DataFrame(pd.Series(data_list, index=col_names)).T
 
-    def message_to_pandas(self) -> pd.DataFrame:
+    def packet_status_to_pandas(self) -> pd.DataFrame:
         """Return the packet status message as a pandas ``DataFrame``
 
         Return:

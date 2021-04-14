@@ -27,7 +27,7 @@ class SimParamsToPandas(TestCase):
     def test_colnames_match_param_names(self) -> None:
         """Test the column names in the returned dataframe match simulated parameters"""
 
-        sim_params = list(self.packet.sim_params.keys()) + ['message']
+        sim_params = list(self.packet.sim_params.keys())
         columns = self.packet.sim_params_to_pandas().columns
         np.testing.assert_array_equal(sim_params, columns)
 
@@ -60,7 +60,7 @@ class FittedParamsToPandas(TestCase):
         fit_params = ['snid']
         fit_params.extend('fit_' + param for param in self.packet.fit_result.param_names)
         fit_params.extend('err_' + param for param in self.packet.fit_result.param_names)
-        fit_params.extend(('chisq', 'ndof', 'mb', 'abs_mag', 'message'))
+        fit_params.extend(('chisq', 'ndof', 'mb', 'abs_mag'))
         columns = self.packet.fitted_params_to_pandas().columns
         np.testing.assert_array_equal(fit_params, columns)
 
@@ -72,7 +72,6 @@ class FittedParamsToPandas(TestCase):
         self.assertEqual(self.packet.snid, returned_data['snid'], 'Incorrect SNID')
         self.assertEqual(self.packet.fit_result.chisq, returned_data['chisq'], 'Incorrect chisq')
         self.assertEqual(self.packet.fit_result.ndof, returned_data['ndof'], 'Incorrect ndof')
-        self.assertEqual(self.packet.message, returned_data['message'], 'Incorrect result message')
 
         for param in self.packet.fit_result.param_names:
             fit_result = self.packet.fitted_model[param]
@@ -90,3 +89,27 @@ class FittedParamsToPandas(TestCase):
         packet = create_mock_pipeline_packet(include_fit=False)
         with self.assertRaises(ValueError):
             packet.fitted_params_to_pandas()
+
+
+class PacketStatusToPandas(TestCase):
+    """Tests for the compilation of packet status indicators into a DataFrame"""
+
+    def test_df_matches_packet_on_successful_fit(self):
+        """Test the returned dataframe matches data from a picket with a successful fit result"""
+
+        packet = create_mock_pipeline_packet()
+        df_data = packet.packet_status_to_pandas().iloc[0]
+
+        self.assertEqual(packet.snid, df_data['snid'])
+        self.assertEqual(packet.message, df_data['message'])
+        self.assertEqual(packet.fit_result.success, df_data['success'])
+
+    def test_df_matches_packet_on_missing_fit(self):
+        """Test the returned dataframe matches data from a picket with a failed fit result"""
+
+        packet = create_mock_pipeline_packet(include_fit=False)
+        df_data = packet.packet_status_to_pandas().iloc[0]
+
+        self.assertEqual(packet.snid, df_data['snid'])
+        self.assertEqual(packet.message, df_data['message'])
+        self.assertEqual(False, df_data['success'])

@@ -40,14 +40,14 @@ class InputDataMatchesDisk(TestCase):
     def test_sim_params_match_packets(self) -> None:
         """Test the simulation parameters written to disk match the input data"""
 
-        data_from_packets = pd.concat([p.sim_params_to_pandas() for p in self.packets]).astype(str)
+        data_from_packets = pd.concat([p.sim_params_to_pandas() for p in self.packets])
         data_from_file = pd.read_hdf(self.temp_path, 'simulation/params')
         pd.testing.assert_frame_equal(data_from_packets, data_from_file)
 
     def test_fit_params_matches_packet(self) -> None:
         """Test the fitted parameters written to disk match the input data"""
 
-        data_from_packets = pd.concat([p.fitted_params_to_pandas() for p in self.packets]).astype(str)
+        data_from_packets = pd.concat([p.fitted_params_to_pandas() for p in self.packets])
         data_from_file = pd.read_hdf(self.temp_path, 'fitting/params')
         pd.testing.assert_frame_equal(data_from_packets, data_from_file)
 
@@ -64,6 +64,17 @@ class InputDataMatchesDisk(TestCase):
         packet = self.packets[0]
         light_curve = pd.read_hdf(self.temp_path, f'simulation/lcs/{packet.snid}')
         pd.testing.assert_frame_equal(packet.light_curve.to_pandas(), light_curve)
+
+    def test_status_matches_packet(self):
+        """Test the status messages written to disk match the packet data"""
+
+        # This table contains mixed data types, so the output node
+        # converts it all to strings when writing to disk
+        data_from_packets = pd.concat([p.packet_status_to_pandas() for p in self.packets])
+        data_from_packets = data_from_packets.astype(str)
+
+        data_from_file = pd.read_hdf(self.temp_path, 'message')
+        pd.testing.assert_frame_equal(data_from_packets, data_from_file)
 
     def test_all_light_curves_written(self) -> None:
         """Test all light-curves were written to disk"""
