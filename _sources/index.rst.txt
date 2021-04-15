@@ -87,12 +87,11 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    :caption: API Reference
    :titlesonly:
 
+   api/models.rst
+   api/pipeline/pipeline.rst
+   api/utils/utils.rst
    api/data_paths.rst
    api/constants.rst
-   api/models.rst
    api/plasticc.rst
-   api/reference_stars.rst
-   api/pipeline/pipeline.rst
-   api/sn_magnitudes.rst
    api/plotting.rst
-   api/utils/utils.rst
+   api/sn_magnitudes.rst

@@ -1,0 +1,349 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Licensed under the Apache 2.0 License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/open-sans/stylesheet.css" />
+  <!-- Licensed under the SIL Open Font License -->
+  <link rel="stylesheet" type="text/css" href="../../../_static/fonts/source-serif-pro/source-serif-pro.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="../../../_static/css/bootstrap-theme.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <title>snat_sim.models.light_curve &#8212; Supernova Atmospheric Simulation</title>
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/guzzle.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/css/custom_style.css" />
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+    <script src="../../../_static/jquery.js"></script>
+    <script src="../../../_static/underscore.js"></script>
+    <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/clipboard.min.js"></script>
+    <script src="../../../_static/copybutton.js"></script>
+    <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  
+   
+
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.models.light_curve</a></li> 
+      </ul>
+    </div>
+    <div class="container-wrapper">
+
+      <div id="mobile-toggle">
+        <a href="#"><span class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+      </div>
+  <div id="left-column">
+    <div class="sphinxsidebar"><a href="
+    ../../../index.html" class="text-logo">SNAT-SIM</a>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <div id="main-search">
+      <form class="form-inline" action="../../../search.html" method="GET" role="form">
+        <div class="input-group">
+          <input name="q" type="text" class="form-control" placeholder="Search...">
+        </div>
+        <input type="hidden" name="check_keywords" value="yes" />
+        <input type="hidden" name="area" value="default" />
+      </form>
+    </div>
+  </div>
+</div>
+<div class="sidebar-block">
+  <div class="sidebar-wrapper">
+    <h2>Table Of Contents</h2>
+  </div>
+  <div class="sidebar-toc">
+    
+    
+      <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../index.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/data_provenance.html">Data Provenance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/integrations.html">Package Integrations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../overview/command_line.html">Command Line Interface</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Notebooks / Science Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/notebook_summaries.html">Notebook Summaries</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/lsst_filters.html">LSST Filters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/pwv_eff_on_black_body.html">Effective PWV on a Black Body</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/pwv_modeling.html">PWV Modeling</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../notebooks/simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
+</ul>
+<p class="caption"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/data_paths.html">snat_sim.data_paths</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+</ul>
+
+    
+  </div>
+</div>
+      
+    </div>
+  </div>
+        <div id="right-column">
+
+          <div class="document clearer body">
+            
+  <h1>Source code for snat_sim.models.light_curve</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Abstract representations of astronomical time-series data&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">sncosmo.photdata</span>
+<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
+
+<span class="n">SNCOSMO_ALIASES</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">column_name</span><span class="p">,</span> <span class="n">alias_set</span> <span class="ow">in</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">photdata</span><span class="o">.</span><span class="n">PHOTDATA_ALIASES</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">alias</span> <span class="ow">in</span> <span class="n">alias_set</span><span class="p">:</span>
+        <span class="n">SNCOSMO_ALIASES</span><span class="p">[</span><span class="n">alias</span><span class="p">]</span> <span class="o">=</span> <span class="n">column_name</span>
+
+
+<span class="c1"># noinspection PyAttributeOutsideInit,PyUnresolvedReferences</span>
+<div class="viewcode-block" id="ObservedCadence"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.light_curve.ObservedCadence">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">ObservedCadence</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;The observational sampling of an astronomical light-curve</span>
+
+<span class="sd">    The zero-point, zero point system, and gain arguments can be a</span>
+<span class="sd">    collection of values (one per ``obs_time`` value), or a single value</span>
+<span class="sd">    to apply at all observation times.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        obs_times: Array of observation times for the light-curve</span>
+<span class="sd">        bands: Array of bands for each observation</span>
+<span class="sd">        zp: The zero-point or an array of zero-points for each observation</span>
+<span class="sd">        zpsys: The zero-point system or an array of zero-point systems</span>
+<span class="sd">        gain: The simulated gain or an array of gain values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">obs_times</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
+    <span class="n">bands</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">skynoise</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span>
+    <span class="n">zp</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span>
+    <span class="n">zpsys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
+    <span class="n">gain</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ObservedCadence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="n">attr_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;obs_times&#39;</span><span class="p">,</span> <span class="s1">&#39;bands&#39;</span><span class="p">,</span> <span class="s1">&#39;skynoise&#39;</span><span class="p">,</span> <span class="s1">&#39;zp&#39;</span><span class="p">,</span> <span class="s1">&#39;zpsys&#39;</span><span class="p">,</span> <span class="s1">&#39;gain&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attr_list</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">skynoise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skynoise</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@skynoise</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">skynoise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skynoise</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_skynoise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">skynoise</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@zp</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zp</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_zp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">zp</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">zpsys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zpsys</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@zpsys</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">zpsys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zpsys</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_zpsys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">zpsys</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;U8&#39;</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gain</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@gain</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span> <span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gain</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_gain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">gain</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ObservedCadence.to_sncosmo"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.light_curve.ObservedCadence.to_sncosmo">[docs]</a>    <span class="k">def</span> <span class="nf">to_sncosmo</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the observational cadence as an ``astropy.Table``</span>
+
+<span class="sd">        The returned table of observations is formatted for use with with</span>
+<span class="sd">        the ``sncosmo`` package.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An astropy table representing the observational cadence in ``sncosmo`` format</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">observations</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
+            <span class="p">{</span>
+                <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span>
+                <span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">,</span>
+                <span class="s1">&#39;gain&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gain</span><span class="p">,</span>
+                <span class="s1">&#39;skynoise&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">skynoise</span><span class="p">,</span>
+                <span class="s1">&#39;zp&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span>
+                <span class="s1">&#39;zpsys&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">zpsys</span>
+            <span class="p">},</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="s1">&#39;U1000&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s1">&#39;U100&#39;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="n">observations</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">observations</span></div>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+        <span class="n">repr_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_sncosmo</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">repr_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObservedCadence</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
+        <span class="n">repr_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repr_list</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LightCurve"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.light_curve.LightCurve">[docs]</a><span class="k">class</span> <span class="nc">LightCurve</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Abstract representation of an astronomical light-curve.&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LightCurve.__init__"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.light_curve.LightCurve.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">time</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+            <span class="n">band</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="n">flux</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+            <span class="n">fluxerr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+            <span class="n">zp</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
+            <span class="n">zpsys</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="n">phot_flag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;An astronomical light-curve</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            time: Time values for each observation in a numerical format (e.g. JD or MJD)</span>
+<span class="sd">            band: The band each observation was performed in</span>
+<span class="sd">            flux: The flux of each observation</span>
+<span class="sd">            fluxerr: The error in each flux value</span>
+<span class="sd">            zp: The zero-point of each observation</span>
+<span class="sd">            zpsys: The zero-point system of each observation</span>
+<span class="sd">            phot_flag: Optional flag for each photometric observation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">phot_flag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="k">if</span> <span class="n">phot_flag</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">phot_flag</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">band</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flux</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;flux&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fluxerr</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">fluxerr</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;fluxerr&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">zp</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;zp&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">zpsys</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">zpsys</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;zpsys&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phot_flag</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">phot_flag</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;phot_flag&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LightCurve.from_sncosmo"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.light_curve.LightCurve.from_sncosmo">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">from_sncosmo</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LightCurve</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create a ``LightCurve`` instance from an astropy table in the SNCosmo format</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            data: A table in the sncosmo format</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A ``LightCurve`` instance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># The sncosmo data format uses flexible column names</span>
+        <span class="c1"># E.g., &#39;time&#39;, &#39;date&#39;, &#39;jd&#39;, &#39;mjd&#39;, &#39;mjdobs&#39;, and &#39;mjd_obs&#39; are all equivalent</span>
+        <span class="c1"># Here we map those column names onto the kwarg names for the parent class</span>
+        <span class="k">return</span> <span class="n">LightCurve</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">SNCOSMO_ALIASES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col</span><span class="p">,</span> <span class="n">col</span><span class="p">):</span> <span class="n">data</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">colnames</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="LightCurve.to_astropy"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.light_curve.LightCurve.to_astropy">[docs]</a>    <span class="k">def</span> <span class="nf">to_astropy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the light-curve data as an astropy ``Table`` formatted for use with sncosmo</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An ``Table`` instance formatted for use with sncosmo</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">Table</span><span class="o">.</span><span class="n">from_pandas</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="LightCurve.to_pandas"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.light_curve.LightCurve.to_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the light-curve data as a pandas ``DataFrame``</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            A ``DataFrame`` instance with the light-curve data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span>
+            <span class="n">band</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">,</span>
+            <span class="n">flux</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">flux</span><span class="p">,</span>
+            <span class="n">fluxerr</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fluxerr</span><span class="p">,</span>
+            <span class="n">zp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span>
+            <span class="n">zpsys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">zpsys</span><span class="p">,</span>
+            <span class="n">phot_flag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">phot_flag</span>
+        <span class="p">),</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The number of observations in the light-curve&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band</span><span class="p">)</span>
+
+<div class="viewcode-block" id="LightCurve.copy"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.light_curve.LightCurve.copy">[docs]</a>    <span class="k">def</span> <span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LightCurve</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return a copy of the instance&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">LightCurve</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Check whether both objects have the same observations and the same values&quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span></div>
+</pre></div>
+
+          </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">SNAT-SIM</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">snat_sim.models.light_curve</a></li> 
+      </ul>
+    </div>
+<script type="text/javascript">
+  $("#mobile-toggle a").click(function () {
+    $("#left-column").toggle();
+  });
+</script>
+<script type="text/javascript" src="../../../_static/js/bootstrap.js"></script>
+  <div class="footer">
+    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+  </div>
+  </body>
+</html>

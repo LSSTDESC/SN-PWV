@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.plasticc &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -92,15 +92,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -114,15 +113,14 @@
           <div class="document clearer body">
             
   <h1>Source code for snat_sim.plasticc</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;The ``plasticc`` module provides data access for PLaSTICC light-curve</span>
+<span></span><span class="sd">&quot;&quot;&quot;The ``plasticc`` module provides data access for PLaSTICC cadence</span>
 <span class="sd">simulations stored on the local machine. Data is accessible by specifying</span>
-<span class="sd">the cadence and model used in a given simulation.</span>
+<span class="sd">the cadence name and model number used in a given simulation.</span>
 
 <span class="sd">Usage Example</span>
 <span class="sd">-------------</span>
 
-<span class="sd">The ``PLaSTICC`` class is responsible to handling data access for</span>
-<span class="sd">simulated light-curve data:</span>
+<span class="sd">The ``PLaSTICC`` class is responsible for handling data access:</span>
 
 <span class="sd">.. doctest:: python</span>
 
@@ -136,23 +134,25 @@
 <span class="sd">   &gt;&gt;&gt; lc_data = PLaSTICC(&#39;alt_sched&#39;, model=11)</span>
 <span class="sd">   &gt;&gt;&gt; num_lc = lc_data.count_light_curves()</span>
 
-<span class="sd">Te class provides **basic** data access via the construction of an iterator</span>
-<span class="sd">over all available light-curves for the given cadence / model. You should expect</span>
-<span class="sd">the first evaluation of the iterator to be slow since it has to load</span>
-<span class="sd">light-curve data into memory as chunks.</span>
+<span class="sd">The class provides **basic** data access via the construction of an iterator</span>
+<span class="sd">over the observed cadence for each simulated light-curve. The iterator returns</span>
+<span class="sd">the unique Id, parameters, and cadecne used in each simulation.</span>
+
+<span class="sd">.. note:: You should expect the first evaluation of the iterator to be slow</span>
+<span class="sd">   since it has to load data into memory as chunks.</span>
 
 <span class="sd">.. code-block:: python</span>
 
-<span class="sd">   &gt;&gt;&gt; lc_iterator = lc_data.iter_lc(iter_lim=10, verbose=False)</span>
-<span class="sd">   &gt;&gt;&gt; plasticc_lc = next(lc_iterator)</span>
+<span class="sd">   &gt;&gt;&gt; lc_iterator = lc_data.iter_cadence(iter_lim=10, verbose=False)</span>
+<span class="sd">   &gt;&gt;&gt; snid, sim_params, cadence = next(lc_iterator)</span>
 
-<span class="sd">PLaSTICC simulations were run using the ``SNANA`` package in FORTRAN and thus</span>
-<span class="sd">are returned using the ``SNANA`` data model. Alternatively, you can convert the</span>
-<span class="sd">returned tables to the data model used by the ``sncosmo`` Python package.</span>
+<span class="sd">The light-curve simulated by PLAsTICC for each cadence can optionally</span>
+<span class="sd">be included with the iterator:</span>
 
 <span class="sd">.. code-block:: python</span>
 
-<span class="sd">   &gt;&gt;&gt; formatted_lc = PLaSTICC.format_data_to_sncosmo(plasticc_lc)</span>
+<span class="sd">   &gt;&gt;&gt; lc_iterator = lc_data.iter_cadence(iter_lim=10, include_lc=True, verbose=False)</span>
+<span class="sd">   &gt;&gt;&gt; snid, sim_params, cadence , lc = next(lc_iterator)</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
@@ -167,51 +167,31 @@
 <span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
-<span class="kn">from</span> <span class="nn">.data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">.data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">LightCurve</span><span class="p">,</span> <span class="n">ObservedCadence</span>
+<span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">NumericalParams</span>
+
+<span class="n">YieldedData</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">NumericalParams</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PLaSTICC"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLaSTICC">[docs]</a><span class="k">class</span> <span class="nc">PLaSTICC</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Data access object for PLaSTICC simulation data&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PLaSTICC.__init__"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLaSTICC.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Data access object for PLaSTICC light-curve simulations performed using a given cadence and SN model</span>
+        <span class="sd">&quot;&quot;&quot;Data access object for PLaSTICC simulations performed using a given cadence and SN model</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            cadence: The cadence to load simulations for</span>
+<span class="sd">            cadence: The cadence to load data for</span>
 <span class="sd">            model: The numerical identifier of the PLaSTICC SN model used in the simulation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span> <span class="o">=</span> <span class="n">cadence</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span></div>
 
-<div class="viewcode-block" id="PLaSTICC.format_data_to_sncosmo"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLaSTICC.format_data_to_sncosmo">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">format_data_to_sncosmo</span><span class="p">(</span><span class="n">light_curve</span><span class="p">:</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Format a PLaSTICC light-curve to be compatible with sncosmo</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            light_curve: Table of PLaSTICC light-curve data</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            An astropy table formatted for use with sncosmo</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">lc</span> <span class="o">=</span> <span class="n">Table</span><span class="p">({</span>
-            <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;lsst_hardware_&#39;</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;FLT&#39;</span><span class="p">]],</span>
-            <span class="s1">&#39;flux&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;FLUXCAL&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;fluxerr&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;FLUXCALERR&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;zp&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;ZEROPT&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;photflag&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;PHOTFLAG&#39;</span><span class="p">]</span>
-        <span class="p">})</span>
-
-        <span class="n">lc</span><span class="p">[</span><span class="s1">&#39;zpsys&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;AB&#39;</span>
-        <span class="n">lc</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span>
-        <span class="k">return</span> <span class="n">lc</span></div>
-
 <div class="viewcode-block" id="PLaSTICC.get_available_cadences"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLaSTICC.get_available_cadences">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">get_available_cadences</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of all available cadences available in the working environment&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Return a list of all cadences available in the working environment&quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">paths_at_init</span><span class="o">.</span><span class="n">get_plasticc_dir</span><span class="p">()</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="s1">&#39;*&#39;</span><span class="p">)</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">is_dir</span><span class="p">()]</span></div>
 
@@ -231,8 +211,8 @@
         <span class="k">return</span> <span class="n">total_lc</span></div>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Iterate over light-curves from a given header file</span>
+    <span class="k">def</span> <span class="nf">_iter_cadence_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">YieldedData</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over cadence data from a given header file</span>
 
 <span class="sd">        Files are expected to be written in pairs of a header file </span>
 <span class="sd">        (`*HEAD.fits`) that stores target meta data and a photometry file </span>
@@ -240,10 +220,12 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            header_path: Path of the header file</span>
-<span class="sd">            verbose: Display a progress bar</span>
+<span class="sd">            include_lc: Include the PLAsTICC simulated light-curve with iterator outputs</span>
 
 <span class="sd">        Yields:</span>
-<span class="sd">            An Astropy table with the MJD and filter for each observation</span>
+<span class="sd">            - The supernova identifier (SNID)</span>
+<span class="sd">            - The parameters used in the simulation</span>
+<span class="sd">            - The cadence of the simulation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Load meta data from the header file</span>
@@ -255,34 +237,67 @@
         <span class="k">with</span> <span class="n">fits</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">phot_file_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">photometry_hdulist</span><span class="p">:</span>
             <span class="n">phot_data</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span><span class="n">photometry_hdulist</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
 
-        <span class="c1"># If using pandas instead of astropy on the above line</span>
-        <span class="c1"># Avoid ValueError: Big-endian buffer not supported on little-endian compiler</span>
+        <span class="c1"># If using pandas instead of astropy on the above line you need to avoid</span>
+        <span class="c1">#   ValueError: Big-endian buffer not supported on little-endian compiler</span>
         <span class="c1"># by adding in the below code:</span>
         <span class="c1"># for key, val in phot_data.iteritems():</span>
         <span class="c1">#     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()</span>
 
-        <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">meta_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">(),</span> <span class="n">total</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">meta_data</span><span class="p">),</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
-            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="c1"># Select the individual light-curve by it&#39;s indices</span>
-                <span class="n">lc_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MIN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
-                <span class="n">lc_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MAX&#39;</span><span class="p">])</span>
-                <span class="n">lc</span> <span class="o">=</span> <span class="n">phot_data</span><span class="p">[</span><span class="n">lc_start</span><span class="p">:</span> <span class="n">lc_end</span><span class="p">]</span>
-                <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="n">meta_data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c1"># Select the individual light-curve by it&#39;s indices</span>
+            <span class="n">lc_start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MIN&#39;</span><span class="p">])</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="n">lc_end</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;PTROBS_MAX&#39;</span><span class="p">])</span>
+            <span class="n">lc_data</span> <span class="o">=</span> <span class="n">phot_data</span><span class="p">[</span><span class="n">lc_start</span><span class="p">:</span> <span class="n">lc_end</span><span class="p">]</span>
 
-                <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
-                <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;ra&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;dec&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;DECL&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;t0&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_PEAKMJD&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_SALT2x1&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_SALT2c&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_REDSHIFT_CMB&#39;</span><span class="p">],</span>
+                <span class="s1">&#39;x0&#39;</span><span class="p">:</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_SALT2x0&#39;</span><span class="p">]</span>
+            <span class="p">}</span>
 
-                <span class="k">yield</span> <span class="n">lc</span>
+            <span class="n">times</span> <span class="o">=</span> <span class="n">lc_data</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">]</span>
+            <span class="n">bands</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;lsst_hardware_&#39;</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">lc_data</span><span class="p">[</span><span class="s1">&#39;FLT&#39;</span><span class="p">]]</span>
+            <span class="n">zero_point</span> <span class="o">=</span> <span class="n">lc_data</span><span class="p">[</span><span class="s1">&#39;ZEROPT&#39;</span><span class="p">]</span>
+            <span class="n">cadence</span> <span class="o">=</span> <span class="n">ObservedCadence</span><span class="p">(</span>
+                <span class="n">obs_times</span><span class="o">=</span><span class="n">times</span><span class="p">,</span>
+                <span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">,</span>
+                <span class="n">zp</span><span class="o">=</span><span class="n">zero_point</span><span class="p">,</span>
+                <span class="n">zpsys</span><span class="o">=</span><span class="s1">&#39;AB&#39;</span><span class="p">,</span>
+                <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                <span class="n">skynoise</span><span class="o">=</span><span class="n">lc_data</span><span class="p">[</span><span class="s1">&#39;SKY_SIG&#39;</span><span class="p">]</span>
+            <span class="p">)</span>
 
-<div class="viewcode-block" id="PLaSTICC.iter_lc"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLaSTICC.iter_lc">[docs]</a>    <span class="k">def</span> <span class="nf">iter_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Table</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Iterate over simulated light-curves  for a given cadence</span>
+            <span class="k">if</span> <span class="n">include_lc</span><span class="p">:</span>
+                <span class="n">lc</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="p">(</span>
+                    <span class="n">time</span><span class="o">=</span><span class="n">times</span><span class="p">,</span>
+                    <span class="n">band</span><span class="o">=</span><span class="n">bands</span><span class="p">,</span>
+                    <span class="n">flux</span><span class="o">=</span><span class="n">lc_data</span><span class="p">[</span><span class="s1">&#39;FLUXCAL&#39;</span><span class="p">],</span>
+                    <span class="n">fluxerr</span><span class="o">=</span><span class="n">lc_data</span><span class="p">[</span><span class="s1">&#39;FLUXCALERR&#39;</span><span class="p">],</span>
+                    <span class="n">zp</span><span class="o">=</span><span class="n">zero_point</span><span class="p">,</span>
+                    <span class="n">zpsys</span><span class="o">=</span><span class="s1">&#39;AB&#39;</span><span class="p">,</span>
+                    <span class="n">phot_flag</span><span class="o">=</span><span class="n">lc_data</span><span class="p">[</span><span class="s1">&#39;PHOTFLAG&#39;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="k">yield</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span><span class="p">,</span> <span class="n">lc</span>
+
+            <span class="k">yield</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span>
+
+<div class="viewcode-block" id="PLaSTICC.iter_cadence"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLaSTICC.iter_cadence">[docs]</a>    <span class="k">def</span> <span class="nf">iter_cadence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">YieldedData</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Iterate over available cadence data for each supernova</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            iter_lim: Limit the number of iterated light-curves</span>
+<span class="sd">            include_lc: Include the PLAsTICC simulated light-curve with iterator outputs</span>
 <span class="sd">            verbose: Display a progress bar</span>
 
 <span class="sd">        Yields:</span>
-<span class="sd">            An Astropy table with simulated light-curve data</span>
+<span class="sd">            - The supernova identifier (SNID)</span>
+<span class="sd">            - The parameters used in the simulation</span>
+<span class="sd">            - The cadence of the simulation</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">max_lc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">count_light_curves</span><span class="p">()</span>
@@ -291,10 +306,10 @@
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">with</span> <span class="n">tqdm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_model_headers</span><span class="p">(),</span> <span class="n">desc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cadence</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">total</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">)</span> <span class="k">as</span> <span class="n">pbar</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">header_path</span> <span class="ow">in</span> <span class="n">pbar</span><span class="p">:</span>
-                <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_lc_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_iter_cadence_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="n">include_lc</span><span class="p">):</span>
                     <span class="n">pbar</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
                     <span class="n">pbar</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
-                    <span class="k">yield</span> <span class="n">lc</span>
+                    <span class="k">yield</span> <span class="n">chunk</span>
 
                     <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
                     <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">total</span><span class="p">:</span>

@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.models.supernova &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -92,15 +92,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -121,159 +120,31 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span><span class="p">,</span> <span class="n">deepcopy</span>
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sncosmo</span>
-<span class="kn">from</span> <span class="nn">astropy.table</span> <span class="kn">import</span> <span class="n">Table</span>
 
+<span class="kn">from</span> <span class="nn">.light_curve</span> <span class="kn">import</span> <span class="n">LightCurve</span><span class="p">,</span> <span class="n">ObservedCadence</span>
 <span class="kn">from</span> <span class="nn">.pwv</span> <span class="kn">import</span> <span class="n">VariablePropagationEffect</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
-
-
-<div class="viewcode-block" id="ObservedCadence"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.ObservedCadence">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">ObservedCadence</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;The observational sampling of an astronomical light-curve</span>
-
-<span class="sd">    The zero-point, zero point system, and gain arguments can be a</span>
-<span class="sd">    collection of values (one per ``obs_time`` value), or a single value</span>
-<span class="sd">    to apply at all observation times.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        obs_times: Array of observation times for the light-curve</span>
-<span class="sd">        bands: Array of bands for each observation</span>
-<span class="sd">        zp: The zero-point or an array of zero-points for each observation</span>
-<span class="sd">        zpsys: The zero-point system or an array of zero-point systems</span>
-<span class="sd">        gain: The simulated gain or an array of gain values</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">obs_times</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span>
-    <span class="n">bands</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-    <span class="n">skynoise</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span>
-    <span class="n">zp</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span>
-    <span class="n">zpsys</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span>
-    <span class="n">gain</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span>
-
-    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">ObservedCadence</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="n">attr_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;obs_times&#39;</span><span class="p">,</span> <span class="s1">&#39;bands&#39;</span><span class="p">,</span> <span class="s1">&#39;skynoise&#39;</span><span class="p">,</span> <span class="s1">&#39;zp&#39;</span><span class="p">,</span> <span class="s1">&#39;zpsys&#39;</span><span class="p">,</span> <span class="s1">&#39;gain&#39;</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">),</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="n">attr</span><span class="p">))</span> <span class="k">for</span> <span class="n">attr</span> <span class="ow">in</span> <span class="n">attr_list</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">skynoise</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_skynoise</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="nd">@skynoise</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">skynoise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">skynoise</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_skynoise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">skynoise</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zp</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="nd">@zp</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">zp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zp</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_zp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">zp</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">zpsys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_zpsys</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="nd">@zpsys</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">zpsys</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">zpsys</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_zpsys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">zpsys</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;U8&#39;</span><span class="p">)</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span> <span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_gain</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-
-    <span class="nd">@gain</span><span class="o">.</span><span class="n">setter</span>
-    <span class="k">def</span> <span class="nf">gain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gain</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_gain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">gain</span><span class="p">)</span>
-
-<div class="viewcode-block" id="ObservedCadence.from_plasticc"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.ObservedCadence.from_plasticc">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">from_plasticc</span><span class="p">(</span>
-            <span class="n">light_curve</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span>
-            <span class="n">zp</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">FloatColl</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-            <span class="n">drop_nondetection</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Extract the observational cadence from a PLaSTICC light-curve</span>
-
-<span class="sd">        The zero-point, zero point system, and gain arguments can be a</span>
-<span class="sd">        collection of values (one per phase value), or a single value to</span>
-<span class="sd">        apply at all obs_times.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            light_curve: Astropy table with PLaSTICC light-curve data</span>
-<span class="sd">            zp: Optionally overwrite the PLaSTICC zero-point with this value(s)</span>
-<span class="sd">            drop_nondetection: Drop data with PHOTFLAG == 0</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            An ``ObservedCadence`` instance</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="k">if</span> <span class="n">drop_nondetection</span><span class="p">:</span>
-            <span class="n">light_curve</span> <span class="o">=</span> <span class="n">light_curve</span><span class="p">[</span><span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;PHOTFLAG&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">]</span>
-
-        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s1">&#39;SNID&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">(),</span>
-            <span class="s1">&#39;ra&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;RA&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;dec&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;DECL&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;t0&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_PEAKMJD&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_SALT2x1&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_SALT2c&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_REDSHIFT_CMB&#39;</span><span class="p">],</span>
-            <span class="s1">&#39;x0&#39;</span><span class="p">:</span> <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SIM_SALT2x0&#39;</span><span class="p">]</span>
-        <span class="p">}</span>
-
-        <span class="k">return</span> <span class="n">cast</span><span class="p">(</span><span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span><span class="p">,</span> <span class="n">params</span><span class="p">),</span> <span class="n">ObservedCadence</span><span class="p">(</span>
-            <span class="n">obs_times</span><span class="o">=</span><span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;MJD&#39;</span><span class="p">],</span>
-            <span class="n">bands</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lsst_hardware_&#39;</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;FLT&#39;</span><span class="p">]],</span>
-            <span class="n">zp</span><span class="o">=</span><span class="n">zp</span> <span class="ow">or</span> <span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;ZEROPT&#39;</span><span class="p">],</span>
-            <span class="n">zpsys</span><span class="o">=</span><span class="s1">&#39;AB&#39;</span><span class="p">,</span>
-            <span class="n">gain</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-            <span class="n">skynoise</span><span class="o">=</span><span class="n">light_curve</span><span class="p">[</span><span class="s1">&#39;SKY_SIG&#39;</span><span class="p">]</span>
-        <span class="p">)</span></div>
-
-<div class="viewcode-block" id="ObservedCadence.to_sncosmo"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.ObservedCadence.to_sncosmo">[docs]</a>    <span class="k">def</span> <span class="nf">to_sncosmo</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the observational cadence as an ``astropy.Table``</span>
-
-<span class="sd">        The returned table of observations is formatted for use with with</span>
-<span class="sd">        the ``sncosmo`` package.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            An astropy table representing the observational cadence in ``sncosmo`` format</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">observations</span> <span class="o">=</span> <span class="n">Table</span><span class="p">(</span>
-            <span class="p">{</span>
-                <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span>
-                <span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">bands</span><span class="p">,</span>
-                <span class="s1">&#39;gain&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">gain</span><span class="p">,</span>
-                <span class="s1">&#39;skynoise&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">skynoise</span><span class="p">,</span>
-                <span class="s1">&#39;zp&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span>
-                <span class="s1">&#39;zpsys&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">zpsys</span>
-            <span class="p">},</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="s1">&#39;U1000&#39;</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="s1">&#39;U100&#39;</span><span class="p">]</span>
-        <span class="p">)</span>
-
-        <span class="n">observations</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">observations</span></div>
-
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
-        <span class="n">repr_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_sncosmo</span><span class="p">()</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="n">repr_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">ObservedCadence</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__repr__</span><span class="p">()</span>
-        <span class="n">repr_list</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">repr_list</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SNModel"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNModel">[docs]</a><span class="k">class</span> <span class="nc">SNModel</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;An observer-frame supernova model composed of a Source and zero or more effects&quot;&quot;&quot;</span>
 
-    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="SNModel.from_sncosmo"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNModel.from_sncosmo">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_sncosmo</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SNModel</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Create an `SNModel`` instance from a ``sncosmo.Model`` instance</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            model: The sncosmo model to build from</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            An ``SNModel`` object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">new_model</span> <span class="o">=</span> <span class="n">SNModel</span><span class="p">(</span>
             <span class="n">model</span><span class="o">.</span><span class="n">source</span><span class="p">,</span>
@@ -282,11 +153,11 @@
             <span class="n">effect_frames</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">_effect_frames</span><span class="p">)</span>
 
         <span class="n">new_model</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="n">model</span><span class="p">[</span><span class="n">p</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">new_model</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
-        <span class="k">return</span> <span class="n">new_model</span>
+        <span class="k">return</span> <span class="n">new_model</span></div>
 
     <span class="c1"># Same as parent except allows duck-typing of ``effect`` arg</span>
     <span class="k">def</span> <span class="nf">_add_effect_partial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">effect</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">frame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Like &#39;add effect&#39;, but don&#39;t sync parameter arrays&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Like ``add effect``, but don&#39;t sync parameter arrays&quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="n">frame</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;rest&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">,</span> <span class="s1">&#39;free&#39;</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;frame must be one of: {&#39;rest&#39;, &#39;obs&#39;, &#39;free&#39;}&quot;</span><span class="p">)</span>
@@ -313,8 +184,8 @@
         <span class="n">phase</span> <span class="o">=</span> <span class="p">(</span><span class="n">time</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">*</span> <span class="n">a</span>
         <span class="n">restwave</span> <span class="o">=</span> <span class="n">wave</span> <span class="o">*</span> <span class="n">a</span>
 
-        <span class="c1"># Note that below we multiply by the scale factor to conserve</span>
-        <span class="c1"># bolometric luminosity.</span>
+        <span class="c1"># Note that below we multiply by the scale factor to conserve bolometric luminosity.</span>
+        <span class="c1"># noinspection PyProtectedMember</span>
         <span class="n">f</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_source</span><span class="o">.</span><span class="n">_flux</span><span class="p">(</span><span class="n">phase</span><span class="p">,</span> <span class="n">restwave</span><span class="p">)</span>
 
         <span class="c1"># Pass the flux through the PropagationEffects.</span>
@@ -348,7 +219,9 @@
         <span class="n">new_model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span>
         <span class="k">return</span> <span class="n">new_model</span>
 
-<div class="viewcode-block" id="SNModel.simulate_lc"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNModel.simulate_lc">[docs]</a>    <span class="k">def</span> <span class="nf">simulate_lc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">scatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<div class="viewcode-block" id="SNModel.simulate_lc"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNModel.simulate_lc">[docs]</a>    <span class="k">def</span> <span class="nf">simulate_lc</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">cadence</span><span class="p">:</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">scatter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">LightCurve</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Simulate a SN light-curve</span>
 
 <span class="sd">        If ``scatter`` is ``True``, then simulated flux values include an added</span>
@@ -361,7 +234,7 @@
 <span class="sd">            fixed_snr: Optionally simulate the light-curve using a fixed signal to noise ratio</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            The simulated light-curve as an astropy table in the ``sncosmo`` format</span>
+<span class="sd">            The simulated light-curve</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">flux</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bandflux</span><span class="p">(</span><span class="n">cadence</span><span class="o">.</span><span class="n">bands</span><span class="p">,</span> <span class="n">cadence</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">zp</span><span class="o">=</span><span class="n">cadence</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span> <span class="n">zpsys</span><span class="o">=</span><span class="n">cadence</span><span class="o">.</span><span class="n">zpsys</span><span class="p">)</span>
@@ -375,14 +248,18 @@
         <span class="k">if</span> <span class="n">scatter</span><span class="p">:</span>
             <span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="n">fluxerr</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">Table</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="p">[</span><span class="n">cadence</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span> <span class="n">cadence</span><span class="o">.</span><span class="n">bands</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">fluxerr</span><span class="p">,</span> <span class="n">cadence</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span> <span class="n">cadence</span><span class="o">.</span><span class="n">zpsys</span><span class="p">],</span>
-            <span class="n">names</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;band&#39;</span><span class="p">,</span> <span class="s1">&#39;flux&#39;</span><span class="p">,</span> <span class="s1">&#39;fluxerr&#39;</span><span class="p">,</span> <span class="s1">&#39;zp&#39;</span><span class="p">,</span> <span class="s1">&#39;zpsys&#39;</span><span class="p">),</span>
-            <span class="n">meta</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)))</span></div>
+        <span class="k">return</span> <span class="n">LightCurve</span><span class="p">(</span>
+            <span class="n">time</span><span class="o">=</span><span class="n">cadence</span><span class="o">.</span><span class="n">obs_times</span><span class="p">,</span>
+            <span class="n">band</span><span class="o">=</span><span class="n">cadence</span><span class="o">.</span><span class="n">bands</span><span class="p">,</span>
+            <span class="n">flux</span><span class="o">=</span><span class="n">flux</span><span class="p">,</span>
+            <span class="n">fluxerr</span><span class="o">=</span><span class="n">fluxerr</span><span class="p">,</span>
+            <span class="n">zp</span><span class="o">=</span><span class="n">cadence</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span>
+            <span class="n">zpsys</span><span class="o">=</span><span class="n">cadence</span><span class="o">.</span><span class="n">zpsys</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="SNModel.fit_lc"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNModel.fit_lc">[docs]</a>    <span class="k">def</span> <span class="nf">fit_lc</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
-            <span class="n">data</span><span class="p">:</span> <span class="n">Table</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="n">data</span><span class="p">:</span> <span class="n">LightCurve</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">vparam_names</span><span class="p">:</span> <span class="n">List</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(),</span>
             <span class="n">bounds</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">method</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;minuit&#39;</span><span class="p">,</span>
@@ -429,7 +306,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Invalid fitting method: </span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="n">result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">fit_func</span><span class="p">(</span>
-            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
+            <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">(),</span>
             <span class="n">model</span><span class="o">=</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
             <span class="n">vparam_names</span><span class="o">=</span><span class="n">vparam_names</span><span class="p">,</span>
             <span class="n">bounds</span><span class="o">=</span><span class="n">bounds</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span>
@@ -448,9 +325,23 @@
 
 
 <div class="viewcode-block" id="SNFitResult"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNFitResult">[docs]</a><span class="k">class</span> <span class="nc">SNFitResult</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">Result</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Represents results from a ``SNModel`` being fit to a ``LightCurve``&quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">:</span> <span class="n">SNFitResult</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">))</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">other</span><span class="p">[</span><span class="n">key</span><span class="p">]):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">param_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;The names of the model parameters&quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;param_names&#39;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
@@ -461,6 +352,8 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">vparam_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;List of parameter names varied in the fit&quot;&quot;&quot;</span>
+
         <span class="k">return</span> <span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;vparam_names&#39;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
@@ -479,13 +372,23 @@
 
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">cov_utils</span><span class="o">.</span><span class="n">from_array</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;covariance&#39;</span><span class="p">],</span> <span class="n">paramNames</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">vparam_names</span><span class="p">)</span>
 
-<div class="viewcode-block" id="SNFitResult.salt_covariance_linear"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNFitResult.salt_covariance_linear">[docs]</a>    <span class="k">def</span> <span class="nf">salt_covariance_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0Truth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;The covariance matrix of apparent magnitude and salt2 parameters&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="SNFitResult.salt_covariance_linear"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNFitResult.salt_covariance_linear">[docs]</a>    <span class="k">def</span> <span class="nf">salt_covariance_linear</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0_truth</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;The covariance matrix of apparent magnitude and salt2 parameters</span>
+
+<span class="sd">        Will raise an error if the `x0`, `x1` and `c` parameters are not</span>
+<span class="sd">        varied in the fit.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x0_truth: Optionally assert an alternative x0 value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            The covariance matrix asd a pandas ``DataFrame``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Cannot calculate variance for a failed fit.&#39;</span><span class="p">)</span>
 
-        <span class="n">x0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">x0Truth</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">x0Truth</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">x0_truth</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">x0_truth</span>
 
         <span class="n">factor</span> <span class="o">=</span> <span class="o">-</span> <span class="mf">2.5</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
         <span class="c1"># drop other parameters like t0</span>
@@ -522,7 +425,7 @@
         <span class="n">sc</span> <span class="o">=</span> <span class="n">_cov</span><span class="o">.</span><span class="n">cov_utils</span><span class="o">.</span><span class="n">subcovariance</span><span class="p">(</span><span class="n">paramList</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;mB&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
         <span class="k">return</span> <span class="n">sc</span><span class="o">.</span><span class="n">cov_utils</span><span class="o">.</span><span class="n">expAVsquare</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="c1"># Extremely similar to the base representation of the parent class but</span>
         <span class="c1"># cleaned up so values are displayed in neat rows / columns</span>
 

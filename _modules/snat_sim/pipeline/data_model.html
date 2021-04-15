@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.pipeline.data_model &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -42,7 +42,8 @@
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">SNAT-SIM</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../pipeline.html" accesskey="U">snat_sim.pipeline</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.pipeline.data_model</a></li> 
       </ul>
     </div>
@@ -92,15 +93,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -122,28 +122,35 @@
 <span class="sd">Data models are defined as Python data classes. All fields in the data model</span>
 <span class="sd">are onptional except for the supernova identifier (``snid``). Other fields</span>
 <span class="sd">include the supernova model parameters used in a light-curve simulation / fit</span>
-<span class="sd">and the chi-squared, degrees of freedom, and B-band magnitudes returned by</span>
-<span class="sd">the fitted model.</span>
+<span class="sd">and the cadence used in the simulation.</span>
 
 <span class="sd">.. doctest::</span>
 
-<span class="sd">   &gt;&gt;&gt; from snat_sim.pipeline.data_model import PipelineResult</span>
-<span class="sd">   &gt;&gt;&gt; data_obj = PipelineResult(</span>
-<span class="sd">   ... snid=&#39;1234567&#39;,</span>
-<span class="sd">   ... sim_params={&#39;x0&#39;: 1, &#39;x1&#39;: .1, &#39;c&#39;: .5},</span>
-<span class="sd">   ... fit_params={&#39;x0&#39;: .9, &#39;x1&#39;: .12, &#39;c&#39;: .51},</span>
-<span class="sd">   ... fit_err={&#39;x0&#39;: .1, &#39;x1&#39;: .01, &#39;c&#39;: .05},</span>
-<span class="sd">   ... chisq=12,</span>
-<span class="sd">   ... ndof=11,</span>
-<span class="sd">   ... mb=22.5,</span>
-<span class="sd">   ... abs_mag=-19.1,</span>
-<span class="sd">   ... message=&#39;The fit exited successfully&#39;</span>
+<span class="sd">   &gt;&gt;&gt; import sncosmo</span>
+<span class="sd">   &gt;&gt;&gt; from snat_sim.models import SNModel, LightCurve</span>
+<span class="sd">   &gt;&gt;&gt; from snat_sim.pipeline.data_model import PipelinePacket</span>
+
+<span class="sd">   &gt;&gt;&gt; # Load example data and an example supernova model</span>
+<span class="sd">   &gt;&gt;&gt; example_data = sncosmo.load_example_data()</span>
+<span class="sd">   &gt;&gt;&gt; light_curve = LightCurve.from_sncosmo(example_data)</span>
+<span class="sd">   &gt;&gt;&gt; model_parameters = example_data.meta</span>
+<span class="sd">   &gt;&gt;&gt; sn_model = SNModel(&#39;Salt2&#39;)</span>
+
+<span class="sd">   &gt;&gt;&gt; # Set an initial guess for fitting the model parameters</span>
+<span class="sd">   &gt;&gt;&gt; sn_model.update(model_parameters)</span>
+
+<span class="sd">   &gt;&gt;&gt; fit_result, fitted_model = sn_model.fit_lc(light_curve, vparam_names=[&#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;])</span>
+<span class="sd">   &gt;&gt;&gt; packet = PipelinePacket(</span>
+<span class="sd">   ...     snid=1234,                    # Unique SN identifier</span>
+<span class="sd">   ...     sim_params=model_parameters,  # Parameters used to simulate the light-curve</span>
+<span class="sd">   ...     light_curve=light_curve,      # The simulated light-curve</span>
+<span class="sd">   ...     fit_result=fit_result,        # ``SNFitResult`` object</span>
+<span class="sd">   ...     fitted_model=fitted_model,    # The fitted model (set to best fit parameter values)</span>
+<span class="sd">   ...     message=&#39;This fit was a success!&#39;</span>
 <span class="sd">   ... )</span>
 
-<span class="sd">Data products can be converted into familiar data structures using instance</span>
-<span class="sd">the methods demonstrated below (see the full class documentation for a</span>
-<span class="sd">complete list of available methods). Missing numerical data is masked using</span>
-<span class="sd">the value ``-99.99``.</span>
+<span class="sd">The simulation and fittd parameters can be converted into pandas Dataframes.</span>
+<span class="sd">Missing numerical data is masked using the value ``-99.99``.</span>
 
 <span class="sd">.. doctest::</span>
 
@@ -151,8 +158,13 @@
 <span class="sd">   &gt;&gt;&gt; include_sim_params = [&#39;x0&#39;, &#39;x1&#39;]</span>
 <span class="sd">   &gt;&gt;&gt; include_fit_params = [&#39;x0&#39;, &#39;c&#39;]</span>
 <span class="sd">   &gt;&gt;&gt;</span>
-<span class="sd">   &gt;&gt;&gt; data_list = data_obj.to_list(include_sim_params, include_fit_params)</span>
-<span class="sd">   &gt;&gt;&gt; data_str = data_obj.to_csv(include_sim_params, include_fit_params)</span>
+<span class="sd">   &gt;&gt;&gt; packet.sim_params_to_pandas()</span>
+<span class="sd">       x1    c    z        x0       t0    SNID</span>
+<span class="sd">   0  0.5  0.2  0.5  0.000012  55100.0  1234.0</span>
+
+<span class="sd">   &gt;&gt;&gt; packet.fitted_params_to_pandas()  # doctest: +ELLIPSIS</span>
+<span class="sd">        snid  fit_z   fit_t0    fit_x0  ...      chisq  ndof         mb    abs_mag</span>
+<span class="sd">   0  1234.0    0.5  55100.0  0.000012  ...  35.862946  37.0  22.815929 -19.452564</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
@@ -160,84 +172,91 @@
 
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
-<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">dataclasses</span> <span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
+<span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">LightCurve</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">SNFitResult</span><span class="p">,</span> <span class="n">SNModel</span>
+
+<span class="n">MASK_VALUE</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.99</span>
 
 
-<div class="viewcode-block" id="PipelineResult"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelineResult">[docs]</a><span class="nd">@dataclass</span>
-<span class="k">class</span> <span class="nc">PipelineResult</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Class representation of internal pipeline data products&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="PipelinePacket"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelinePacket">[docs]</a><span class="nd">@dataclass</span>
+<span class="k">class</span> <span class="nc">PipelinePacket</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Class representation of internal pipeline data products</span>
 
-    <span class="n">snid</span><span class="p">:</span> <span class="nb">str</span>
-    <span class="n">sim_params</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-    <span class="n">fit_params</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-    <span class="n">fit_err</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">dict</span><span class="p">)</span>
-    <span class="n">chisq</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.99</span>
-    <span class="n">ndof</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.99</span>
-    <span class="n">mb</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.99</span>
-    <span class="n">abs_mag</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.99</span>
-    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+<span class="sd">    Fields:</span>
+<span class="sd">        snid: Unique identifier for the data packet</span>
+<span class="sd">        sim_params: Parameters used to simulate the light-curve</span>
+<span class="sd">        cadence: The observational cadence used to simulate the light-curve</span>
+<span class="sd">        light_curve: The simulated light-curve</span>
+<span class="sd">        fit_result: Fit result from fitting the light-curve</span>
+<span class="sd">        fitted_model: Model used to fit the light-curve</span>
+<span class="sd">        message: Status message</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PipelineResult.to_csv"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelineResult.to_csv">[docs]</a>    <span class="k">def</span> <span class="nf">to_csv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">fit_params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Combine light-curve fit results into single row matching the output table file format</span>
+    <span class="n">snid</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="n">sim_params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">cadence</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">ObservedCadence</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">light_curve</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">LightCurve</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fit_result</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SNFitResult</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">fitted_model</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">SNModel</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">covariance</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">message</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            sim_params: The simulated parameter values to include int the output</span>
-<span class="sd">            fit_params: The fitted parameter values to include in the output</span>
+<div class="viewcode-block" id="PipelinePacket.sim_params_to_pandas"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelinePacket.sim_params_to_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">sim_params_to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return simulated parameters as a pandas Dataframe</span>
 
-<span class="sd">        Returns:</span>
-<span class="sd">            A string with data in CSV format</span>
+<span class="sd">        Return:</span>
+<span class="sd">            Parameters used in the simulation of light-curves</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">out_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="n">sim_params</span><span class="p">,</span> <span class="n">fit_params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">out_list</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span></div>
+        <span class="n">out_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_params</span><span class="p">)</span>
+        <span class="n">out_data</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snid</span>
+        <span class="c1"># out_data[&#39;message&#39;] = self.message</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out_data</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
 
-<div class="viewcode-block" id="PipelineResult.to_list"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelineResult.to_list">[docs]</a>    <span class="k">def</span> <span class="nf">to_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">,</span> <span class="n">fit_params</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return class data as a list with missing values masked as -99.99</span>
+<div class="viewcode-block" id="PipelinePacket.fitted_params_to_pandas"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelinePacket.fitted_params_to_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">fitted_params_to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return fitted parameters as a pandas Dataframe</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            sim_params: The order of the simulated parameter values in the return</span>
-<span class="sd">            fit_params: The order of the fitted parameter values in the return</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            A list of strings and floats</span>
+<span class="sd">        Return:</span>
+<span class="sd">            Parameters recovered from fitting a light-curve</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">out_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">snid</span><span class="p">]</span>
-        <span class="n">out_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="o">-</span><span class="mf">99.99</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sim_params</span><span class="p">)</span>
-        <span class="n">out_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="o">-</span><span class="mf">99.99</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">fit_params</span><span class="p">)</span>
-        <span class="n">out_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_err</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">param</span><span class="p">,</span> <span class="o">-</span><span class="mf">99.99</span><span class="p">)</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">fit_params</span><span class="p">)</span>
-        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">chisq</span><span class="p">)</span>
-        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ndof</span><span class="p">)</span>
-        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mb</span><span class="p">)</span>
-        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">abs_mag</span><span class="p">)</span>
-        <span class="n">out_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">out_list</span></div>
-
-<div class="viewcode-block" id="PipelineResult.column_names"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelineResult.column_names">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">column_names</span><span class="p">(</span><span class="n">sim_params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">fit_params</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Return a list of column names matching the data model used by ``PipelineResult.to_csv``</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            sim_params: The simulated parameter values to include int the output</span>
-<span class="sd">            fit_params: The fitted parameter values to include in the output</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            List of column names as strings</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitted_model</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Fit results are not stored in the data packet.&#39;</span><span class="p">)</span>
 
         <span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;snid&#39;</span><span class="p">]</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;sim_&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">sim_params</span><span class="p">)</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;fit_&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">fit_params</span><span class="p">)</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;err_&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="n">fit_params</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;fit_&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;err_&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;chisq&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ndof&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;mb&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;abs_mag&#39;</span><span class="p">)</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">col_names</span></div></div>
+        <span class="c1"># col_names.append(&#39;message&#39;)</span>
+
+        <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">snid</span><span class="p">]</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">MASK_VALUE</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">chisq</span><span class="p">)</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">ndof</span><span class="p">)</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">source_peakabsmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">))</span>
+        <span class="c1"># data_list.append(self.message)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">col_names</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
+
+<div class="viewcode-block" id="PipelinePacket.packet_status_to_pandas"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelinePacket.packet_status_to_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">packet_status_to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Return the packet status message as a pandas ``DataFrame``</span>
+
+<span class="sd">        Return:</span>
+<span class="sd">            Dataframe with the snid, fit success status, and result message</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">success</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">success</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;snid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">snid</span><span class="p">],</span> <span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">success</span><span class="p">],</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">]})</span></div></div>
 </pre></div>
 
           </div>
@@ -255,6 +274,7 @@
              >modules</a> |</li>
         <li class="nav-item nav-item-0"><a href="../../../index.html">SNAT-SIM</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../pipeline.html" >snat_sim.pipeline</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.pipeline.data_model</a></li> 
       </ul>
     </div>

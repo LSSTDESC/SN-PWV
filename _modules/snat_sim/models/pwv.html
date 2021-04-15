@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.models.pwv &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -92,15 +92,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -121,12 +120,10 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
 
 <span class="kn">import</span> <span class="nn">abc</span>
-<span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
 
-<span class="kn">import</span> <span class="nn">joblib</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">sncosmo</span>
@@ -142,7 +139,6 @@
 <span class="kn">from</span> <span class="nn">snat_sim.utils.caching</span> <span class="kn">import</span> <span class="n">Cache</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
-<span class="kn">from</span> <span class="nn">..data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
 <span class="kn">from</span> <span class="nn">..utils</span> <span class="kn">import</span> <span class="n">time_series</span> <span class="k">as</span> <span class="n">tsu</span>
 
 <span class="c1"># Todo: These were picked ad-hock and are likely too big.</span>
@@ -153,10 +149,10 @@
 
 
 <div class="viewcode-block" id="PWVModel"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.PWVModel">[docs]</a><span class="k">class</span> <span class="nc">PWVModel</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Model for interpolating the atmospheric water vapor at a given time and time&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Model for interpolating the atmospheric water vapor at a given date and time&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PWVModel.__init__"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.PWVModel.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv_series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Build a model for time variable PWV by drawing from a given PWV time series</span>
+        <span class="sd">&quot;&quot;&quot;Build a model for time variable PWV by interpolating from a given PWV time series</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            pwv_series: PWV values with a datetime index</span>
@@ -165,15 +161,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span> <span class="o">=</span> <span class="n">pwv_series</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">resample_data_across_year</span><span class="p">()</span><span class="o">.</span><span class="n">tsu</span><span class="o">.</span><span class="n">periodic_interpolation</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">pwv_los</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="n">PWV_CACHE_SIZE</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_los</span><span class="p">)</span>
-
-        <span class="n">cache_type</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;SNAT_SIM_CACHE_TYPE&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">cache_type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="n">TRANSMISSION_CACHE_SIZE</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="n">cache_type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">memory</span> <span class="o">=</span> <span class="n">joblib</span><span class="o">.</span><span class="n">Memory</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">paths_at_init</span><span class="o">.</span><span class="n">joblib_path</span><span class="p">),</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">bytes_limit</span><span class="o">=</span><span class="n">AIRMASS_CACHE_SIZE</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span> <span class="o">=</span> <span class="n">memory</span><span class="o">.</span><span class="n">cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span><span class="p">,</span> <span class="n">TRANSMISSION_CACHE_SIZE</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pwv_los</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_los</span><span class="p">,</span> <span class="n">PWV_CACHE_SIZE</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PWVModel.from_suominet_receiver"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.PWVModel.from_suominet_receiver">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">from_suominet_receiver</span><span class="p">(</span><span class="n">receiver</span><span class="p">:</span> <span class="n">GPSReceiver</span><span class="p">,</span> <span class="n">year</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">supp_years</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PWVModel</span><span class="p">:</span>
@@ -185,7 +174,7 @@
 <span class="sd">            supp_years: Years to supplement data with when missing from ``year``</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            An interpolation function that accepts ``time`` and ``format`` arguments</span>
+<span class="sd">            A PWV model that interpolates from data taken by the given receiver</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">all_years</span> <span class="o">=</span> <span class="p">[</span><span class="n">year</span><span class="p">]</span>
@@ -339,7 +328,7 @@
             <span class="n">alt</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
             <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;mjd&#39;</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Interpolate the PWV along the line of sight as a function of time</span>
+        <span class="sd">&quot;&quot;&quot;Interpolate the PWV along the line of sight for the given time</span>
 
 <span class="sd">        The ``time_format`` argument can be set to ``None`` when passing datetime</span>
 <span class="sd">        objects instead of numerical values for ``time``.</span>
@@ -358,7 +347,15 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_zenith</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">time_format</span><span class="p">)</span> <span class="o">*</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">lat</span><span class="p">,</span> <span class="n">lon</span><span class="p">,</span> <span class="n">alt</span><span class="p">,</span> <span class="n">time_format</span><span class="p">))</span></div>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calc_airmass</span><span class="p">(</span>
+                    <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+                    <span class="n">ra</span><span class="o">=</span><span class="n">ra</span><span class="p">,</span>
+                    <span class="n">dec</span><span class="o">=</span><span class="n">dec</span><span class="p">,</span>
+                    <span class="n">lat</span><span class="o">=</span><span class="n">lat</span><span class="p">,</span>
+                    <span class="n">lon</span><span class="o">=</span><span class="n">lon</span><span class="p">,</span>
+                    <span class="n">alt</span><span class="o">=</span><span class="n">alt</span><span class="p">,</span>
+                    <span class="n">time_format</span><span class="o">=</span><span class="n">time_format</span><span class="p">)</span>
+                <span class="p">)</span></div>
 
 <div class="viewcode-block" id="PWVModel.seasonal_averages"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.PWVModel.seasonal_averages">[docs]</a>    <span class="k">def</span> <span class="nf">seasonal_averages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Calculate the average PWV in each season</span>
@@ -412,22 +409,23 @@
             <span class="n">res</span><span class="o">=</span><span class="n">resolution</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_interpolator</span> <span class="o">=</span> <span class="n">RegularGridInterpolator</span><span class="p">(</span>
-            <span class="n">points</span><span class="o">=</span><span class="p">(</span><span class="n">calc_pwv_eff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samp_pwv</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">samp_wave</span><span class="p">),</span> <span class="n">values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">samp_transmission</span><span class="p">)</span>
+            <span class="n">points</span><span class="o">=</span><span class="p">(</span><span class="n">calc_pwv_eff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samp_pwv</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">samp_wave</span><span class="p">),</span>
+            <span class="n">values</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">samp_transmission</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">calc_transmission</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="s1">&#39;pwv&#39;</span><span class="p">,</span> <span class="s1">&#39;wave&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="n">TRANSMISSION_CACHE_SIZE</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">calc_transmission</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calc_transmission</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_calc_transmission</span><span class="p">,</span> <span class="n">TRANSMISSION_CACHE_SIZE</span><span class="p">,</span> <span class="s1">&#39;pwv&#39;</span><span class="p">,</span> <span class="s1">&#39;wave&#39;</span><span class="p">)</span></div>
 
     <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">wave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">wave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">wave</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
-<div class="viewcode-block" id="PWVTransmissionModel.calc_transmission"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.PWVTransmissionModel.calc_transmission">[docs]</a>    <span class="k">def</span> <span class="nf">calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">wave</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Evaluate transmission model at given wavelengths</span>
+    <span class="k">def</span> <span class="nf">_calc_transmission</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">wave</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Evaluate the transmission model at the given wavelengths</span>
 
 <span class="sd">        Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``</span>
 <span class="sd">        object if ``pwv`` is an array. Wavelengths are expected in angstroms.</span>
@@ -454,7 +452,7 @@
             <span class="n">xi</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">wave</span><span class="p">)[:,</span> <span class="kc">None</span><span class="p">]</span>
 
             <span class="n">names</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">{}</span><span class="s1"> mm&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)))</span>
-            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interpolator</span><span class="p">(</span><span class="n">xi</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">)</span></div></div>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_interpolator</span><span class="p">(</span><span class="n">xi</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">names</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="VariablePropagationEffect"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.VariablePropagationEffect">[docs]</a><span class="k">class</span> <span class="nc">VariablePropagationEffect</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">PropagationEffect</span><span class="p">):</span>
@@ -488,7 +486,7 @@
     <span class="n">_maxwave</span> <span class="o">=</span> <span class="mf">12000.0</span>
 
 <div class="viewcode-block" id="StaticPWVTrans.__init__"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.StaticPWVTrans.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transmission_res</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Time independent atmospheric transmission due to PWV</span>
+        <span class="sd">&quot;&quot;&quot;Time independent atmospheric transmission effect due to PWV</span>
 
 <span class="sd">        Setting the ``transmission_res`` argument to ``None`` results in the</span>
 <span class="sd">        highest available transmission model available.</span>
@@ -531,9 +529,10 @@
 
 
 <div class="viewcode-block" id="AbstractVariablePWVEffect"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.AbstractVariablePWVEffect">[docs]</a><span class="k">class</span> <span class="nc">AbstractVariablePWVEffect</span><span class="p">(</span><span class="n">VariablePropagationEffect</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Base class for building time-variable PWV propagation effects&quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="AbstractVariablePWVEffect.__init__"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.AbstractVariablePWVEffect.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">transmission_res</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Time independent atmospheric transmission due to PWV</span>
+        <span class="sd">&quot;&quot;&quot;Time variable atmospheric transmission effect due to PWV</span>
 
 <span class="sd">        Setting the ``transmission_res`` argument to ``None`` results in the</span>
 <span class="sd">        highest available transmission model available.</span>
@@ -542,7 +541,7 @@
 <span class="sd">            pwv: Atmospheric concentration of PWV along line of sight in mm</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution</span>
+<span class="sd">            transmission_res: Reduce the underlying transmission model by binning to the given resolution</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_transmission_res</span> <span class="o">=</span> <span class="n">transmission_res</span>
@@ -556,7 +555,7 @@
         <span class="sd">&quot;&quot;&quot;The PWV concentration used by the propagation effect at a given time</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            time): Time to get the PWV concentration for</span>
+<span class="sd">            time: Time to get the PWV concentration for</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An array of PWV values in units of mm</span>
@@ -573,14 +572,16 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">transmission</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>  <span class="c1"># PWV is a vector and transmission is a DataFrame</span>
             <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">transmission</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span>
 
-        <span class="k">else</span><span class="p">:</span>  <span class="c1"># Assume PWV is scalar and transmission is Series-like</span>
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">transmission</span>
+        <span class="c1"># Assume PWV is scalar and transmission is Series-like</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">transmission</span>
 
-            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">transmission</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">flux</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">flux</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">transmission</span><span class="p">)</span>
 
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Could not identify how to match dimensions of atm. model to source flux.&#39;</span><span class="p">)</span>
+        <span class="c1"># We don&#39;t actually expect this to ever be raised. The above conditionals should be sufficient.</span>
+        <span class="c1"># However, we put it here just in case the function is called in some creative un-anticipated fashion.</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Could not match dimensions of atmospheric model to source flux.&#39;</span><span class="p">)</span>  <span class="c1"># pragma: no cover</span>
 
 <div class="viewcode-block" id="AbstractVariablePWVEffect.propagate"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.AbstractVariablePWVEffect.propagate">[docs]</a>    <span class="k">def</span> <span class="nf">propagate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wave</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Propagate the flux through the atmosphere</span>
@@ -643,14 +644,14 @@
         <span class="sd">&quot;&quot;&quot;The PWV concentration used by the propagation effect at a given time</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            time): Time to get the PWV concentration for</span>
+<span class="sd">            time: Time to get the PWV concentration for</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            An array of PWV values in units of mm</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pwv_model</span><span class="o">.</span><span class="n">pwv_los</span><span class="p">(</span>
-            <span class="n">time</span><span class="p">,</span>
+            <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
             <span class="n">ra</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;ra&#39;</span><span class="p">],</span>
             <span class="n">dec</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;dec&#39;</span><span class="p">],</span>
             <span class="n">lat</span><span class="o">=</span><span class="bp">self</span><span class="p">[</span><span class="s1">&#39;lat&#39;</span><span class="p">],</span>

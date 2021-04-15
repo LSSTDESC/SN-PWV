@@ -15,18 +15,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>PWV effects on SN Magnitude &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -109,15 +109,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -397,8 +396,8 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">tqdm</span> <span class="kn">import</span> <span class="n">tqdm</span>
 
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
-<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">sn_magnitudes</span><span class="p">,</span> <span class="n">reference_stars</span><span class="p">,</span> <span class="n">plotting</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
-<span class="kn">from</span> <span class="nn">tests.mock</span> <span class="kn">import</span> <span class="n">create_cadence</span>
+<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">sn_magnitudes</span><span class="p">,</span> <span class="n">plotting</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span> <span class="nn">tests.mock</span> <span class="kn">import</span> <span class="n">create_mock_cadence</span>
 
 </pre></div>
 </div>
@@ -473,7 +472,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 891.30it/s]
+Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 640.09it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -541,7 +540,7 @@ Tabulating Mag: 100%|██████████| 1155/1155 [00:01&lt;00:00, 
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 922.89it/s]
+Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 668.81it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -582,7 +581,7 @@ curves should be different in each band.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">cadence</span> <span class="o">=</span> <span class="n">create_cadence</span><span class="p">(</span><span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">)</span>
+<span></span><span class="n">cadence</span> <span class="o">=</span> <span class="n">create_mock_cadence</span><span class="p">(</span><span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">)</span>
 <span class="n">cadence</span>
 
 </pre></div>
@@ -594,7 +593,7 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;snat_sim.models.supernova.ObservedCadence object at 0x7f7762c09ca0&gt;
+&lt;snat_sim.models.supernova.ObservedCadence object at 0x7fc6b4384190&gt;
   time        band        gain  skynoise    zp   zpsys
 ------- --------------- ------- -------- ------- ------
   -20.0 lsst_hardware_g     1.0      0.0    25.0     AB
@@ -644,9 +643,15 @@ curves should be different in each band.</p>
     <span class="n">iter_total</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pwv_arr</span><span class="p">)</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">z_arr</span><span class="p">)</span>
     <span class="n">arg_iter</span> <span class="o">=</span> <span class="n">itertools</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">pwv</span><span class="p">,</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">arg_iter</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="n">iter_total</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s1">&#39;Light-Curves&#39;</span><span class="p">,</span> <span class="n">disable</span><span class="o">=</span><span class="ow">not</span> <span class="n">verbose</span><span class="p">):</span>
+        <span class="c1"># Update model to reflect the parameters we want to use in the simulation</span>
         <span class="n">model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">t0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">)</span>
         <span class="n">model</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span>
-        <span class="k">yield</span> <span class="n">model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="o">=</span><span class="n">snr</span><span class="p">)</span>
+
+        <span class="c1"># Simulate a light-curve and convert it from a ``LightCurve`` instance to an astropy table</span>
+        <span class="n">light_curve</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="o">=</span><span class="n">snr</span><span class="p">)</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">()</span>
+        <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
+
+        <span class="k">yield</span> <span class="n">light_curve</span>
 
 </pre></div>
 </div>
@@ -676,7 +681,7 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 231/231 [01:24&lt;00:00,  2.74it/s]
+Light-Curves: 100%|██████████| 231/231 [01:02&lt;00:00,  3.71it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -704,7 +709,7 @@ Light-Curves: 100%|██████████| 231/231 [01:24&lt;00:00,  2.7
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 63/63 [00:23&lt;00:00,  2.68it/s]
+Light-Curves: 100%|██████████| 63/63 [00:17&lt;00:00,  3.57it/s]
 </pre></div></div>
 </div>
 <p>Here we visualize the fitted, uncorrected (i.e. without any stretch / color correction) magnitudes.</p>
@@ -855,7 +860,7 @@ Light-Curves: 100%|██████████| 63/63 [00:23&lt;00:00,  2.68i
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">iter_light_curve_iter_with_ref</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">),</span> <span class="n">snr</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">iter_light_curves_with_ref</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">),</span> <span class="n">snr</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterator over SN light-curves calibrated to a set of reference stars</span>
 
 <span class="sd">    Args:</span>
@@ -870,10 +875,12 @@ Light-Curves: 100%|██████████| 63/63 [00:23&lt;00:00,  2.68i
 <span class="sd">        An Astropy table for each PWV and redshift</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">catalog</span> <span class="o">=</span> <span class="n">reference_stars</span><span class="o">.</span><span class="n">ReferenceCatalog</span><span class="p">(</span><span class="o">*</span><span class="n">spectral_types</span><span class="p">)</span>
+    <span class="n">catalog</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ReferenceCatalog</span><span class="p">(</span><span class="o">*</span><span class="n">spectral_types</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">lc</span> <span class="ow">in</span> <span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">snr</span><span class="o">=</span><span class="n">snr</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">):</span>
         <span class="n">pwv</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;pwv&#39;</span><span class="p">]</span>
-        <span class="k">yield</span> <span class="n">catalog</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span><span class="n">lc</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">)</span>
+        <span class="n">new_lc</span> <span class="o">=</span> <span class="n">catalog</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">LightCurve</span><span class="o">.</span><span class="n">from_sncosmo</span><span class="p">(</span><span class="n">lc</span><span class="p">),</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">)</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">()</span>
+        <span class="n">new_lc</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="n">lc</span><span class="o">.</span><span class="n">meta</span>
+        <span class="k">yield</span> <span class="n">new_lc</span>
 </pre></div>
 </div>
 </div>
@@ -883,7 +890,7 @@ Light-Curves: 100%|██████████| 63/63 [00:23&lt;00:00,  2.68i
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">vparams</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
-<span class="n">light_curves_with_ref</span> <span class="o">=</span> <span class="n">iter_light_curve_iter_with_ref</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
+<span class="n">light_curves_with_ref</span> <span class="o">=</span> <span class="n">iter_light_curves_with_ref</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 <span class="n">fitted_mag_with_ref</span><span class="p">,</span> <span class="n">fitted_params_with_ref</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">fit_mag</span><span class="p">(</span>
         <span class="n">model_without_pwv</span><span class="p">,</span> <span class="n">light_curves_with_ref</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;t0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
 
@@ -895,7 +902,7 @@ Light-Curves: 100%|██████████| 63/63 [00:23&lt;00:00,  2.68i
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 231/231 [01:27&lt;00:00,  2.65it/s]
+Light-Curves: 100%|██████████| 231/231 [01:11&lt;00:00,  3.22it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">

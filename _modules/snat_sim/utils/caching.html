@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.utils.caching &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -93,15 +93,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -133,12 +132,11 @@
 
 <span class="sd">   &gt;&gt;&gt; from snat_sim.utils.caching import Cache</span>
 
-
-<span class="sd">   &gt;&gt;&gt; @Cache(&#39;x&#39;, &#39;y&#39;, cache_size=1000)</span>
-<span class="sd">   ... def add(x, y):</span>
+<span class="sd">   &gt;&gt;&gt; def add(x: np.array, y: np.array) -&gt; np.array:</span>
 <span class="sd">   ...     print(&#39;The function has been called!&#39;)</span>
 <span class="sd">   ...     return x + y</span>
 
+<span class="sd">   &gt;&gt;&gt; add = Cache(add, 1000, &#39;x&#39;, &#39;y&#39;)</span>
 <span class="sd">   &gt;&gt;&gt; x_arr = np.arange(1, 5)</span>
 <span class="sd">   &gt;&gt;&gt; y_arr = np.arange(5, 9)</span>
 
@@ -149,21 +147,6 @@
 <span class="sd">   &gt;&gt;&gt; print(add(x_arr, y_arr))</span>
 <span class="sd">   [ 6  8 10 12]</span>
 
-<span class="sd">Class methods can also be decorated, but should be decorated at instantiation</span>
-<span class="sd">as follows:</span>
-
-<span class="sd">.. doctest:: python</span>
-
-<span class="sd">   &gt;&gt;&gt; class Foo:</span>
-<span class="sd">   ...</span>
-<span class="sd">   ...     def __init__(self):</span>
-<span class="sd">   ...         self.add = Cache(&#39;x&#39;, &#39;y&#39;, cache_size=1000)(self.add)</span>
-<span class="sd">   ...</span>
-<span class="sd">   ...     def add(self, x, y):</span>
-<span class="sd">   ...         return x + y</span>
-<span class="sd">   ...</span>
-
-
 <span class="sd">Module API</span>
 <span class="sd">----------</span>
 <span class="sd">&quot;&quot;&quot;</span>
@@ -171,7 +154,6 @@
 <span class="kn">import</span> <span class="nn">inspect</span>
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">OrderedDict</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">wraps</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Hashable</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -214,7 +196,7 @@
 <div class="viewcode-block" id="Cache"><a class="viewcode-back" href="../../../api/utils/caching.html#snat_sim.utils.caching.Cache">[docs]</a><span class="k">class</span> <span class="nc">Cache</span><span class="p">(</span><span class="n">MemoryCache</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Memoization function wrapper&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="Cache.__init__"><a class="viewcode-back" href="../../../api/utils/caching.html#snat_sim.utils.caching.Cache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">numpy_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="Cache.__init__"><a class="viewcode-back" href="../../../api/utils/caching.html#snat_sim.utils.caching.Cache.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">callable</span><span class="p">,</span> <span class="n">cache_size</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">*</span><span class="n">numpy_args</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Memoization decorator supporting ``numpy`` arrays.</span>
 
 <span class="sd">        Args:</span>
@@ -225,10 +207,12 @@
 <span class="sd">            A callable function decorator</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
+        <span class="bp">self</span><span class="o">.</span><span class="n">function</span> <span class="o">=</span> <span class="n">function</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cache_size</span> <span class="o">=</span> <span class="n">cache_size</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">numpy_args</span> <span class="o">=</span> <span class="n">numpy_args</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Cache</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">max_size</span><span class="o">=</span><span class="n">cache_size</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
+    <span class="k">def</span> <span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Cache return values of the given function</span>
 
 <span class="sd">        Args:</span>
@@ -238,27 +222,21 @@
 <span class="sd">            The wrapped function</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nd">@wraps</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
-        <span class="k">def</span> <span class="nf">wrapped</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-            <span class="sd">&quot;&quot;&quot;Wrapped version of the given function.</span>
+        <span class="n">kwargs_for_key</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getcallargs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">arg_to_cast</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">numpy_args</span><span class="p">:</span>
+            <span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">])</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
 
-<span class="sd">            Arguments and returns are the same as ``function``</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+        <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-            <span class="n">kwargs_for_key</span> <span class="o">=</span> <span class="n">inspect</span><span class="o">.</span><span class="n">getcallargs</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">arg_to_cast</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">numpy_args</span><span class="p">:</span>
-                <span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="p">[</span><span class="n">arg_to_cast</span><span class="p">])</span><span class="o">.</span><span class="n">tobytes</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
-            <span class="n">key</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">kwargs_for_key</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
-
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
-                <span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-
-            <span class="k">return</span> <span class="n">out</span>
-
-        <span class="k">return</span> <span class="n">wrapped</span></div>
+    <span class="k">def</span> <span class="nf">__reduce__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Ensures instances can be pickled</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">,</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">function</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cache_size</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">numpy_args</span><span class="p">)</span></div>
 </pre></div>
 
           </div>

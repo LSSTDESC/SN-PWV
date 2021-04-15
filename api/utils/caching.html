@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.utils.caching &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -91,15 +91,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -127,12 +126,11 @@ specified by name when constructing the decorator:</p>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.utils.caching</span> <span class="kn">import</span> <span class="n">Cache</span>
 
-
-<span class="gp">&gt;&gt;&gt; </span><span class="nd">@Cache</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
-<span class="gp">... </span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">:</span>
 <span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The function has been called!&#39;</span><span class="p">)</span>
 <span class="gp">... </span>    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
 
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="n">add</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">x_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">y_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">)</span>
 
@@ -142,18 +140,6 @@ specified by name when constructing the decorator:</p>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">add</span><span class="p">(</span><span class="n">x_arr</span><span class="p">,</span> <span class="n">y_arr</span><span class="p">))</span>
 <span class="go">[ 6  8 10 12]</span>
-</pre></div>
-</div>
-<p>Class methods can also be decorated, but should be decorated at instantiation
-as follows:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">class</span> <span class="nc">Foo</span><span class="p">:</span>
-<span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">add</span> <span class="o">=</span> <span class="n">Cache</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span> <span class="n">cache_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">add</span><span class="p">)</span>
-<span class="gp">...</span>
-<span class="gp">... </span>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-<span class="gp">... </span>        <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
-<span class="gp">...</span>
 </pre></div>
 </div>
 </div>
@@ -180,17 +166,17 @@ entry from the cache.</p>
 
 <dl class="py class">
 <dt id="snat_sim.utils.caching.Cache">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.utils.caching.</span></code><code class="sig-name descname"><span class="pre">Cache</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numpy_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#Cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.utils.caching.</span></code><code class="sig-name descname"><span class="pre">Cache</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numpy_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#Cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Memoization function wrapper</p>
 <dl class="py method">
 <dt id="snat_sim.utils.caching.Cache.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numpy_args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#Cache.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache.__init__" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numpy_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#Cache.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Memoization decorator supporting <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*numpy_args</strong> – Function arguments to treat as numpy arrays</p></li>
-<li><p><strong>cache_size</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Maximum memory to allocate to cached data in bytes</p></li>
+<li><p><strong>cache_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Maximum memory to allocate to cached data in bytes</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

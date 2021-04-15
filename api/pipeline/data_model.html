@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.pipeline.data_model &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -91,15 +91,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -120,101 +119,108 @@
 <p>Data models are defined as Python data classes. All fields in the data model
 are onptional except for the supernova identifier (<code class="docutils literal notranslate"><span class="pre">snid</span></code>). Other fields
 include the supernova model parameters used in a light-curve simulation / fit
-and the chi-squared, degrees of freedom, and B-band magnitudes returned by
-the fitted model.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.pipeline.data_model</span> <span class="kn">import</span> <span class="n">PipelineResult</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data_obj</span> <span class="o">=</span> <span class="n">PipelineResult</span><span class="p">(</span>
-<span class="gp">... </span><span class="n">snid</span><span class="o">=</span><span class="s1">&#39;1234567&#39;</span><span class="p">,</span>
-<span class="gp">... </span><span class="n">sim_params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x0&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">5</span><span class="p">},</span>
-<span class="gp">... </span><span class="n">fit_params</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x0&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">9</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">12</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">51</span><span class="p">},</span>
-<span class="gp">... </span><span class="n">fit_err</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;x0&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">01</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="o">.</span><span class="mi">05</span><span class="p">},</span>
-<span class="gp">... </span><span class="n">chisq</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
-<span class="gp">... </span><span class="n">ndof</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
-<span class="gp">... </span><span class="n">mb</span><span class="o">=</span><span class="mf">22.5</span><span class="p">,</span>
-<span class="gp">... </span><span class="n">abs_mag</span><span class="o">=-</span><span class="mf">19.1</span><span class="p">,</span>
-<span class="gp">... </span><span class="n">message</span><span class="o">=</span><span class="s1">&#39;The fit exited successfully&#39;</span>
+and the cadence used in the simulation.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sncosmo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">LightCurve</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.pipeline.data_model</span> <span class="kn">import</span> <span class="n">PipelinePacket</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load example data and an example supernova model</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_data</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">load_example_data</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="o">.</span><span class="n">from_sncosmo</span><span class="p">(</span><span class="n">example_data</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model_parameters</span> <span class="o">=</span> <span class="n">example_data</span><span class="o">.</span><span class="n">meta</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sn_model</span> <span class="o">=</span> <span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;Salt2&#39;</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set an initial guess for fitting the model parameters</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sn_model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model_parameters</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit_result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">sn_model</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">,</span> <span class="n">vparam_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">packet</span> <span class="o">=</span> <span class="n">PipelinePacket</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">snid</span><span class="o">=</span><span class="mi">1234</span><span class="p">,</span>                    <span class="c1"># Unique SN identifier</span>
+<span class="gp">... </span>    <span class="n">sim_params</span><span class="o">=</span><span class="n">model_parameters</span><span class="p">,</span>  <span class="c1"># Parameters used to simulate the light-curve</span>
+<span class="gp">... </span>    <span class="n">light_curve</span><span class="o">=</span><span class="n">light_curve</span><span class="p">,</span>      <span class="c1"># The simulated light-curve</span>
+<span class="gp">... </span>    <span class="n">fit_result</span><span class="o">=</span><span class="n">fit_result</span><span class="p">,</span>        <span class="c1"># ``SNFitResult`` object</span>
+<span class="gp">... </span>    <span class="n">fitted_model</span><span class="o">=</span><span class="n">fitted_model</span><span class="p">,</span>    <span class="c1"># The fitted model (set to best fit parameter values)</span>
+<span class="gp">... </span>    <span class="n">message</span><span class="o">=</span><span class="s1">&#39;This fit was a success!&#39;</span>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
-<p>Data products can be converted into familiar data structures using instance
-the methods demonstrated below (see the full class documentation for a
-complete list of available methods). Missing numerical data is masked using
-the value <code class="docutils literal notranslate"><span class="pre">-99.99</span></code>.</p>
+<p>The simulation and fittd parameters can be converted into pandas Dataframes.
+Missing numerical data is masked using the value <code class="docutils literal notranslate"><span class="pre">-99.99</span></code>.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Pick which simulated and fitted parameters to include in the output</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">include_sim_params</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">]</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">include_fit_params</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 <span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data_list</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">to_list</span><span class="p">(</span><span class="n">include_sim_params</span><span class="p">,</span> <span class="n">include_fit_params</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data_str</span> <span class="o">=</span> <span class="n">data_obj</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="n">include_sim_params</span><span class="p">,</span> <span class="n">include_fit_params</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">packet</span><span class="o">.</span><span class="n">sim_params_to_pandas</span><span class="p">()</span>
+<span class="go">    x1    c    z        x0       t0    SNID</span>
+<span class="go">0  0.5  0.2  0.5  0.000012  55100.0  1234.0</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">packet</span><span class="o">.</span><span class="n">fitted_params_to_pandas</span><span class="p">()</span>  
+<span class="go">     snid  fit_z   fit_t0    fit_x0  ...      chisq  ndof         mb    abs_mag</span>
+<span class="go">0  1234.0    0.5  55100.0  0.000012  ...  35.862946  37.0  22.815929 -19.452564</span>
 </pre></div>
 </div>
 </div>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="snat_sim.pipeline.data_model.PipelineResult">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.data_model.</span></code><code class="sig-name descname"><span class="pre">PipelineResult</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">snid</span></em>, <em class="sig-param"><span class="pre">sim_params=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">fit_params=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">fit_err=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">chisq=-99.99</span></em>, <em class="sig-param"><span class="pre">ndof=-99.99</span></em>, <em class="sig-param"><span class="pre">mb=-99.99</span></em>, <em class="sig-param"><span class="pre">abs_mag=-99.99</span></em>, <em class="sig-param"><span class="pre">message=''</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.pipeline.data_model.PipelinePacket">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.data_model.</span></code><code class="sig-name descname"><span class="pre">PipelinePacket</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cadence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_curve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_result</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitted_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelinePacket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class representation of internal pipeline data products</p>
-<dl class="py method">
-<dt id="snat_sim.pipeline.data_model.PipelineResult.to_csv">
-<code class="sig-name descname"><span class="pre">to_csv</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.to_csv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.to_csv" title="Permalink to this definition">¶</a></dt>
-<dd><p>Combine light-curve fit results into single row matching the output table file format</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sim_params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The simulated parameter values to include int the output</p></li>
-<li><p><strong>fit_params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The fitted parameter values to include in the output</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>A string with data in CSV format</p>
+<dl class="simple">
+<dt>Fields:</dt><dd><p>snid: Unique identifier for the data packet
+sim_params: Parameters used to simulate the light-curve
+cadence: The observational cadence used to simulate the light-curve
+light_curve: The simulated light-curve
+fit_result: Fit result from fitting the light-curve
+fitted_model: Model used to fit the light-curve
+message: Status message</p>
 </dd>
 </dl>
-</dd></dl>
-
 <dl class="py method">
-<dt id="snat_sim.pipeline.data_model.PipelineResult.to_list">
-<code class="sig-name descname"><span class="pre">to_list</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.to_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.to_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return class data as a list with missing values masked as -99.99</p>
+<dt id="snat_sim.pipeline.data_model.PipelinePacket.sim_params_to_pandas">
+<code class="sig-name descname"><span class="pre">sim_params_to_pandas</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelinePacket.sim_params_to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket.sim_params_to_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return simulated parameters as a pandas Dataframe</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sim_params</strong> – The order of the simulated parameter values in the return</p></li>
-<li><p><strong>fit_params</strong> – The order of the fitted parameter values in the return</p></li>
-</ul>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A list of strings and floats</p>
+<dd class="field-even"><p>Parameters used in the simulation of light-curves</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.data_model.PipelineResult.column_names">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">column_names</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sim_params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelineResult.column_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.column_names" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of column names matching the data model used by <code class="docutils literal notranslate"><span class="pre">PipelineResult.to_csv</span></code></p>
+<dt id="snat_sim.pipeline.data_model.PipelinePacket.fitted_params_to_pandas">
+<code class="sig-name descname"><span class="pre">fitted_params_to_pandas</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelinePacket.fitted_params_to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket.fitted_params_to_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return fitted parameters as a pandas Dataframe</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sim_params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The simulated parameter values to include int the output</p></li>
-<li><p><strong>fit_params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The fitted parameter values to include in the output</p></li>
-</ul>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>List of column names as strings</p>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Parameters recovered from fitting a light-curve</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.data_model.PipelineResult.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">snid</span></em>, <em class="sig-param"><span class="pre">sim_params=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">fit_params=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">fit_err=&lt;factory&gt;</span></em>, <em class="sig-param"><span class="pre">chisq=-99.99</span></em>, <em class="sig-param"><span class="pre">ndof=-99.99</span></em>, <em class="sig-param"><span class="pre">mb=-99.99</span></em>, <em class="sig-param"><span class="pre">abs_mag=-99.99</span></em>, <em class="sig-param"><span class="pre">message=''</span></em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelineResult.__init__" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.pipeline.data_model.PipelinePacket.packet_status_to_pandas">
+<code class="sig-name descname"><span class="pre">packet_status_to_pandas</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelinePacket.packet_status_to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket.packet_status_to_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the packet status message as a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Dataframe with the snid, fit success status, and result message</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.pipeline.data_model.PipelinePacket.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cadence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_curve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_result</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitted_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
 </dd></dl>
 

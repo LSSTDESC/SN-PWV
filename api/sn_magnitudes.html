@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.sn_magnitudes &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -28,8 +28,7 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.plotting" href="plotting.html" />
-    <link rel="prev" title="snat_sim.pipeline" href="pipeline/pipeline.html" />
+    <link rel="prev" title="snat_sim.plotting" href="plotting.html" />
   
    
 
@@ -45,9 +44,6 @@
              >modules</a> |</li>
         <li class="right" >
           <a href="plotting.html" title="snat_sim.plotting"
-             accesskey="N">next</a> |</li>
-        <li class="right" >
-          <a href="pipeline/pipeline.html" title="snat_sim.pipeline"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.sn_magnitudes</a></li> 
@@ -99,15 +95,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -123,8 +118,8 @@
   <div class="section" id="module-snat_sim.sn_magnitudes">
 <span id="snat-sim-sn-magnitudes"></span><h1>snat_sim.sn_magnitudes<a class="headerlink" href="#module-snat_sim.sn_magnitudes" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">sn_magnitudes.py</span></code> module is responsible for calculating supernova
-magnitudes as a function of PWV and redshift. Functionality is provided to
-determine magnitudes directly from a SN model and via a light-curve fit.</p>
+magnitudes as a function of PWV and redshift. Functionality includes calculating
+magnitudes directly from a supernova model or via a light-curve fit.</p>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
@@ -161,7 +156,7 @@ to a model and leaving all other parameters unchanged.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
+<li><p><strong>model</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>]) – The sncosmo model to use in the simulations</p></li>
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – Array of PWV values</p></li>
 <li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – Array of redshift values</p></li>
 <li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Name of the bands to tabulate magnitudes for</p></li>
@@ -361,9 +356,6 @@ normalized to the magnitude at the fiducial atmosphere.</p>
              >modules</a> |</li>
         <li class="right" >
           <a href="plotting.html" title="snat_sim.plotting"
-             >next</a> |</li>
-        <li class="right" >
-          <a href="pipeline/pipeline.html" title="snat_sim.pipeline"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.sn_magnitudes</a></li> 

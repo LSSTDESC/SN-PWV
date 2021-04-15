@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.sn_magnitudes &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -92,15 +92,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -115,8 +114,8 @@
             
   <h1>Source code for snat_sim.sn_magnitudes</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;The ``sn_magnitudes.py`` module is responsible for calculating supernova</span>
-<span class="sd">magnitudes as a function of PWV and redshift. Functionality is provided to</span>
-<span class="sd">determine magnitudes directly from a SN model and via a light-curve fit.</span>
+<span class="sd">magnitudes as a function of PWV and redshift. Functionality includes calculating</span>
+<span class="sd">magnitudes directly from a supernova model or via a light-curve fit.</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
@@ -143,7 +142,7 @@
 
 <span class="c1"># Todo: Add dictionary keys to docs? - consider named tuple?</span>
 <div class="viewcode-block" id="get_config_pwv_vals"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.get_config_pwv_vals">[docs]</a><span class="nd">@lru_cache</span><span class="p">()</span>  <span class="c1"># Cache I/O</span>
-<span class="k">def</span> <span class="nf">get_config_pwv_vals</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">paths_at_init</span><span class="o">.</span><span class="n">_config_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_config_pwv_vals</span><span class="p">(</span><span class="n">config_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span> <span class="o">=</span> <span class="n">paths_at_init</span><span class="o">.</span><span class="n">pwv_config_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">types</span><span class="o">.</span><span class="n">NumericalParams</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Retrieve PWV values to use as reference values</span>
 
 <span class="sd">    Returned values include:</span>
@@ -171,7 +170,7 @@
 
 
 <div class="viewcode-block" id="tabulate_mag"><a class="viewcode-back" href="../../api/sn_magnitudes.html#snat_sim.sn_magnitudes.tabulate_mag">[docs]</a><span class="k">def</span> <span class="nf">tabulate_mag</span><span class="p">(</span>
-        <span class="n">model</span><span class="p">:</span> <span class="n">SNModel</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">SNModel</span><span class="p">,</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">Model</span><span class="p">],</span>
         <span class="n">pwv_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">],</span>
         <span class="n">z_arr</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">],</span>
         <span class="n">bands</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>

@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.models &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -28,8 +28,8 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.plasticc" href="plasticc.html" />
-    <link rel="prev" title="snat_sim.constants" href="constants.html" />
+    <link rel="next" title="snat_sim.pipeline" href="pipeline/pipeline.html" />
+    <link rel="prev" title="Simulating Light-Curves with a Cadence" href="../notebooks/simulating_lc_for_cadence.html" />
   
    
 
@@ -44,10 +44,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plasticc.html" title="snat_sim.plasticc"
+          <a href="pipeline/pipeline.html" title="snat_sim.pipeline"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="constants.html" title="snat_sim.constants"
+          <a href="../notebooks/simulating_lc_for_cadence.html" title="Simulating Light-Curves with a Cadence"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.models</a></li> 
@@ -99,15 +99,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -122,10 +121,10 @@
             
   <div class="section" id="module-snat_sim.models">
 <span id="snat-sim-models"></span><h1>snat_sim.models<a class="headerlink" href="#module-snat_sim.models" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">modeling</span></code> module defines classes for modeling different
-physical phenomena. This includes SNe Ia light-curves, the propagation of
-light through atmospheric water vapor (with and without variation in time),
-and the seasonal variation of precipitable water vapor over time.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">modeling</span></code> module defines classes for modeling physical phenomena.
+This includes SNe Ia light-curves, the propagation of light through atmospheric
+water vapor (with and without variation in time), and the broad-band photometry
+of stellar catalogs.</p>
 <div class="section" id="model-summaries">
 <h2>Model Summaries<a class="headerlink" href="#model-summaries" title="Permalink to this headline">¶</a></h2>
 <p>A summary of the available models is provided below:</p>
@@ -139,17 +138,26 @@ and the seasonal variation of precipitable water vapor over time.</p>
 <td><p>Models atmospheric transmission due to PWV at a fixed resolution</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PWVModel</span></code></p></td>
-<td><p>Model for interpolating the atmospheric water vapor at a given time and time</p></td>
+<td><p>Model for interpolating the atmospheric water vapor at a given date and time</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SNModel</span></code></p></td>
 <td><p>An observer-frame supernova model composed of a Source and zero or more effects</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReferenceStar</span></code></p></td>
+<td><p>Representation of spectral data from the Goettingen Spectral Library</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ReferenceCatalog</span></code></p></td>
+<td><p>A rudimentary implementation of a reference star catalog</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">VariableCatalog</span></code></p></td>
+<td><p>A reference star catalog that determines the time dependent PWV concentration from an underlying PWV model</p></td>
 </tr>
 </tbody>
 </table>
 <p>Supernova models (<code class="docutils literal notranslate"><span class="pre">SNModel</span></code>) are designed to closely resemble the behavior
 of the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package. However, unlike <code class="docutils literal notranslate"><span class="pre">sncosmo.Model</span></code> objects, the
-<code class="docutils literal notranslate"><span class="pre">snat_sim.SNModel</span></code> class provides support for propogation effects that vary
-with time. A summary of propagation effects provided by the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code>
+<code class="docutils literal notranslate"><span class="pre">snat_sim.SNModel</span></code> class provides support for propagation effects that vary
+with time. A summary of custom propagation effects provided by the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code>
 package is listed below:</p>
 <table class="longtable docutils align-default">
 <colgroup>
@@ -168,17 +176,36 @@ package is listed below:</p>
 </tr>
 </tbody>
 </table>
+<p>Simulation results are generally returned using one or more of the following
+object types:</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ObservedCadence</span></code></p></td>
+<td><p>The observational sampling of an astronomical light-curve</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">LightCurve</span></code></p></td>
+<td><p>Abstract representation of an astronomical light-curve.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">SNFitResult</span></code></p></td>
+<td><p>Represents results from a <code class="docutils literal notranslate"><span class="pre">SNModel</span></code> being fit to a <code class="docutils literal notranslate"><span class="pre">LightCurve</span></code></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
-<p>To ensure ease of use, supernovae modeling with the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is
-backwards compatibile with the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package and follows a similar
+<p>To ensure ease of use, supernova modeling with the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is
+backward compatible with the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package and follows a similar
 <a class="reference external" href="https://sncosmo.readthedocs.io/en/stable/models.html">design pattern</a>.
-The <code class="docutils literal notranslate"><span class="pre">SNModel</span></code> class from <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> acts as a drop in replacements for
-the <code class="docutils literal notranslate"><span class="pre">Model</span></code> classes built in to <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but provides extended
+The <code class="docutils literal notranslate"><span class="pre">SNModel</span></code> class from <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> acts as a drop-in replacement for
+the <code class="docutils literal notranslate"><span class="pre">Model</span></code> classes built into <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but provides extended
 functionality.</p>
-<p>Like <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>, models are instantiated for a given spectral
-template and various propagation effects can be added to the model. In the
+<p>Supernova models are instantiated using a spectral template with the addition of
+optional observer or rest-frame effects. In the
 following example, atmospheric propagation effects due to precipitable water
 vapor are added to a Salt2 supernova model.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">models</span>
@@ -193,7 +220,8 @@ vapor are added to a Salt2 supernova model.</p>
 </pre></div>
 </div>
 <p>Unlike <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>, the process of simulating or fitting light-curves is
-handled directly from the model class. Lets consider these two cases seperately.</p>
+handled directly from the model class. We consider these two cases seperately
+in the following sections.</p>
 <div class="section" id="simulating-light-curves">
 <h3>Simulating Light-Curves<a class="headerlink" href="#simulating-light-curves" title="Permalink to this headline">¶</a></h3>
 <p>To simulate a light-curve, you first need to establish the desired light-curve
@@ -206,12 +234,29 @@ cadence (i.e., how the light-curve should be sampled in time):</p>
 </pre></div>
 </div>
 <p>Light-curves can then be simulated directly from the model using the
-<code class="docutils literal notranslate"><span class="pre">simulate_lc</span></code> method:</p>
+<code class="docutils literal notranslate"><span class="pre">simulate_lc</span></code> method. Notice that the returned type is a <code class="docutils literal notranslate"><span class="pre">LightCurve</span></code>
+object:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here we simulate a light-curve with statistical noise</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve_with_noise</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">light_curve_with_noise</span><span class="p">))</span>
+<span class="go">&lt;class &#39;snat_sim.models.light_curve.LightCurve&#39;&gt;</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here we simulate a light-curve with a fixed signal to noise ratio</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve_fixed_snr</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">fixed_snr</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">light_curve_fixed_snr</span><span class="p">))</span>
+<span class="go">&lt;class &#39;snat_sim.models.light_curve.LightCurve&#39;&gt;</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">LightCurve</span></code> class represents astronomical light-curves and provides an
+easy interface for casting the data into other commonly used object types.</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sncosmo</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">LightCurve</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">example_data</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">load_example_data</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">light_curve_data</span> <span class="o">=</span> <span class="n">LightCurve</span><span class="o">.</span><span class="n">from_sncosmo</span><span class="p">(</span><span class="n">example_data</span><span class="p">)</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lc_as_dataframe</span> <span class="o">=</span> <span class="n">light_curve_data</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lc_as_table</span> <span class="o">=</span> <span class="n">light_curve_data</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -220,22 +265,19 @@ cadence (i.e., how the light-curve should be sampled in time):</p>
 <p>Photometric data can be fit directly from the model using the <code class="docutils literal notranslate"><span class="pre">fit_lc</span></code> method.
 Notice in the below example that the returned object types are classes from the
 <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">sncosmo</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">SNModel</span>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">supernova_model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">z</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">55100.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit_result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">light_curve_data</span><span class="p">,</span> <span class="n">vparam_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">load_example_data</span><span class="p">()</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model_to_fit</span> <span class="o">=</span> <span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">fit_result</span><span class="p">))</span>
+<span class="go">&lt;class &#39;snat_sim.models.supernova.SNFitResult&#39;&gt;</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="c1"># We set fix the z and t0 and then vary the remaining parameters during the fit</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">model_to_fit</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;z&#39;</span><span class="p">],</span> <span class="n">t0</span><span class="o">=</span><span class="n">data</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;t0&#39;</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fit_result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">model_to_fit</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">vparam_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">fit_result</span><span class="p">),</span> <span class="nb">type</span><span class="p">(</span><span class="n">fitted_model</span><span class="p">))</span>
-<span class="go">&lt;class &#39;snat_sim.models.supernova.SNFitResult&#39;&gt; &lt;class &#39;snat_sim.models.supernova.SNModel&#39;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">fitted_model</span><span class="p">))</span>
+<span class="go">&lt;class &#39;snat_sim.models.supernova.SNModel&#39;&gt;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">SNFitResult</span></code> object is similar to the <code class="docutils literal notranslate"><span class="pre">Result</span></code> class from <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>
-but <strong>is not backwards compatible</strong>. <code class="docutils literal notranslate"><span class="pre">SNFitResult</span></code> instances provide access
+but <strong>is not backward compatible</strong>. <code class="docutils literal notranslate"><span class="pre">SNFitResult</span></code> instances provide access
 to fit results as floats or <code class="docutils literal notranslate"><span class="pre">pandas</span></code> objects (e.g., <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code> or
 <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>) depending on the value.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">fit_result</span><span class="p">)</span>
@@ -243,27 +285,65 @@ to fit results as floats or <code class="docutils literal notranslate"><span cla
 <span class="go">     message: Minimization exited successfully.</span>
 <span class="go">       ncall: 77</span>
 <span class="go">        nfit: 1</span>
-<span class="go">       chisq: 35.863</span>
+<span class="go">       chisq: 35.537</span>
 <span class="go">        ndof: 37</span>
-<span class="go"> param_names: [&#39;z&#39;, &#39;t0&#39;, &#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;]</span>
-<span class="go">  parameters: [5.000e-01 5.510e+04 1.188e-05 4.382e-01 2.190e-01]</span>
+<span class="go"> param_names: [&#39;z&#39;, &#39;t0&#39;, &#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;, &#39;Atmospherepwv&#39;]</span>
+<span class="go">  parameters: [5.000e-01 5.510e+04 1.194e-05 4.257e-01 2.483e-01 4.000e+00]</span>
 <span class="go">vparam_names: [&#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;]</span>
-<span class="go">      errors: [3.777e-07 3.178e-01 2.862e-02]</span>
+<span class="go">      errors: [3.830e-07 3.173e-01 2.931e-02]</span>
 <span class="go">  covariance:</span>
-<span class="go">    [[ 1.426e-13 -6.461e-08 -7.622e-09]</span>
-<span class="go">     [-6.461e-08  1.010e-01  1.223e-03]</span>
-<span class="go">     [-7.622e-09  1.223e-03  8.189e-04]]</span>
+<span class="go">    [[ 1.467e-13 -6.472e-08 -7.966e-09]</span>
+<span class="go">     [-6.472e-08  1.007e-01  1.174e-03]</span>
+<span class="go">     [-7.966e-09  1.174e-03  8.590e-04]]</span>
 </pre></div>
 </div>
 <p>Fit result objects are also capable of calculating the variance in the
-distance modulus given the alpha/beta standerdization parameters:</p>
+distance modulus given the alpha/beta standardization parameters:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">alpha</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_alpha</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">beta</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_beta</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">mu_variance</span> <span class="o">=</span> <span class="n">fit_result</span><span class="o">.</span><span class="n">mu_variance_linear</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># The covariance matrix used when determining error values</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit_result</span><span class="o">.</span><span class="n">salt_covariance_linear</span><span class="p">()</span>
+<span class="go">          mB        x1         c</span>
+<span class="go">mB  0.001213  0.005886  0.000725</span>
+<span class="go">x1  0.005886  0.100684  0.001174</span>
+<span class="go">c   0.000725  0.001174  0.000859</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Here we use alpha and beta parameters from Betoule et al. 2014</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mu_variance</span> <span class="o">=</span> <span class="n">fit_result</span><span class="o">.</span><span class="n">mu_variance_linear</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="n">alpha</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_alpha</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_beta</span><span class="p">)</span>
+
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">mu_variance</span><span class="si">:</span><span class="s1"> .5f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-<span class="go"> 0.00735</span>
+<span class="go"> 0.00762</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="calibrating-light-curves">
+<h3>Calibrating Light-Curves<a class="headerlink" href="#calibrating-light-curves" title="Permalink to this headline">¶</a></h3>
+<p>Your use case may involve calibrating simulated light-curves relative to a
+stellar reference catalog. The spectrum for individual spectral types can be
+retreived using the <code class="docutils literal notranslate"><span class="pre">ReferenceStar</span></code> class:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">reference_star</span>
+
+<span class="gp">&gt;&gt;&gt; </span><span class="n">g2_star</span> <span class="o">=</span> <span class="n">reference_star</span><span class="o">.</span><span class="n">ReferenceStar</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">g2_star</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
+<span class="go">3000.000     4.960049e+17</span>
+<span class="go">3000.006     4.659192e+17</span>
+<span class="go">3000.012     4.304657e+17</span>
+<span class="go">3000.018     3.751426e+17</span>
+<span class="go">3000.024     2.847191e+17</span>
+<span class="go">                 ...</span>
+<span class="go">11999.920    1.366567e+18</span>
+<span class="go">11999.940    1.366673e+18</span>
+<span class="go">11999.960    1.366418e+18</span>
+<span class="go">11999.980    1.365863e+18</span>
+<span class="go">12000.000    1.365315e+18</span>
+<span class="go">Length: 933333, dtype: float32</span>
+</pre></div>
+</div>
+<p>A <code class="docutils literal notranslate"><span class="pre">ReferenceCatalog</span></code> is used to represent a collection of stars with different
+stellar types. Catalog instances can be used to calibrate supernoca light-curves.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reference_catalog</span> <span class="o">=</span> <span class="n">reference_star</span><span class="o">.</span><span class="n">ReferenceCatalog</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">reference_catalog</span><span class="o">.</span><span class="n">calibrate_lc</span><span class="p">(</span><span class="n">light_curve_data</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">4</span><span class="p">))</span>
 </pre></div>
 </div>
 </div>
@@ -271,150 +351,31 @@ distance modulus given the alpha/beta standerdization parameters:</p>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="module-snat_sim.models.supernova">
-<span id="modeling-supernova-observations"></span><h2>Modeling Supernova Observations<a class="headerlink" href="#module-snat_sim.models.supernova" title="Permalink to this headline">¶</a></h2>
-<p>Modeling functionality for the spectro-photometric time-sampling of
-supernovae.</p>
+<div class="section" id="module-snat_sim.models.reference_star">
+<span id="reference-stars-api"></span><h2>Reference Stars API<a class="headerlink" href="#module-snat_sim.models.reference_star" title="Permalink to this headline">¶</a></h2>
+<p>Models for the spectro-photometric flux of stars and their combination into
+reference catalogs.</p>
 <dl class="py class">
-<dt id="snat_sim.models.supernova.ObservedCadence">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.supernova.</span></code><code class="sig-name descname"><span class="pre">ObservedCadence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">obs_times</span></em>, <em class="sig-param"><span class="pre">bands</span></em>, <em class="sig-param"><span class="pre">skynoise=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">zp=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">zpsys=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">gain=&lt;property</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#ObservedCadence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.ObservedCadence" title="Permalink to this definition">¶</a></dt>
-<dd><p>The observational sampling of an astronomical light-curve</p>
-<p>The zero-point, zero point system, and gain arguments can be a
-collection of values (one per <code class="docutils literal notranslate"><span class="pre">obs_time</span></code> value), or a single value
-to apply at all observation times.</p>
+<dt id="snat_sim.models.reference_star.ReferenceStar">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.reference_star.</span></code><code class="sig-name descname"><span class="pre">ReferenceStar</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectral_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar" title="Permalink to this definition">¶</a></dt>
+<dd><p>Representation of spectral data from the Goettingen Spectral Library</p>
+<dl class="py method">
+<dt id="snat_sim.models.reference_star.ReferenceStar.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectral_type</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load a spectrum for the given spectral type</p>
+<p>Flux values are returned in phot/cm2/s/angstrom and are index by
+wavelength values in Angstroms.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>obs_times</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Array of observation times for the light-curve</p></li>
-<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Array of bands for each observation</p></li>
-<li><p><strong>zp</strong> (<em>~FloatLike</em>) – The zero-point or an array of zero-points for each observation</p></li>
-<li><p><strong>zpsys</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – The zero-point system or an array of zero-point systems</p></li>
-<li><p><strong>gain</strong> (<em>~FloatLike</em>) – The simulated gain or an array of gain values</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py method">
-<dt id="snat_sim.models.supernova.ObservedCadence.from_plasticc">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_plasticc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">light_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop_nondetection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#ObservedCadence.from_plasticc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.ObservedCadence.from_plasticc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Extract the observational cadence from a PLaSTICC light-curve</p>
-<p>The zero-point, zero point system, and gain arguments can be a
-collection of values (one per phase value), or a single value to
-apply at all obs_times.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>light_curve</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Astropy table with PLaSTICC light-curve data</p></li>
-<li><p><strong>zp</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[~FloatLike]) – Optionally overwrite the PLaSTICC zero-point with this value(s)</p></li>
-<li><p><strong>drop_nondetection</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Drop data with PHOTFLAG == 0</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <a class="reference internal" href="#snat_sim.models.supernova.ObservedCadence" title="snat_sim.models.supernova.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>]</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An <code class="docutils literal notranslate"><span class="pre">ObservedCadence</span></code> instance</p>
+<dd class="field-odd"><p><strong>spectral_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Spectral type (e.g., G2)</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.models.supernova.ObservedCadence.to_sncosmo">
-<code class="sig-name descname"><span class="pre">to_sncosmo</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#ObservedCadence.to_sncosmo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.ObservedCadence.to_sncosmo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return the observational cadence as an <code class="docutils literal notranslate"><span class="pre">astropy.Table</span></code></p>
-<p>The returned table of observations is formatted for use with with
-the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>An astropy table representing the observational cadence in <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> format</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.models.supernova.ObservedCadence.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">obs_times</span></em>, <em class="sig-param"><span class="pre">bands</span></em>, <em class="sig-param"><span class="pre">skynoise=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">zp=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">zpsys=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">gain=&lt;property</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.models.supernova.ObservedCadence.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="snat_sim.models.supernova.SNModel">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.supernova.</span></code><code class="sig-name descname"><span class="pre">SNModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effect_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effect_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>An observer-frame supernova model composed of a Source and zero or more effects</p>
-<dl class="py method">
-<dt id="snat_sim.models.supernova.SNModel.simulate_lc">
-<code class="sig-name descname"><span class="pre">simulate_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_snr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNModel.simulate_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNModel.simulate_lc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Simulate a SN light-curve</p>
-<p>If <code class="docutils literal notranslate"><span class="pre">scatter</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then simulated flux values include an added
-random component drawn from a normal distribution with a standard deviation
-equal to the error of the observation.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>cadence</strong> (<a class="reference internal" href="#snat_sim.models.supernova.ObservedCadence" title="snat_sim.models.supernova.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>) – Observational cadence to evaluate the light-curve with</p></li>
-<li><p><strong>scatter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to add random noise to the flux values</p></li>
-<li><p><strong>fixed_snr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Optionally simulate the light-curve using a fixed signal to noise ratio</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The simulated light-curve as an astropy table in the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> format</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.models.supernova.SNModel.fit_lc">
-<code class="sig-name descname"><span class="pre">fit_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vparam_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'minuit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_amplitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minsnr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelcov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNModel.fit_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNModel.fit_lc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Fit model parameters to photometric data via a chi-squared minimization</p>
-<dl class="simple">
-<dt>Fitting behavior:</dt><dd><ul class="simple">
-<li><p>Parameters of the parent instance are not modified during the fit</p></li>
-<li><p>If <code class="docutils literal notranslate"><span class="pre">modelcov</span></code> is enabled, the fit is performed multiple times until convergence.</p></li>
-<li><p>The <code class="docutils literal notranslate"><span class="pre">t0</span></code> parameter has a default fitting boundary such that the latest
-phase of the model lines up with the earliest data point and the earliest
-phase of the model lines up with the latest data point.</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>data</strong> – Table of photometric data.</p></li>
-<li><p><strong>vparam_names</strong> – Model parameters to vary in the fit.</p></li>
-<li><p><strong>bounds</strong> – Bounded range for each parameter. Keys should be parameter names, values are tuples.</p></li>
-<li><p><strong>guess_amplitude</strong> – Whether or not to guess the amplitude from the data.</p></li>
-<li><p><strong>guess_t0</strong> – Whether or not to guess t0. Only has an effect when fitting t0.</p></li>
-<li><p><strong>guess_z</strong> – Whether or not to guess z (redshift). Only has an effect when fitting redshift.</p></li>
-<li><p><strong>minsnr</strong> – When guessing amplitude and t0, only use data with signal-to-noise ratio greater than this value.</p></li>
-<li><p><strong>method</strong> – Minimization method to use. Either “minuit” or “emcee”</p></li>
-<li><p><strong>modelcov</strong> – Include model covariance when calculating chisq. Default is False.</p></li>
-<li><p><strong>maxcall</strong> – Maximum number of chi-square iterations to evaluate when fitting.</p></li>
-<li><p><strong>phase_range</strong> – If given, discard data outside this range of phases.</p></li>
-<li><p><strong>wave_range</strong> – If given, discard data with bandpass effective wavelengths outside this range.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The fit result and a copy of the model set to the fitted parameters</p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt id="snat_sim.models.supernova.SNFitResult">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.supernova.</span></code><code class="sig-name descname"><span class="pre">SNFitResult</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNFitResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
-<dt id="snat_sim.models.supernova.SNFitResult.parameters">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">parameters</span></code><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.parameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>The model parameters</p>
+<dt id="snat_sim.models.reference_star.ReferenceStar.to_pandas">
+<code class="sig-name descname"><span class="pre">to_pandas</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.to_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the spectral template as a <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code> object</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
@@ -423,56 +384,201 @@ phase of the model lines up with the latest data point.</p></li>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.models.supernova.SNFitResult.vparameters">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">vparameters</span></code><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.vparameters" title="Permalink to this definition">¶</a></dt>
-<dd><p>The values of the varied parameters</p>
+<dt id="snat_sim.models.reference_star.ReferenceStar.get_available_types">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_available_types</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.get_available_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.get_available_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the spectral types available on disk</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A list fo spectral types</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.models.supernova.SNFitResult.covariance">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">covariance</span></code><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.covariance" title="Permalink to this definition">¶</a></dt>
-<dd><p>The covariance matrix</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="snat_sim.models.supernova.SNFitResult.salt_covariance_linear">
-<code class="sig-name descname"><span class="pre">salt_covariance_linear</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0Truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNFitResult.salt_covariance_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.salt_covariance_linear" title="Permalink to this definition">¶</a></dt>
-<dd><p>The covariance matrix of apparent magnitude and salt2 parameters</p>
+<dt id="snat_sim.models.reference_star.ReferenceStar.flux_scaling_dataframe">
+<code class="sig-name descname"><span class="pre">flux_scaling_dataframe</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.flux_scaling_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.flux_scaling_dataframe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Retrieve pre-tabulated scale factors uses when calibrating flux values for PWV absorption</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A DataFrame indexed by PWV with columns for flux</p>
+</dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.models.supernova.SNFitResult.mu_variance_linear">
-<code class="sig-name descname"><span class="pre">mu_variance_linear</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNFitResult.mu_variance_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.mu_variance_linear" title="Permalink to this definition">¶</a></dt>
-<dd><p>Calculate the variance in distance modulus</p>
-<p>Determined using the covariance matrix of apparent magnitude and
-salt2 parameters (See the <code class="docutils literal notranslate"><span class="pre">salt_covariance_linear</span></code> method).</p>
+<dt id="snat_sim.models.reference_star.ReferenceStar.flux">
+<code class="sig-name descname"><span class="pre">flux</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the reference star flux values</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>alpha</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The stretch correction factor</p></li>
-<li><p><strong>beta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The color excess correction factor</p></li>
+<li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
+<li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]) – PWV values to get magnitudes for</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The variance in mu</p>
+<dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.reference_star.ReferenceStar.norm_flux">
+<code class="sig-name descname"><span class="pre">norm_flux</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.norm_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.norm_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the normalized reference star flux values</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
+<li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]) – PWV values to get magnitudes for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.models.reference_star.ReferenceCatalog">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.reference_star.</span></code><code class="sig-name descname"><span class="pre">ReferenceCatalog</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">spectral_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceCatalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>A rudimentary implementation of a reference star catalog</p>
+<dl class="py method">
+<dt id="snat_sim.models.reference_star.ReferenceCatalog.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">spectral_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceCatalog.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceCatalog.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a reference star catalog composed of the given spectral types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>*spectral_types</strong> – Spectral types for the catalog (e.g., ‘G2’, ‘M5’, ‘K2’)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.reference_star.ReferenceCatalog.average_norm_flux">
+<code class="sig-name descname"><span class="pre">average_norm_flux</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceCatalog.average_norm_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceCatalog.average_norm_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the average normalized reference star flux</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
+<li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – PWV values to get magnitudes for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.reference_star.ReferenceCatalog.calibrate_lc">
+<code class="sig-name descname"><span class="pre">calibrate_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">light_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceCatalog.calibrate_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceCatalog.calibrate_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide normalized reference flux from a light-curve</p>
+<p>Recalibrate flux values using the average change in flux of a collection of
+reference stars.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>light_curve</strong> (<a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a>) – Light curve to calibrate</p></li>
+<li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – PWV value to subtract reference star for</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A modified copy of the <code class="docutils literal notranslate"><span class="pre">light_curve</span></code> argument</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.models.reference_star.VariableCatalog">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.reference_star.</span></code><code class="sig-name descname"><span class="pre">VariableCatalog</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">spectral_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#VariableCatalog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.VariableCatalog" title="Permalink to this definition">¶</a></dt>
+<dd><p>A reference star catalog that determines the time dependent PWV concentration from an underlying PWV model</p>
+<dl class="py method">
+<dt id="snat_sim.models.reference_star.VariableCatalog.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">spectral_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#VariableCatalog.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.VariableCatalog.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a reference star catalog composed of the given spectral types and a PWV model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>*spectral_types</strong> – Spectral types for the catalog (e.g., ‘G2’, ‘M5’, ‘K2’)</p></li>
+<li><p><strong>pwv_model</strong> (<a class="reference internal" href="#snat_sim.models.pwv.PWVModel" title="snat_sim.models.pwv.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a>) – The PWV model to determine the zenith PWV concentration from</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.reference_star.VariableCatalog.average_norm_flux">
+<code class="sig-name descname"><span class="pre">average_norm_flux</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">30.244573</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">70.7499537</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mjd'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#VariableCatalog.average_norm_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.VariableCatalog.average_norm_flux" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the average normalized reference star flux</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
+<li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>]) – Time at which the target is observed</p></li>
+<li><p><strong>ra</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Right Ascension of the target (Deg)</p></li>
+<li><p><strong>dec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Declination of the target (Deg)</p></li>
+<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Latitude of the observer (Deg)</p></li>
+<li><p><strong>lon</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Longitude of the observer (Deg)</p></li>
+<li><p><strong>alt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Altitude of the observer (m)</p></li>
+<li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.reference_star.VariableCatalog.calibrate_lc">
+<code class="sig-name descname"><span class="pre">calibrate_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">light_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">30.244573</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">70.7499537</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mjd'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#VariableCatalog.calibrate_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.VariableCatalog.calibrate_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Divide normalized reference flux from a light-curve</p>
+<p>Recalibrate flux values using the average change in flux of a collection of
+reference stars.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>light_curve</strong> (<a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a>) – Yhr light-curve to calibrate</p></li>
+<li><p><strong>ra</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Right Ascension of the target (Deg)</p></li>
+<li><p><strong>dec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Declination of the target (Deg)</p></li>
+<li><p><strong>lat</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Latitude of the observer (Deg)</p></li>
+<li><p><strong>lon</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Longitude of the observer (Deg)</p></li>
+<li><p><strong>alt</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Altitude of the observer (m)</p></li>
+<li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A modified copy of the <code class="docutils literal notranslate"><span class="pre">light_curve</span></code> argument</p>
 </dd>
 </dl>
 </dd></dl>
@@ -481,17 +587,17 @@ salt2 parameters (See the <code class="docutils literal notranslate"><span class
 
 </div>
 <div class="section" id="module-snat_sim.models.pwv">
-<span id="modeling-pwv-effects"></span><h2>Modeling PWV Effects<a class="headerlink" href="#module-snat_sim.models.pwv" title="Permalink to this headline">¶</a></h2>
+<span id="pwv-effects-api"></span><h2>PWV Effects API<a class="headerlink" href="#module-snat_sim.models.pwv" title="Permalink to this headline">¶</a></h2>
 <p>Modeling functionality for Precipitable Water Vapor (PWV) and related
 observational effects.</p>
 <dl class="py class">
 <dt id="snat_sim.models.pwv.PWVModel">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.pwv.</span></code><code class="sig-name descname"><span class="pre">PWVModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#PWVModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.PWVModel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Model for interpolating the atmospheric water vapor at a given time and time</p>
+<dd><p>Model for interpolating the atmospheric water vapor at a given date and time</p>
 <dl class="py method">
 <dt id="snat_sim.models.pwv.PWVModel.__init__">
 <code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#PWVModel.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.PWVModel.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Build a model for time variable PWV by drawing from a given PWV time series</p>
+<dd><p>Build a model for time variable PWV by interpolating from a given PWV time series</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><p><strong>pwv_series</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – PWV values with a datetime index</p>
@@ -515,7 +621,7 @@ observational effects.</p>
 <dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.pwv.PWVModel" title="snat_sim.models.pwv.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a></p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An interpolation function that accepts <code class="docutils literal notranslate"><span class="pre">time</span></code> and <code class="docutils literal notranslate"><span class="pre">format</span></code> arguments</p>
+<dd class="field-odd"><p>A PWV model that interpolates from data taken by the given receiver</p>
 </dd>
 </dl>
 </dd></dl>
@@ -567,7 +673,7 @@ objects for <code class="docutils literal notranslate"><span class="pre">time</s
 <dl class="py method">
 <dt id="snat_sim.models.pwv.PWVModel.pwv_los">
 <code class="sig-name descname"><span class="pre">pwv_los</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">30.244573</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">70.7499537</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mjd'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#PWVModel.pwv_los"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.PWVModel.pwv_los" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolate the PWV along the line of sight as a function of time</p>
+<dd><p>Interpolate the PWV along the line of sight for the given time</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">time_format</span></code> argument can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> when passing datetime
 objects instead of numerical values for <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p>
 <dl class="field-list simple">
@@ -625,25 +731,6 @@ from the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="snat_sim.models.pwv.PWVTransmissionModel.calc_transmission">
-<code class="sig-name descname"><span class="pre">calc_transmission</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#PWVTransmissionModel.calc_transmission"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.PWVTransmissionModel.calc_transmission" title="Permalink to this definition">¶</a></dt>
-<dd><p>Evaluate transmission model at given wavelengths</p>
-<p>Returns a <code class="docutils literal notranslate"><span class="pre">Series</span></code> object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is a scalar, and a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>
-object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is an array. Wavelengths are expected in angstroms.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>pwv</strong> – Line of sight PWV to interpolate for</p></li>
-<li><p><strong>wave</strong> – Wavelengths to evaluate transmission (Defaults to <code class="docutils literal notranslate"><span class="pre">samp_wave</span></code> attribute)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The interpolated transmission at the given wavelengths / resolution</p>
-</dd>
-</dl>
-</dd></dl>
-
 </dd></dl>
 
 <dl class="py class">
@@ -682,7 +769,7 @@ method accepts a <code class="docutils literal notranslate"><span class="pre">ti
 <dl class="py method">
 <dt id="snat_sim.models.pwv.StaticPWVTrans.__init__">
 <code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transmission_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#StaticPWVTrans.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.StaticPWVTrans.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Time independent atmospheric transmission due to PWV</p>
+<dd><p>Time independent atmospheric transmission effect due to PWV</p>
 <p>Setting the <code class="docutils literal notranslate"><span class="pre">transmission_res</span></code> argument to <code class="docutils literal notranslate"><span class="pre">None</span></code> results in the
 highest available transmission model available.</p>
 <dl class="simple">
@@ -696,9 +783,9 @@ highest available transmission model available.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
+<dl class="py property">
 <dt id="snat_sim.models.pwv.StaticPWVTrans.transmission_res">
-<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">transmission_res</span></code><a class="headerlink" href="#snat_sim.models.pwv.StaticPWVTrans.transmission_res" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">transmission_res</span></code><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#snat_sim.models.pwv.StaticPWVTrans.transmission_res" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resolution used when binning the underlying atmospheric transmission model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -732,10 +819,11 @@ highest available transmission model available.</p>
 <dl class="py class">
 <dt id="snat_sim.models.pwv.AbstractVariablePWVEffect">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.pwv.</span></code><code class="sig-name descname"><span class="pre">AbstractVariablePWVEffect</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transmission_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#AbstractVariablePWVEffect"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.AbstractVariablePWVEffect" title="Permalink to this definition">¶</a></dt>
-<dd><dl class="py method">
+<dd><p>Base class for building time-variable PWV propagation effects</p>
+<dl class="py method">
 <dt id="snat_sim.models.pwv.AbstractVariablePWVEffect.__init__">
 <code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transmission_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#AbstractVariablePWVEffect.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.AbstractVariablePWVEffect.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Time independent atmospheric transmission due to PWV</p>
+<dd><p>Time variable atmospheric transmission effect due to PWV</p>
 <p>Setting the <code class="docutils literal notranslate"><span class="pre">transmission_res</span></code> argument to <code class="docutils literal notranslate"><span class="pre">None</span></code> results in the
 highest available transmission model available.</p>
 <dl class="simple">
@@ -744,7 +832,7 @@ highest available transmission model available.</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>transmission_res</strong> (<em>float</em>) – Reduce the underlying transmission model by binning to the given resolution</p>
+<dd class="field-odd"><p><strong>transmission_res</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reduce the underlying transmission model by binning to the given resolution</p>
 </dd>
 </dl>
 </dd></dl>
@@ -755,10 +843,10 @@ highest available transmission model available.</p>
 <dd><p>The PWV concentration used by the propagation effect at a given time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time</strong><strong>)</strong> – Time to get the PWV concentration for</p>
+<dd class="field-odd"><p><strong>time</strong> (<em>~FloatColl</em>) – Time to get the PWV concentration for</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>~FloatLike</p>
+<dd class="field-even"><p>~FloatColl</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>An array of PWV values in units of mm</p>
@@ -824,10 +912,10 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 <dd><p>The PWV concentration used by the propagation effect at a given time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time</strong><strong>)</strong> – Time to get the PWV concentration for</p>
+<dd class="field-odd"><p><strong>time</strong> (<em>~FloatColl</em>) – Time to get the PWV concentration for</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>~FloatLike</p>
+<dd class="field-even"><p>~FloatColl</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>An array of PWV values in units of mm</p>
@@ -870,10 +958,10 @@ winter:</p>
 <dd><p>The PWV concentration used by the propagation effect at a given time</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>time</strong> (<em>~FloatLike</em>) – Time to get the PWV concentration for</p>
+<dd class="field-odd"><p><strong>time</strong> (<em>~FloatColl</em>) – Time to get the PWV concentration for</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>~FloatLike</p>
+<dd class="field-even"><p>~FloatColl</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>An array of PWV values in units of mm</p>
@@ -885,6 +973,324 @@ winter:</p>
 <dt id="snat_sim.models.pwv.SeasonalPWVTrans.from_pwv_model">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_pwv_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#SeasonalPWVTrans.from_pwv_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.SeasonalPWVTrans.from_pwv_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a new instance using the averaged per-season PWV from a PWV model</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-snat_sim.models.supernova">
+<span id="supernova-api"></span><h2>Supernova API<a class="headerlink" href="#module-snat_sim.models.supernova" title="Permalink to this headline">¶</a></h2>
+<p>Modeling functionality for the spectro-photometric time-sampling of
+supernovae.</p>
+<dl class="py class">
+<dt id="snat_sim.models.supernova.SNModel">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.supernova.</span></code><code class="sig-name descname"><span class="pre">SNModel</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effects</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effect_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">effect_frames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>An observer-frame supernova model composed of a Source and zero or more effects</p>
+<dl class="py method">
+<dt id="snat_sim.models.supernova.SNModel.from_sncosmo">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_sncosmo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNModel.from_sncosmo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNModel.from_sncosmo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an <cite>SNModel`</cite> instance from a <code class="docutils literal notranslate"><span class="pre">sncosmo.Model</span></code> instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>) – The sncosmo model to build from</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>An <code class="docutils literal notranslate"><span class="pre">SNModel</span></code> object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.supernova.SNModel.simulate_lc">
+<code class="sig-name descname"><span class="pre">simulate_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scatter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fixed_snr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNModel.simulate_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNModel.simulate_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simulate a SN light-curve</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">scatter</span></code> is <code class="docutils literal notranslate"><span class="pre">True</span></code>, then simulated flux values include an added
+random component drawn from a normal distribution with a standard deviation
+equal to the error of the observation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cadence</strong> (<a class="reference internal" href="#snat_sim.models.light_curve.ObservedCadence" title="snat_sim.models.light_curve.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>) – Observational cadence to evaluate the light-curve with</p></li>
+<li><p><strong>scatter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to add random noise to the flux values</p></li>
+<li><p><strong>fixed_snr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Optionally simulate the light-curve using a fixed signal to noise ratio</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The simulated light-curve</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.supernova.SNModel.fit_lc">
+<code class="sig-name descname"><span class="pre">fit_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vparam_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">()</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'minuit'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_amplitude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_t0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">guess_z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">minsnr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modelcov</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxcall</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_range</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNModel.fit_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNModel.fit_lc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Fit model parameters to photometric data via a chi-squared minimization</p>
+<dl class="simple">
+<dt>Fitting behavior:</dt><dd><ul class="simple">
+<li><p>Parameters of the parent instance are not modified during the fit</p></li>
+<li><p>If <code class="docutils literal notranslate"><span class="pre">modelcov</span></code> is enabled, the fit is performed multiple times until convergence.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">t0</span></code> parameter has a default fitting boundary such that the latest
+phase of the model lines up with the earliest data point and the earliest
+phase of the model lines up with the latest data point.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> – Table of photometric data.</p></li>
+<li><p><strong>vparam_names</strong> – Model parameters to vary in the fit.</p></li>
+<li><p><strong>bounds</strong> – Bounded range for each parameter. Keys should be parameter names, values are tuples.</p></li>
+<li><p><strong>guess_amplitude</strong> – Whether or not to guess the amplitude from the data.</p></li>
+<li><p><strong>guess_t0</strong> – Whether or not to guess t0. Only has an effect when fitting t0.</p></li>
+<li><p><strong>guess_z</strong> – Whether or not to guess z (redshift). Only has an effect when fitting redshift.</p></li>
+<li><p><strong>minsnr</strong> – When guessing amplitude and t0, only use data with signal-to-noise ratio greater than this value.</p></li>
+<li><p><strong>method</strong> – Minimization method to use. Either “minuit” or “emcee”</p></li>
+<li><p><strong>modelcov</strong> – Include model covariance when calculating chisq. Default is False.</p></li>
+<li><p><strong>maxcall</strong> – Maximum number of chi-square iterations to evaluate when fitting.</p></li>
+<li><p><strong>phase_range</strong> – If given, discard data outside this range of phases.</p></li>
+<li><p><strong>wave_range</strong> – If given, discard data with bandpass effective wavelengths outside this range.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The fit result and a copy of the model set to the fitted parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.models.supernova.SNFitResult">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.supernova.</span></code><code class="sig-name descname"><span class="pre">SNFitResult</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNFitResult"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult" title="Permalink to this definition">¶</a></dt>
+<dd><p>Represents results from a <code class="docutils literal notranslate"><span class="pre">SNModel</span></code> being fit to a <code class="docutils literal notranslate"><span class="pre">LightCurve</span></code></p>
+<dl class="py property">
+<dt id="snat_sim.models.supernova.SNFitResult.param_names">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">param_names</span></code><em class="property"><span class="pre">:</span> <span class="pre">List[str]</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.param_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>The names of the model parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt id="snat_sim.models.supernova.SNFitResult.parameters">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">parameters</span></code><em class="property"><span class="pre">:</span> <span class="pre">pandas.core.series.Series</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The model parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt id="snat_sim.models.supernova.SNFitResult.vparam_names">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">vparam_names</span></code><em class="property"><span class="pre">:</span> <span class="pre">List[str]</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.vparam_names" title="Permalink to this definition">¶</a></dt>
+<dd><p>List of parameter names varied in the fit</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt id="snat_sim.models.supernova.SNFitResult.vparameters">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">vparameters</span></code><em class="property"><span class="pre">:</span> <span class="pre">pandas.core.series.Series</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.vparameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>The values of the varied parameters</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt id="snat_sim.models.supernova.SNFitResult.covariance">
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">covariance</span></code><em class="property"><span class="pre">:</span> <span class="pre">Optional[pandas.core.frame.DataFrame]</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>The covariance matrix</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.supernova.SNFitResult.salt_covariance_linear">
+<code class="sig-name descname"><span class="pre">salt_covariance_linear</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x0_truth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNFitResult.salt_covariance_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.salt_covariance_linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>The covariance matrix of apparent magnitude and salt2 parameters</p>
+<p>Will raise an error if the <cite>x0</cite>, <cite>x1</cite> and <cite>c</cite> parameters are not
+varied in the fit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>x0_truth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Optionally assert an alternative x0 value</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The covariance matrix asd a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.supernova.SNFitResult.mu_variance_linear">
+<code class="sig-name descname"><span class="pre">mu_variance_linear</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNFitResult.mu_variance_linear"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.mu_variance_linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculate the variance in distance modulus</p>
+<p>Determined using the covariance matrix of apparent magnitude and
+salt2 parameters (See the <code class="docutils literal notranslate"><span class="pre">salt_covariance_linear</span></code> method).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>alpha</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The stretch correction factor</p></li>
+<li><p><strong>beta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The color excess correction factor</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The variance in mu</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-snat_sim.models.light_curve">
+<span id="light-curve-api"></span><h2>Light-Curve API<a class="headerlink" href="#module-snat_sim.models.light_curve" title="Permalink to this headline">¶</a></h2>
+<p>Abstract representations of astronomical time-series data</p>
+<dl class="py class">
+<dt id="snat_sim.models.light_curve.ObservedCadence">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.light_curve.</span></code><code class="sig-name descname"><span class="pre">ObservedCadence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">obs_times</span></em>, <em class="sig-param"><span class="pre">bands</span></em>, <em class="sig-param"><span class="pre">skynoise=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">zp=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">zpsys=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">gain=&lt;property</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#ObservedCadence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.ObservedCadence" title="Permalink to this definition">¶</a></dt>
+<dd><p>The observational sampling of an astronomical light-curve</p>
+<p>The zero-point, zero point system, and gain arguments can be a
+collection of values (one per <code class="docutils literal notranslate"><span class="pre">obs_time</span></code> value), or a single value
+to apply at all observation times.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>obs_times</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Array of observation times for the light-curve</p></li>
+<li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Array of bands for each observation</p></li>
+<li><p><strong>zp</strong> (<em>~FloatColl</em>) – The zero-point or an array of zero-points for each observation</p></li>
+<li><p><strong>zpsys</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – The zero-point system or an array of zero-point systems</p></li>
+<li><p><strong>gain</strong> (<em>~FloatColl</em>) – The simulated gain or an array of gain values</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="snat_sim.models.light_curve.ObservedCadence.to_sncosmo">
+<code class="sig-name descname"><span class="pre">to_sncosmo</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#ObservedCadence.to_sncosmo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.ObservedCadence.to_sncosmo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the observational cadence as an <code class="docutils literal notranslate"><span class="pre">astropy.Table</span></code></p>
+<p>The returned table of observations is formatted for use with with
+the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An astropy table representing the observational cadence in <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> format</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.light_curve.ObservedCadence.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">obs_times</span></em>, <em class="sig-param"><span class="pre">bands</span></em>, <em class="sig-param"><span class="pre">skynoise=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">zp=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">zpsys=&lt;property</span> <span class="pre">object&gt;</span></em>, <em class="sig-param"><span class="pre">gain=&lt;property</span> <span class="pre">object&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#snat_sim.models.light_curve.ObservedCadence.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="snat_sim.models.light_curve.LightCurve">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.models.light_curve.</span></code><code class="sig-name descname"><span class="pre">LightCurve</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluxerr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zpsys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phot_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve" title="Permalink to this definition">¶</a></dt>
+<dd><p>Abstract representation of an astronomical light-curve.</p>
+<dl class="py method">
+<dt id="snat_sim.models.light_curve.LightCurve.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluxerr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zpsys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phot_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>An astronomical light-curve</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Time values for each observation in a numerical format (e.g. JD or MJD)</p></li>
+<li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The band each observation was performed in</p></li>
+<li><p><strong>flux</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The flux of each observation</p></li>
+<li><p><strong>fluxerr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The error in each flux value</p></li>
+<li><p><strong>zp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The zero-point of each observation</p></li>
+<li><p><strong>zpsys</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The zero-point system of each observation</p></li>
+<li><p><strong>phot_flag</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Optional flag for each photometric observation</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.light_curve.LightCurve.from_sncosmo">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_sncosmo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.from_sncosmo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.from_sncosmo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a <code class="docutils literal notranslate"><span class="pre">LightCurve</span></code> instance from an astropy table in the SNCosmo format</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – A table in the sncosmo format</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A <code class="docutils literal notranslate"><span class="pre">LightCurve</span></code> instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.light_curve.LightCurve.to_astropy">
+<code class="sig-name descname"><span class="pre">to_astropy</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.to_astropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.to_astropy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the light-curve data as an astropy <code class="docutils literal notranslate"><span class="pre">Table</span></code> formatted for use with sncosmo</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>An <code class="docutils literal notranslate"><span class="pre">Table</span></code> instance formatted for use with sncosmo</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.light_curve.LightCurve.to_pandas">
+<code class="sig-name descname"><span class="pre">to_pandas</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.to_pandas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the light-curve data as a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> instance with the light-curve data</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="snat_sim.models.light_curve.LightCurve.copy">
+<code class="sig-name descname"><span class="pre">copy</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.copy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a copy of the instance</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -907,10 +1313,10 @@ winter:</p>
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="plasticc.html" title="snat_sim.plasticc"
+          <a href="pipeline/pipeline.html" title="snat_sim.pipeline"
              >next</a> |</li>
         <li class="right" >
-          <a href="constants.html" title="snat_sim.constants"
+          <a href="../notebooks/simulating_lc_for_cadence.html" title="Simulating Light-Curves with a Cadence"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.models</a></li> 

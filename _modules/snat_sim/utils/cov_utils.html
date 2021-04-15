@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.utils.cov_utils &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
     <script src="../../../_static/jquery.js"></script>
     <script src="../../../_static/underscore.js"></script>
     <script src="../../../_static/doctools.js"></script>
@@ -93,15 +93,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/models.html">snat_sim.models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../api/utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -169,6 +168,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
+<span class="c1"># noinspection PyPep8Naming</span>
 <div class="viewcode-block" id="CovarianceAccessor"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor">[docs]</a><span class="nd">@pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">register_dataframe_accessor</span><span class="p">(</span><span class="s1">&#39;cov_utils&#39;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CovarianceAccessor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Pandas DataFrame accessor for covariance calculations&quot;&quot;&quot;</span>
@@ -234,11 +234,11 @@
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">paramValue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
     <span class="nd">@overload</span>
     <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paramValue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="o">...</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
 <div class="viewcode-block" id="CovarianceAccessor.log_covariance"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance">[docs]</a>    <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">,</span> <span class="n">paramValue</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -257,11 +257,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">covariance_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paramName</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paramName</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="n">covariance_df</span><span class="o">.</span><span class="n">values</span>
             <span class="n">cov</span><span class="p">[:,</span> <span class="n">paramName</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">cov</span><span class="p">[:,</span> <span class="n">paramName</span><span class="p">]</span> <span class="o">/</span> <span class="n">paramValue</span>
             <span class="n">cov</span><span class="p">[</span><span class="n">paramName</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">cov</span><span class="p">[</span><span class="n">paramName</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">paramValue</span>
-            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;parameter name specified as index. Returning covariance as numpy array.&#39;</span><span class="p">)</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Parameter name specified as index. Returning covariance as numpy array.&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">cov</span>
 
         <span class="n">covariance_df</span><span class="p">[</span><span class="n">paramName</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">covariance_df</span><span class="p">[</span><span class="n">paramName</span><span class="p">]</span> <span class="o">/</span> <span class="n">paramValue</span>

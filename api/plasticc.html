@@ -15,11 +15,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
     <title>snat_sim.plasticc &#8212; Supernova Atmospheric Simulation</title>
-    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/guzzle.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/guzzle.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="../_static/css/custom_style.css" />
-    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
@@ -28,8 +28,8 @@
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.reference_stars" href="reference_stars.html" />
-    <link rel="prev" title="snat_sim.models" href="models.html" />
+    <link rel="next" title="snat_sim.plotting" href="plotting.html" />
+    <link rel="prev" title="snat_sim.constants" href="constants.html" />
   
    
 
@@ -44,10 +44,10 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="reference_stars.html" title="snat_sim.reference_stars"
+          <a href="plotting.html" title="snat_sim.plotting"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="models.html" title="snat_sim.models"
+          <a href="constants.html" title="snat_sim.constants"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.plasticc</a></li> 
@@ -99,15 +99,14 @@
 </ul>
 <p class="caption"><span class="caption-text">API Reference</span></p>
 <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="pipeline/pipeline.html">snat_sim.pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="utils/utils.html">snat_sim.utils</a></li>
 <li class="toctree-l1"><a class="reference internal" href="data_paths.html">snat_sim.data_paths</a></li>
 <li class="toctree-l1"><a class="reference internal" href="constants.html">snat_sim.constants</a></li>
-<li class="toctree-l1"><a class="reference internal" href="models.html">snat_sim.models</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">snat_sim.plasticc</a></li>
-<li class="toctree-l1"><a class="reference internal" href="reference_stars.html">snat_sim.reference_stars</a></li>
-<li class="toctree-l1"><a class="reference internal" href="pipeline/pipeline.html">snat_sim.pipeline</a></li>
-<li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="plotting.html">snat_sim.plotting</a></li>
-<li class="toctree-l1"><a class="reference internal" href="utils/utils.html">snat_sim.utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
 </ul>
 
     
@@ -122,13 +121,12 @@
             
   <div class="section" id="module-snat_sim.plasticc">
 <span id="snat-sim-plasticc"></span><h1>snat_sim.plasticc<a class="headerlink" href="#module-snat_sim.plasticc" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">plasticc</span></code> module provides data access for PLaSTICC light-curve
+<p>The <code class="docutils literal notranslate"><span class="pre">plasticc</span></code> module provides data access for PLaSTICC cadence
 simulations stored on the local machine. Data is accessible by specifying
-the cadence and model used in a given simulation.</p>
+the cadence name and model number used in a given simulation.</p>
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">PLaSTICC</span></code> class is responsible to handling data access for
-simulated light-curve data:</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">PLaSTICC</span></code> class is responsible for handling data access:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.plasticc</span> <span class="kn">import</span> <span class="n">PLaSTICC</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get a list of cadences available in the directory printed above</span>
@@ -140,18 +138,22 @@ simulated light-curve data:</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">num_lc</span> <span class="o">=</span> <span class="n">lc_data</span><span class="o">.</span><span class="n">count_light_curves</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Te class provides <strong>basic</strong> data access via the construction of an iterator
-over all available light-curves for the given cadence / model. You should expect
-the first evaluation of the iterator to be slow since it has to load
-light-curve data into memory as chunks.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lc_iterator</span> <span class="o">=</span> <span class="n">lc_data</span><span class="o">.</span><span class="n">iter_lc</span><span class="p">(</span><span class="n">iter_lim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">plasticc_lc</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">lc_iterator</span><span class="p">)</span>
+<p>The class provides <strong>basic</strong> data access via the construction of an iterator
+over the observed cadence for each simulated light-curve. The iterator returns
+the unique Id, parameters, and cadecne used in each simulation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You should expect the first evaluation of the iterator to be slow
+since it has to load data into memory as chunks.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lc_iterator</span> <span class="o">=</span> <span class="n">lc_data</span><span class="o">.</span><span class="n">iter_cadence</span><span class="p">(</span><span class="n">iter_lim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">snid</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">,</span> <span class="n">cadence</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">lc_iterator</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>PLaSTICC simulations were run using the <code class="docutils literal notranslate"><span class="pre">SNANA</span></code> package in FORTRAN and thus
-are returned using the <code class="docutils literal notranslate"><span class="pre">SNANA</span></code> data model. Alternatively, you can convert the
-returned tables to the data model used by the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> Python package.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">formatted_lc</span> <span class="o">=</span> <span class="n">PLaSTICC</span><span class="o">.</span><span class="n">format_data_to_sncosmo</span><span class="p">(</span><span class="n">plasticc_lc</span><span class="p">)</span>
+<p>The light-curve simulated by PLAsTICC for each cadence can optionally
+be included with the iterator:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lc_iterator</span> <span class="o">=</span> <span class="n">lc_data</span><span class="o">.</span><span class="n">iter_cadence</span><span class="p">(</span><span class="n">iter_lim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">snid</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">,</span> <span class="n">cadence</span> <span class="p">,</span> <span class="n">lc</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">lc_iterator</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -164,11 +166,11 @@ returned tables to the data model used by the <code class="docutils literal notr
 <dl class="py method">
 <dt id="snat_sim.plasticc.PLaSTICC.__init__">
 <code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Data access object for PLaSTICC light-curve simulations performed using a given cadence and SN model</p>
+<dd><p>Data access object for PLaSTICC simulations performed using a given cadence and SN model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The cadence to load simulations for</p></li>
+<li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The cadence to load data for</p></li>
 <li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The numerical identifier of the PLaSTICC SN model used in the simulation</p></li>
 </ul>
 </dd>
@@ -176,26 +178,9 @@ returned tables to the data model used by the <code class="docutils literal notr
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.plasticc.PLaSTICC.format_data_to_sncosmo">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">format_data_to_sncosmo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">light_curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.format_data_to_sncosmo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.format_data_to_sncosmo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Format a PLaSTICC light-curve to be compatible with sncosmo</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>light_curve</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – Table of PLaSTICC light-curve data</p>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>An astropy table formatted for use with sncosmo</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="snat_sim.plasticc.PLaSTICC.get_available_cadences">
 <em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_available_cadences</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.get_available_cadences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.get_available_cadences" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a list of all available cadences available in the working environment</p>
+<dd><p>Return a list of all cadences available in the working environment</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
@@ -226,21 +211,26 @@ returned tables to the data model used by the <code class="docutils literal notr
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.plasticc.PLaSTICC.iter_lc">
-<code class="sig-name descname"><span class="pre">iter_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.iter_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.iter_lc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Iterate over simulated light-curves  for a given cadence</p>
+<dt id="snat_sim.plasticc.PLaSTICC.iter_cadence">
+<code class="sig-name descname"><span class="pre">iter_cadence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_lc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.iter_cadence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.iter_cadence" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterate over available cadence data for each supernova</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>iter_lim</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Limit the number of iterated light-curves</p></li>
+<li><p><strong>include_lc</strong> – Include the PLAsTICC simulated light-curve with iterator outputs</p></li>
 <li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Display a progress bar</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
-<dd class="field-even"><p>An Astropy table with simulated light-curve data</p>
+<dd class="field-even"><ul class="simple">
+<li><p>The supernova identifier (SNID)</p></li>
+<li><p>The parameters used in the simulation</p></li>
+<li><p>The cadence of the simulation</p></li>
+</ul>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterable</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>]</p>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <a class="reference internal" href="models.html#snat_sim.models.light_curve.ObservedCadence" title="snat_sim.models.light_curve.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -265,10 +255,10 @@ returned tables to the data model used by the <code class="docutils literal notr
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="reference_stars.html" title="snat_sim.reference_stars"
+          <a href="plotting.html" title="snat_sim.plotting"
              >next</a> |</li>
         <li class="right" >
-          <a href="models.html" title="snat_sim.models"
+          <a href="constants.html" title="snat_sim.constants"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">snat_sim.plasticc</a></li> 
