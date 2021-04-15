@@ -66,11 +66,9 @@ class LightCurveSimulation(TestCase):
         catalog = create_mock_variable_catalog('G2', 'M5', 'K2')
         packet = create_mock_pipeline_packet(include_lc=False)
 
-        print(model.parameters)
         node_without_catalog = SimulateLightCurves(model, add_scatter=False)
         uncalibrated_lc = node_without_catalog.simulate_lc(packet.sim_params, packet.cadence)
 
-        print(model.parameters)
         node_with_catalog = SimulateLightCurves(model, add_scatter=False, catalog=catalog)
         calibrated_lc = node_with_catalog.simulate_lc(packet.sim_params, packet.cadence)
 
