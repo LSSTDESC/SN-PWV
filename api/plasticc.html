@@ -121,20 +121,20 @@
             
   <div class="section" id="module-snat_sim.plasticc">
 <span id="snat-sim-plasticc"></span><h1>snat_sim.plasticc<a class="headerlink" href="#module-snat_sim.plasticc" title="Permalink to this headline">¶</a></h1>
-<p>The <code class="docutils literal notranslate"><span class="pre">plasticc</span></code> module provides data access for PLaSTICC cadence
+<p>The <code class="docutils literal notranslate"><span class="pre">plasticc</span></code> module provides data access for PLAsTICC cadence
 simulations stored on the local machine. Data is accessible by specifying
 the cadence name and model number used in a given simulation.</p>
 <div class="section" id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
-<p>The <code class="docutils literal notranslate"><span class="pre">PLaSTICC</span></code> class is responsible for handling data access:</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.plasticc</span> <span class="kn">import</span> <span class="n">PLaSTICC</span>
+<p>The <code class="docutils literal notranslate"><span class="pre">PLAsTICC</span></code> class is responsible for handling data access:</p>
+<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim.plasticc</span> <span class="kn">import</span> <span class="n">PLAsTICC</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Get a list of cadences available in the directory printed above</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">PLaSTICC</span><span class="o">.</span><span class="n">get_available_cadences</span><span class="p">())</span>  
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">PLAsTICC</span><span class="o">.</span><span class="n">get_available_cadences</span><span class="p">())</span>  
 <span class="gp">&gt;&gt;&gt; </span><span class="p">[</span> <span class="s1">&#39;alt_sched&#39;</span> <span class="p">]</span>  
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Count the number of light-curves for a given cadence and SN model</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">lc_data</span> <span class="o">=</span> <span class="n">PLaSTICC</span><span class="p">(</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">lc_data</span> <span class="o">=</span> <span class="n">PLAsTICC</span><span class="p">(</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">num_lc</span> <span class="o">=</span> <span class="n">lc_data</span><span class="o">.</span><span class="n">count_light_curves</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -160,26 +160,26 @@ be included with the iterator:</p>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="snat_sim.plasticc.PLaSTICC">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.plasticc.</span></code><code class="sig-name descname"><span class="pre">PLaSTICC</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC" title="Permalink to this definition">¶</a></dt>
-<dd><p>Data access object for PLaSTICC simulation data</p>
+<dt id="snat_sim.plasticc.PLAsTICC">
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.plasticc.</span></code><code class="sig-name descname"><span class="pre">PLAsTICC</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLAsTICC"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLAsTICC" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data access object for PLAsTICC simulation data</p>
 <dl class="py method">
-<dt id="snat_sim.plasticc.PLaSTICC.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Data access object for PLaSTICC simulations performed using a given cadence and SN model</p>
+<dt id="snat_sim.plasticc.PLAsTICC.__init__">
+<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLAsTICC.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLAsTICC.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Data access object for PLAsTICC simulations performed using a given cadence and SN model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cadence</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The cadence to load data for</p></li>
-<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The numerical identifier of the PLaSTICC SN model used in the simulation</p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The numerical identifier of the PLAsTICC SN model used in the simulation</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.plasticc.PLaSTICC.get_available_cadences">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_available_cadences</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.get_available_cadences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.get_available_cadences" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.plasticc.PLAsTICC.get_available_cadences">
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">get_available_cadences</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLAsTICC.get_available_cadences"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLAsTICC.get_available_cadences" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of all cadences available in the working environment</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -189,8 +189,8 @@ be included with the iterator:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.plasticc.PLaSTICC.get_model_headers">
-<code class="sig-name descname"><span class="pre">get_model_headers</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.get_model_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.get_model_headers" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.plasticc.PLAsTICC.get_model_headers">
+<code class="sig-name descname"><span class="pre">get_model_headers</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLAsTICC.get_model_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLAsTICC.get_model_headers" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a list of file paths for all simulation header files</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -200,8 +200,8 @@ be included with the iterator:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.plasticc.PLaSTICC.count_light_curves">
-<code class="sig-name descname"><span class="pre">count_light_curves</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.count_light_curves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.count_light_curves" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.plasticc.PLAsTICC.count_light_curves">
+<code class="sig-name descname"><span class="pre">count_light_curves</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLAsTICC.count_light_curves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLAsTICC.count_light_curves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the number of available light-curve simulations for the current cadence and model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -211,8 +211,8 @@ be included with the iterator:</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.plasticc.PLaSTICC.iter_cadence">
-<code class="sig-name descname"><span class="pre">iter_cadence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_lc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLaSTICC.iter_cadence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLaSTICC.iter_cadence" title="Permalink to this definition">¶</a></dt>
+<dt id="snat_sim.plasticc.PLAsTICC.iter_cadence">
+<code class="sig-name descname"><span class="pre">iter_cadence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_lc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plasticc.html#PLAsTICC.iter_cadence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plasticc.PLAsTICC.iter_cadence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Iterate over available cadence data for each supernova</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>

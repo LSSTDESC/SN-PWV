@@ -125,7 +125,7 @@ official <a class="reference external" href="https://mwvgroup.github.io/Egon/">E
 <dl class="py class">
 <dt id="snat_sim.pipeline.nodes.LoadPlasticcCadence">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></code><code class="sig-name descname"><span class="pre">LoadPlasticcCadence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plasticc_dao</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_zp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pipeline node for loading PLaSTICC cadence data from disk</p>
+<dd><p>Pipeline node for loading PLAsTICC cadence data from disk</p>
 <dl class="simple">
 <dt>Connectors:</dt><dd><p>output: Emits a pipeline packet decorated with the snid, simulation parameters, and cadence</p>
 </dd>
@@ -133,13 +133,13 @@ official <a class="reference external" href="https://mwvgroup.github.io/Egon/">E
 <dl class="py method">
 <dt id="snat_sim.pipeline.nodes.LoadPlasticcCadence.__init__">
 <code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plasticc_dao</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_zp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence.__init__" title="Permalink to this definition">¶</a></dt>
-<dd><p>Source node for loading PLaSTICC cadence data from disk</p>
+<dd><p>Source node for loading PLAsTICC cadence data from disk</p>
 <p>This node can only be run using a single process. This can be the main
 process (<code class="docutils literal notranslate"><span class="pre">num_processes=0</span></code>) or a single forked process (<code class="docutils literal notranslate"><span class="pre">num_processes=1</span></code>.)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>plasticc_dao</strong> (<a class="reference internal" href="../plasticc.html#snat_sim.plasticc.PLaSTICC" title="snat_sim.plasticc.PLaSTICC"><code class="xref py py-class docutils literal notranslate"><span class="pre">PLaSTICC</span></code></a>) – A PLaSTICC data access object</p></li>
+<li><p><strong>plasticc_dao</strong> (<a class="reference internal" href="../plasticc.html#snat_sim.plasticc.PLAsTICC" title="snat_sim.plasticc.PLAsTICC"><code class="xref py py-class docutils literal notranslate"><span class="pre">PLAsTICC</span></code></a>) – A PLAsTICC data access object</p></li>
 <li><p><strong>iter_lim</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Exit after loading the given number of light-curves</p></li>
 <li><p><strong>override_zp</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Overwrite the zero-point used by plasticc with this number</p></li>
 <li><p><strong>num_processes</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of processes to allocate to the node (must be 0 or 1 for this node)</p></li>
@@ -151,7 +151,7 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 <dl class="py method">
 <dt id="snat_sim.pipeline.nodes.LoadPlasticcCadence.action">
 <code class="sig-name descname"><span class="pre">action</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence.action" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load PLaSTICC cadence data from disk</p>
+<dd><p>Load PLAsTICC cadence data from disk</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -164,7 +164,7 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 <dl class="py class">
 <dt id="snat_sim.pipeline.nodes.SimulateLightCurves">
 <em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></code><code class="sig-name descname"><span class="pre">SimulateLightCurves</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sn_model</span></em>, <em class="sig-param"><span class="pre">catalog=None</span></em>, <em class="sig-param"><span class="pre">num_processes=1</span></em>, <em class="sig-param"><span class="pre">add_scatter=True</span></em>, <em class="sig-param"><span class="pre">fixed_snr=None</span></em>, <em class="sig-param"><span class="pre">abs_mb=-19.05</span></em>, <em class="sig-param"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></em>, <em class="sig-param"><span class="pre">Om0=0.295</span></em>, <em class="sig-param"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></em>, <em class="sig-param"><span class="pre">Neff=3.04</span></em>, <em class="sig-param"><span class="pre">m_nu=None</span></em>, <em class="sig-param"><span class="pre">Ob0=None)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves" title="Permalink to this definition">¶</a></dt>
-<dd><p>Pipeline node for simulating light-curves based on PLaSTICC cadences</p>
+<dd><p>Pipeline node for simulating light-curves based on PLAsTICC cadences</p>
 <dl class="simple">
 <dt>Connectors:</dt><dd><p>input: A Pipeline Packet
 success_output: Emits pipeline packets successfully decorated with a simulated light-curve

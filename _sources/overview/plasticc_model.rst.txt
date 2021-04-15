@@ -1,9 +1,9 @@
 :orphan:
 
-PLaSTICC Data Model
+PLAsTICC Data Model
 ===================
 
-This page outlines the data model for PLaSTICC simulations used by the parent
+This page outlines the data model for PLAsTICC simulations used by the parent
 project. It is **not a complete, formal, or official record** for
 the described data model. It is intended only as a quick reference for use by developers.
 

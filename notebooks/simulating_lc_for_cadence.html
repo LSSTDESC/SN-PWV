@@ -96,7 +96,7 @@
 <li class="toctree-l1"><a class="reference internal" href="sne_delta_mag.html">PWV effects on SN Magnitude</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pwv_modeling.html">PWV Modeling</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Simulating Light-Curves with a Cadence</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#The-PLaSTICC-Data">The PLaSTICC Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#The-PLAsTICC-Data">The PLAsTICC Data</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Simulating-Light-Curves">Simulating Light-Curves</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#Adding-Atmospheric-Effects">Adding Atmospheric Effects</a></li>
 </ul>
@@ -374,8 +374,8 @@ div.rendered_html tbody tr:hover {
 </style>
 <div class="section" id="Simulating-Light-Curves-with-a-Cadence">
 <h1>Simulating Light-Curves with a Cadence<a class="headerlink" href="#Simulating-Light-Curves-with-a-Cadence" title="Permalink to this headline">¶</a></h1>
-<p>This notebook demonstrates the simulation of normal Type Ia Supernova (SN Ia) light-curves using realistic cadences and atmospheric variability expected from LSST. To achieve this we use data from the PLaSTICC simulations to establish the cadence, light-curve parameters, and location of SNe observed by LSST. Light-curves with customized time-variable PWV transmission effects are then simulated using these parameters.</p>
-<p>Plots in this notebook are rendered using a subset of the PLaSTICC simulation data. To access this data, configure your working environment as outlined <a class="reference external" href="https://lsstdesc.org/SN-PWV/overview/install.html">in the docs</a>.</p>
+<p>This notebook demonstrates the simulation of normal Type Ia Supernova (SN Ia) light-curves using realistic cadences and atmospheric variability expected from LSST. To achieve this we use data from the PLAsTICC simulations to establish the cadence, light-curve parameters, and location of SNe observed by LSST. Light-curves with customized time-variable PWV transmission effects are then simulated using these parameters.</p>
+<p>Plots in this notebook are rendered using a subset of the PLAsTICC simulation data. To access this data, configure your working environment as outlined <a class="reference external" href="https://lsstdesc.org/SN-PWV/overview/install.html">in the docs</a>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -395,7 +395,7 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">pwv_kpno.gps_pwv</span> <span class="kn">import</span> <span class="n">GPSReceiver</span>
 
 <span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
-<span class="kn">from</span> <span class="nn">snat_sim.plasticc</span> <span class="kn">import</span> <span class="n">PLaSTICC</span>
+<span class="kn">from</span> <span class="nn">snat_sim.plasticc</span> <span class="kn">import</span> <span class="n">PLAsTICC</span>
 
 </pre></div>
 </div>
@@ -430,15 +430,15 @@ PosixPath(&#39;/mnt/md0/bulk/sn-sims&#39;)
 </pre></div>
 </div>
 </div>
-<div class="section" id="The-PLaSTICC-Data">
-<h2>The PLaSTICC Data<a class="headerlink" href="#The-PLaSTICC-Data" title="Permalink to this headline">¶</a></h2>
-<p>Instead of evaluating different cadences from scratch, we take the PLaSTICC simulations as a starting point. First we check what cadence simulations are available on the notebook’s host server.</p>
+<div class="section" id="The-PLAsTICC-Data">
+<h2>The PLAsTICC Data<a class="headerlink" href="#The-PLAsTICC-Data" title="Permalink to this headline">¶</a></h2>
+<p>Instead of evaluating different cadences from scratch, we take the PLAsTICC simulations as a starting point. First we check what cadence simulations are available on the notebook’s host server.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">PLaSTICC</span><span class="o">.</span><span class="n">get_available_cadences</span><span class="p">()</span>
+<span></span><span class="n">PLAsTICC</span><span class="o">.</span><span class="n">get_available_cadences</span><span class="p">()</span>
 
 </pre></div>
 </div>
@@ -458,7 +458,7 @@ PosixPath(&#39;/mnt/md0/bulk/sn-sims&#39;)
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">alt_sched</span> <span class="o">=</span> <span class="n">PLaSTICC</span><span class="p">(</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<span></span><span class="n">alt_sched</span> <span class="o">=</span> <span class="n">PLAsTICC</span><span class="p">(</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
 <span class="n">demo_header_files</span> <span class="o">=</span> <span class="n">alt_sched</span><span class="o">.</span><span class="n">get_model_headers</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Available Light-curves: &#39;</span><span class="p">,</span> <span class="n">alt_sched</span><span class="o">.</span><span class="n">count_light_curves</span><span class="p">())</span>
 </pre></div>
@@ -544,7 +544,7 @@ Available Light-curves:  4737479
 </div>
 <div class="section" id="Simulating-Light-Curves">
 <h2>Simulating Light-Curves<a class="headerlink" href="#Simulating-Light-Curves" title="Permalink to this headline">¶</a></h2>
-<p>Since we need to add in our own atmospheric variability, the pre-tabulated flux values above are of limited use. Instead, we use the PLaSTICC meta-data to establish the cadence and model parameters for each simulated SN. This information is then used to simulate our own light-curves with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
+<p>Since we need to add in our own atmospheric variability, the pre-tabulated flux values above are of limited use. Instead, we use the PLAsTICC meta-data to establish the cadence and model parameters for each simulated SN. This information is then used to simulate our own light-curves with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
@@ -602,7 +602,7 @@ Available Light-curves:  4737479
 <tr><td>61885.9872</td><td>lsst_hardware_g</td><td>-2.155282717255695</td><td>14.979999542236328</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
 </table></div>
 </div>
-<p>When comparing our own “duplicated” light-curves with the original PLaSTICC simulations, we care about three things: 1. Do the light-curves have the same parameters (except for x0, which depends on the spectral template and cosmology)? 1. Do the light-curves have the same time sampling? 1. Do the light-curves have a similar SNR?</p>
+<p>When comparing our own “duplicated” light-curves with the original PLAsTICC simulations, we care about three things: 1. Do the light-curves have the same parameters (except for x0, which depends on the spectral template and cosmology)? 1. Do the light-curves have the same time sampling? 1. Do the light-curves have a similar SNR?</p>
 <p>The first point above is ensured by the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> test suite. The second is easily verified by looking at the plotted data:</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
@@ -627,15 +627,15 @@ Available Light-curves:  4737479
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">compile_light_curves</span><span class="p">(</span><span class="n">dao</span><span class="p">:</span> <span class="n">PLaSTICC</span><span class="p">,</span> <span class="n">override_zp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">):</span>
+<span></span><span class="k">def</span> <span class="nf">compile_light_curves</span><span class="p">(</span><span class="n">dao</span><span class="p">:</span> <span class="n">PLAsTICC</span><span class="p">,</span> <span class="n">override_zp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create stacked tables for PLAsTICC simulated light-curves and their duplicated simulations</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dao: The PLaSTICC data access object</span>
+<span class="sd">        dao: The PLAsTICC data access object</span>
 <span class="sd">        override_zp: Overwrite the zero-point used by plasticc with this number</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        - Stacked table of PLaSTICC light-curves</span>
+<span class="sd">        - Stacked table of PLAsTICC light-curves</span>
 <span class="sd">        - Stacked table of duplicated light-curves</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -665,10 +665,10 @@ Available Light-curves:  4737479
 
 
 <span class="k">def</span> <span class="nf">plot_snr_distributions</span><span class="p">(</span><span class="n">dao</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">16</span><span class="p">)):</span>
-    <span class="sd">&quot;&quot;&quot;Plot the SNR distribution in each band for PLaSTICC light-curves and their duplicates</span>
+    <span class="sd">&quot;&quot;&quot;Plot the SNR distribution in each band for PLAsTICC light-curves and their duplicates</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        lc_list (List[Table]): List of light-curves in the PLaSTICC data model</span>
+<span class="sd">        lc_list (List[Table]): List of light-curves in the PLAsTICC data model</span>
 <span class="sd">        bins          (array): Bins to use when generating the histogram</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
@@ -694,7 +694,7 @@ Available Light-curves:  4737479
     <span class="k">for</span> <span class="n">axis</span> <span class="ow">in</span> <span class="n">axis_row</span><span class="p">:</span>
         <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;SNR&#39;</span><span class="p">)</span>
 
-    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;PLaSTICC&#39;</span><span class="p">)</span>
+    <span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;PLAsTICC&#39;</span><span class="p">)</span>
     <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;SNCosmo&#39;</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -823,10 +823,10 @@ Available Light-curves:  4737479
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="k">def</span> <span class="nf">plot_airmass_validation</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Plot the airmass of simulated PLaSTICC SNe locations as observed from LSST</span>
+    <span class="sd">&quot;&quot;&quot;Plot the airmass of simulated PLAsTICC SNe locations as observed from LSST</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        cadence_name (PLaSTICC): Simulated PLaSTICC cadence to plot SNe for</span>
+<span class="sd">        cadence_name (PLAsTICC): Simulated PLAsTICC cadence to plot SNe for</span>
 <span class="sd">        mjd             (float): Date to plot airmasses for</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 

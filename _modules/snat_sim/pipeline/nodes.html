@@ -140,26 +140,26 @@
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">..models</span> <span class="kn">import</span> <span class="n">LightCurve</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">SNFitResult</span><span class="p">,</span> <span class="n">SNModel</span><span class="p">,</span> <span class="n">VariableCatalog</span>
 <span class="kn">from</span> <span class="nn">..pipeline.data_model</span> <span class="kn">import</span> <span class="n">PipelinePacket</span>
-<span class="kn">from</span> <span class="nn">..plasticc</span> <span class="kn">import</span> <span class="n">PLaSTICC</span>
+<span class="kn">from</span> <span class="nn">..plasticc</span> <span class="kn">import</span> <span class="n">PLAsTICC</span>
 
 
 <div class="viewcode-block" id="LoadPlasticcCadence"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.LoadPlasticcCadence">[docs]</a><span class="k">class</span> <span class="nc">LoadPlasticcCadence</span><span class="p">(</span><span class="n">Source</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pipeline node for loading PLaSTICC cadence data from disk</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline node for loading PLAsTICC cadence data from disk</span>
 
 <span class="sd">    Connectors:</span>
 <span class="sd">        output: Emits a pipeline packet decorated with the snid, simulation parameters, and cadence</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="LoadPlasticcCadence.__init__"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.LoadPlasticcCadence.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">plasticc_dao</span><span class="p">:</span> <span class="n">PLaSTICC</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">override_zp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">plasticc_dao</span><span class="p">:</span> <span class="n">PLAsTICC</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">override_zp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Source node for loading PLaSTICC cadence data from disk</span>
+        <span class="sd">&quot;&quot;&quot;Source node for loading PLAsTICC cadence data from disk</span>
 
 <span class="sd">        This node can only be run using a single process. This can be the main</span>
 <span class="sd">        process (``num_processes=0``) or a single forked process (``num_processes=1``.)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            plasticc_dao: A PLaSTICC data access object</span>
+<span class="sd">            plasticc_dao: A PLAsTICC data access object</span>
 <span class="sd">            iter_lim: Exit after loading the given number of light-curves</span>
 <span class="sd">            override_zp: Overwrite the zero-point used by plasticc with this number</span>
 <span class="sd">            num_processes: Number of processes to allocate to the node (must be 0 or 1 for this node)</span>
@@ -177,7 +177,7 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="LoadPlasticcCadence.action"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.LoadPlasticcCadence.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Load PLaSTICC cadence data from disk&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Load PLAsTICC cadence data from disk&quot;&quot;&quot;</span>
 
         <span class="k">for</span> <span class="n">snid</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span><span class="o">.</span><span class="n">iter_cadence</span><span class="p">(</span><span class="n">iter_lim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span><span class="p">):</span>
             <span class="n">cadence</span><span class="o">.</span><span class="n">zp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">cadence</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">override_zp</span><span class="p">)</span>
@@ -185,7 +185,7 @@
 
 
 <div class="viewcode-block" id="SimulateLightCurves"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.SimulateLightCurves">[docs]</a><span class="k">class</span> <span class="nc">SimulateLightCurves</span><span class="p">(</span><span class="n">Node</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Pipeline node for simulating light-curves based on PLaSTICC cadences</span>
+    <span class="sd">&quot;&quot;&quot;Pipeline node for simulating light-curves based on PLAsTICC cadences</span>
 
 <span class="sd">    Connectors:</span>
 <span class="sd">        input: A Pipeline Packet</span>
