@@ -47,8 +47,8 @@ Missing numerical data is masked using the value ``-99.99``.
    0  0.5  0.2  0.5  0.000012  55100.0  1234.0
 
    >>> packet.fitted_params_to_pandas()  # doctest: +ELLIPSIS
-        snid  fit_z   fit_t0  ...        mb    abs_mag
-   0  1234.0    0.5  55100.0  ... 22.815929 -19.452564
+        snid  fit_z   fit_t0    fit_x0  ...      chisq  ndof         mb    abs_mag
+   0  1234.0    0.5  55100.0  0.000012  ...  35.862946  37.0  22.815929 -19.452564
 
 Module Docs
 -----------
