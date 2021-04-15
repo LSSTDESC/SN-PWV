@@ -24,26 +24,26 @@ from egon.nodes import Node, Source, Target
 from .. import constants as const
 from ..models import LightCurve, ObservedCadence, SNFitResult, SNModel, VariableCatalog
 from ..pipeline.data_model import PipelinePacket
-from ..plasticc import PLaSTICC
+from ..plasticc import PLAsTICC
 
 
 class LoadPlasticcCadence(Source):
-    """Pipeline node for loading PLaSTICC cadence data from disk
+    """Pipeline node for loading PLAsTICC cadence data from disk
 
     Connectors:
         output: Emits a pipeline packet decorated with the snid, simulation parameters, and cadence
     """
 
     def __init__(
-            self, plasticc_dao: PLaSTICC, iter_lim: int = float('inf'), override_zp: float = 30, num_processes: int = 1
+            self, plasticc_dao: PLAsTICC, iter_lim: int = float('inf'), override_zp: float = 30, num_processes: int = 1
     ) -> None:
-        """Source node for loading PLaSTICC cadence data from disk
+        """Source node for loading PLAsTICC cadence data from disk
 
         This node can only be run using a single process. This can be the main
         process (``num_processes=0``) or a single forked process (``num_processes=1``.)
 
         Args:
-            plasticc_dao: A PLaSTICC data access object
+            plasticc_dao: A PLAsTICC data access object
             iter_lim: Exit after loading the given number of light-curves
             override_zp: Overwrite the zero-point used by plasticc with this number
             num_processes: Number of processes to allocate to the node (must be 0 or 1 for this node)
@@ -61,7 +61,7 @@ class LoadPlasticcCadence(Source):
         super().__init__(num_processes=num_processes)
 
     def action(self) -> None:
-        """Load PLaSTICC cadence data from disk"""
+        """Load PLAsTICC cadence data from disk"""
 
         for snid, params, cadence in self.cadence.iter_cadence(iter_lim=self.iter_lim):
             cadence.zp = np.full_like(cadence.zp, self.override_zp)
@@ -69,7 +69,7 @@ class LoadPlasticcCadence(Source):
 
 
 class SimulateLightCurves(Node):
-    """Pipeline node for simulating light-curves based on PLaSTICC cadences
+    """Pipeline node for simulating light-curves based on PLAsTICC cadences
 
     Connectors:
         input: A Pipeline Packet

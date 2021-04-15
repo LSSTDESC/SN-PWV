@@ -91,7 +91,7 @@ class DataPaths:
         return path
 
     def get_plasticc_dir(self, cadence: Optional[str] = None, model: Optional[int] = None) -> Path:
-        """Directory with PLaSTICC simulation data
+        """Directory with PLAsTICC simulation data
 
         Args:
             cadence: Return subdirectory for the given simulation cadence

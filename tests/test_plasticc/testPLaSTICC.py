@@ -1,8 +1,8 @@
-"""Tests for the ``snat_sim.plasticc.PLaSTICC`` class"""
+"""Tests for the ``snat_sim.plasticc.PLAsTICC`` class"""
 
 from unittest import TestCase
 
-from snat_sim.plasticc import PLaSTICC
+from snat_sim.plasticc import PLAsTICC
 
 
 class SetUp:
@@ -10,18 +10,18 @@ class SetUp:
 
     @classmethod
     def setUpClass(cls) -> None:
-        """Instantiate a PLaSTICC data access object"""
+        """Instantiate a PLAsTICC data access object"""
 
         cls.test_cadence = 'alt_sched'
         cls.test_model = 11
-        cls.dao = PLaSTICC(cls.test_cadence, cls.test_model)
+        cls.dao = PLAsTICC(cls.test_cadence, cls.test_model)
 
 
 class GetAvailableCadences(TestCase):
     """Test returned cadences match those packaged with ``snat_sim`` by default"""
 
     def runTest(self) -> None:
-        self.assertEqual(PLaSTICC.get_available_cadences(), ['alt_sched'])
+        self.assertEqual(PLAsTICC.get_available_cadences(), ['alt_sched'])
 
 
 class GetModelHeaders(SetUp, TestCase):

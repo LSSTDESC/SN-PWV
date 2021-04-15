@@ -41,8 +41,8 @@ class UsesEnvironmentalVariables(TestCase):
         self.assertEqual(DataPaths().get_plasticc_dir(), test_dir)
 
 
-class PLaSTICCPaths(TestCase):
-    """Tests the resolution of paths for PLaSTICC data"""
+class PLAsTICCPaths(TestCase):
+    """Tests the resolution of paths for PLAsTICC data"""
 
     def setUp(self) -> None:
         """Create a ``DataPaths`` object for testing"""

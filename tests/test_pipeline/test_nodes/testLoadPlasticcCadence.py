@@ -6,7 +6,7 @@ import numpy as np
 from egon.mock import MockTarget
 
 from snat_sim.pipeline.nodes import LoadPlasticcCadence
-from snat_sim.plasticc import PLaSTICC
+from snat_sim.plasticc import PLAsTICC
 
 
 class LoadsCorrectSimulationData(TestCase):
@@ -17,7 +17,7 @@ class LoadsCorrectSimulationData(TestCase):
         """Use the ``LoadPlasticcCadence`` node to load data into a mock pipeline"""
 
         # Create a mock pipeline
-        cadence = PLaSTICC('alt_sched', 11)
+        cadence = PLAsTICC('alt_sched', 11)
         load_action = LoadPlasticcCadence(cadence, num_processes=0)
         mock_target = MockTarget()
 
@@ -58,6 +58,6 @@ class NumProcessesLimitedToOne(TestCase):
     """Test the number of allocated processes is limited to one"""
 
     def runTest(self) -> None:
-        cadence = PLaSTICC('alt_sched', 11)
+        cadence = PLAsTICC('alt_sched', 11)
         with self.assertRaises(RuntimeError):
             LoadPlasticcCadence(cadence, num_processes=2)
