@@ -5,12 +5,10 @@ observational effects.
 from __future__ import annotations
 
 import abc
-import os
 import warnings
 from datetime import datetime
 from typing import *
 
-import joblib
 import numpy as np
 import pandas as pd
 import sncosmo
@@ -26,7 +24,6 @@ from scipy.interpolate import RegularGridInterpolator
 from snat_sim.utils.caching import Cache
 from .. import constants as const
 from .. import types
-from ..data_paths import paths_at_init
 from ..utils import time_series as tsu
 
 # Todo: These were picked ad-hock and are likely too big.
@@ -37,10 +34,10 @@ AIRMASS_CACHE_SIZE = 250_000
 
 
 class PWVModel:
-    """Model for interpolating the atmospheric water vapor at a given time and time"""
+    """Model for interpolating the atmospheric water vapor at a given date and time"""
 
     def __init__(self, pwv_series: pd.Series) -> None:
-        """Build a model for time variable PWV by drawing from a given PWV time series
+        """Build a model for time variable PWV by interpolating from a given PWV time series
 
         Args:
             pwv_series: PWV values with a datetime index
@@ -49,15 +46,8 @@ class PWVModel:
         self.pwv_model_data = pwv_series.tsu.resample_data_across_year().tsu.periodic_interpolation()
         self.pwv_model_data.index = tsu.datetime_to_sec_in_year(self.pwv_model_data.index)
 
-        self.pwv_los = Cache('time', cache_size=PWV_CACHE_SIZE)(self.pwv_los)
-
-        cache_type = int(os.environ.get('SNAT_SIM_CACHE_TYPE', 1))
-        if cache_type == 1:
-            self.calc_airmass = Cache('time', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_airmass)
-
-        elif cache_type == 2:
-            memory = joblib.Memory(str(paths_at_init.joblib_path), verbose=0, bytes_limit=AIRMASS_CACHE_SIZE)
-            self.calc_airmass = memory.cache(self.calc_airmass)
+        self.calc_airmass = Cache(self.calc_airmass, TRANSMISSION_CACHE_SIZE, 'time')
+        self.pwv_los = Cache(self.pwv_los, PWV_CACHE_SIZE, 'time')
 
     @staticmethod
     def from_suominet_receiver(receiver: GPSReceiver, year: int, supp_years: Collection[int] = None) -> PWVModel:
@@ -69,7 +59,7 @@ class PWVModel:
             supp_years: Years to supplement data with when missing from ``year``
 
         Returns:
-            An interpolation function that accepts ``time`` and ``format`` arguments
+            A PWV model that interpolates from data taken by the given receiver
         """
 
         all_years = [year]
@@ -223,7 +213,7 @@ class PWVModel:
             alt=const.vro_altitude,
             time_format='mjd'
     ) -> Union[float, np.array]:
-        """Interpolate the PWV along the line of sight as a function of time
+        """Interpolate the PWV along the line of sight for the given time
 
         The ``time_format`` argument can be set to ``None`` when passing datetime
         objects instead of numerical values for ``time``.
@@ -242,7 +232,15 @@ class PWVModel:
         """
 
         return (self.pwv_zenith(time, time_format) *
-                self.calc_airmass(time, ra, dec, lat, lon, alt, time_format))
+                self.calc_airmass(
+                    time=time,
+                    ra=ra,
+                    dec=dec,
+                    lat=lat,
+                    lon=lon,
+                    alt=alt,
+                    time_format=time_format)
+                )
 
     def seasonal_averages(self) -> Dict[str, float]:
         """Calculate the average PWV in each season
@@ -296,22 +294,23 @@ class PWVTransmissionModel:
             res=resolution).values.T
 
         self._interpolator = RegularGridInterpolator(
-            points=(calc_pwv_eff(self.samp_pwv), self.samp_wave), values=self.samp_transmission)
+            points=(calc_pwv_eff(self.samp_pwv), self.samp_wave),
+            values=self.samp_transmission)
 
-        self.calc_transmission = Cache('pwv', 'wave', cache_size=TRANSMISSION_CACHE_SIZE)(self.calc_transmission)
+        self.calc_transmission = Cache(self._calc_transmission, TRANSMISSION_CACHE_SIZE, 'pwv', 'wave')
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
-    def calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
+    def _calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
         ...  # pragma: no cover
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
-    def calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
+    def _calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
         ...  # pragma: no cover
 
-    def calc_transmission(self, pwv, wave=None):
-        """Evaluate transmission model at given wavelengths
+    def _calc_transmission(self, pwv, wave=None):
+        """Evaluate the transmission model at the given wavelengths
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``
         object if ``pwv`` is an array. Wavelengths are expected in angstroms.
@@ -372,7 +371,7 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
     _maxwave = 12000.0
 
     def __init__(self, transmission_res: float = 5) -> None:
-        """Time independent atmospheric transmission due to PWV
+        """Time independent atmospheric transmission effect due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
         highest available transmission model available.
@@ -415,9 +414,10 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 
 
 class AbstractVariablePWVEffect(VariablePropagationEffect):
+    """Base class for building time-variable PWV propagation effects"""
 
     def __init__(self, transmission_res: float = 5) -> None:
-        """Time independent atmospheric transmission due to PWV
+        """Time variable atmospheric transmission effect due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
         highest available transmission model available.
@@ -426,7 +426,7 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
             pwv: Atmospheric concentration of PWV along line of sight in mm
 
         Args:
-            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
+            transmission_res: Reduce the underlying transmission model by binning to the given resolution
         """
 
         self._transmission_res = transmission_res
@@ -440,7 +440,7 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
-            time): Time to get the PWV concentration for
+            time: Time to get the PWV concentration for
 
         Returns:
             An array of PWV values in units of mm
@@ -457,14 +457,16 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
         if isinstance(transmission, pd.DataFrame):  # PWV is a vector and transmission is a DataFrame
             return flux * transmission.values.T
 
-        else:  # Assume PWV is scalar and transmission is Series-like
-            if np.ndim(flux) == 1:
-                return flux * transmission
+        # Assume PWV is scalar and transmission is Series-like
+        elif np.ndim(flux) == 1:
+            return flux * transmission
 
-            if np.ndim(flux) == 2:
-                return flux * np.atleast_2d(transmission)
+        elif np.ndim(flux) == 2:
+            return flux * np.atleast_2d(transmission)
 
-        raise NotImplementedError('Could not identify how to match dimensions of atm. model to source flux.')
+        # We don't actually expect this to ever be raised. The above conditionals should be sufficient.
+        # However, we put it here just in case the function is called in some creative un-anticipated fashion.
+        raise NotImplementedError('Could not match dimensions of atmospheric model to source flux.')  # pragma: no cover
 
     def propagate(self, wave: np.ndarray, flux: np.ndarray, time: Union[float, np.ndarray]) -> np.ndarray:
         """Propagate the flux through the atmosphere
@@ -527,14 +529,14 @@ class VariablePWVTrans(AbstractVariablePWVEffect):
         """The PWV concentration used by the propagation effect at a given time
 
         Args:
-            time): Time to get the PWV concentration for
+            time: Time to get the PWV concentration for
 
         Returns:
             An array of PWV values in units of mm
         """
 
         return self._pwv_model.pwv_los(
-            time,
+            time=time,
             ra=self['ra'],
             dec=self['dec'],
             lat=self['lat'],

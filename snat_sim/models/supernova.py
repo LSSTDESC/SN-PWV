@@ -5,152 +5,16 @@ supernovae.
 from __future__ import annotations
 
 from copy import copy, deepcopy
-from dataclasses import dataclass
 from typing import *
-from typing import Optional, Union
+from typing import Optional
 
 import numpy as np
 import pandas as pd
 import sncosmo
-from astropy.table import Table
 
+from .light_curve import LightCurve, ObservedCadence
 from .pwv import VariablePropagationEffect
 from .. import types
-
-
-@dataclass
-class ObservedCadence:
-    """The observational sampling of an astronomical light-curve
-
-    The zero-point, zero point system, and gain arguments can be a
-    collection of values (one per ``obs_time`` value), or a single value
-    to apply at all observation times.
-
-    Args:
-        obs_times: Array of observation times for the light-curve
-        bands: Array of bands for each observation
-        zp: The zero-point or an array of zero-points for each observation
-        zpsys: The zero-point system or an array of zero-point systems
-        gain: The simulated gain or an array of gain values
-    """
-
-    obs_times: Collection[float]
-    bands: Collection[str]
-    skynoise: types.FloatColl
-    zp: types.FloatColl
-    zpsys: Union[str, Collection[str]]
-    gain: types.FloatColl
-
-    def __eq__(self, other: ObservedCadence) -> bool:
-        attr_list = ['obs_times', 'bands', 'skynoise', 'zp', 'zpsys', 'gain']
-        return np.all(np.equal(getattr(self, attr), getattr(other, attr)) for attr in attr_list)
-
-    @property
-    def skynoise(self) -> np.array:
-        return self._skynoise.copy()
-
-    @skynoise.setter
-    def skynoise(self, skynoise: types.FloatColl):
-        self._skynoise = np.full_like(self.obs_times, skynoise)
-
-    @property
-    def zp(self) -> np.array:
-        return self._zp.copy()
-
-    @zp.setter
-    def zp(self, zp: types.FloatColl):
-        self._zp = np.full_like(self.obs_times, zp)
-
-    @property
-    def zpsys(self) -> np.array:
-        return self._zpsys.copy()
-
-    @zpsys.setter
-    def zpsys(self, zpsys: types.FloatColl):
-        self._zpsys = np.full_like(self.obs_times, zpsys, dtype='U8')
-
-    @property
-    def gain(self) -> np.array:
-        return self._gain.copy()
-
-    @gain.setter
-    def gain(self, gain: types.FloatColl):
-        self._gain = np.full_like(self.obs_times, gain)
-
-    @staticmethod
-    def from_plasticc(
-            light_curve: Table,
-            zp: types.FloatColl = None,
-            drop_nondetection: bool = False
-    ) -> Tuple[types.NumericalParams, ObservedCadence]:
-        """Extract the observational cadence from a PLaSTICC light-curve
-
-        The zero-point, zero point system, and gain arguments can be a
-        collection of values (one per phase value), or a single value to
-        apply at all obs_times.
-
-        Args:
-            light_curve: Astropy table with PLaSTICC light-curve data
-            zp: Optionally overwrite the PLaSTICC zero-point with this value(s)
-            drop_nondetection: Drop data with PHOTFLAG == 0
-
-        Returns:
-            An ``ObservedCadence`` instance
-        """
-
-        if drop_nondetection:
-            light_curve = light_curve[light_curve['PHOTFLAG'] != 0]
-
-        params = {
-            'SNID': light_curve.meta['SNID'].strip(),
-            'ra': light_curve.meta['RA'],
-            'dec': light_curve.meta['DECL'],
-            't0': light_curve.meta['SIM_PEAKMJD'],
-            'x1': light_curve.meta['SIM_SALT2x1'],
-            'c': light_curve.meta['SIM_SALT2c'],
-            'z': light_curve.meta['SIM_REDSHIFT_CMB'],
-            'x0': light_curve.meta['SIM_SALT2x0']
-        }
-
-        return cast(types.NumericalParams, params), ObservedCadence(
-            obs_times=light_curve['MJD'],
-            bands=['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
-            zp=zp or light_curve['ZEROPT'],
-            zpsys='AB',
-            gain=1,
-            skynoise=light_curve['SKY_SIG']
-        )
-
-    def to_sncosmo(self) -> Table:
-        """Return the observational cadence as an ``astropy.Table``
-
-        The returned table of observations is formatted for use with with
-        the ``sncosmo`` package.
-
-        Returns:
-            An astropy table representing the observational cadence in ``sncosmo`` format
-        """
-
-        observations = Table(
-            {
-                'time': self.obs_times,
-                'band': self.bands,
-                'gain': self.gain,
-                'skynoise': self.skynoise,
-                'zp': self.zp,
-                'zpsys': self.zpsys
-            },
-            dtype=[float, 'U1000', float, float, float, 'U100']
-        )
-
-        observations.sort('time')
-        return observations
-
-    def __repr__(self) -> str:  # pragma: no cover
-        repr_list = self.to_sncosmo().__repr__().split('\n')
-        repr_list[0] = super(ObservedCadence, self).__repr__()
-        repr_list.pop(2)
-        return '\n'.join(repr_list)
 
 
 class SNModel(sncosmo.Model):
@@ -158,6 +22,14 @@ class SNModel(sncosmo.Model):
 
     @staticmethod
     def from_sncosmo(model: sncosmo.Model) -> SNModel:
+        """Create an `SNModel`` instance from a ``sncosmo.Model`` instance
+
+        Args:
+            model: The sncosmo model to build from
+
+        Returns:
+            An ``SNModel`` object
+        """
 
         new_model = SNModel(
             model.source,
@@ -170,7 +42,7 @@ class SNModel(sncosmo.Model):
 
     # Same as parent except allows duck-typing of ``effect`` arg
     def _add_effect_partial(self, effect, name, frame) -> None:
-        """Like 'add effect', but don't sync parameter arrays"""
+        """Like ``add effect``, but don't sync parameter arrays"""
 
         if frame not in ['rest', 'obs', 'free']:
             raise ValueError("frame must be one of: {'rest', 'obs', 'free'}")
@@ -197,8 +69,8 @@ class SNModel(sncosmo.Model):
         phase = (time - self._parameters[1]) * a
         restwave = wave * a
 
-        # Note that below we multiply by the scale factor to conserve
-        # bolometric luminosity.
+        # Note that below we multiply by the scale factor to conserve bolometric luminosity.
+        # noinspection PyProtectedMember
         f = a * self._source._flux(phase, restwave)
 
         # Pass the flux through the PropagationEffects.
@@ -232,7 +104,9 @@ class SNModel(sncosmo.Model):
         new_model.update(dict(zip(self.param_names, self.parameters)))
         return new_model
 
-    def simulate_lc(self, cadence: ObservedCadence, scatter: bool = True, fixed_snr: Optional[float] = None) -> Table:
+    def simulate_lc(
+            self, cadence: ObservedCadence, scatter: bool = True, fixed_snr: Optional[float] = None
+    ) -> LightCurve:
         """Simulate a SN light-curve
 
         If ``scatter`` is ``True``, then simulated flux values include an added
@@ -245,7 +119,7 @@ class SNModel(sncosmo.Model):
             fixed_snr: Optionally simulate the light-curve using a fixed signal to noise ratio
 
         Returns:
-            The simulated light-curve as an astropy table in the ``sncosmo`` format
+            The simulated light-curve
         """
 
         flux = self.bandflux(cadence.bands, cadence.obs_times, zp=cadence.zp, zpsys=cadence.zpsys)
@@ -259,14 +133,18 @@ class SNModel(sncosmo.Model):
         if scatter:
             flux = np.atleast_1d(np.random.normal(flux, fluxerr))
 
-        return Table(
-            data=[cadence.obs_times, cadence.bands, flux, fluxerr, cadence.zp, cadence.zpsys],
-            names=('time', 'band', 'flux', 'fluxerr', 'zp', 'zpsys'),
-            meta=dict(zip(self.param_names, self.parameters)))
+        return LightCurve(
+            time=cadence.obs_times,
+            band=cadence.bands,
+            flux=flux,
+            fluxerr=fluxerr,
+            zp=cadence.zp,
+            zpsys=cadence.zpsys
+        )
 
     def fit_lc(
             self,
-            data: Table = None,
+            data: LightCurve = None,
             vparam_names: List = tuple(),
             bounds: Dict[str: Tuple[types.Numeric, types.Numeric]] = None,
             method: str = 'minuit',
@@ -313,7 +191,7 @@ class SNModel(sncosmo.Model):
             raise ValueError(f'Invalid fitting method: {method}')
 
         result, fitted_model = fit_func(
-            data=data,
+            data=data.to_astropy(),
             model=deepcopy(self),
             vparam_names=vparam_names,
             bounds=bounds, method=method,
@@ -332,9 +210,23 @@ class SNModel(sncosmo.Model):
 
 
 class SNFitResult(sncosmo.utils.Result):
+    """Represents results from a ``SNModel`` being fit to a ``LightCurve``"""
+
+    def __eq__(self, other: SNFitResult) -> bool:
+
+        if (not isinstance(other, self.__class__)) or (self.keys() != other.keys()):
+            return False
+
+        for key, val in self.items():
+            if not np.array_equal(val, other[key]):
+                return False
+
+        return True
 
     @property
     def param_names(self) -> List[str]:
+        """The names of the model parameters"""
+
         return copy(self['param_names'])
 
     @property
@@ -345,6 +237,8 @@ class SNFitResult(sncosmo.utils.Result):
 
     @property
     def vparam_names(self) -> List[str]:
+        """List of parameter names varied in the fit"""
+
         return copy(self['vparam_names'])
 
     @property
@@ -363,13 +257,23 @@ class SNFitResult(sncosmo.utils.Result):
 
         return pd.DataFrame.cov_utils.from_array(self['covariance'], paramNames=self.vparam_names)
 
-    def salt_covariance_linear(self, x0Truth: float = None) -> pd.DataFrame:
-        """The covariance matrix of apparent magnitude and salt2 parameters"""
+    def salt_covariance_linear(self, x0_truth: float = None) -> pd.DataFrame:
+        """The covariance matrix of apparent magnitude and salt2 parameters
+
+        Will raise an error if the `x0`, `x1` and `c` parameters are not
+        varied in the fit.
+
+        Args:
+            x0_truth: Optionally assert an alternative x0 value
+
+        Returns:
+            The covariance matrix asd a pandas ``DataFrame``
+        """
 
         if not self.success:
             raise RuntimeError('Cannot calculate variance for a failed fit.')
 
-        x0 = self.parameters.loc['x0'] if x0Truth is None else x0Truth
+        x0 = self.parameters.loc['x0'] if x0_truth is None else x0_truth
 
         factor = - 2.5 / np.log(10)
         # drop other parameters like t0
@@ -406,7 +310,7 @@ class SNFitResult(sncosmo.utils.Result):
         sc = _cov.cov_utils.subcovariance(paramList=['mB', 'x1', 'c'])
         return sc.cov_utils.expAVsquare(arr)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         # Extremely similar to the base representation of the parent class but
         # cleaned up so values are displayed in neat rows / columns
 

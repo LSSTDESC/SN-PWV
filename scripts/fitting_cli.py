@@ -12,7 +12,7 @@ from typing import Dict, Tuple, Union
 from pwv_kpno.gps_pwv import GPSReceiver
 
 sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
-from snat_sim import models, reference_stars
+from snat_sim import models
 from snat_sim.pipeline import FittingPipeline
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
@@ -112,10 +112,10 @@ class AdvancedNamespace(argparse.Namespace):
             effect_frames=['obs'])
 
     @property
-    def catalog(self) -> reference_stars.VariableCatalog:
+    def catalog(self) -> models.VariableCatalog:
         """The reference star catalog to calibrate simulations with."""
 
-        return reference_stars.VariableCatalog(*self.ref_stars, pwv_model=self.pwv_model)
+        return models.VariableCatalog(self.pwv_model, *self.ref_stars)
 
     @property
     def add_scatter(self):
@@ -138,7 +138,6 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         fit_model=command_line_args.fitting_model,
         vparams=command_line_args.vparams,
         out_path=command_line_args.out_path,
-        sim_path=command_line_args.sim_path,
         simulation_pool=command_line_args.sim_pool_size,
         fitting_pool=command_line_args.fit_pool_size,
         bounds=command_line_args.fitting_bounds,
@@ -191,13 +190,6 @@ def create_cli_parser() -> argparse.ArgumentParser:
         type=Path,
         required=True,
         help='Output file path (a .csv extension is enforced).'
-    )
-
-    parser.add_argument(
-        '-d', '--sim_path',
-        type=Path,
-        default=None,
-        help='Optionally write simulated light-curves to the given HDF5 file path.'
     )
 
     #######################################################################

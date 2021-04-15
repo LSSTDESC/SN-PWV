@@ -1,9 +1,8 @@
-"""Tests for the ``plasticc`` module"""
+"""Tests for the ``snat_sim.plasticc.PLaSTICC`` class"""
 
 from unittest import TestCase
 
 from snat_sim.plasticc import PLaSTICC
-from tests.mock import create_mock_plasticc_light_curve
 
 
 class SetUp:
@@ -26,7 +25,7 @@ class GetAvailableCadences(TestCase):
 
 
 class GetModelHeaders(SetUp, TestCase):
-    """Tests for the collection of header files"""
+    """Tests the collection of header files matches data included with the package"""
 
     def runTest(self) -> None:
         header_paths = self.dao.get_model_headers()
@@ -40,50 +39,22 @@ class CountLightCurves(SetUp, TestCase):
 
     def runTest(self) -> None:
         counted_light_curves = self.dao.count_light_curves()
-        returned_light_curves = len(list(self.dao.iter_lc(verbose=False)))
+        returned_light_curves = len(list(self.dao.iter_cadence(verbose=False)))
         self.assertEqual(returned_light_curves, counted_light_curves)
 
 
-class IterLCForHeader(SetUp, TestCase):
-    """Test returned light curves have meta data"""
-
-    def runTest(self) -> None:
-        test_header = self.dao.get_model_headers()[0]
-        lc = next(self.dao._iter_lc_for_header(test_header, verbose=False))
-        self.assertTrue(lc.meta)
-
-
 class IterLcForCadenceModel(SetUp, TestCase):
-    """Tests for the iteration of light-curves"""
+    """Tests for the iteration of cadence data"""
 
-    def test_lc_count_matches_count_light_curves_func(self) -> None:
-        """Test returned light curve count matches the values returned by ``count_light_curves``"""
+    def test_iter_count_matches_count_light_curves_func(self) -> None:
+        """Test the number of iterations matches the values returned by ``count_light_curves``"""
 
-        total_lc_count = sum(1 for _ in self.dao.iter_lc(verbose=False))
+        total_lc_count = sum(1 for _ in self.dao.iter_cadence(verbose=False))
         expected_count = self.dao.count_light_curves()
         self.assertEqual(expected_count, total_lc_count)
 
-    def test_iter_limit(self):
+    def test_iter_limit(self) -> None:
         """Test the number of returned light-curves is limited by the ``iter_lim`` argument"""
 
-        total_lc_count = sum(1 for _ in self.dao.iter_lc(iter_lim=5, verbose=False))
+        total_lc_count = sum(1 for _ in self.dao.iter_cadence(iter_lim=5, verbose=False))
         self.assertEqual(5, total_lc_count)
-
-
-class FormatPlasticcSncosmo(SetUp, TestCase):
-    """Tests for the formatting of PLaSTICC data into the sncosmo data model"""
-
-    def setUp(self) -> None:
-        self.plasticc_lc = create_mock_plasticc_light_curve()
-        self.formatted_lc = self.dao.format_data_to_sncosmo(self.plasticc_lc)
-
-    def test_correct_column_names(self) -> None:
-        """Test the formatted data table has the correct columns"""
-
-        expected_names = ['time', 'band', 'flux', 'fluxerr', 'zp', 'photflag', 'zpsys']
-        self.assertSequenceEqual(self.formatted_lc.colnames, expected_names)
-
-    def test_preserves_meta_data(self) -> None:
-        """Test the formatted data table has the same metadata as the input table"""
-
-        self.assertDictEqual(self.formatted_lc.meta, self.plasticc_lc.meta)

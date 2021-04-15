@@ -6,28 +6,35 @@ Usage Example
 Data models are defined as Python data classes. All fields in the data model
 are onptional except for the supernova identifier (``snid``). Other fields
 include the supernova model parameters used in a light-curve simulation / fit
-and the chi-squared, degrees of freedom, and B-band magnitudes returned by
-the fitted model.
+and the cadence used in the simulation.
 
 .. doctest::
 
-   >>> from snat_sim.pipeline.data_model import PipelineResult
-   >>> data_obj = PipelineResult(
-   ... snid='1234567',
-   ... sim_params={'x0': 1, 'x1': .1, 'c': .5},
-   ... fit_params={'x0': .9, 'x1': .12, 'c': .51},
-   ... fit_err={'x0': .1, 'x1': .01, 'c': .05},
-   ... chisq=12,
-   ... ndof=11,
-   ... mb=22.5,
-   ... abs_mag=-19.1,
-   ... message='The fit exited successfully'
+   >>> import sncosmo
+   >>> from snat_sim.models import SNModel, LightCurve
+   >>> from snat_sim.pipeline.data_model import PipelinePacket
+
+   >>> # Load example data and an example supernova model
+   >>> example_data = sncosmo.load_example_data()
+   >>> light_curve = LightCurve.from_sncosmo(example_data)
+   >>> model_parameters = example_data.meta
+   >>> sn_model = SNModel('Salt2')
+
+   >>> # Set an initial guess for fitting the model parameters
+   >>> sn_model.update(model_parameters)
+
+   >>> fit_result, fitted_model = sn_model.fit_lc(light_curve, vparam_names=['x0', 'x1', 'c'])
+   >>> packet = PipelinePacket(
+   ...     snid=1234,                    # Unique SN identifier
+   ...     sim_params=model_parameters,  # Parameters used to simulate the light-curve
+   ...     light_curve=light_curve,      # The simulated light-curve
+   ...     fit_result=fit_result,        # ``SNFitResult`` object
+   ...     fitted_model=fitted_model,    # The fitted model (set to best fit parameter values)
+   ...     message='This fit was a success!'
    ... )
 
-Data products can be converted into familiar data structures using instance
-the methods demonstrated below (see the full class documentation for a
-complete list of available methods). Missing numerical data is masked using
-the value ``-99.99``.
+The simulation and fittd parameters can be converted into pandas Dataframes.
+Missing numerical data is masked using the value ``-99.99``.
 
 .. doctest::
 
@@ -35,8 +42,13 @@ the value ``-99.99``.
    >>> include_sim_params = ['x0', 'x1']
    >>> include_fit_params = ['x0', 'c']
    >>>
-   >>> data_list = data_obj.to_list(include_sim_params, include_fit_params)
-   >>> data_str = data_obj.to_csv(include_sim_params, include_fit_params)
+   >>> packet.sim_params_to_pandas()
+       x1    c    z        x0       t0    SNID
+   0  0.5  0.2  0.5  0.000012  55100.0  1234.0
+
+   >>> packet.fitted_params_to_pandas()  # doctest: +ELLIPSIS
+        snid  fit_z   fit_t0    fit_x0  ...      chisq  ndof         mb    abs_mag
+   0  1234.0    0.5  55100.0  0.000012  ...  35.862946  37.0  22.815929 -19.452564
 
 Module Docs
 -----------
@@ -44,81 +56,88 @@ Module Docs
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from typing import Iterable, List
+from dataclasses import dataclass
+from typing import Optional
 
+import pandas as pd
+
+from .. import constants as const
 from .. import types
+from ..models import LightCurve, ObservedCadence, SNFitResult, SNModel
+
+MASK_VALUE = -99.99
 
 
 @dataclass
-class PipelineResult:
-    """Class representation of internal pipeline data products"""
+class PipelinePacket:
+    """Class representation of internal pipeline data products
 
-    snid: str
-    sim_params: types.NumericalParams = field(default_factory=dict)
-    fit_params: types.NumericalParams = field(default_factory=dict)
-    fit_err: types.NumericalParams = field(default_factory=dict)
-    chisq: float = -99.99
-    ndof: int = -99.99
-    mb: float = -99.99
-    abs_mag: float = -99.99
-    message: str = ''
+    Fields:
+        snid: Unique identifier for the data packet
+        sim_params: Parameters used to simulate the light-curve
+        cadence: The observational cadence used to simulate the light-curve
+        light_curve: The simulated light-curve
+        fit_result: Fit result from fitting the light-curve
+        fitted_model: Model used to fit the light-curve
+        message: Status message
+    """
 
-    def to_csv(self, sim_params: Iterable[str], fit_params: Iterable[str]) -> str:
-        """Combine light-curve fit results into single row matching the output table file format
+    snid: int
+    sim_params: Optional[types.NumericalParams] = None
+    cadence: Optional[ObservedCadence] = None
+    light_curve: Optional[LightCurve] = None
+    fit_result: Optional[SNFitResult] = None
+    fitted_model: Optional[SNModel] = None
+    covariance: Optional[pd.DataFrame] = None
+    message: Optional[str] = ""
 
-        Args:
-            sim_params: The simulated parameter values to include int the output
-            fit_params: The fitted parameter values to include in the output
+    def sim_params_to_pandas(self) -> pd.DataFrame:
+        """Return simulated parameters as a pandas Dataframe
 
-        Returns:
-            A string with data in CSV format
+        Return:
+            Parameters used in the simulation of light-curves
         """
 
-        out_list = self.to_list(sim_params, fit_params)
-        return ','.join(map(str, out_list)) + '\n'
+        out_data = pd.Series(self.sim_params)
+        out_data['SNID'] = self.snid
+        # out_data['message'] = self.message
+        return pd.DataFrame(out_data).T
 
-    def to_list(self, sim_params, fit_params) -> List[str, float]:
-        """Return class data as a list with missing values masked as -99.99
+    def fitted_params_to_pandas(self) -> pd.DataFrame:
+        """Return fitted parameters as a pandas Dataframe
 
-        Args:
-            sim_params: The order of the simulated parameter values in the return
-            fit_params: The order of the fitted parameter values in the return
-
-        Returns:
-            A list of strings and floats
+        Return:
+            Parameters recovered from fitting a light-curve
         """
 
-        out_list = [self.snid]
-        out_list.extend(self.sim_params.get(param, -99.99) for param in sim_params)
-        out_list.extend(self.fit_params.get(param, -99.99) for param in fit_params)
-        out_list.extend(self.fit_err.get(param, -99.99) for param in fit_params)
-        out_list.append(self.chisq)
-        out_list.append(self.ndof)
-        out_list.append(self.mb)
-        out_list.append(self.abs_mag)
-        out_list.append(self.message)
-        return out_list
-
-    @staticmethod
-    def column_names(sim_params: Iterable[str], fit_params: Iterable[str]) -> List[str]:
-        """Return a list of column names matching the data model used by ``PipelineResult.to_csv``
-
-        Args:
-            sim_params: The simulated parameter values to include int the output
-            fit_params: The fitted parameter values to include in the output
-
-        Returns:
-            List of column names as strings
-        """
+        if None in (self.fit_result, self.fitted_model):
+            raise ValueError('Fit results are not stored in the data packet.')
 
         col_names = ['snid']
-        col_names.extend('sim_' + param for param in sim_params)
-        col_names.extend('fit_' + param for param in fit_params)
-        col_names.extend('err_' + param for param in fit_params)
+        col_names.extend('fit_' + param for param in self.fit_result.param_names)
+        col_names.extend('err_' + param for param in self.fit_result.param_names)
         col_names.append('chisq')
         col_names.append('ndof')
         col_names.append('mb')
         col_names.append('abs_mag')
-        col_names.append('message')
-        return col_names
+        # col_names.append('message')
+
+        data_list = [self.snid]
+        data_list.extend(self.fit_result.parameters)
+        data_list.extend(self.fit_result.errors.get(p, MASK_VALUE) for p in self.fit_result.param_names)
+        data_list.append(self.fit_result.chisq)
+        data_list.append(self.fit_result.ndof)
+        data_list.append(self.fitted_model.source.bandmag('bessellb', 'ab', phase=0))
+        data_list.append(self.fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
+        # data_list.append(self.message)
+        return pd.DataFrame(pd.Series(data_list, index=col_names)).T
+
+    def packet_status_to_pandas(self) -> pd.DataFrame:
+        """Return the packet status message as a pandas ``DataFrame``
+
+        Return:
+            Dataframe with the snid, fit success status, and result message
+        """
+
+        success = self.fit_result.success if self.fit_result else False
+        return pd.DataFrame({'snid': [self.snid], 'success': [success], 'message': [self.message]})

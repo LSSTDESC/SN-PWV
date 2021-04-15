@@ -3,7 +3,6 @@ bokeh
 egon
 h5py
 iminuit<2.0.0
-joblib
 matplotlib
 numpy>=1.16.0
 pandas
@@ -11,5 +10,7 @@ pwv_kpno==2.0.0.dev6
 pytz
 pyyaml
 scipy
+setuptools
 sncosmo
+tables
 tqdm

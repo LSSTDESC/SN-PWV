@@ -14,13 +14,13 @@ from pwv_kpno.defaults import v1_transmission
 from scipy.integrate import trapz
 from tqdm import tqdm
 
-from snat_sim.reference_stars import get_stellar_spectra
+from snat_sim.models import ReferenceStar
+from snat_sim.data_paths import paths_at_init
 
 # Define spectral types this script will consider
 SPEC_TYPES = ('G2', 'M4', 'M9', 'M0', 'M1', 'M2', 'M3', 'M5', 'K2', 'K9', 'K5', 'F5')
 
-# Set default data location and PWV sampling
-DATA_DIR = Path(__file__).parent
+# Set default PWV sampling for tabulated flux values
 PWV_VALS = np.arange(0, 100, 0.5)
 
 
@@ -68,7 +68,7 @@ def run(out_dir, spec_types=SPEC_TYPES, pwv_vals=PWV_VALS):
     with tqdm(total=total_iters) as pbar:
         for i, spectype in enumerate(spec_types):
             out_path = out_dir / f'{spectype}.txt'
-            spectrum = get_stellar_spectra(spectype)
+            spectrum = ReferenceStar(spectype).to_pandas()
             pbar.set_description(f'Current spectral type {spectype} ({i} / {len(spec_types)})')
 
             spectrum_flux = np.zeros((len(pwv_vals), 7))
@@ -81,6 +81,4 @@ def run(out_dir, spec_types=SPEC_TYPES, pwv_vals=PWV_VALS):
 
 
 if __name__ == '__main__':
-    local_out_dir = Path(__file__).parent
-    # local_out_dir.mkdir(exist_ok=True)
-    run(local_out_dir)
+    run(paths_at_init.stellar_flux_dir)

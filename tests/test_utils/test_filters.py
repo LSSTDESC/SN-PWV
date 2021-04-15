@@ -1,4 +1,4 @@
-"""Tests for the ``filters`` module"""
+"""Tests for the ``snat_sim.utils.filters`` module"""
 
 from unittest import TestCase
 
@@ -11,7 +11,9 @@ from snat_sim.utils import filters
 class RegisterSncosmoFilter(TestCase):
     """Tests for the ``register_sncosmo_filter`` function"""
 
-    def setUp(self):
+    def setUp(self) -> None:
+        """Create and register a dummy filter profile"""
+
         self.wave = np.arange(1000, 10_000)
         self.transmission = np.full_like(self.wave, 0.75, dtype=float)
         self.name = 'test_band'
@@ -19,7 +21,7 @@ class RegisterSncosmoFilter(TestCase):
         filters.register_sncosmo_filter(
             self.wave, self.transmission, self.name, force=True)
 
-    def test_filter_is_registered(self):
+    def test_filter_is_registered(self) -> None:
         """Check test filter is registered with correct wavelength and transmission"""
 
         sncosmo_band = sncosmo.get_bandpass(self.name)
@@ -34,7 +36,7 @@ class RegisterSncosmoFilter(TestCase):
             self.transmission.tolist(), sncosmo_band.trans.tolist(),
             'Incorrect transmission for bandpass')
 
-    def test_error_without_force(self):
+    def test_error_without_force(self) -> None:
         """Test error raised if band passes are re-registered with force=False"""
 
         args = self.wave, self.transmission, self.name
@@ -45,30 +47,30 @@ class RegisterDECAMFilters(TestCase):
     """Tests for the ``register_decam_filters`` function"""
 
     @staticmethod
-    def assert_bands_are_registered(*bands):
+    def assert_bands_are_registered(*bands: str) -> None:
         """Fail if given bands are not registered with sncosmo"""
 
         for band in bands:
             sncosmo.get_bandpass(band)
 
-    def test_band_passes_registered(self):
+    def test_band_passes_registered(self) -> None:
         """Test bands are registered under ids DECam_<ugrizy>"""
 
         bands = [f'DECam_{b}' for b in 'ugrizY']
         self.assert_bands_are_registered(*bands)
 
-    def test_filters_registered(self):
+    def test_filters_registered(self) -> None:
         """Test bands are registered under ids DECam_<ugrizy>_filter"""
 
         bands = [f'DECam_{b}_filter' for b in 'ugrizY']
         self.assert_bands_are_registered(*bands)
 
-    def test_ccd_registered(self):
+    def test_ccd_registered(self) -> None:
         """Test a ``DECam_ccd`` band is registered"""
 
         self.assert_bands_are_registered('DECam_ccd')
 
-    def test_throughput_registered(self):
+    def test_throughput_registered(self) -> None:
         """Test a ``DECam_atm`` band is registered"""
 
         self.assert_bands_are_registered('DECam_atm')
@@ -78,54 +80,54 @@ class RegisterLSSTFilters(TestCase):
     """Tests for the ``register_lsst_filters``"""
 
     # noinspection PyMethodMayBeStatic
-    def assert_bands_are_registered(self, *bands):
+    def assert_bands_are_registered(self, *bands: str) -> None:
         """Fail if given bands are not registered with sncosmo"""
 
         for band in bands:
             sncosmo.get_bandpass(band)
 
-    def test_total_bands_registered(self):
+    def test_total_bands_registered(self) -> None:
         """Test bands are registered under ids lsst_total_<ugrizy>"""
 
         bands = [f'lsst_total_{b}' for b in 'ugrizY']
         self.assert_bands_are_registered(*bands)
 
-    def test_hardware_registered(self):
+    def test_hardware_registered(self) -> None:
         """Test bands are registered under ids lsst_hardware_<ugrizy>"""
 
         bands = [f'lsst_hardware_{b}' for b in 'ugrizY']
         self.assert_bands_are_registered(*bands)
 
-    def test_filters_registered(self):
+    def test_filters_registered(self) -> None:
         """Test bands are registered under ids lsst_filter_<ugrizy>"""
 
         bands = [f'lsst_filter_{b}' for b in 'ugrizY']
         self.assert_bands_are_registered(*bands)
 
-    def test_mirrors_registered(self):
+    def test_mirrors_registered(self) -> None:
         """Test bands are registered under ids lsst_m<1, 2, 3>"""
 
         bands = [f'lsst_m{m}' for m in range(1, 4)]
         self.assert_bands_are_registered(*bands)
 
-    def test_lenses_registered(self):
+    def test_lenses_registered(self) -> None:
         """Test bands are registered under ids lsst_lens<1, 2, 3>"""
 
         bands = [f'lsst_lens{m}' for m in range(1, 4)]
         self.assert_bands_are_registered(*bands)
 
-    def test_detector_registered(self):
+    def test_detector_registered(self) -> None:
         """Test a ``lsst_detector`` band is registered"""
 
         self.assert_bands_are_registered('lsst_detector')
 
-    def test_atmospheres_registered(self):
+    def test_atmospheres_registered(self) -> None:
         """Test the ``atmos_10`` and ``atmos_10_std`` bands are registered"""
 
         bands = ['lsst_atmos_10', 'lsst_atmos_std']
         self.assert_bands_are_registered(*bands)
 
-    def test_combined_mirrors_equal_product_of_mirrors(self):
+    def test_combined_mirrors_equal_product_of_mirrors(self) -> None:
         """Test ``lsst_mirrors`` filter is the product of all three mirrors"""
 
         m1 = sncosmo.get_bandpass('lsst_m1')
@@ -136,7 +138,7 @@ class RegisterLSSTFilters(TestCase):
         m_total = sncosmo.get_bandpass('lsst_mirrors')
         self.assertListEqual(m_product.tolist(), m_total.trans.tolist())
 
-    def test_combined_lenses_equal_product_of_lenses(self):
+    def test_combined_lenses_equal_product_of_lenses(self) -> None:
         """Test ``lsst_lenses`` filter is the product of all three lenses"""
 
         l1 = sncosmo.get_bandpass('lsst_lens1')
@@ -148,7 +150,7 @@ class RegisterLSSTFilters(TestCase):
         self.assertListEqual(l_product.tolist(), l_total.trans.tolist())
 
     @staticmethod
-    def test_hardware_equal_product_of_components():
+    def test_hardware_equal_product_of_components() -> None:
         """Test ``lsst_hardware`` filter is product of all non-Atm. filters"""
 
         wave = np.arange(3000, 11000)

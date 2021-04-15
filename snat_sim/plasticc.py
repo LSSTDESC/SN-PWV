@@ -1,12 +1,11 @@
-"""The ``plasticc`` module provides data access for PLaSTICC light-curve
+"""The ``plasticc`` module provides data access for PLaSTICC cadence
 simulations stored on the local machine. Data is accessible by specifying
-the cadence and model used in a given simulation.
+the cadence name and model number used in a given simulation.
 
 Usage Example
 -------------
 
-The ``PLaSTICC`` class is responsible to handling data access for
-simulated light-curve data:
+The ``PLaSTICC`` class is responsible for handling data access:
 
 .. doctest:: python
 
@@ -20,23 +19,25 @@ simulated light-curve data:
    >>> lc_data = PLaSTICC('alt_sched', model=11)
    >>> num_lc = lc_data.count_light_curves()
 
-Te class provides **basic** data access via the construction of an iterator
-over all available light-curves for the given cadence / model. You should expect
-the first evaluation of the iterator to be slow since it has to load
-light-curve data into memory as chunks.
+The class provides **basic** data access via the construction of an iterator
+over the observed cadence for each simulated light-curve. The iterator returns
+the unique Id, parameters, and cadecne used in each simulation.
+
+.. note:: You should expect the first evaluation of the iterator to be slow
+   since it has to load data into memory as chunks.
 
 .. code-block:: python
 
-   >>> lc_iterator = lc_data.iter_lc(iter_lim=10, verbose=False)
-   >>> plasticc_lc = next(lc_iterator)
+   >>> lc_iterator = lc_data.iter_cadence(iter_lim=10, verbose=False)
+   >>> snid, sim_params, cadence = next(lc_iterator)
 
-PLaSTICC simulations were run using the ``SNANA`` package in FORTRAN and thus
-are returned using the ``SNANA`` data model. Alternatively, you can convert the
-returned tables to the data model used by the ``sncosmo`` Python package.
+The light-curve simulated by PLAsTICC for each cadence can optionally
+be included with the iterator:
 
 .. code-block:: python
 
-   >>> formatted_lc = PLaSTICC.format_data_to_sncosmo(plasticc_lc)
+   >>> lc_iterator = lc_data.iter_cadence(iter_lim=10, include_lc=True, verbose=False)
+   >>> snid, sim_params, cadence , lc = next(lc_iterator)
 
 Module Docs
 -----------
@@ -51,18 +52,22 @@ from astropy.io import fits
 from astropy.table import Table
 from tqdm import tqdm
 
-from .data_paths import paths_at_init
 from . import types
+from .data_paths import paths_at_init
+from .models import LightCurve, ObservedCadence
+from .types import NumericalParams
+
+YieldedData = Tuple[int, NumericalParams, ObservedCadence]
 
 
 class PLaSTICC:
     """Data access object for PLaSTICC simulation data"""
 
     def __init__(self, cadence: str, model: int) -> None:
-        """Data access object for PLaSTICC light-curve simulations performed using a given cadence and SN model
+        """Data access object for PLaSTICC simulations performed using a given cadence and SN model
 
         Args:
-            cadence: The cadence to load simulations for
+            cadence: The cadence to load data for
             model: The numerical identifier of the PLaSTICC SN model used in the simulation
         """
 
@@ -70,32 +75,8 @@ class PLaSTICC:
         self.model = model
 
     @staticmethod
-    def format_data_to_sncosmo(light_curve: Table) -> Table:
-        """Format a PLaSTICC light-curve to be compatible with sncosmo
-
-        Args:
-            light_curve: Table of PLaSTICC light-curve data
-
-        Returns:
-            An astropy table formatted for use with sncosmo
-        """
-
-        lc = Table({
-            'time': light_curve['MJD'],
-            'band': ['lsst_hardware_' + f.lower().strip() for f in light_curve['FLT']],
-            'flux': light_curve['FLUXCAL'],
-            'fluxerr': light_curve['FLUXCALERR'],
-            'zp': light_curve['ZEROPT'],
-            'photflag': light_curve['PHOTFLAG']
-        })
-
-        lc['zpsys'] = 'AB'
-        lc.meta = light_curve.meta
-        return lc
-
-    @staticmethod
     def get_available_cadences() -> List[str]:
-        """Return a list of all available cadences available in the working environment"""
+        """Return a list of all cadences available in the working environment"""
 
         return [p.name for p in paths_at_init.get_plasticc_dir().glob('*') if p.is_dir()]
 
@@ -115,8 +96,8 @@ class PLaSTICC:
         return total_lc
 
     @staticmethod
-    def _iter_lc_for_header(header_path: types.PathLike, verbose: bool = True):
-        """Iterate over light-curves from a given header file
+    def _iter_cadence_for_header(header_path: types.PathLike, include_lc=False) -> Iterator[YieldedData]:
+        """Iterate over cadence data from a given header file
 
         Files are expected to be written in pairs of a header file 
         (`*HEAD.fits`) that stores target meta data and a photometry file 
@@ -124,10 +105,12 @@ class PLaSTICC:
 
         Args:
             header_path: Path of the header file
-            verbose: Display a progress bar
+            include_lc: Include the PLAsTICC simulated light-curve with iterator outputs
 
         Yields:
-            An Astropy table with the MJD and filter for each observation
+            - The supernova identifier (SNID)
+            - The parameters used in the simulation
+            - The cadence of the simulation
         """
 
         # Load meta data from the header file
@@ -139,34 +122,67 @@ class PLaSTICC:
         with fits.open(phot_file_path) as photometry_hdulist:
             phot_data = Table(photometry_hdulist[1].data)
 
-        # If using pandas instead of astropy on the above line
-        # Avoid ValueError: Big-endian buffer not supported on little-endian compiler
+        # If using pandas instead of astropy on the above line you need to avoid
+        #   ValueError: Big-endian buffer not supported on little-endian compiler
         # by adding in the below code:
         # for key, val in phot_data.iteritems():
         #     phot_data[key] = phot_data[key].to_numpy().byteswap().newbyteorder()
 
-        with tqdm(meta_data.iterrows(), total=len(meta_data), disable=not verbose) as pbar:
-            for idx, meta in pbar:
-                # Select the individual light-curve by it's indices
-                lc_start = int(meta['PTROBS_MIN']) - 1
-                lc_end = int(meta['PTROBS_MAX'])
-                lc = phot_data[lc_start: lc_end]
-                lc.meta.update(meta)
+        for idx, meta in meta_data.iterrows():
+            # Select the individual light-curve by it's indices
+            lc_start = int(meta['PTROBS_MIN']) - 1
+            lc_end = int(meta['PTROBS_MAX'])
+            lc_data = phot_data[lc_start: lc_end]
 
-                pbar.update()
-                pbar.refresh()
+            params = {
+                'ra': meta['RA'],
+                'dec': meta['DECL'],
+                't0': meta['SIM_PEAKMJD'],
+                'x1': meta['SIM_SALT2x1'],
+                'c': meta['SIM_SALT2c'],
+                'z': meta['SIM_REDSHIFT_CMB'],
+                'x0': meta['SIM_SALT2x0']
+            }
 
-                yield lc
+            times = lc_data['MJD']
+            bands = ['lsst_hardware_' + f.lower().strip() for f in lc_data['FLT']]
+            zero_point = lc_data['ZEROPT']
+            cadence = ObservedCadence(
+                obs_times=times,
+                bands=bands,
+                zp=zero_point,
+                zpsys='AB',
+                gain=1,
+                skynoise=lc_data['SKY_SIG']
+            )
 
-    def iter_lc(self, iter_lim: int = None, verbose: bool = True) -> Iterable[Table]:
-        """Iterate over simulated light-curves  for a given cadence
+            if include_lc:
+                lc = LightCurve(
+                    time=times,
+                    band=bands,
+                    flux=lc_data['FLUXCAL'],
+                    fluxerr=lc_data['FLUXCALERR'],
+                    zp=zero_point,
+                    zpsys='AB',
+                    phot_flag=lc_data['PHOTFLAG']
+                )
+
+                yield int(meta['SNID'].strip()), params, cadence, lc
+
+            yield int(meta['SNID'].strip()), params, cadence
+
+    def iter_cadence(self, iter_lim: int = None, include_lc=False, verbose: bool = True) -> Iterator[YieldedData]:
+        """Iterate over available cadence data for each supernova
 
         Args:
             iter_lim: Limit the number of iterated light-curves
+            include_lc: Include the PLAsTICC simulated light-curve with iterator outputs
             verbose: Display a progress bar
 
         Yields:
-            An Astropy table with simulated light-curve data
+            - The supernova identifier (SNID)
+            - The parameters used in the simulation
+            - The cadence of the simulation
         """
 
         max_lc = self.count_light_curves()
@@ -175,10 +191,10 @@ class PLaSTICC:
         i = 0
         with tqdm(self.get_model_headers(), desc=self.cadence, total=total, disable=not verbose) as pbar:
             for header_path in pbar:
-                for lc in self._iter_lc_for_header(header_path, verbose=False):
+                for chunk in self._iter_cadence_for_header(header_path, include_lc=include_lc):
                     pbar.update()
                     pbar.refresh()
-                    yield lc
+                    yield chunk
 
                     i += 1
                     if i >= total:

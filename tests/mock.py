@@ -1,21 +1,22 @@
-"""Mock objects used when evaluating the test suite"""
+"""Functions for building objects used by the test suite"""
 
 from datetime import datetime, timedelta
 from typing import *
 
 import numpy as np
 import pandas as pd
-from astropy.table import Table
+import sncosmo
 
-from snat_sim.models.supernova import ObservedCadence
-from snat_sim.models import PWVModel
+from snat_sim.models import LightCurve, ObservedCadence, PWVModel, SNModel, VariableCatalog
+from snat_sim.pipeline.data_model import PipelinePacket
 
 
 def create_mock_pwv_data(
-        start_time=datetime(2020, 1, 1),
-        end_time=datetime(2020, 12, 31),
-        delta=timedelta(days=1),
-        offset=timedelta(hours=0)):
+        start_time: datetime = datetime(2020, 1, 1),
+        end_time: datetime = datetime(2020, 12, 31),
+        delta: timedelta = timedelta(days=1),
+        offset: timedelta = timedelta(hours=0)
+) -> pd.Series:
     """Return a ``Series`` of mock PWV values that alternate between .5 and 1
 
     Args:
@@ -25,7 +26,7 @@ def create_mock_pwv_data(
         offset    (timedelta): Apply a linear offset to the returned values
 
     Returns:
-        A pandas ``Series`` object
+        Pwv values with a datetime index
     """
 
     index = np.arange(start_time, end_time, delta).astype(datetime) + offset
@@ -34,7 +35,7 @@ def create_mock_pwv_data(
     return pd.Series(pwv, index=index)
 
 
-def create_constant_pwv_model(constant_pwv_value=4):
+def create_mock_pwv_model(constant_pwv_value: float = 4) -> PWVModel:
     """Create a ``PWVModel`` instance that returns a constant PWV at zenith
 
     Args:
@@ -50,81 +51,25 @@ def create_constant_pwv_model(constant_pwv_value=4):
     return PWVModel(model_data)
 
 
-def create_mock_plasticc_light_curve():
-    """Create a mock light-curve in the PLaSTICC data format
+def create_mock_variable_catalog(*spectral_types) -> VariableCatalog:
+    """Create a mock variable reference catalog
+
+    Derives from an underlying PWV model returned by ``create_mock_pwv_model``.
+
+    Args:
+        spectral_types: Spectral types to include in the catalog
 
     Returns:
-        An astropy table
+        A reference catalog with a variable PWV component
     """
 
-    time_values = np.arange(-20, 52)
-    return Table(
-        data={
-            'MJD': time_values,
-            'FLT': list('ugrizY') * (len(time_values) // 6),
-            'FLUXCAL': np.ones_like(time_values),
-            'FLUXCALERR': np.full_like(time_values, .2),
-            'ZEROPT': np.full_like(time_values, 30),
-            'PHOTFLAG': [0] * 10 + [6144] + [4096] * 61,
-            'SKY_SIG': np.full_like(time_values, 80)
-        },
-        meta={
-            'SNID': '123456',
-            'RA': 10,
-            'DECL': -5,
-            'SIM_PEAKMJD': 0,
-            'SIM_SALT2x1': .1,
-            'SIM_SALT2c': .2,
-            'SIM_REDSHIFT_CMB': .5,
-            'SIM_SALT2x0': 1
-        }
-    )
+    return VariableCatalog(create_mock_pwv_model(), *spectral_types)
 
 
-def create_mock_pipeline_outputs():
-    """Create DataFrame with mock results from the snat_sim pipeline using DES SN3YR data
-
-    Returns:
-        An astropy table if ``path`` is not given
-    """
-
-    from sndata.des import SN3YR
-
-    # Download DES data if not already available
-    sn3yr = SN3YR()
-    sn3yr.download_module_data()
-
-    # Load DES fit results and format them to match pipeline outputs
-    pipeline_fits = sn3yr.load_table('SALT2mu_DES+LOWZ_C11.FITRES')
-    pipeline_fits.rename_column('CID', 'snid')
-    pipeline_fits.rename_column('zCMB', 'z')
-    pipeline_fits.rename_column('zCMBERR', 'z_err')
-    pipeline_fits.rename_column('PKMJD', 't0')
-    pipeline_fits.rename_column('PKMJDERR', 't0_err')
-    pipeline_fits.rename_column('x0ERR', 'x0_err')
-    pipeline_fits.rename_column('x1ERR', 'x1_err')
-    pipeline_fits.rename_column('cERR', 'c_err')
-    pipeline_fits.rename_column('NDOF', 'dof')
-    pipeline_fits.rename_column('FITCHI2', 'chisq')
-    pipeline_fits.rename_column('RA', 'ra')
-    pipeline_fits.rename_column('DECL', 'dec')
-    pipeline_fits.rename_column('mB', 'mb')
-    pipeline_fits.rename_column('mBERR', 'mb_err')
-    pipeline_fits.meta = dict()
-
-    # Keep only the data outputted by the snat_sim fitting pipeline
-    keep_columns = ['snid', 'dof', 'chisq', 'ra', 'dec', 'mb', 'mb_err']
-    for param in ['z', 't0', 'x0', 'x1', 'c']:
-        keep_columns.append(param)
-        keep_columns.append(param + '_err')
-    pipeline_fits = pipeline_fits[keep_columns]
-    return pipeline_fits.to_pandas()
-
-
-def create_cadence(
+def create_mock_cadence(
         obs_time: Collection[float] = range(-20, 51),
         bands: Collection[str] = ('decam_g', 'decam_r', 'decam_i', 'decam_z', 'decam_y'),
-        zp: Union[int, float] = 25,
+        zp: Union[int, float] = 30,
         zpsys: str = 'AB',
         gain: int = 1
 ) -> ObservedCadence:
@@ -153,3 +98,60 @@ def create_cadence(
         gain=gain,
         skynoise=0
     )
+
+
+def create_mock_light_curve() -> LightCurve:
+    """Create a mock light-curve
+
+    Returns:
+        A LightCurve instance filled with dummy data
+    """
+
+    data = sncosmo.load_example_data()
+    data['band'] = [b.replace('sdss', 'lsst_hardware_') for b in data['band']]
+    return LightCurve(
+        time=data['time'],
+        band=data['band'],
+        flux=data['flux'],
+        fluxerr=data['fluxerr'],
+        zp=data['zp'],
+        zpsys=data['zpsys']
+    )
+
+
+def create_mock_pipeline_packet(
+        snid: int = 123456, include_lc: bool = True, include_fit: bool = True
+) -> PipelinePacket:
+    """Create a ``PipelinePacket`` instance with mock data
+
+    Args:
+        snid: The unique id value for the pipeline packet
+        include_lc: Include a simulated light_curve in the packet
+        include_fit: Include fit results for the simulated light_curve
+
+    Returns:
+        A ``PipelinePacket`` instance
+    """
+
+    sim_params = {'SNID': 123456, 'ra': 10, 'dec': -5, 't0': 0, 'x1': .1, 'c': .2, 'z': .5, 'x0': 1}
+    time_values = np.arange(-20, 52)
+    cadence = ObservedCadence(
+        obs_times=np.arange(-20, 52),
+        bands=[f'lsst_hardware_{b}' for b in 'ugrizy'] * (len(time_values) // 6),
+        skynoise=np.full_like(time_values, 0),
+        zp=np.full_like(time_values, 30),
+        zpsys=np.full_like(time_values, 'ab', dtype='U2'),
+        gain=np.full_like(time_values, 1),
+    )
+    packet = PipelinePacket(snid, cadence=cadence, sim_params=sim_params)
+
+    if include_lc:
+        model = SNModel('salt2-extended')
+        model.update({p: v for p, v in sim_params.items() if p in model.param_names})
+        packet.light_curve = model.simulate_lc(cadence)
+
+        if include_fit:
+            packet.fit_result, packet.fitted_model = model.fit_lc(packet.light_curve, ['x0', 'x1', 'c'])
+            packet.covariance = packet.fit_result.salt_covariance_linear()
+
+    return packet

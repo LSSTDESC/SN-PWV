@@ -52,6 +52,7 @@ import numpy as np
 import pandas as pd
 
 
+# noinspection PyPep8Naming
 @pd.api.extensions.register_dataframe_accessor('cov_utils')
 class CovarianceAccessor:
     """Pandas DataFrame accessor for covariance calculations"""
@@ -117,11 +118,11 @@ class CovarianceAccessor:
 
     @overload
     def log_covariance(self, paramName: int, paramValue: float, factor: float = 1.) -> np.ndarray:
-        ...
+        ...  # pragma: no cover
 
     @overload
     def log_covariance(self, paramName: str, paramValue: float, factor: float = 1.) -> pd.DataFrame:
-        ...
+        ...  # pragma: no cover
 
     def log_covariance(self, paramName, paramValue, factor=1.):
         """
@@ -140,11 +141,11 @@ class CovarianceAccessor:
         """
 
         covariance_df = self._obj
-        if isinstance(paramName, np.int):
+        if isinstance(paramName, int):
             cov = covariance_df.values
             cov[:, paramName] = factor * cov[:, paramName] / paramValue
             cov[paramName, :] = factor * cov[paramName, :] / paramValue
-            warn('parameter name specified as index. Returning covariance as numpy array.')
+            warn('Parameter name specified as index. Returning covariance as numpy array.')
             return cov
 
         covariance_df[paramName] = factor * covariance_df[paramName] / paramValue

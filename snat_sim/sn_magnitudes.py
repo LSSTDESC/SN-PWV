@@ -1,6 +1,6 @@
 """The ``sn_magnitudes.py`` module is responsible for calculating supernova
-magnitudes as a function of PWV and redshift. Functionality is provided to
-determine magnitudes directly from a SN model and via a light-curve fit.
+magnitudes as a function of PWV and redshift. Functionality includes calculating
+magnitudes directly from a supernova model or via a light-curve fit.
 
 Module Docs
 -----------
@@ -27,7 +27,7 @@ from .models import SNModel
 
 # Todo: Add dictionary keys to docs? - consider named tuple?
 @lru_cache()  # Cache I/O
-def get_config_pwv_vals(config_path: types.PathLike = paths_at_init._config_path) -> types.NumericalParams:
+def get_config_pwv_vals(config_path: types.PathLike = paths_at_init.pwv_config_path) -> types.NumericalParams:
     """Retrieve PWV values to use as reference values
 
     Returned values include:
@@ -55,7 +55,7 @@ def get_config_pwv_vals(config_path: types.PathLike = paths_at_init._config_path
 
 
 def tabulate_mag(
-        model: SNModel,
+        model: Union[SNModel, sncosmo.Model],
         pwv_arr: Collection[types.Numeric],
         z_arr: Collection[types.Numeric],
         bands: List[str],
