@@ -33,25 +33,6 @@ and the cadence used in the simulation.
    ...     message='This fit was a success!'
    ... )
 
-The simulation and fittd parameters can be converted into pandas Dataframes.
-Missing numerical data is masked using the value ``-99.99``.
-
-.. doctest::
-
-   >>> # Pick which simulated and fitted parameters to include in the output
-   >>> include_sim_params = ['x0', 'x1']
-   >>> include_fit_params = ['x0', 'c']
-   >>>
-   >>> packet.sim_params_to_pandas()
-       x1    c    z        x0       t0    SNID
-   0  0.5  0.2  0.5  0.000012  55100.0  1234.0
-
-   >>> packet.fitted_params_to_pandas()
-        snid  fit_z   fit_t0    fit_x0  ...      chisq  ndof         mb    abs_mag
-   0  1234.0    0.5  55100.0  0.000012  ...  35.862946  37.0  22.815929 -19.452564
-
-   [1 rows x 15 columns]
-
 Module Docs
 -----------
 """
