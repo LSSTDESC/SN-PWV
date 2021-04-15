@@ -144,21 +144,6 @@ and the cadence used in the simulation.</p>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>
 </div>
-<p>The simulation and fittd parameters can be converted into pandas Dataframes.
-Missing numerical data is masked using the value <code class="docutils literal notranslate"><span class="pre">-99.99</span></code>.</p>
-<div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Pick which simulated and fitted parameters to include in the output</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">include_sim_params</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">]</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">include_fit_params</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
-<span class="go">&gt;&gt;&gt;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">packet</span><span class="o">.</span><span class="n">sim_params_to_pandas</span><span class="p">()</span>
-<span class="go">    x1    c    z        x0       t0    SNID</span>
-<span class="go">0  0.5  0.2  0.5  0.000012  55100.0  1234.0</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="n">packet</span><span class="o">.</span><span class="n">fitted_params_to_pandas</span><span class="p">()</span>  
-<span class="go">     snid  fit_z   fit_t0    fit_x0  ...      chisq  ndof         mb    abs_mag</span>
-<span class="go">0  1234.0    0.5  55100.0  0.000012  ...  35.862946  37.0  22.815929 -19.452564</span>
-</pre></div>
-</div>
 </div>
 <div class="section" id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>

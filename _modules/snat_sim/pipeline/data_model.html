@@ -149,23 +149,6 @@
 <span class="sd">   ...     message=&#39;This fit was a success!&#39;</span>
 <span class="sd">   ... )</span>
 
-<span class="sd">The simulation and fittd parameters can be converted into pandas Dataframes.</span>
-<span class="sd">Missing numerical data is masked using the value ``-99.99``.</span>
-
-<span class="sd">.. doctest::</span>
-
-<span class="sd">   &gt;&gt;&gt; # Pick which simulated and fitted parameters to include in the output</span>
-<span class="sd">   &gt;&gt;&gt; include_sim_params = [&#39;x0&#39;, &#39;x1&#39;]</span>
-<span class="sd">   &gt;&gt;&gt; include_fit_params = [&#39;x0&#39;, &#39;c&#39;]</span>
-<span class="sd">   &gt;&gt;&gt;</span>
-<span class="sd">   &gt;&gt;&gt; packet.sim_params_to_pandas()</span>
-<span class="sd">       x1    c    z        x0       t0    SNID</span>
-<span class="sd">   0  0.5  0.2  0.5  0.000012  55100.0  1234.0</span>
-
-<span class="sd">   &gt;&gt;&gt; packet.fitted_params_to_pandas()  # doctest: +ELLIPSIS</span>
-<span class="sd">        snid  fit_z   fit_t0    fit_x0  ...      chisq  ndof         mb    abs_mag</span>
-<span class="sd">   0  1234.0    0.5  55100.0  0.000012  ...  35.862946  37.0  22.815929 -19.452564</span>
-
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
 <span class="sd">&quot;&quot;&quot;</span>
