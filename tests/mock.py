@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import sncosmo
 
-from snat_sim.models import LightCurve, ObservedCadence, PWVModel, SNModel
+from snat_sim.models import LightCurve, ObservedCadence, PWVModel, SNModel, VariableCatalog
 from snat_sim.pipeline.data_model import PipelinePacket
 
 
@@ -49,6 +49,21 @@ def create_mock_pwv_model(constant_pwv_value: float = 4) -> PWVModel:
     pwv = np.full(len(date_sampling), constant_pwv_value)
     model_data = pd.Series(pwv, index=pd.to_datetime(date_sampling))
     return PWVModel(model_data)
+
+
+def create_mock_variable_catalog(*spectral_types) -> VariableCatalog:
+    """Create a mock variable reference catalog
+
+    Derives from an underlying PWV model returned by ``create_mock_pwv_model``.
+
+    Args:
+        spectral_types: Spectral types to include in the catalog
+
+    Returns:
+        A reference catalog with a variable PWV component
+    """
+
+    return VariableCatalog(create_mock_pwv_model(), *spectral_types)
 
 
 def create_mock_cadence(
@@ -122,7 +137,7 @@ def create_mock_pipeline_packet(
     time_values = np.arange(-20, 52)
     cadence = ObservedCadence(
         obs_times=np.arange(-20, 52),
-        bands=[f'lsst_hardware_{b}' for b in 'ugrizY'] * (len(time_values) // 6),
+        bands=[f'lsst_hardware_{b}' for b in 'ugrizy'] * (len(time_values) // 6),
         skynoise=np.full_like(time_values, 0),
         zp=np.full_like(time_values, 30),
         zpsys=np.full_like(time_values, 'ab', dtype='U2'),

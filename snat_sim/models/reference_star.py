@@ -227,7 +227,7 @@ class ReferenceCatalog:
 class VariableCatalog:
     """A reference star catalog that determines the time dependent PWV concentration from an underlying PWV model"""
 
-    def __init__(self, *spectral_types: str, pwv_model: PWVModel) -> None:
+    def __init__(self, pwv_model: PWVModel, *spectral_types: str) -> None:
         """Create a reference star catalog composed of the given spectral types and a PWV model
 
         Args:

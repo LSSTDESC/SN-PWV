@@ -97,7 +97,7 @@ class SimulateLightCurves(Node):
             cosmo: Cosmology to assume in the simulation
         """
 
-        self.sim_model = sn_model
+        self.sim_model = copy(sn_model)
         self.catalog = catalog
         self.add_scatter = add_scatter
         self.fixed_snr = fixed_snr
@@ -110,7 +110,7 @@ class SimulateLightCurves(Node):
         self.failure_output = Output('Simulation Failure')
         super().__init__(num_processes)
 
-    def duplicate_plasticc_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> LightCurve:
+    def simulate_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> LightCurve:
         """Duplicate a plastic light-curve using the simulation model
 
         Args:
@@ -137,7 +137,7 @@ class SimulateLightCurves(Node):
 
         for packet in self.input.iter_get():
             try:
-                packet.light_curve = self.duplicate_plasticc_lc(
+                packet.light_curve = self.simulate_lc(
                     packet.sim_params, packet.cadence
                 )
 

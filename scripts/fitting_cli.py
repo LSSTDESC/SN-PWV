@@ -115,7 +115,7 @@ class AdvancedNamespace(argparse.Namespace):
     def catalog(self) -> models.VariableCatalog:
         """The reference star catalog to calibrate simulations with."""
 
-        return models.VariableCatalog(*self.ref_stars, pwv_model=self.pwv_model)
+        return models.VariableCatalog(self.pwv_model, *self.ref_stars)
 
     @property
     def add_scatter(self):

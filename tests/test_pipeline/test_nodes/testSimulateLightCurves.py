@@ -2,11 +2,12 @@
 
 from unittest import TestCase
 
+import pandas as pd
 from egon.mock import MockSource, MockTarget
 
 from snat_sim.models import SNModel
 from snat_sim.pipeline.nodes import SimulateLightCurves
-from tests.mock import create_mock_pipeline_packet
+from tests.mock import create_mock_pipeline_packet, create_mock_variable_catalog
 
 
 class ResultRouting(TestCase):
@@ -52,3 +53,29 @@ class ResultRouting(TestCase):
 
         self.assertFalse(self.success_target.accumulated_data)
         self.assertTrue(self.failure_target.accumulated_data)
+
+
+class LightCurveSimulation(TestCase):
+    """Tests relating to the simulation of light-curves by the node"""
+
+    @staticmethod
+    def test_simulation_includes_reference_catalog() -> None:
+        """Test simulated light-curves are calibrated if a reference catalog is specified"""
+
+        model = SNModel('salt2-extended')
+        catalog = create_mock_variable_catalog('G2', 'M5', 'K2')
+        packet = create_mock_pipeline_packet(include_lc=False)
+
+        print(model.parameters)
+        node_without_catalog = SimulateLightCurves(model, add_scatter=False)
+        uncalibrated_lc = node_without_catalog.simulate_lc(packet.sim_params, packet.cadence)
+
+        print(model.parameters)
+        node_with_catalog = SimulateLightCurves(model, add_scatter=False, catalog=catalog)
+        calibrated_lc = node_with_catalog.simulate_lc(packet.sim_params, packet.cadence)
+
+        ra, dec = packet.sim_params['ra'], packet.sim_params['dec']
+        pd.testing.assert_frame_equal(
+            catalog.calibrate_lc(uncalibrated_lc, ra, dec).to_pandas(),
+            calibrated_lc.to_pandas()
+        )
