@@ -13,7 +13,7 @@ and the cadence used in the simulation.
    >>> import sncosmo
    >>> from snat_sim.models import SNModel, LightCurve
    >>> from snat_sim.pipeline.data_model import PipelinePacket
-   
+
    >>> # Load example data and an example supernova model
    >>> example_data = sncosmo.load_example_data()
    >>> light_curve = LightCurve.from_sncosmo(example_data)
@@ -43,12 +43,12 @@ Missing numerical data is masked using the value ``-99.99``.
    >>> include_fit_params = ['x0', 'c']
    >>>
    >>> packet.sim_params_to_pandas()
-       x1    c    z        x0       t0    SNID                  message
-   0  0.5  0.2  0.5  0.000012  55100.0  1234.0  This fit was a success!
+       x1    c    z        x0       t0    SNID
+   0  0.5  0.2  0.5  0.000012  55100.0  1234.0
 
    >>> packet.fitted_params_to_pandas()  # doctest: +ELLIPSIS
-      snid fit_z   fit_t0  ...        mb    abs_mag                  message
-   0  1234   0.5  55100.0  ...  22.80058 -19.467872  This fit was a success!
+        snid  fit_z   fit_t0  ...        mb    abs_mag
+   0  1234.0    0.5  55100.0  ... 22.815929 -19.452564
 
 Module Docs
 -----------

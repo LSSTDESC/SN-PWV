@@ -16,6 +16,7 @@ A summary of the available models is provided below:
    SNModel
    ReferenceStar
    ReferenceCatalog
+   VariableCatalog
 
 Supernova models (``SNModel``) are designed to closely resemble the behavior
 of the ``sncosmo`` package. However, unlike ``sncosmo.Model`` objects, the
@@ -30,6 +31,16 @@ package is listed below:
    SeasonalPWVTrans
    VariablePWVTrans
 
+Simulation results are generally returned using one or more of the following
+object types:
+
+.. autosummary::
+   :nosignatures:
+
+   ObservedCadence
+   LightCurve
+   SNFitResult
+
 Usage Example
 -------------
 
@@ -40,8 +51,8 @@ The ``SNModel`` class from ``snat_sim`` acts as a drop-in replacement for
 the ``Model`` classes built into ``sncosmo`` but provides extended
 functionality.
 
-Like ``sncosmo``, models are instantiated for a given spectral
-template in addition to observer or rest-frame propagation effects. In the
+Supernova models are instantiated using a spectral template with the addition of
+optional observer or rest-frame effects. In the
 following example, atmospheric propagation effects due to precipitable water
 vapor are added to a Salt2 supernova model.
 
@@ -88,7 +99,7 @@ object:
 
    >>> # Here we simulate a light-curve with a fixed signal to noise ratio
    >>> light_curve_fixed_snr = supernova_model.simulate_lc(cadence, fixed_snr=5)
-    >>> print(type(light_curve_fixed_snr))
+   >>> print(type(light_curve_fixed_snr))
    <class 'snat_sim.models.light_curve.LightCurve'>
 
 The ``LightCurve`` class represents astronomical light-curves and provides an
@@ -96,34 +107,14 @@ easy interface for casting the data into other commonly used object types.
 
 .. doctest:: python
 
+   >>> import sncosmo
    >>> from snat_sim.models import LightCurve
 
-   >>> light_curve_data = LightCurve(
-   ... time=[55070.000000, 55072.051282, 55074.102564, 55076.153846],
-   ... band=['sdssg', 'sdssr', 'sdssi', 'sdssz'],
-   ... flux=[0.363512, -0.200801,  0.307494,  1.087761],
-   ... fluxerr=[0.672844, 0.672844, 0.672844, 0.672844],
-   ... zp=[25.0, 25.0, 25.0, 25.0],
-   ... zpsys=['ab', 'ab', 'ab', 'ab'])
+   >>> example_data = sncosmo.load_example_data()
+   >>> light_curve_data = LightCurve.from_sncosmo(example_data)
 
-   >>> light_curve_data.to_pandas()
-                  band      flux   fluxerr    zp zpsys  phot_flag
-   time
-   55070.000000  sdssg  0.363512  0.672844  25.0    ab        0.0
-   55072.051282  sdssr -0.200801  0.672844  25.0    ab        0.0
-   55074.102564  sdssi  0.307494  0.672844  25.0    ab        0.0
-   55076.153846  sdssz  1.087761  0.672844  25.0    ab        0.0
-
-
-   >>> light_curve_data.to_astropy()
-       time      band    flux   fluxerr     zp   zpsys phot_flag
-     float64     str5  float64  float64  float64  str2  float64
-   ------------ ----- --------- -------- ------- ----- ---------
-        55070.0 sdssg  0.363512 0.672844    25.0    ab       0.0
-   55072.051282 sdssr -0.200801 0.672844    25.0    ab       0.0
-   55074.102564 sdssi  0.307494 0.672844    25.0    ab       0.0
-   55076.153846 sdssz  1.087761 0.672844    25.0    ab       0.0
-
+   >>> lc_as_dataframe = light_curve_data.to_pandas()
+   >>> lc_as_table = light_curve_data.to_astropy()
 
 Fitting Light-Curves
 ^^^^^^^^^^^^^^^^^^^^
@@ -134,9 +125,15 @@ Notice in the below example that the returned object types are classes from the
 
 .. doctest:: python
 
-   >>> fit_result, fitted_model = supernova_model.fit_lc(light_curve, vparam_names=['x0', 'x1', 'c'])
-   >>> print(type(fit_result), type(fitted_model))
-   <class 'snat_sim.models.supernova.SNFitResult'> <class 'snat_sim.models.supernova.SNModel'>
+   >>> supernova_model.set(z=.5, t0=55100.0)
+   >>> fit_result, fitted_model = supernova_model.fit_lc(
+   ...     light_curve_data, vparam_names=['x0', 'x1', 'c'])
+
+   >>> print(type(fit_result))
+   <class 'snat_sim.models.supernova.SNFitResult'>
+
+   >>> print(type(fitted_model))
+   <class 'snat_sim.models.supernova.SNModel'>
 
 The ``SNFitResult`` object is similar to the ``Result`` class from ``sncosmo``
 but **is not backward compatible**. ``SNFitResult`` instances provide access
@@ -150,16 +147,16 @@ to fit results as floats or ``pandas`` objects (e.g., ``pandas.Series`` or
         message: Minimization exited successfully.
           ncall: 77
            nfit: 1
-          chisq: 35.863
+          chisq: 35.537
            ndof: 37
-    param_names: ['z', 't0', 'x0', 'x1', 'c']
-     parameters: [5.000e-01 5.510e+04 1.188e-05 4.382e-01 2.190e-01]
+    param_names: ['z', 't0', 'x0', 'x1', 'c', 'Atmospherepwv']
+     parameters: [5.000e-01 5.510e+04 1.194e-05 4.257e-01 2.483e-01 4.000e+00]
    vparam_names: ['x0', 'x1', 'c']
-         errors: [3.777e-07 3.178e-01 2.862e-02]
+         errors: [3.830e-07 3.173e-01 2.931e-02]
      covariance:
-       [[ 1.426e-13 -6.461e-08 -7.622e-09]
-        [-6.461e-08  1.010e-01  1.223e-03]
-        [-7.622e-09  1.223e-03  8.189e-04]]
+       [[ 1.467e-13 -6.472e-08 -7.966e-09]
+        [-6.472e-08  1.007e-01  1.174e-03]
+        [-7.966e-09  1.174e-03  8.590e-04]]
 
 Fit result objects are also capable of calculating the variance in the
 distance modulus given the alpha/beta standardization parameters:
@@ -168,19 +165,26 @@ distance modulus given the alpha/beta standardization parameters:
 
    >>> from snat_sim import constants as const
 
+   >>> # The covariance matrix used when determining error values
    >>> fit_result.salt_covariance_linear()
+             mB        x1         c
+   mB  0.001213  0.005886  0.000725
+   x1  0.005886  0.100684  0.001174
+   c   0.000725  0.001174  0.000859
 
    >>> # Here we use alpha and beta parameters from Betoule et al. 2014
-   >>> mu_variance = fit_result.mu_variance_linear(alpha=const.betoule_alpha, beta=const.betoule_beta)
+   >>> mu_variance = fit_result.mu_variance_linear(
+   ...     alpha=const.betoule_alpha, beta=const.betoule_beta)
+
    >>> print(f'{mu_variance: .5f}')
-    0.00735
+    0.00762
 
 Calibrating Light-Curves
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 Your use case may involve calibrating simulated light-curves relative to a
-stellar reference catalog. The spectrum for individual spectral types can be retreived
-using the ``ReferenceStar`` class:
+stellar reference catalog. The spectrum for individual spectral types can be
+retreived using the ``ReferenceStar`` class:
 
 .. doctest:: python
 
@@ -207,11 +211,8 @@ stellar types. Catalog instances can be used to calibrate supernoca light-curves
 
 .. code-block:: python
 
-   >>> import sncosmo
-
-   >>> light_curve = sncosmo.load_example_data()
    >>> reference_catalog = reference_star.ReferenceCatalog('G2', 'M5')
-   >>> print(reference_catalog.calibrate_lc(light_curve, pwv=4))
+   >>> print(reference_catalog.calibrate_lc(light_curve_data, pwv=4))
 
 Module Docs
 -----------

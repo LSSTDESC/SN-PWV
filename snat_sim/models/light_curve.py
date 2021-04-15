@@ -1,4 +1,4 @@
-"""Abstract representations of astronomical time-series data."""
+"""Abstract representations of astronomical time-series data"""
 
 from __future__ import annotations
 
@@ -13,9 +13,6 @@ import sncosmo.photdata
 from astropy.table import Table
 
 from .. import types
-
-if TYPE_CHECKING:  # pragma: no cover
-    from ..types import Numeric
 
 SNCOSMO_ALIASES = dict()
 for column_name, alias_set in sncosmo.photdata.PHOTDATA_ALIASES.items():
@@ -120,11 +117,11 @@ class LightCurve:
 
     def __init__(
             self,
-            time: Collection[Numeric],
+            time: Collection[float],
             band: Collection[str],
-            flux: Collection[Numeric],
-            fluxerr: Collection[Numeric],
-            zp: Collection[Numeric],
+            flux: Collection[float],
+            fluxerr: Collection[float],
+            zp: Collection[float],
             zpsys: Collection[str],
             phot_flag: Optional[Collection[int]] = None
     ) -> None:

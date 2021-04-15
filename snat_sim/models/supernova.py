@@ -212,15 +212,16 @@ class SNModel(sncosmo.Model):
 class SNFitResult(sncosmo.utils.Result):
     """Represents results from a ``SNModel`` being fit to a ``LightCurve``"""
 
-    def __eq__(self, other):
+    def __eq__(self, other: SNFitResult) -> bool:
 
-        if isinstance(other, self.__class__) and (self.keys() == other.keys()):
-            for key, val in self.items():
-                if not np.array_equal(val, other[key]):
-                    return False
+        if (not isinstance(other, self.__class__)) or (self.keys() != other.keys()):
+            return False
 
-            return True
-        return False
+        for key, val in self.items():
+            if not np.array_equal(val, other[key]):
+                return False
+
+        return True
 
     @property
     def param_names(self) -> List[str]:
@@ -309,7 +310,7 @@ class SNFitResult(sncosmo.utils.Result):
         sc = _cov.cov_utils.subcovariance(paramList=['mB', 'x1', 'c'])
         return sc.cov_utils.expAVsquare(arr)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         # Extremely similar to the base representation of the parent class but
         # cleaned up so values are displayed in neat rows / columns
 

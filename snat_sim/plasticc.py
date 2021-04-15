@@ -20,14 +20,24 @@ The ``PLaSTICC`` class is responsible for handling data access:
    >>> num_lc = lc_data.count_light_curves()
 
 The class provides **basic** data access via the construction of an iterator
-over the observed cadence for each simulated light-curve. You should
-expect the first evaluation of the iterator to be slow since it has to load
-data into memory as chunks.
+over the observed cadence for each simulated light-curve. The iterator returns
+the unique Id, parameters, and cadecne used in each simulation.
+
+.. note:: You should expect the first evaluation of the iterator to be slow
+   since it has to load data into memory as chunks.
 
 .. code-block:: python
 
    >>> lc_iterator = lc_data.iter_cadence(iter_lim=10, verbose=False)
-   >>> plasticc_lc = next(lc_iterator)
+   >>> snid, sim_params, cadence = next(lc_iterator)
+
+The light-curve simulated by PLAsTICC for each cadence can optionally
+be included with the iterator:
+
+.. code-block:: python
+
+   >>> lc_iterator = lc_data.iter_cadence(iter_lim=10, include_lc=True, verbose=False)
+   >>> snid, sim_params, cadence , lc = next(lc_iterator)
 
 Module Docs
 -----------

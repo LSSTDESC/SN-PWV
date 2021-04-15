@@ -16,12 +16,11 @@ specified by name when constructing the decorator:
 
    >>> from snat_sim.utils.caching import Cache
 
-
-   >>> @Cache('x', 'y', cache_size=1000)
-   ... def add(x, y):
+   >>> def add(x: np.array, y: np.array) -> np.array:
    ...     print('The function has been called!')
    ...     return x + y
 
+   >>> add = Cache(add, 1000, 'x', 'y')
    >>> x_arr = np.arange(1, 5)
    >>> y_arr = np.arange(5, 9)
 
@@ -31,22 +30,6 @@ specified by name when constructing the decorator:
 
    >>> print(add(x_arr, y_arr))
    [ 6  8 10 12]
-
-Class methods can also be decorated, but should be decorated at instantiation
-as follows:
-
-.. doctest:: python
-
-   >>> class Foo:
-   ...
-   ...     def __init__(self):
-   ...         self.add = Cache('x', 'y', cache_size=1000)(self.add)
-   ...
-   ...     @staticmethod
-   ...     def add( x, y):
-   ...         return x + y
-   ...
-
 
 Module API
 ----------
