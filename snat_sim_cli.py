@@ -144,7 +144,8 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         iter_lim=command_line_args.iter_lim,
         catalog=command_line_args.catalog,
         add_scatter=command_line_args.add_scatter,
-        fixed_snr=command_line_args.fixed_snr
+        fixed_snr=command_line_args.fixed_snr,
+        overwrite=command_line_args.overwrite
     )
 
     pipeline.validate()
@@ -190,6 +191,12 @@ def create_cli_parser() -> argparse.ArgumentParser:
         type=Path,
         required=True,
         help='Output file path (a .csv extension is enforced).'
+    )
+
+    parser.add_argument(
+        '--overwrite',
+        action='store_true',
+        help='Allow existing results to be overwritten.'
     )
 
     #######################################################################
