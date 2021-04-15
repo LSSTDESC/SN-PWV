@@ -54,7 +54,7 @@ from egon.pipeline import Pipeline
 from . import nodes
 from .nodes import FitLightCurves, LoadPlasticcCadence, SimulateLightCurves, WritePipelinePacket
 from ..models import SNModel, VariableCatalog
-from ..plasticc import PLaSTICC
+from ..plasticc import PLAsTICC
 
 
 class FittingPipeline(Pipeline):
@@ -103,7 +103,7 @@ class FittingPipeline(Pipeline):
         out_path.parent.mkdir(exist_ok=True)
 
         # Define the nodes of the analysis pipeline
-        cadence = PLaSTICC(cadence, model=11)
+        cadence = PLAsTICC(cadence, model=11)
         self.load_plastic = LoadPlasticcCadence(cadence, iter_lim=iter_lim)
         self.write_to_disk = WritePipelinePacket(out_path)
 

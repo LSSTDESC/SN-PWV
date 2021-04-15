@@ -1,22 +1,22 @@
-"""The ``plasticc`` module provides data access for PLaSTICC cadence
+"""The ``plasticc`` module provides data access for PLAsTICC cadence
 simulations stored on the local machine. Data is accessible by specifying
 the cadence name and model number used in a given simulation.
 
 Usage Example
 -------------
 
-The ``PLaSTICC`` class is responsible for handling data access:
+The ``PLAsTICC`` class is responsible for handling data access:
 
 .. doctest:: python
 
-   >>> from snat_sim.plasticc import PLaSTICC
+   >>> from snat_sim.plasticc import PLAsTICC
 
    >>> # Get a list of cadences available in the directory printed above
-   >>> print(PLaSTICC.get_available_cadences())  #doctest:+SKIP
+   >>> print(PLAsTICC.get_available_cadences())  #doctest:+SKIP
    >>> [ 'alt_sched' ]  #doctest:+SKIP
 
    >>> # Count the number of light-curves for a given cadence and SN model
-   >>> lc_data = PLaSTICC('alt_sched', model=11)
+   >>> lc_data = PLAsTICC('alt_sched', model=11)
    >>> num_lc = lc_data.count_light_curves()
 
 The class provides **basic** data access via the construction of an iterator
@@ -60,15 +60,15 @@ from .types import NumericalParams
 YieldedData = Tuple[int, NumericalParams, ObservedCadence]
 
 
-class PLaSTICC:
-    """Data access object for PLaSTICC simulation data"""
+class PLAsTICC:
+    """Data access object for PLAsTICC simulation data"""
 
     def __init__(self, cadence: str, model: int) -> None:
-        """Data access object for PLaSTICC simulations performed using a given cadence and SN model
+        """Data access object for PLAsTICC simulations performed using a given cadence and SN model
 
         Args:
             cadence: The cadence to load data for
-            model: The numerical identifier of the PLaSTICC SN model used in the simulation
+            model: The numerical identifier of the PLAsTICC SN model used in the simulation
         """
 
         self.cadence = cadence
