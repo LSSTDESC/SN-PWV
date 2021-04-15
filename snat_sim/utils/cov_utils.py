@@ -1,6 +1,10 @@
 """The ``cov_utils`` module extends ``pandas.DataFrame`` objects to include
 covariance calculations relevant to processing supernova fit results.
 
+.. note:: This module is heavily based on code ported from the
+   `AnalyzeSN <https://github.com/rbiswas4/AnalyzeSN>`_ project.
+
+
 Usage Example
 -------------
 
