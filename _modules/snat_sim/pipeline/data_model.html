@@ -198,7 +198,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">out_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sim_params</span><span class="p">)</span>
-        <span class="n">out_data</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snid</span>
+        <span class="n">out_data</span><span class="p">[</span><span class="s1">&#39;snid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">snid</span>
         <span class="c1"># out_data[&#39;message&#39;] = self.message</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">out_data</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
 
@@ -239,7 +239,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">success</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">success</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span> <span class="k">else</span> <span class="kc">False</span>
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;snid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">snid</span><span class="p">],</span> <span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">success</span><span class="p">],</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">]})</span></div></div>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;snid&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">snid</span><span class="p">],</span> <span class="s1">&#39;success&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">success</span><span class="p">],</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="p">[:</span><span class="mi">150</span><span class="p">]]})</span></div></div>
 </pre></div>
 
           </div>

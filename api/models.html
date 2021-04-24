@@ -731,6 +731,25 @@ from the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="snat_sim.models.pwv.PWVTransmissionModel.calc_transmission">
+<code class="sig-name descname"><span class="pre">calc_transmission</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#PWVTransmissionModel.calc_transmission"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.PWVTransmissionModel.calc_transmission" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluate the transmission model at the given wavelengths</p>
+<p>Returns a <code class="docutils literal notranslate"><span class="pre">Series</span></code> object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is a scalar, and a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>
+object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is an array. Wavelengths are expected in angstroms.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pwv</strong> – Line of sight PWV to interpolate for</p></li>
+<li><p><strong>wave</strong> – Wavelengths to evaluate transmission (Defaults to <code class="docutils literal notranslate"><span class="pre">samp_wave</span></code> attribute)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The interpolated transmission at the given wavelengths / resolution</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
