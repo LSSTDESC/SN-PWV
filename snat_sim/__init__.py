@@ -4,8 +4,10 @@ variability will impact Type Ia Supernovae observed by the Legacy Survey of
 Space and Time (LSST).
 """
 
-from . import *
+import warnings
+from tables import NaturalNameWarning
 
+from . import *
 from .utils import setup_environment as _setup_environment
 
 __version__ = 'Development'
@@ -14,3 +16,5 @@ __maintainer__ = 'Daniel Perrefort'
 __license__ = 'GPL 3.0'
 
 _setup_environment()
+warnings.simplefilter('ignore', category=DeprecationWarning)
+warnings.filterwarnings('ignore', category=NaturalNameWarning)

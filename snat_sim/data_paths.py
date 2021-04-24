@@ -60,18 +60,7 @@ class DataPaths:
             self._plasticc_directory = self.data_dir / 'plasticc'
 
     @property
-    def joblib_path(self) -> Path:
-        """Directory to store function calls cached by joblib"""
-
-        data_path = os.environ.get(
-            'SNAT_SIM_CACHE',
-            self.data_dir / 'joblib'
-        )
-
-        return Path(data_path)
-
-    @property
-    def _config_path(self) -> Path:
+    def pwv_config_path(self) -> Path:
         """The path of the PWV configuration file"""
 
         return self.data_dir / 'defaults' / 'ref_pwv.yaml'
@@ -102,7 +91,7 @@ class DataPaths:
         return path
 
     def get_plasticc_dir(self, cadence: Optional[str] = None, model: Optional[int] = None) -> Path:
-        """Directory with PLaSTICC simulation data
+        """Directory with PLAsTICC simulation data
 
         Args:
             cadence: Return subdirectory for the given simulation cadence
@@ -122,7 +111,7 @@ class DataPaths:
         return plasticc_directory
 
 
-# Prebuilt object representing the ``data_dir`` as determined at package init
+# Represents the data locations as determined at package init
 # Objects instantiated later on may have a different ``data_dir`` if the variables
 # in the working environment change during runtime
 paths_at_init = DataPaths()

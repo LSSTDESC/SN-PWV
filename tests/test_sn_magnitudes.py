@@ -1,30 +1,30 @@
-"""Tests for the ``sn_magnitudes`` module"""
+"""Tests for the ``snat_sim.sn_magnitudes`` module"""
 
 from unittest import TestCase
 
 import numpy as np
 import sncosmo
 
-from snat_sim import constants as const
-from snat_sim import models, sn_magnitudes
+from snat_sim import sn_magnitudes, constants as const
+from snat_sim.models import StaticPWVTrans
 
 
 class GetConfigPWVValues(TestCase):
     """Tests for the ``get_config_pwv_vals`` function"""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         """Load the default config values"""
         cls.config_dict = sn_magnitudes.get_config_pwv_vals()
 
-    def test_expected_keys(self):
+    def test_expected_keys(self) -> None:
         """Test returned dictionary has expected keys"""
 
-        returned_keys = set(self.config_dict.keys())
-        expected = {'reference_pwv', 'slope_start', 'slope_end'}
+        returned_keys = tuple(self.config_dict.keys())
+        expected = ('reference_pwv', 'slope_start', 'slope_end')
         self.assertSequenceEqual(expected, returned_keys)
 
-    def test_values_are_equidistant(self):
+    def test_values_are_equidistant(self) -> None:
         """Test slope start / end values are equidistant from reference PWV"""
 
         upper_dist = self.config_dict['reference_pwv'] - self.config_dict['slope_end']
@@ -35,9 +35,11 @@ class GetConfigPWVValues(TestCase):
 class TestTabulateMagnitudes(TestCase):
     """Tests for the ``tabulate_mag`` function"""
 
-    def setUp(self):
+    def setUp(self) -> None:
+        """Calculate magnitudes with a supernova model suffering from PWV absorption"""
+
         self.model = sncosmo.Model('salt2-extended')
-        self.model.add_effect(models.StaticPWVTrans(), '', 'obs')
+        self.model.add_effect(StaticPWVTrans(), '', 'obs')
 
         self.pwv_vals = 0.001, 5
         self.z_vals = 0.001, .5
@@ -46,7 +48,7 @@ class TestTabulateMagnitudes(TestCase):
         self.mag_dict = sn_magnitudes.tabulate_mag(
             self.model, self.pwv_vals, self.z_vals, self.bands, verbose=False)
 
-    def test_values_match_sncosmo_simulation(self):
+    def test_values_match_sncosmo_simulation(self) -> None:
         """Test returned values equal simulated values from sncosmo"""
 
         # Tabulated results for a single band
@@ -68,13 +70,13 @@ class TestTabulateMagnitudes(TestCase):
 
         np.testing.assert_allclose(expected_mag, tabulated_mag)
 
-    def test_all_bands_returned(self):
+    def test_all_bands_returned(self) -> None:
         """Test values are returned for each input band"""
 
         returned_bands = list(self.mag_dict.keys())
         self.assertSequenceEqual(self.bands, returned_bands)
 
-    def test_returned_array_shape(self):
+    def test_returned_array_shape(self) -> None:
         """Test returned dictionary values are arrays with correct shape"""
 
         shape = len(self.pwv_vals), len(self.z_vals)

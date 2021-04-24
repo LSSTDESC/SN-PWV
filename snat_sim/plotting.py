@@ -48,23 +48,22 @@ from pytz import utc
 
 from . import constants as const
 from . import models
-
-Numeric = Union[int, float]
+from .types import Numeric
 
 
 def _multi_line_plot(
-        x_arr: np.ndarray, y_arr: np.ndarray, z_arr: np.ndarray,
-        axis: plt.Axes, label: Optional[str] = None) -> None:
+        x_arr: np.ndarray, y_arr: np.ndarray, z_arr: np.ndarray, axis: plt.Axes, label: Optional[str] = None
+) -> None:
     """Plot a 2d y array vs a 1d x array.
 
-    Lines are color coded according to values of a 2d z array
+    Lines are color coded according to values of the 2d ``z_arr`` array
 
     Args:
-        x_arr: A 1d array
-        y_arr: A 2d array
-        z_arr: A 2d array
+        x_arr: A 1d array with x-Values
+        y_arr: A 2d array with y values for multiple lines
+        z_arr: A 2d array with z (color) values for x,y pair
         axis: Axis to plot on
-        label: Optional label to format with ``z`` value
+        label: Optional label to format with ``z_arr`` values
     """
 
     # noinspection PyUnresolvedReferences
@@ -80,9 +79,13 @@ def _multi_line_plot(
 
 
 def plot_delta_mag_vs_z(
-        pwv_arr: np.ndarray, z_arr: np.ndarray, delta_mag_arr: np.ndarray,
-        axis: Optional[plt.axis] = None, label: Optional[str] = None) -> None:
-    """Single panel, multi-line plot of change in magnitude vs z. Color coded by PWV.
+        pwv_arr: np.ndarray,
+        z_arr: np.ndarray,
+        delta_mag_arr: np.ndarray,
+        axis: Optional[plt.axis] = None,
+        label: Optional[str] = None
+) -> None:
+    """Single panel, multi-line plot of change in magnitude vs redshift color coded by PWV
 
     Args:
         pwv_arr: Array of PWV values
@@ -102,9 +105,13 @@ def plot_delta_mag_vs_z(
 
 
 def plot_delta_mag_vs_pwv(
-        pwv_arr: np.ndarray, z_arr: np.ndarray, delta_mag_arr: np.ndarray,
-        axis: Optional[plt.axis] = None, label: Optional[str] = None) -> None:
-    """Single panel, multi-line plot for change in magnitude vs PWV. Color coded by redshift.
+        pwv_arr: np.ndarray,
+        z_arr: np.ndarray,
+        delta_mag_arr: np.ndarray,
+        axis: Optional[plt.axis] = None,
+        label: Optional[str] = None
+) -> None:
+    """Single panel, multi-line plot for change in magnitude vs PWV color coded by redshift
 
     Args:
         pwv_arr: Array of PWV values
@@ -125,8 +132,9 @@ def plot_delta_mag_vs_pwv(
 
 # noinspection PyUnusedLocal
 def plot_derivative_mag_vs_z(
-        pwv_arr: np.ndarray, z_arr: np.ndarray, slope_arr: np.ndarray, axis: Optional[plt.axis] = None) -> None:
-    """Single panel, multi-line plot of slope in delta magnitude vs z. Color coded by PWV.
+        pwv_arr: np.ndarray, z_arr: np.ndarray, slope_arr: np.ndarray, axis: Optional[plt.axis] = None
+) -> None:
+    """Single panel, multi-line plot of slope in delta magnitude vs redshift color coded by PWV
 
     Args:
         pwv_arr: Array of PWV values
@@ -144,6 +152,7 @@ def plot_derivative_mag_vs_z(
     axis.set_ylabel(r'$\frac{\Delta \, m}{\Delta \, PWV} |_{PWV = 4 mm}$', fontsize=20)
 
 
+# noinspection PyUnboundLocalVariable
 def plot_pwv_mag_effects(
         pwv_arr: np.ndarray,
         z_arr: np.ndarray,
@@ -152,7 +161,7 @@ def plot_pwv_mag_effects(
         bands: List[str],
         figsize: Tuple[Numeric, Numeric] = (10, 8)
 ) -> Tuple[plt.Figure, plt.Axes]:
-    """Multi panel plot with a column for each band and rows for the change in magnitude vs pwv and redshift parameters.
+    """Multi panel plot with a column for each band and rows for the change in magnitude vs pwv and redshift parameters
 
     ``delta_mag`` is expected to have band names as keys, and 2d arrays as
     values. Each array should represent the change in magnitude for each
@@ -252,10 +261,10 @@ def plot_spectral_template(
         resolution: Numeric = 2,
         figsize: Tuple[Numeric, Numeric] = (6, 4)
 ) -> Tuple[plt.Figure, np.array]:
-    """Plot of the salt2-extended spectral template with overlaid PWV and bandpass throughput curves.
+    """Plot a spectral template with overlaid PWV and bandpass throughput curves
 
     Args:
-        source: sncosmo source to use as spectral template
+        source: ``sncosmo`` source to use as spectral template
         wave_arr: The observer frame wavelengths to plot flux for in Angstroms
         z_arr: The redshifts to plot the template at
         pwv: The PWV to plot the transmission function for
@@ -314,10 +323,11 @@ def plot_spectral_template(
     return fig, np.array([top_ax, bottom_ax])
 
 
+# noinspection PyUnboundLocalVariable
 def plot_magnitude(
         mags: Dict[str, np.ndarray], pwv: np.ndarray, z: np.ndarray, figsize: Tuple[Numeric, Numeric] = (9, 6)
 ) -> Tuple[plt.figure, plt.Axes]:
-    """Multi-panel plot showing magnitudes in different columns vs PWV and redshift in different rows.
+    """Multi-panel plot showing magnitudes in different columns vs PWV and redshift in different rows
 
     Args:
         mags: Simulated magnitude values for each band
@@ -396,10 +406,12 @@ def plot_fitted_params(
     return fig, axes
 
 
+# noinspection PyUnboundLocalVariable
 def plot_delta_colors(
         pwv_arr: np.ndarray, z_arr: np.ndarray, mag_dict: Dict[str, np.ndarray],
-        colors: List[Tuple[str, str]], ref_pwv: Numeric = 0) -> None:
-    """Shows the change in color as a function of redshift. Color coded by PWV.
+        colors: List[Tuple[str, str]], ref_pwv: Numeric = 0
+) -> None:
+    """Shows the change in SN color as a function of redshift with each SN color coded by PWV
 
     Args:
         pwv_arr: Array of PWV values
@@ -430,8 +442,9 @@ def plot_delta_colors(
 
 # noinspection PyUnusedLocal
 def plot_delta_mu(
-        mu: np.ndarray, pwv_arr: np.ndarray, z_arr: np.ndarray, cosmo: Cosmology = const.betoule_cosmo) -> None:
-    """Plot the variation in fitted distance modulus as a function of redshift and PWV.
+        mu: np.ndarray, pwv_arr: np.ndarray, z_arr: np.ndarray, cosmo: Cosmology = const.betoule_cosmo
+) -> None:
+    """Plot the variation in fitted distance modulus as a function of redshift and PWV
 
     Args:
         mu: Array of distance moduli
@@ -655,8 +668,10 @@ def plot_residuals_on_sky(
 
 
 def compare_prop_effects(
-        pwv_data: pd.Series, static: models.StaticPWVTrans,
-        seasonal: models.SeasonalPWVTrans, variable: models.VariablePWVTrans
+        pwv_data: pd.Series,
+        static: models.StaticPWVTrans,
+        seasonal: models.SeasonalPWVTrans,
+        variable: models.VariablePWVTrans
 ) -> Tuple[plt.figure, plt.Axes]:
     """Compare the Zenith PWV assumed by different propagation effects
 
@@ -721,7 +736,7 @@ def plot_transmission_variation(
     axis.fill_between(wave, low_transmission, high_transmission, label=f'PWV = {high_pwv} mm', alpha=.75)
 
     axis.set_title(r'Change in atmospheric PWV transmission flux due to $\Delta$PWV')
-    axis.set_xlabel('Wavelength ($\AA$)')
+    axis.set_xlabel(r'Wavelength ($\AA$)')
     axis.set_ylabel('PWV Transmission')
     axis.set_xlim(wave_min, wave_max)
     axis.set_ylim(.5, 1)
@@ -769,7 +784,7 @@ def plot_flux_variation(
     axis.fill_between(wave, low_pwv_flux, high_pwv_flux, label=f'PWV = {high_pwv} mm', alpha=.75)
 
     axis.set_title(r'Change in SN Ia flux due to $\Delta$PWV')
-    axis.set_xlabel('Wavelength ($\AA$)')
+    axis.set_xlabel(r'Wavelength ($\AA$)')
     axis.set_ylabel('SN Ia Flux')
     axis.set_xlim(wave_min, wave_max)
     axis.legend(framealpha=1)

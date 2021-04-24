@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
-"""Create a small subset of PLaSTIC used for testing / profiling.
+"""Create a small subset of PLAsTICC data used for testing / profiling.
 
 Usage:
-   python make_test_data.py [PLaSTICC Data Directory] [Cadence Name] [Model Number]
+   python make_test_data.py [PLAsTICC Data Directory] [Cadence Name] [Model Number]
 
 Example:
    python make_test_data.py /mnt/md0/sn-sims/ alt_sched 11
