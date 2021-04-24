@@ -133,7 +133,7 @@ def create_mock_pipeline_packet(
         A ``PipelinePacket`` instance
     """
 
-    sim_params = {'SNID': 123456, 'ra': 10, 'dec': -5, 't0': 0, 'x1': .1, 'c': .2, 'z': .5, 'x0': 1}
+    sim_params = {'ra': 10, 'dec': -5, 't0': 0, 'x1': .1, 'c': .2, 'z': .5, 'x0': 1}
     time_values = np.arange(-20, 52)
     cadence = ObservedCadence(
         obs_times=np.arange(-20, 52),
