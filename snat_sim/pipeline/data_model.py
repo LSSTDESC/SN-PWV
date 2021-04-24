@@ -82,7 +82,7 @@ class PipelinePacket:
         """
 
         out_data = pd.Series(self.sim_params)
-        out_data['SNID'] = self.snid
+        out_data['snid'] = self.snid
         # out_data['message'] = self.message
         return pd.DataFrame(out_data).T
 
@@ -123,4 +123,4 @@ class PipelinePacket:
         """
 
         success = self.fit_result.success if self.fit_result else False
-        return pd.DataFrame({'snid': [self.snid], 'success': [success], 'message': [self.message]})
+        return pd.DataFrame({'snid': [self.snid], 'success': [success], 'message': [self.message[:150]]})

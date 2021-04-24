@@ -297,19 +297,19 @@ class PWVTransmissionModel:
             points=(calc_pwv_eff(self.samp_pwv), self.samp_wave),
             values=self.samp_transmission)
 
-        self.calc_transmission = Cache(self._calc_transmission, TRANSMISSION_CACHE_SIZE, 'pwv', 'wave')
+        self.calc_transmission = Cache(self.calc_transmission, TRANSMISSION_CACHE_SIZE, 'pwv', 'wave')
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
-    def _calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
+    def calc_transmission(self, pwv: float, wave: Optional[np.array] = None) -> pd.Series:
         ...  # pragma: no cover
 
     # noinspection PyMissingOrEmptyDocstring
     @overload
-    def _calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
+    def calc_transmission(self, pwv: Collection[float], wave: Optional[np.ndarray] = None) -> pd.DataFrame:
         ...  # pragma: no cover
 
-    def _calc_transmission(self, pwv, wave=None):
+    def calc_transmission(self, pwv, wave=None):
         """Evaluate the transmission model at the given wavelengths
 
         Returns a ``Series`` object if ``pwv`` is a scalar, and a ``DataFrame``

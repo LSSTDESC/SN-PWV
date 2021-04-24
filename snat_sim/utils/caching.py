@@ -115,8 +115,9 @@ class Cache(MemoryCache):
             return self[key]
 
         except KeyError:
-            self[key] = self.function(*args, **kwargs)
-            return self[key]
+            new_val = self.function(*args, **kwargs)
+            self[key] = new_val
+            return new_val
 
     def __reduce__(self):
         # Ensures instances can be pickled
