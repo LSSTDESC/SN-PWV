@@ -323,6 +323,40 @@ def plot_spectral_template(
     return fig, np.array([top_ax, bottom_ax])
 
 
+def plot_spectrum(
+        wave: np.array, flux: np.array, figsize: Tuple[Numeric, Numeric] = (9, 3), hardware_only=False
+) -> Tuple[plt.figure, plt.Axes]:
+    """Plot a spectrum over the per-filter LSST hardware throughput
+
+    Args:
+        wave: Spectrum wavelengths in Angstroms
+        flux: Flux of the spectrum in arbitrary units
+        figsize: Size of the figure
+
+    Returns:
+        The matplotlib figure and axis
+    """
+
+    fig, axis = plt.subplots(figsize=figsize)
+
+    axis.set_ylabel('Object Flux')
+    axis.set_xlim(min(wave), max(wave))
+    axis.set_xlabel(r'Wavelength ($\AA$)')
+
+    twin_ax = axis.twinx()
+    twin_ax.set_ylim(0, 1)
+    twin_ax.set_ylabel('Bandpass Transmission', rotation=270, labelpad=15)
+
+    prefix = 'lsst_hardware_' if hardware_only else 'lsst_total_'
+    for filter_abbrev in 'ugrizy':
+        filt = sncosmo.get_bandpass(f'{prefix}{filter_abbrev}')
+        twin_ax.fill_between(wave, filt(wave), alpha=.3, label=filter_abbrev)
+        twin_ax.plot(wave, filt(wave))
+
+    axis.plot(wave, flux, color='k')
+    return fig, axis
+
+
 # noinspection PyUnboundLocalVariable
 def plot_magnitude(
         mags: Dict[str, np.ndarray], pwv: np.ndarray, z: np.ndarray, figsize: Tuple[Numeric, Numeric] = (9, 6)
@@ -639,7 +673,11 @@ def plot_cosmology_fit(
 
 
 def plot_residuals_on_sky(
-        ra: np.array, dec: np.array, residual: np.array, cmap: str = 'coolwarm', figsize: Tuple[Numeric, Numeric] = (8, 4)
+        ra: np.array,
+        dec: np.array,
+        residual: np.array,
+        cmap: str = 'coolwarm',
+        figsize: Tuple[Numeric, Numeric] = (8, 4)
 ) -> Tuple[plt.figure, plt.Axes]:
     """Plot hubble residuals as a function of supernova coordinates.
 
