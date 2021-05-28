@@ -377,7 +377,7 @@ div.rendered_html tbody tr:hover {
 </style>
 <section id="LSST-Filters">
 <h1>LSST Filters<a class="headerlink" href="#LSST-Filters" title="Permalink to this headline">¶</a></h1>
-<p>This notebook demonstrates the LSST filter set and the fiducial LSST atmosphere.</p>
+<p>This notebook demonstrates the LSST filter set and the fiducial LSST atmosphere. These transmission functions are compared against spectral templates for stars and SNe.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
@@ -391,8 +391,10 @@ div.rendered_html tbody tr:hover {
 <span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">pwv_kpno.defaults</span> <span class="kn">import</span> <span class="n">v1_transmission</span>
+<span class="kn">from</span> <span class="nn">scipy.ndimage</span> <span class="kn">import</span> <span class="n">gaussian_filter</span>
 
-<span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">ReferenceStar</span>
+<span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">plotting</span>
+<span class="kn">from</span> <span class="nn">snat_sim.models</span> <span class="kn">import</span> <span class="n">ReferenceStar</span><span class="p">,</span> <span class="n">SNModel</span>
 
 </pre></div>
 </div>
@@ -480,6 +482,7 @@ div.rendered_html tbody tr:hover {
 <img alt="../_images/notebooks_lsst_filters_5_0.png" src="../_images/notebooks_lsst_filters_5_0.png" />
 </div>
 </div>
+<p>The atmospheric transmission profile provided by the LSST engineering team includes the entire atmospheric contribution. We instead use a model for PWV transmission only, shown below:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
@@ -528,7 +531,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_lsst_filters_7_0.png" src="../_images/notebooks_lsst_filters_7_0.png" />
+<img alt="../_images/notebooks_lsst_filters_8_0.png" src="../_images/notebooks_lsst_filters_8_0.png" />
 </div>
 </div>
 </section>
@@ -624,7 +627,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_lsst_filters_11_0.png" src="../_images/notebooks_lsst_filters_11_0.png" />
+<img alt="../_images/notebooks_lsst_filters_12_0.png" src="../_images/notebooks_lsst_filters_12_0.png" />
 </div>
 </div>
 <p>A rough minimization shows that our choice of resolution and PWV concentration in the above plot were reasonable.</p>
@@ -731,7 +734,7 @@ Best fit Resolution: 4.999999802004262
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_lsst_filters_16_0.png" src="../_images/notebooks_lsst_filters_16_0.png" />
+<img alt="../_images/notebooks_lsst_filters_17_0.png" src="../_images/notebooks_lsst_filters_17_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -777,7 +780,55 @@ Best fit Resolution: 4.999999802004262
 <div class="prompt empty docutils container">
 </div>
 <div class="output_area docutils container">
-<img alt="../_images/notebooks_lsst_filters_18_0.png" src="../_images/notebooks_lsst_filters_18_0.png" />
+<img alt="../_images/notebooks_lsst_filters_19_0.png" src="../_images/notebooks_lsst_filters_19_0.png" />
+</div>
+</div>
+<p>This is a ggod point to remind ourselves that stars have very different colors than SNe, as shown below. Here we bin the stellar spectrum to roughly the same resolution as the SN spectral template.</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">g2_spec</span> <span class="o">=</span> <span class="n">ReferenceStar</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">()</span>
+
+<span class="n">filtered_data</span> <span class="o">=</span> <span class="n">gaussian_filter</span><span class="p">(</span><span class="n">g2_spec</span><span class="p">,</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">plotting</span><span class="o">.</span><span class="n">plot_spectrum</span><span class="p">(</span><span class="n">g2_spec</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">filtered_data</span><span class="p">,</span> <span class="n">hardware_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">11000</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;g2_template_over_filters.pdf&#39;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_lsst_filters_21_0.png" src="../_images/notebooks_lsst_filters_21_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
+<span></span><span class="n">sn_model</span> <span class="o">=</span> <span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
+<span class="n">sn_model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mf">.5</span><span class="p">)</span>
+<span class="n">sn_wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">12000</span><span class="p">)</span>
+<span class="n">sn_flux</span> <span class="o">=</span> <span class="n">sn_model</span><span class="o">.</span><span class="n">flux</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">sn_wave</span><span class="p">)</span>
+<span class="n">plotting</span><span class="o">.</span><span class="n">plot_spectrum</span><span class="p">(</span><span class="n">sn_wave</span><span class="p">,</span> <span class="n">sn_flux</span><span class="p">,</span> <span class="n">hardware_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">3000</span><span class="p">,</span> <span class="mi">11000</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;sn_template_over_filters.pdf&#39;</span><span class="p">)</span>
+
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/notebooks_lsst_filters_22_0.png" src="../_images/notebooks_lsst_filters_22_0.png" />
 </div>
 </div>
 <div class="nbinput nblast docutils container">
