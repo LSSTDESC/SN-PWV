@@ -201,7 +201,7 @@ def create_cli_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         '--overwrite',
         action='store_true',
-        help='Allow existing results to be overwritten.'
+        help='Flag to allow existing results to be overwritten.'
     )
 
     #######################################################################
@@ -326,7 +326,7 @@ def create_cli_parser() -> argparse.ArgumentParser:
     debugging_group.add_argument(
         '--no-scatter',
         action='store_true',
-        help='Turn off added scatter when simulating light-curves.'
+        help='Flag used to turn off added scatter when simulating light-curves.'
     )
 
     debugging_group.add_argument(
@@ -347,28 +347,28 @@ def create_cli_parser() -> argparse.ArgumentParser:
     visualizer.add_argument(
         '--visualize',
         action='store_true',
-        description='Launch a web server for visualizing the current pipeline status.'
+        help='Flag used to launch a web server for visualizing the current pipeline status.'
     )
 
     visualizer.add_argument(
         '--host',
         type=str,
         default=None,
-        description='Host IP used to serve the application from.'
+        help='Optionally define the host IP used to serve the application from.'
     )
 
     visualizer.add_argument(
         '--port',
         type=int,
         default=None,
-        description='Port used to serve the application.'
+        help='Optionally define the port used to serve the application.'
     )
 
     visualizer.add_argument(
         '--proxy',
         type=str,
         default=None,
-        description='Use a proxy to serve the application to a different URL "{input}::{output}".'
+        help='Optionally use a proxy to serve the application to a different URL "{input}::{output}".'
     )
 
     return parser
