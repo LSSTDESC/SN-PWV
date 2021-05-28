@@ -323,6 +323,40 @@ def plot_spectral_template(
     return fig, np.array([top_ax, bottom_ax])
 
 
+def plot_spectrum(
+        wave: np.array, flux: np.array, figsize: Tuple[Numeric, Numeric] = (9, 3), hardware_only=False
+) -> Tuple[plt.figure, plt.Axes]:
+    """Plot a spectrum over the per-filter LSST hardware throughput
+
+    Args:
+        wave: Spectrum wavelengths in Angstroms
+        flux: Flux of the spectrum in arbitrary units
+        figsize: Size of the figure
+
+    Returns:
+        The matplotlib figure and axis
+    """
+
+    fig, axis = plt.subplots(figsize=figsize)
+
+    axis.set_ylabel('Object Flux')
+    axis.set_xlim(min(wave), max(wave))
+    axis.set_xlabel(r'Wavelength ($\AA$)')
+
+    twin_ax = axis.twinx()
+    twin_ax.set_ylim(0, 1)
+    twin_ax.set_ylabel('Bandpass Transmission', rotation=270, labelpad=15)
+
+    prefix = 'lsst_hardware_' if hardware_only else 'lsst_total_'
+    for filter_abbrev in 'ugrizy':
+        filt = sncosmo.get_bandpass(f'{prefix}{filter_abbrev}')
+        twin_ax.fill_between(wave, filt(wave), alpha=.3, label=filter_abbrev)
+        twin_ax.plot(wave, filt(wave))
+
+    axis.plot(wave, flux, color='k')
+    return fig, axis
+
+
 # noinspection PyUnboundLocalVariable
 def plot_magnitude(
         mags: Dict[str, np.ndarray], pwv: np.ndarray, z: np.ndarray, figsize: Tuple[Numeric, Numeric] = (9, 6)
@@ -481,7 +515,7 @@ def plot_delta_mu(
 
 
 def plot_year_pwv_vs_time(
-        pwv_series: pd.Series, figsize: Tuple[Numeric, Numeric] = (10, 4), missing: Numeric = 1
+        pwv_series: pd.Series, figsize: Tuple[Numeric, Numeric] = (8, 4), missing: Numeric = 1
 ) -> Tuple[plt.figure, plt.Axes]:
     """Plot PWV measurements taken over a single year as a function of time.
 
@@ -520,7 +554,7 @@ def plot_year_pwv_vs_time(
     print(f'Fall Average:  {fall_pwv.mean(): .2f} +\\- {fall_pwv.std(): .2f} mm')
 
     fig, axis = plt.subplots(figsize=figsize)
-    axis.set_ylabel('Median Folded PWV (mm)')
+    axis.set_ylabel('PWV (mm)')
     axis.set_xlabel('Time of Year')
     axis.set_ylim(0, 20)
     ylow, yhigh = axis.get_ylim()
@@ -557,7 +591,7 @@ def plot_year_pwv_vs_time(
         axis.axvline(equinox_date, linestyle='--', color='k', zorder=1)
 
     # Plot rolling average
-    axis.scatter(pwv_series.index, pwv_series, s=1, alpha=.2, label='Median PWV', zorder=2)
+    axis.scatter(pwv_series.index, pwv_series, s=1, alpha=.2, zorder=2)
     axis.plot(rolling_mean_pwv.index, rolling_mean_pwv, color='C1', label='Rolling Avg.', zorder=3, linewidth=2)
 
     # Plot seasonal average
@@ -639,7 +673,11 @@ def plot_cosmology_fit(
 
 
 def plot_residuals_on_sky(
-        ra: np.array, dec: np.array, residual: np.array, cmap: str = 'coolwarm'
+        ra: np.array,
+        dec: np.array,
+        residual: np.array,
+        cmap: str = 'coolwarm',
+        figsize: Tuple[Numeric, Numeric] = (8, 4)
 ) -> Tuple[plt.figure, plt.Axes]:
     """Plot hubble residuals as a function of supernova coordinates.
 
@@ -648,6 +686,7 @@ def plot_residuals_on_sky(
         dec: Declination of each supernova
         residual: Hubble residual for each supernova
         cmap: Name of the matplotlib color map to use
+        figsize: The size of the figure
 
     Returns:
         The matplotlib figure and axis
@@ -655,7 +694,7 @@ def plot_residuals_on_sky(
 
     sn_coord = SkyCoord(ra, dec, unit=u.deg).galactic
 
-    fig, axis = plt.subplots(figsize=(10, 5), subplot_kw={'projection': 'aitoff'})
+    fig, axis = plt.subplots(figsize=figsize, subplot_kw={'projection': 'aitoff'})
     axis.grid(True)
 
     vlim = max(np.abs(residual))
@@ -671,7 +710,8 @@ def compare_prop_effects(
         pwv_data: pd.Series,
         static: models.StaticPWVTrans,
         seasonal: models.SeasonalPWVTrans,
-        variable: models.VariablePWVTrans
+        variable: models.VariablePWVTrans,
+        figsize: Tuple[float, float] = (9, 6)
 ) -> Tuple[plt.figure, plt.Axes]:
     """Compare the Zenith PWV assumed by different propagation effects
 
@@ -680,6 +720,7 @@ def compare_prop_effects(
         static: Static propagation effect
         seasonal: Seasonal Propagation effect
         variable: Variable Propagation effect
+        figsize: The size of the figure
 
     Returns:
         The matplotlib figure and axis
@@ -693,7 +734,7 @@ def compare_prop_effects(
     x_vals = np.arange(pwv_data.index[0], pwv_data.index[-1], timedelta(days=1)).astype(datetime)
     mjd_vals = Time(x_vals).mjd
 
-    plt.figure(figsize=(9, 6))
+    plt.figure(figsize=figsize)
     plt.scatter(pwv_data.index, pwv_data.values, s=2, alpha=.1, color='grey')
     plt.plot(x_vals, variable.assumed_pwv(mjd_vals), label='Variable')
     plt.plot(x_vals, seasonal.assumed_pwv(mjd_vals), label='Seasonal', linewidth=2.5)
@@ -709,7 +750,11 @@ def compare_prop_effects(
 
 
 def plot_transmission_variation(
-        pwv1: float, pwv2: float, wave_min: float = 6500, wave_max: float = 10000, resolution: int = 9
+        pwv1: float, pwv2: float,
+        wave_min: float = 6500,
+        wave_max: float = 10000,
+        resolution: int = 9,
+        figsize: Tuple[Numeric, Numeric] = (8, 4)
 ) -> Tuple[plt.figure, plt.Axes]:
     """Compare the atmospheric transmission function for two PWV concentrations
 
@@ -719,6 +764,7 @@ def plot_transmission_variation(
         wave_min: Minimum wavelength to plot
         wave_max: Maximum wavelength to plot
         resolution: Bin the atmospheric transmission function to a lower transmission
+        figsize: The size of the figure
 
     Returns:
         The matplotlib figure and axis
@@ -731,7 +777,7 @@ def plot_transmission_variation(
     low_transmission = v1_transmission(pwv=low_pwv, wave=wave, res=resolution)
     high_transmission = v1_transmission(pwv=high_pwv, wave=wave, res=resolution)
 
-    fig, axis = plt.subplots(figsize=(10, 5))
+    fig, axis = plt.subplots(figsize=figsize)
     axis.plot(wave, low_transmission, color='k', label=f'PWV = {low_pwv} mm', linewidth=1.5)
     axis.fill_between(wave, low_transmission, high_transmission, label=f'PWV = {high_pwv} mm', alpha=.75)
 
@@ -750,7 +796,8 @@ def plot_flux_variation(
         z: float = .55,
         wave_min: float = 6500,
         wave_max: float = 10000,
-        resolution: int = 9
+        resolution: int = 9,
+        figsize: Tuple[Numeric, Numeric] = (8, 4)
 ) -> Tuple[plt.figure, plt.Axes]:
     """Compare the PWV absorbed flux of a SN IA for two PWV concentrations
 
@@ -761,6 +808,7 @@ def plot_flux_variation(
         wave_min: Minimum wavelength to plot
         wave_max: Maximum wavelength to plot
         resolution: Bin the atmospheric transmission function to a lower transmission
+        figsize: The size of the figure
 
     Returns:
         The matplotlib figure and axis
@@ -779,7 +827,7 @@ def plot_flux_variation(
     model.set(pwv=high_pwv)
     high_pwv_flux = model.flux(0, wave)
 
-    fig, axis = plt.subplots(figsize=(10, 5))
+    fig, axis = plt.subplots(figsize=figsize)
     axis.plot(wave, low_pwv_flux, color='k', label=f'PWV = {low_pwv} mm', linewidth=1.5)
     axis.fill_between(wave, low_pwv_flux, high_pwv_flux, label=f'PWV = {high_pwv} mm', alpha=.75)
 
@@ -791,7 +839,9 @@ def plot_flux_variation(
     return fig, axis
 
 
-def plot_delta_sn_flux(pwv: float = 4, wave_min: float = 6500, wave_max: float = 10000) -> Tuple[plt.figure, np.array]:
+def plot_delta_sn_flux(
+        pwv: float = 4, wave_min: float = 6500, wave_max: float = 10000, figsize: Tuple[Numeric, Numeric] = (8, 4)
+) -> Tuple[plt.figure, np.array]:
     """Plot the change to spectroscopic SN Ia flux over wavelength and redshift
 
     An imshow style plot with the change in flux along the color axis.
@@ -800,6 +850,7 @@ def plot_delta_sn_flux(pwv: float = 4, wave_min: float = 6500, wave_max: float =
         pwv: The PWV concentration to use when determining the change in flux
         wave_min: Minimum wavelength to plot
         wave_max: Maximum wavelength to plot
+        figsize: The size of the figure
 
     Returns:
         The matplotlib figure and and array of matplotlib axes
@@ -820,7 +871,7 @@ def plot_delta_sn_flux(pwv: float = 4, wave_min: float = 6500, wave_max: float =
         delta_flux.append(flux - flux_model)
 
     fig, (top_ax, bottom_ax) = plt.subplots(
-        nrows=2, figsize=(10, 5), sharex='col',
+        nrows=2, figsize=figsize, sharex='col',
         gridspec_kw={'height_ratios': [4, 1.75]})
 
     top_ax.imshow(
