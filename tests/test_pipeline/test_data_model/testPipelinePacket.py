@@ -27,7 +27,7 @@ class SimParamsToPandas(TestCase):
     def test_colnames_match_param_names(self) -> None:
         """Test the column names in the returned dataframe match simulated parameters"""
 
-        sim_params = list(self.packet.sim_params.keys())
+        sim_params = [k.lower() for k in self.packet.sim_params.keys()] + ['snid']
         columns = self.packet.sim_params_to_pandas().columns
         np.testing.assert_array_equal(sim_params, columns)
 
