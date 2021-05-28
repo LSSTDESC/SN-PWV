@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -26,6 +27,8 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="snat_sim.models" href="../api/models.html" />
@@ -372,7 +375,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Simulating-Light-Curves-with-a-Cadence">
+<section id="Simulating-Light-Curves-with-a-Cadence">
 <h1>Simulating Light-Curves with a Cadence<a class="headerlink" href="#Simulating-Light-Curves-with-a-Cadence" title="Permalink to this headline">¶</a></h1>
 <p>This notebook demonstrates the simulation of normal Type Ia Supernova (SN Ia) light-curves using realistic cadences and atmospheric variability expected from LSST. To achieve this we use data from the PLAsTICC simulations to establish the cadence, light-curve parameters, and location of SNe observed by LSST. Light-curves with customized time-variable PWV transmission effects are then simulated using these parameters.</p>
 <p>Plots in this notebook are rendered using a subset of the PLAsTICC simulation data. To access this data, configure your working environment as outlined <a class="reference external" href="https://lsstdesc.org/SN-PWV/overview/install.html">in the docs</a>.</p>
@@ -430,7 +433,7 @@ PosixPath(&#39;/mnt/md0/bulk/sn-sims&#39;)
 </pre></div>
 </div>
 </div>
-<div class="section" id="The-PLAsTICC-Data">
+<section id="The-PLAsTICC-Data">
 <h2>The PLAsTICC Data<a class="headerlink" href="#The-PLAsTICC-Data" title="Permalink to this headline">¶</a></h2>
 <p>Instead of evaluating different cadences from scratch, we take the PLAsTICC simulations as a starting point. First we check what cadence simulations are available on the notebook’s host server.</p>
 <div class="nbinput docutils container">
@@ -541,8 +544,8 @@ Available Light-curves:  4737479
 <img alt="../_images/notebooks_simulating_lc_for_cadence_10_0.png" src="../_images/notebooks_simulating_lc_for_cadence_10_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Simulating-Light-Curves">
+</section>
+<section id="Simulating-Light-Curves">
 <h2>Simulating Light-Curves<a class="headerlink" href="#Simulating-Light-Curves" title="Permalink to this headline">¶</a></h2>
 <p>Since we need to add in our own atmospheric variability, the pre-tabulated flux values above are of limited use. Instead, we use the PLAsTICC meta-data to establish the cadence and model parameters for each simulated SN. This information is then used to simulate our own light-curves with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
 <div class="nbinput nblast docutils container">
@@ -682,7 +685,7 @@ Available Light-curves:  4737479
             <span class="n">avg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">snr</span><span class="p">)</span>
             <span class="n">std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">snr</span><span class="p">)</span>
 
-            <span class="n">axis</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">snr</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
+            <span class="n">axis</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">snr</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">)</span>
             <span class="n">axis</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">avg</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Average = </span><span class="si">{</span><span class="n">avg</span><span class="si">:</span><span class="s1"> .2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">axis</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">avg</span> <span class="o">-</span> <span class="n">std</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Stdev = </span><span class="si">{</span><span class="n">std</span><span class="si">:</span><span class="s1"> .2f</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
             <span class="n">axis</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">avg</span> <span class="o">+</span> <span class="n">std</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
@@ -718,8 +721,8 @@ Available Light-curves:  4737479
 <img alt="../_images/notebooks_simulating_lc_for_cadence_18_0.png" src="../_images/notebooks_simulating_lc_for_cadence_18_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Adding-Atmospheric-Effects">
+</section>
+<section id="Adding-Atmospheric-Effects">
 <h2>Adding Atmospheric Effects<a class="headerlink" href="#Adding-Atmospheric-Effects" title="Permalink to this headline">¶</a></h2>
 <p>To simulate light-curves with PWV effects, we need a model for the PWV over time. This is easily defined as follows:</p>
 <div class="nbinput nblast docutils container">
@@ -886,8 +889,8 @@ Available Light-curves:  4737479
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

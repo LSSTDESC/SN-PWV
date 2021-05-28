@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
@@ -111,11 +112,11 @@
 
           <div class="document clearer body">
             
-  <div class="section" id="module-snat_sim.utils.caching">
+  <section id="module-snat_sim.utils.caching">
 <span id="snat-sim-utils-caching"></span><h1>snat_sim.utils.caching<a class="headerlink" href="#module-snat_sim.utils.caching" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">caching</span></code> module defines numpy compatible function wrappers
 for implementing function level memoization.</p>
-<div class="section" id="usage-example">
+<section id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
 <p>The builtin Python memoization routines (e.g., <code class="docutils literal notranslate"><span class="pre">lru_cache</span></code>) are not
 compatible with <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays because array objects are not hashable.
@@ -142,16 +143,16 @@ specified by name when constructing the decorator:</p>
 <span class="go">[ 6  8 10 12]</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="module-api">
+</section>
+<section id="module-api">
 <h2>Module API<a class="headerlink" href="#module-api" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="snat_sim.utils.caching.MemoryCache">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.utils.caching.</span></code><code class="sig-name descname"><span class="pre">MemoryCache</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#MemoryCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.MemoryCache" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.caching.MemoryCache">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.utils.caching.</span></span><span class="sig-name descname"><span class="pre">MemoryCache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#MemoryCache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.MemoryCache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ordered dictionary with an imposed limit on overall memory usage</p>
 <dl class="py method">
-<dt id="snat_sim.utils.caching.MemoryCache.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#MemoryCache.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.MemoryCache.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.caching.MemoryCache.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#MemoryCache.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.MemoryCache.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Ordered dictionary with an imposed size limit im memory.</p>
 <p>When memory usage exceeds the predefined amount, remove the oldest
 entry from the cache.</p>
@@ -165,12 +166,12 @@ entry from the cache.</p>
 </dd></dl>
 
 <dl class="py class">
-<dt id="snat_sim.utils.caching.Cache">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.utils.caching.</span></code><code class="sig-name descname"><span class="pre">Cache</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numpy_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#Cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.caching.Cache">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.utils.caching.</span></span><span class="sig-name descname"><span class="pre">Cache</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numpy_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#Cache"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache" title="Permalink to this definition">¶</a></dt>
 <dd><p>Memoization function wrapper</p>
 <dl class="py method">
-<dt id="snat_sim.utils.caching.Cache.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numpy_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#Cache.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.caching.Cache.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_size</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">numpy_args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/caching.html#Cache.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.caching.Cache.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Memoization decorator supporting <code class="docutils literal notranslate"><span class="pre">numpy</span></code> arrays.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -187,8 +188,8 @@ entry from the cache.</p>
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

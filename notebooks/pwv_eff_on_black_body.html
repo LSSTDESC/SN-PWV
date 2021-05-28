@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -26,6 +27,8 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PWV effects on SN Magnitude" href="sne_delta_mag.html" />
@@ -367,7 +370,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="Effective-PWV-on-a-Black-Body">
+<section id="Effective-PWV-on-a-Black-Body">
 <h1>Effective PWV on a Black Body<a class="headerlink" href="#Effective-PWV-on-a-Black-Body" title="Permalink to this headline">¶</a></h1>
 <p>The effective precipitable water vapor is defined as a rescaling of the precipitable water vapor (PWV) along the the line of sight such that changes in the brightness of an object become (roughly) linear. This notebook demonstrates the definition of effective PWV by plotting the PWV induced change in the magnitude of a Black Body.</p>
 <div class="nbinput nblast docutils container">
@@ -438,7 +441,7 @@ div.rendered_html tbody tr:hover {
 <span class="sd">        A list of delta magnitudes in the given band</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">minwave</span><span class="p">(),</span> <span class="n">band</span><span class="o">.</span><span class="n">maxwave</span><span class="p">(),</span> <span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+    <span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">minwave</span><span class="p">(),</span> <span class="n">band</span><span class="o">.</span><span class="n">maxwave</span><span class="p">(),</span> <span class="mf">.05</span><span class="p">)</span>
     <span class="n">base_sed</span> <span class="o">=</span> <span class="n">black_body_sed</span><span class="p">(</span><span class="n">bb_temp</span><span class="p">,</span> <span class="n">wave</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">base_mag</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">base_sed</span> <span class="o">*</span> <span class="n">wave</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">wave</span><span class="p">))</span>
 
@@ -506,12 +509,12 @@ div.rendered_html tbody tr:hover {
         <span class="n">right_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pwv_eff</span><span class="p">,</span> <span class="n">delta_mag</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;LSST </span><span class="si">{</span><span class="n">band_abbrev</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
     <span class="c1"># Plot reference lines for pwv values</span>
-    <span class="n">left_twin_y</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">norm_pwv</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">85</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Norm pwv&#39;</span><span class="p">)</span>
-    <span class="n">left_twin_y</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">fid_pwv</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Fiducial pwv&#39;</span><span class="p">)</span>
-    <span class="n">right_twin_y</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">coef</span> <span class="o">*</span> <span class="p">(</span><span class="n">norm_pwv</span> <span class="o">**</span> <span class="n">exp</span><span class="p">),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">85</span><span class="p">)</span>
-    <span class="n">right_twin_y</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">coef</span> <span class="o">*</span> <span class="p">(</span><span class="n">fid_pwv</span> <span class="o">**</span> <span class="n">exp</span><span class="p">),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">left_twin_y</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">norm_pwv</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.85</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Norm pwv&#39;</span><span class="p">)</span>
+    <span class="n">left_twin_y</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">fid_pwv</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.7</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Fiducial pwv&#39;</span><span class="p">)</span>
+    <span class="n">right_twin_y</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">coef</span> <span class="o">*</span> <span class="p">(</span><span class="n">norm_pwv</span> <span class="o">**</span> <span class="n">exp</span><span class="p">),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;:&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.85</span><span class="p">)</span>
+    <span class="n">right_twin_y</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">coef</span> <span class="o">*</span> <span class="p">(</span><span class="n">fid_pwv</span> <span class="o">**</span> <span class="n">exp</span><span class="p">),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;-.&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.7</span><span class="p">)</span>
 
-    <span class="n">eff_ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">pwv_eff_labels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">eff_ticks</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">pwv_eff_labels</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">.5</span><span class="p">)</span>
     <span class="n">los_ticks</span> <span class="o">=</span> <span class="p">(</span><span class="n">eff_ticks</span> <span class="o">/</span> <span class="n">coef</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">exp</span><span class="p">)</span>
     <span class="n">left_ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">los_ticks</span><span class="p">)</span>
     <span class="n">left_ax</span><span class="o">.</span><span class="n">set_xticklabels</span><span class="p">(</span><span class="n">eff_ticks</span><span class="p">)</span>
@@ -539,15 +542,15 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="c1"># Sample PWV values more frequently at lower values for a smoother curve</span>
 <span class="n">pwv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="o">.</span><span class="mi">01</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">.</span><span class="mi">1</span><span class="p">),</span>
-    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">.1</span><span class="p">,</span> <span class="mf">.01</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">.1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mf">.1</span><span class="p">),</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">.5</span><span class="p">),</span>
     <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">12.1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 <span class="p">])</span>
 
 <span class="n">pwv_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
 <span class="n">plot_delta_bb_mag</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">pwv_labels</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="sa">f</span><span class="s1">&#39;delta_bb_mag.png&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 
@@ -570,7 +573,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-</div>
+</section>
 
 
           </div>

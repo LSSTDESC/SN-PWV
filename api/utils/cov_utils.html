@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
@@ -111,7 +112,7 @@
 
           <div class="document clearer body">
             
-  <div class="section" id="module-snat_sim.utils.cov_utils">
+  <section id="module-snat_sim.utils.cov_utils">
 <span id="snat-sim-utils-cov-utils"></span><h1>snat_sim.utils.cov_utils<a class="headerlink" href="#module-snat_sim.utils.cov_utils" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">cov_utils</span></code> module extends <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code> objects to include
 covariance calculations relevant to processing supernova fit results.</p>
@@ -120,7 +121,7 @@ covariance calculations relevant to processing supernova fit results.</p>
 <p>This module is heavily based on code ported from the
 <a class="reference external" href="https://github.com/rbiswas4/AnalyzeSN">AnalyzeSN</a> project.</p>
 </div>
-<div class="section" id="usage-example">
+<section id="usage-example">
 <h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">cov_utils</span></code> accessor provides a constructor method for converting
 covariance data from <code class="docutils literal notranslate"><span class="pre">numpy</span></code> type objects into a <code class="docutils literal notranslate"><span class="pre">pandas.DataFrame</span></code>
@@ -155,16 +156,16 @@ using the <code class="docutils literal notranslate"><span class="pre">subcovari
 <span class="go">c   0.00285  0.00133</span>
 </pre></div>
 </div>
-</div>
-<div class="section" id="module-docs">
+</section>
+<section id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="snat_sim.utils.cov_utils.CovarianceAccessor">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.utils.cov_utils.</span></code><code class="sig-name descname"><span class="pre">CovarianceAccessor</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.cov_utils.CovarianceAccessor">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.utils.cov_utils.</span></span><span class="sig-name descname"><span class="pre">CovarianceAccessor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pandas DataFrame accessor for covariance calculations</p>
 <dl class="py method">
-<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.cov_utils.CovarianceAccessor.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pandas_obj</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Extends <code class="docutils literal notranslate"><span class="pre">pandas</span></code> support for time series data</p>
 <p>DO NOT USE THIS CLASS DIRECTLY! This class is registered as a pandas accessor.
 See the module level usage example for more information.</p>
@@ -176,8 +177,8 @@ See the module level usage example for more information.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.from_array">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">from_array</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">covArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.from_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.from_array" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.cov_utils.CovarianceAccessor.from_array">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">from_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">covArray</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramNames</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">normalized</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.from_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.from_array" title="Permalink to this definition">¶</a></dt>
 <dd><p>Instantiates a Dataframe covariance matrix using data from a <cite>numpy.ndarray</cite> object.</p>
 <p>If paramNames is not None, then the dataframe is indexed by the
 parameter names, and has columns corresponding to the parameter names
@@ -202,10 +203,10 @@ column names chosen by pandas.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance">
-<code class="sig-name descname"><span class="pre">log_covariance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramName</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramValue</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.log_covariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance" title="Permalink to this definition">¶</a></dt>
-<dt>
-<code class="sig-name descname"><span class="pre">log_covariance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramName</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramValue</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance">
+<span class="sig-name descname"><span class="pre">log_covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramName</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramValue</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">numpy.ndarray</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.log_covariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">log_covariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramName</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">paramValue</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">factor</span></span><span class="p"><span class="pre">:</span></span> <span class="n"><span class="pre">float</span></span> <span class="o"><span class="pre">=</span></span> <span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span> &#x2192; <span class="pre">pandas.core.frame.DataFrame</span></dt>
 <dd><p>Covariance of the parameters with parameter paramName replaced by
 factor * np.log(param) everywhere, and its true value is paramValue,
 assuming linear propagation</p>
@@ -224,8 +225,8 @@ the factor should be <code class="docutils literal notranslate"><span class="pre
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance">
-<code class="sig-name descname"><span class="pre">subcovariance</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.subcovariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance">
+<span class="sig-name descname"><span class="pre">subcovariance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">paramList</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.subcovariance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>Returns the covariance of a subset of parameters in a covariance dataFrame.</p>
 <p>The set of parameters in paramList must be a subset of the columns and
 indices of covariance.</p>
@@ -243,8 +244,8 @@ indices of covariance.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.utils.cov_utils.CovarianceAccessor.expAVsquare">
-<code class="sig-name descname"><span class="pre">expAVsquare</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.expAVsquare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.expAVsquare" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.utils.cov_utils.CovarianceAccessor.expAVsquare">
+<span class="sig-name descname"><span class="pre">expAVsquare</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/cov_utils.html#CovarianceAccessor.expAVsquare"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.cov_utils.CovarianceAccessor.expAVsquare" title="Permalink to this definition">¶</a></dt>
 <dd><p>The expectation of <code class="docutils literal notranslate"><span class="pre">(A^T</span> <span class="pre">*</span> <span class="pre">V)</span> <span class="pre">**</span> <span class="pre">2</span></code> where A is a constant vector and V is
 a random vector <code class="docutils literal notranslate"><span class="pre">V</span> <span class="pre">~</span> <span class="pre">N(0.,</span> <span class="pre">covV)</span></code> by computing <code class="docutils literal notranslate"><span class="pre">A^T</span> <span class="pre">*</span> <span class="pre">covV</span> <span class="pre">*</span> <span class="pre">A</span></code></p>
 <dl class="field-list simple">
@@ -262,8 +263,8 @@ a random vector <code class="docutils literal notranslate"><span class="pre">V</
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

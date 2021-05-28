@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../../_static/fonts/open-sans/stylesheet.css" />
@@ -111,7 +112,7 @@
 
           <div class="document clearer body">
             
-  <div class="section" id="module-snat_sim.pipeline.nodes">
+  <section id="module-snat_sim.pipeline.nodes">
 <span id="snat-sim-pipeline-nodes"></span><h1>snat_sim.pipeline.nodes<a class="headerlink" href="#module-snat_sim.pipeline.nodes" title="Permalink to this headline">¶</a></h1>
 <p>Defines the individual data processing nodes used to construct complete
 data analysis pipelines.</p>
@@ -120,19 +121,19 @@ data analysis pipelines.</p>
 <p>Nodes are built on the <code class="docutils literal notranslate"><span class="pre">egon</span></code> framework. For more information see the
 official <a class="reference external" href="https://mwvgroup.github.io/Egon/">Egon Documentation</a>.</p>
 </div>
-<div class="section" id="module-docs">
+<section id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="snat_sim.pipeline.nodes.LoadPlasticcCadence">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></code><code class="sig-name descname"><span class="pre">LoadPlasticcCadence</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plasticc_dao</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_zp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.LoadPlasticcCadence">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></span><span class="sig-name descname"><span class="pre">LoadPlasticcCadence</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plasticc_dao</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_zp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline node for loading PLAsTICC cadence data from disk</p>
 <dl class="simple">
 <dt>Connectors:</dt><dd><p>output: Emits a pipeline packet decorated with the snid, simulation parameters, and cadence</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.LoadPlasticcCadence.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plasticc_dao</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_zp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.LoadPlasticcCadence.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">plasticc_dao</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iter_lim</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">override_zp</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Source node for loading PLAsTICC cadence data from disk</p>
 <p>This node can only be run using a single process. This can be the main
 process (<code class="docutils literal notranslate"><span class="pre">num_processes=0</span></code>) or a single forked process (<code class="docutils literal notranslate"><span class="pre">num_processes=1</span></code>.)</p>
@@ -149,8 +150,8 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.LoadPlasticcCadence.action">
-<code class="sig-name descname"><span class="pre">action</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence.action" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.LoadPlasticcCadence.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#LoadPlasticcCadence.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.LoadPlasticcCadence.action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Load PLAsTICC cadence data from disk</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -162,8 +163,8 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 </dd></dl>
 
 <dl class="py class">
-<dt id="snat_sim.pipeline.nodes.SimulateLightCurves">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></code><code class="sig-name descname"><span class="pre">SimulateLightCurves</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sn_model</span></em>, <em class="sig-param"><span class="pre">catalog=None</span></em>, <em class="sig-param"><span class="pre">num_processes=1</span></em>, <em class="sig-param"><span class="pre">add_scatter=True</span></em>, <em class="sig-param"><span class="pre">fixed_snr=None</span></em>, <em class="sig-param"><span class="pre">abs_mb=-19.05</span></em>, <em class="sig-param"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></em>, <em class="sig-param"><span class="pre">Om0=0.295</span></em>, <em class="sig-param"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></em>, <em class="sig-param"><span class="pre">Neff=3.04</span></em>, <em class="sig-param"><span class="pre">m_nu=None</span></em>, <em class="sig-param"><span class="pre">Ob0=None)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.SimulateLightCurves">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></span><span class="sig-name descname"><span class="pre">SimulateLightCurves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sn_model</span></em>, <em class="sig-param"><span class="pre">catalog=None</span></em>, <em class="sig-param"><span class="pre">num_processes=1</span></em>, <em class="sig-param"><span class="pre">add_scatter=True</span></em>, <em class="sig-param"><span class="pre">fixed_snr=None</span></em>, <em class="sig-param"><span class="pre">abs_mb=-19.05</span></em>, <em class="sig-param"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></em>, <em class="sig-param"><span class="pre">Om0=0.295</span></em>, <em class="sig-param"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></em>, <em class="sig-param"><span class="pre">Neff=3.04</span></em>, <em class="sig-param"><span class="pre">m_nu=None</span></em>, <em class="sig-param"><span class="pre">Ob0=None)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline node for simulating light-curves based on PLAsTICC cadences</p>
 <dl class="simple">
 <dt>Connectors:</dt><dd><p>input: A Pipeline Packet
@@ -172,8 +173,8 @@ failure_output: Emits pipeline packets for cases where the simulation procedure 
 </dd>
 </dl>
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.SimulateLightCurves.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sn_model</span></em>, <em class="sig-param"><span class="pre">catalog=None</span></em>, <em class="sig-param"><span class="pre">num_processes=1</span></em>, <em class="sig-param"><span class="pre">add_scatter=True</span></em>, <em class="sig-param"><span class="pre">fixed_snr=None</span></em>, <em class="sig-param"><span class="pre">abs_mb=-19.05</span></em>, <em class="sig-param"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></em>, <em class="sig-param"><span class="pre">Om0=0.295</span></em>, <em class="sig-param"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></em>, <em class="sig-param"><span class="pre">Neff=3.04</span></em>, <em class="sig-param"><span class="pre">m_nu=None</span></em>, <em class="sig-param"><span class="pre">Ob0=None)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.SimulateLightCurves.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">sn_model</span></em>, <em class="sig-param"><span class="pre">catalog=None</span></em>, <em class="sig-param"><span class="pre">num_processes=1</span></em>, <em class="sig-param"><span class="pre">add_scatter=True</span></em>, <em class="sig-param"><span class="pre">fixed_snr=None</span></em>, <em class="sig-param"><span class="pre">abs_mb=-19.05</span></em>, <em class="sig-param"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></em>, <em class="sig-param"><span class="pre">Om0=0.295</span></em>, <em class="sig-param"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></em>, <em class="sig-param"><span class="pre">Neff=3.04</span></em>, <em class="sig-param"><span class="pre">m_nu=None</span></em>, <em class="sig-param"><span class="pre">Ob0=None)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit light-curves using multiple processes and combine results into an output file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -189,8 +190,8 @@ failure_output: Emits pipeline packets for cases where the simulation procedure 
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.SimulateLightCurves.simulate_lc">
-<code class="sig-name descname"><span class="pre">simulate_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves.simulate_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves.simulate_lc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.SimulateLightCurves.simulate_lc">
+<span class="sig-name descname"><span class="pre">simulate_lc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cadence</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves.simulate_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves.simulate_lc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Duplicate a plastic light-curve using the simulation model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -206,8 +207,8 @@ failure_output: Emits pipeline packets for cases where the simulation procedure 
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.SimulateLightCurves.action">
-<code class="sig-name descname"><span class="pre">action</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves.action" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.SimulateLightCurves.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#SimulateLightCurves.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.SimulateLightCurves.action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Simulate light-curves with atmospheric effects</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -219,8 +220,8 @@ failure_output: Emits pipeline packets for cases where the simulation procedure 
 </dd></dl>
 
 <dl class="py class">
-<dt id="snat_sim.pipeline.nodes.FitLightCurves">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></code><code class="sig-name descname"><span class="pre">FitLightCurves</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sn_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#FitLightCurves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.FitLightCurves" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.FitLightCurves">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></span><span class="sig-name descname"><span class="pre">FitLightCurves</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sn_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#FitLightCurves"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.FitLightCurves" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline node for fitting simulated light-curves</p>
 <dl class="simple">
 <dt>Connectors:</dt><dd><p>input: A Pipeline Packet
@@ -229,8 +230,8 @@ failure_output: Emits pipeline packets for cases where the fitting procedure fai
 </dd>
 </dl>
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.FitLightCurves.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sn_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#FitLightCurves.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.FitLightCurves.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.FitLightCurves.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sn_model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bounds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#FitLightCurves.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.FitLightCurves.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit light-curves using multiple processes and combine results into an output file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -245,8 +246,8 @@ failure_output: Emits pipeline packets for cases where the fitting procedure fai
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.FitLightCurves.fit_lc">
-<code class="sig-name descname"><span class="pre">fit_lc</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">light_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_guess</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#FitLightCurves.fit_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.FitLightCurves.fit_lc" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.FitLightCurves.fit_lc">
+<span class="sig-name descname"><span class="pre">fit_lc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">light_curve</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">initial_guess</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#FitLightCurves.fit_lc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.FitLightCurves.fit_lc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit the given light-curve</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -269,8 +270,8 @@ failure_output: Emits pipeline packets for cases where the fitting procedure fai
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.FitLightCurves.action">
-<code class="sig-name descname"><span class="pre">action</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#FitLightCurves.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.FitLightCurves.action" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.FitLightCurves.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#FitLightCurves.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.FitLightCurves.action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Fit light-curves</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -282,16 +283,16 @@ failure_output: Emits pipeline packets for cases where the fitting procedure fai
 </dd></dl>
 
 <dl class="py class">
-<dt id="snat_sim.pipeline.nodes.WritePipelinePacket">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></code><code class="sig-name descname"><span class="pre">WritePipelinePacket</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.WritePipelinePacket">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></span><span class="sig-name descname"><span class="pre">WritePipelinePacket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline node for writing pipeline packets to disk</p>
 <dl class="simple">
 <dt>Connectors:</dt><dd><p>input: A pipeline packet</p>
 </dd>
 </dl>
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.WritePipelinePacket.__init__">
-<code class="sig-name descname"><span class="pre">__init__</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.__init__" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.WritePipelinePacket.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output node for writing HDF5 data to disk</p>
 <p>This node can only be run using a single process. This can be the main
 process (<code class="docutils literal notranslate"><span class="pre">num_processes=0</span></code>) or a single forked process (<code class="docutils literal notranslate"><span class="pre">num_processes=1</span></code>.)</p>
@@ -303,8 +304,8 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.WritePipelinePacket.write_packet">
-<code class="sig-name descname"><span class="pre">write_packet</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packet</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.write_packet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.write_packet" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.WritePipelinePacket.write_packet">
+<span class="sig-name descname"><span class="pre">write_packet</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">packet</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.write_packet"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.write_packet" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write a pipeline packet to the output file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -314,8 +315,8 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.WritePipelinePacket.setup">
-<code class="sig-name descname"><span class="pre">setup</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.setup" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.WritePipelinePacket.setup">
+<span class="sig-name descname"><span class="pre">setup</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.setup"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.setup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Open a file accessor object</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -325,8 +326,8 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.WritePipelinePacket.teardown">
-<code class="sig-name descname"><span class="pre">teardown</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.teardown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.teardown" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.WritePipelinePacket.teardown">
+<span class="sig-name descname"><span class="pre">teardown</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.teardown"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.teardown" title="Permalink to this definition">¶</a></dt>
 <dd><p>Close any open file accessors</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -336,8 +337,8 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 </dd></dl>
 
 <dl class="py method">
-<dt id="snat_sim.pipeline.nodes.WritePipelinePacket.action">
-<code class="sig-name descname"><span class="pre">action</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.action" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.pipeline.nodes.WritePipelinePacket.action">
+<span class="sig-name descname"><span class="pre">action</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.action"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Write data from the input connector to disk</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -348,8 +349,8 @@ process (<code class="docutils literal notranslate"><span class="pre">num_proces
 
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

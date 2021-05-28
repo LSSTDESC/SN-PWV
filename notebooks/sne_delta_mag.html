@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -27,7 +28,7 @@
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
     <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-    <script type="text/x-mathjax-config">MathJax.Hub.Config({"tex2jax": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true, "ignoreClass": "document", "processClass": "math|output_area"}})</script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PWV Modeling" href="pwv_modeling.html" />
@@ -377,7 +378,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="PWV-effects-on-SN-Magnitude">
+<section id="PWV-effects-on-SN-Magnitude">
 <h1>PWV effects on SN Magnitude<a class="headerlink" href="#PWV-effects-on-SN-Magnitude" title="Permalink to this headline">¶</a></h1>
 <p>This notebook demonstrates the effects of PWV absorption on the apparent magnitude of SNe.</p>
 <div class="nbinput nblast docutils container">
@@ -424,7 +425,7 @@ div.rendered_html tbody tr:hover {
 <span class="n">model_with_pwv</span><span class="o">.</span><span class="n">add_effect</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">StaticPWVTrans</span><span class="p">(),</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">)</span>
 
 <span class="n">pwv_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
-<span class="n">z_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">.</span><span class="mi">01</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">,</span> <span class="o">.</span><span class="mi">05</span><span class="p">)</span>
+<span class="n">z_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">.01</span><span class="p">,</span> <span class="mf">1.05</span><span class="p">,</span> <span class="mf">.05</span><span class="p">)</span>
 
 <span class="c1"># We make sure to use bands without an Atm. component</span>
 <span class="n">bands</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;lsst_hardware_</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="s1">&#39;grizy&#39;</span><span class="p">]</span>
@@ -432,7 +433,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="section" id="Spectral-Template">
+<section id="Spectral-Template">
 <h2>Spectral Template<a class="headerlink" href="#Spectral-Template" title="Permalink to this headline">¶</a></h2>
 <p>The effect of PWV absorption is fundamentally dependent on the interplay between the SED of the effected object and the PWV transmission function. For this work we consider an extend version of the Salt2 spectral template. We visualize the template as a reference. For easier visualization, the figure below includes dilation effects but does not include the change in flux density due to distance.</p>
 <div class="nbinput docutils container">
@@ -440,7 +441,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_spectral_template</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_spectral_template</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;spectral_template.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
 
 </pre></div>
@@ -453,8 +454,8 @@ div.rendered_html tbody tr:hover {
 <img alt="../_images/notebooks_sne_delta_mag_6_0.png" src="../_images/notebooks_sne_delta_mag_6_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Apparent-magnitude">
+</section>
+<section id="Apparent-magnitude">
 <h2>Apparent magnitude<a class="headerlink" href="#Apparent-magnitude" title="Permalink to this headline">¶</a></h2>
 <p>We start by considering the direct impact of PWV absorption on simulated SN Ia magnitudes. Apparent magnitudes are simulated for multiple bands, redshifts, and PWV concentrations.</p>
 <div class="nbinput docutils container">
@@ -572,8 +573,8 @@ Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 66
 <p><strong>Sanity Check:</strong> We expect to see the following trends in the above plot: - The bluer bands should have minimal PWV impact. - The size of <span class="math notranslate nohighlight">\(\Delta\)</span>m should be largest for the redder bands. - The slope in <span class="math notranslate nohighlight">\(\Delta\)</span>m should be almost zero in the bluer bands. - <span class="math notranslate nohighlight">\(\Delta\)</span>m should be zero for the fiducial PWV value. - The general shape of the <span class="math notranslate nohighlight">\(\Delta m\)</span> vs PWV curves should change as a function of different features passing through each band. This means the shape of the
 curves should be different in each band.</p>
 <hr class="docutils" />
-</div>
-<div class="section" id="Change-in-Magnitude-With-Fitting">
+</section>
+<section id="Change-in-Magnitude-With-Fitting">
 <h2>Change in Magnitude With Fitting<a class="headerlink" href="#Change-in-Magnitude-With-Fitting" title="Permalink to this headline">¶</a></h2>
 <p>Instead of tabulating the simulating magnitude, we can instead consider the change in magnitude by simulating light-curves with PWV effects and then fitting a model without a PWV component. For simplicity we use a densely sampled, uniform cadence.</p>
 <div class="nbinput docutils container">
@@ -851,8 +852,8 @@ Light-Curves: 100%|██████████| 63/63 [00:17&lt;00:00,  3.57i
 <hr class="docutils" />
 <p><strong>Sanity Check:</strong> Unlike some of the previous plots we have made, we expect the overall shape of the the <span class="math notranslate nohighlight">\(\Delta m\)</span> vs <span class="math notranslate nohighlight">\(z\)</span> curves to be similar across bands. Since we are considering fitted magnitudes in the above plot, the presence of PWV impacts the fitted model parameters, and then the model enforces cross-band uniformity when we evaluate the synthetic photometry.</p>
 <hr class="docutils" />
-</div>
-<div class="section" id="Relative-to-a-Reference-Star">
+</section>
+<section id="Relative-to-a-Reference-Star">
 <h2>Relative to a Reference Star<a class="headerlink" href="#Relative-to-a-Reference-Star" title="Permalink to this headline">¶</a></h2>
 <p>In practice flux values are calibrated relative to a reference star. To understand how PWV effects SNe fluxes during this process, we normalize the reference star flux to it’s respective fluxes through PWV=0 and take the difference (SNe flux / normalized reference star flux).</p>
 <div class="nbinput nblast docutils container">
@@ -1022,11 +1023,11 @@ Light-Curves: 100%|██████████| 231/231 [01:11&lt;00:00,  3.2
 <img alt="../_images/notebooks_sne_delta_mag_43_0.png" src="../_images/notebooks_sne_delta_mag_43_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Impact-on-Distance-Modulus">
+</section>
+<section id="Impact-on-Distance-Modulus">
 <h2>Impact on Distance Modulus<a class="headerlink" href="#Impact-on-Distance-Modulus" title="Permalink to this headline">¶</a></h2>
 <p>Here we consider the impact of PWV on <span class="math notranslate nohighlight">\(\mu\)</span> using fits to SNe flux after calibration to the reference star. We note that there is a disagreement between the distance module calculated by an astropy Cosmology object, and by an SNCosmo model that has been calibrated using that same cosmology. For consistency, we exclusively use SNCosmo values of <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
-<div class="section" id="Results-without-using-a-reference-star">
+<section id="Results-without-using-a-reference-star">
 <h3>Results without using a reference star<a class="headerlink" href="#Results-without-using-a-reference-star" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
@@ -1081,8 +1082,8 @@ Light-Curves: 100%|██████████| 231/231 [01:11&lt;00:00,  3.2
 <img alt="../_images/notebooks_sne_delta_mag_48_0.png" src="../_images/notebooks_sne_delta_mag_48_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Results-with-a-reference-star">
+</section>
+<section id="Results-with-a-reference-star">
 <h3>Results with a reference star<a class="headerlink" href="#Results-with-a-reference-star" title="Permalink to this headline">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
@@ -1134,9 +1135,9 @@ Light-Curves: 100%|██████████| 231/231 [01:11&lt;00:00,  3.2
 <img alt="../_images/notebooks_sne_delta_mag_52_0.png" src="../_images/notebooks_sne_delta_mag_52_0.png" />
 </div>
 </div>
-</div>
-</div>
-<div class="section" id="Change-in-Color">
+</section>
+</section>
+<section id="Change-in-Color">
 <h2>Change in Color<a class="headerlink" href="#Change-in-Color" title="Permalink to this headline">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
@@ -1210,8 +1211,8 @@ Light-Curves: 100%|██████████| 231/231 [01:11&lt;00:00,  3.2
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

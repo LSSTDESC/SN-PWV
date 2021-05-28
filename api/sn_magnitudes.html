@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -115,7 +116,7 @@
 
           <div class="document clearer body">
             
-  <div class="section" id="module-snat_sim.sn_magnitudes">
+  <section id="module-snat_sim.sn_magnitudes">
 <span id="snat-sim-sn-magnitudes"></span><h1>snat_sim.sn_magnitudes<a class="headerlink" href="#module-snat_sim.sn_magnitudes" title="Permalink to this headline">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">sn_magnitudes.py</span></code> module is responsible for calculating supernova
 magnitudes as a function of PWV and redshift. Functionality includes calculating
@@ -125,11 +126,11 @@ magnitudes directly from a supernova model or via a light-curve fit.</p>
 <p>This module is deprecated. All of the functionality provided by
 this module is now available elsewhere in the package.</p>
 </div>
-<div class="section" id="module-docs">
+<section id="module-docs">
 <h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.get_config_pwv_vals">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">get_config_pwv_vals</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/SN-PWV/SN-PWV/data/defaults/ref_pwv.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#get_config_pwv_vals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.get_config_pwv_vals" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.get_config_pwv_vals">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">get_config_pwv_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/SN-PWV/SN-PWV/data/defaults/ref_pwv.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#get_config_pwv_vals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.get_config_pwv_vals" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve PWV values to use as reference values</p>
 <dl class="simple">
 <dt>Returned values include:</dt><dd><ul class="simple">
@@ -153,8 +154,8 @@ this module is now available elsewhere in the package.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.tabulate_mag">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">tabulate_mag</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#tabulate_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.tabulate_mag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.tabulate_mag">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">tabulate_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#tabulate_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.tabulate_mag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate apparent magnitude due to presence of PWV</p>
 <p>Magnitude is calculated for the model by adding PWV effects
 to a model and leaving all other parameters unchanged.</p>
@@ -178,8 +179,8 @@ to a model and leaving all other parameters unchanged.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.tabulate_fiducial_mag">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">tabulate_fiducial_mag</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fid_pwv_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#tabulate_fiducial_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.tabulate_fiducial_mag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.tabulate_fiducial_mag">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">tabulate_fiducial_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fid_pwv_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#tabulate_fiducial_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.tabulate_fiducial_mag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get SN magnitudes corresponding to the fiducial atmosphere</p>
 <dl class="simple">
 <dt>Returns a dictionary of the form</dt><dd><p>{&lt;band&gt;: [&lt;slope start mag&gt; , &lt;reference pwv mag&gt;, &lt;slope end mag&gt;]</p>
@@ -204,8 +205,8 @@ to a model and leaving all other parameters unchanged.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.correct_mag">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">correct_mag</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.141</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.101</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#correct_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.correct_mag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.correct_mag">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">correct_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.141</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3.101</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#correct_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.correct_mag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Correct fitted supernova magnitude for stretch and color</p>
 <p>calibrated mag = mag + α * x1 - β * c</p>
 <dl class="field-list simple">
@@ -228,8 +229,8 @@ to a model and leaving all other parameters unchanged.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.fit_mag">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">fit_mag</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_curves</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#fit_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.fit_mag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.fit_mag">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">fit_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_curves</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vparams</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bands</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#fit_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.fit_mag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine apparent mag by fitting simulated light-curves</p>
 <p>Returned arrays are shape  (len(pwv_arr), len(z_arr)).</p>
 <dl class="field-list simple">
@@ -255,8 +256,8 @@ Dictionary with arrays for fitted parameters at each PWV and redshift</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.calc_delta_mag">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">calc_delta_mag</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiducial_mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiducial_pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_delta_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_delta_mag" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.calc_delta_mag">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">calc_delta_mag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiducial_mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fiducial_pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_delta_mag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_delta_mag" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine the change in magnitude relative to the fiducial atmosphere</p>
 <p>This is also equivalent to determining the apparent magnitude of a SN
 normalized to the magnitude at the fiducial atmosphere.</p>
@@ -282,8 +283,8 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.calc_mu_for_model">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">calc_mu_for_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">model</span></em>, <em class="sig-param"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></em>, <em class="sig-param"><span class="pre">Om0=0.295</span></em>, <em class="sig-param"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></em>, <em class="sig-param"><span class="pre">Neff=3.04</span></em>, <em class="sig-param"><span class="pre">m_nu=None</span></em>, <em class="sig-param"><span class="pre">Ob0=None)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_mu_for_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_mu_for_model" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.calc_mu_for_model">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">calc_mu_for_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">model</span></em>, <em class="sig-param"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></em>, <em class="sig-param"><span class="pre">Om0=0.295</span></em>, <em class="sig-param"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></em>, <em class="sig-param"><span class="pre">Neff=3.04</span></em>, <em class="sig-param"><span class="pre">m_nu=None</span></em>, <em class="sig-param"><span class="pre">Ob0=None)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_mu_for_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_mu_for_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the distance modulus of a model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -302,8 +303,8 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.calc_mu_for_params">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">calc_mu_for_params</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_mu_for_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_mu_for_params" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.calc_mu_for_params">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">calc_mu_for_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_mu_for_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_mu_for_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the distance modulus for an array of fitted params</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -322,8 +323,8 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="snat_sim.sn_magnitudes.calc_calibration_factor_for_params">
-<code class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></code><code class="sig-name descname"><span class="pre">calc_calibration_factor_for_params</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_calibration_factor_for_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_calibration_factor_for_params" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="snat_sim.sn_magnitudes.calc_calibration_factor_for_params">
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">calc_calibration_factor_for_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_calibration_factor_for_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_calibration_factor_for_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the distance modulus for an array of fitted params</p>
 <p>returns constants.alpha * x_1 - constants.beta * c</p>
 <dl class="field-list simple">
@@ -342,8 +343,8 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 </dl>
 </dd></dl>
 
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

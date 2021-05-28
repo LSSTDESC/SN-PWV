@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -26,6 +27,8 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Simulating Light-Curves with a Cadence" href="simulating_lc_for_cadence.html" />
@@ -373,7 +376,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="PWV-Modeling">
+<section id="PWV-Modeling">
 <h1>PWV Modeling<a class="headerlink" href="#PWV-Modeling" title="Permalink to this headline">¶</a></h1>
 <p>This notebook outlines an approach for modeling time variable precipitable water vapor (PWV) using real world weather data taken by the SuomiNet project.</p>
 <div class="nbinput nblast docutils container">
@@ -393,7 +396,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="section" id="The-Approach">
+<section id="The-Approach">
 <h2>The Approach<a class="headerlink" href="#The-Approach" title="Permalink to this headline">¶</a></h2>
 <p>To create a physically reasonable representation of the atmospheric variability at LSST, we use PWV measurements taken at the nearby Cerro Telolo International Observatory (CTIO).</p>
 <div class="nbinput nblast docutils container">
@@ -414,7 +417,7 @@ div.rendered_html tbody tr:hover {
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
 <span></span><span class="n">ctio_weather</span> <span class="o">=</span> <span class="n">ctio</span><span class="o">.</span><span class="n">weather_data</span><span class="p">()</span>
 
-<span class="n">ctio_weather</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;PWV&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ctio_weather</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;date&#39;</span><span class="p">,</span> <span class="s1">&#39;PWV&#39;</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.2</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;CTIO PWV (mm)&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date&#39;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;All available PWV measurements for CTIO&#39;</span><span class="p">)</span>
@@ -659,8 +662,8 @@ Fall Average:   4.97 +\-  2.25 mm
     <span class="n">interpolated_pwv_data</span> <span class="o">=</span> <span class="n">pwv_model_obj</span><span class="o">.</span><span class="n">pwv_zenith</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">time_format</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
-    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">interpolated_pwv_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Interpolated&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">75</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Measured&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">pwv_data</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">interpolated_pwv_data</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Interpolated&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C1&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.75</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;PWV (mm)&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;Date (UTC)&#39;</span><span class="p">)</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
@@ -687,8 +690,8 @@ Fall Average:   4.97 +\-  2.25 mm
 <img alt="../_images/notebooks_pwv_modeling_15_0.png" src="../_images/notebooks_pwv_modeling_15_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Automated-Model-Building">
+</section>
+<section id="Automated-Model-Building">
 <h2>Automated Model Building<a class="headerlink" href="#Automated-Model-Building" title="Permalink to this headline">¶</a></h2>
 <p>The process outlined above is can be automated by building a <code class="docutils literal notranslate"><span class="pre">PWVModel</span></code> instance directly from a <code class="docutils literal notranslate"><span class="pre">GPSReceiver</span></code> object.</p>
 <div class="nbinput docutils container">
@@ -712,8 +715,8 @@ Fall Average:   4.97 +\-  2.25 mm
 <img alt="../_images/notebooks_pwv_modeling_17_0.png" src="../_images/notebooks_pwv_modeling_17_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Propagation-Effects">
+</section>
+<section id="Propagation-Effects">
 <h2>Propagation Effects<a class="headerlink" href="#Propagation-Effects" title="Permalink to this headline">¶</a></h2>
 <p>PWV models can be used to add propagation effects to supernova model instances. Propagation effects describe how the the spectral energy distribution of a model is effected by intervening phenomena (in this case, the absorption of light by the atmosphere).</p>
 <p>Propagation effects can represent a time constant PWV concentration, time variable PWV at the full temporal resolution of the underlying model, and as a binned average per season. We demonstrate all three below.</p>
@@ -754,8 +757,8 @@ Fall Average:   4.97 +\-  2.25 mm
 <img alt="../_images/notebooks_pwv_modeling_20_0.png" src="../_images/notebooks_pwv_modeling_20_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="Impact-on-SN-Spectra">
+</section>
+<section id="Impact-on-SN-Spectra">
 <h2>Impact on SN Spectra<a class="headerlink" href="#Impact-on-SN-Spectra" title="Permalink to this headline">¶</a></h2>
 <p>To understand the impact of seasonal PWV variability (in a very rudimentary way) we compare the atmospheric transmission for the lowest and highest average seasonal PWV as determined from the final PWV variability model shown above.</p>
 <div class="nbinput docutils container">
@@ -781,7 +784,7 @@ Fall Average:   4.97 +\-  2.25 mm
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_flux_variation</span><span class="p">(</span><span class="mf">3.78</span><span class="p">,</span> <span class="mf">7.33</span><span class="p">,</span> <span class="n">z</span><span class="o">=.</span><span class="mi">55</span><span class="p">);</span>
+<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_flux_variation</span><span class="p">(</span><span class="mf">3.78</span><span class="p">,</span> <span class="mf">7.33</span><span class="p">,</span> <span class="n">z</span><span class="o">=</span><span class="mf">.55</span><span class="p">);</span>
 
 </pre></div>
 </div>
@@ -825,8 +828,8 @@ Fall Average:   4.97 +\-  2.25 mm
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>

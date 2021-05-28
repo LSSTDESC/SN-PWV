@@ -4,7 +4,8 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   
   <!-- Licensed under the Apache 2.0 License -->
   <link rel="stylesheet" type="text/css" href="../_static/fonts/open-sans/stylesheet.css" />
@@ -26,6 +27,8 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "document", "processHtmlClass": "math|output_area"}}</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Effective PWV on a Black Body" href="pwv_eff_on_black_body.html" />
@@ -372,7 +375,7 @@ div.rendered_html tbody tr:hover {
   background: rgba(66, 165, 245, 0.2);
 }
 </style>
-<div class="section" id="LSST-Filters">
+<section id="LSST-Filters">
 <h1>LSST Filters<a class="headerlink" href="#LSST-Filters" title="Permalink to this headline">¶</a></h1>
 <p>This notebook demonstrates the LSST filter set and the fiducial LSST atmosphere.</p>
 <div class="nbinput nblast docutils container">
@@ -405,7 +408,7 @@ div.rendered_html tbody tr:hover {
 </pre></div>
 </div>
 </div>
-<div class="section" id="Baseline-Filter-Set">
+<section id="Baseline-Filter-Set">
 <h2>Baseline Filter Set<a class="headerlink" href="#Baseline-Filter-Set" title="Permalink to this headline">¶</a></h2>
 <p>The LSST filter set is provided in enough detail that we can separate the hardware and atmospheric contributions. This allows us to add our own customized atmospheric component(s).</p>
 <div class="nbinput nblast docutils container">
@@ -438,11 +441,11 @@ div.rendered_html tbody tr:hover {
         <span class="n">hardware</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lsst_hardware_</span><span class="si">{</span><span class="n">band_letter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="n">filter_only</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lsst_filter_</span><span class="si">{</span><span class="n">band_letter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-        <span class="n">left_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">filter_only</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">filter_only</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Filters&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">left_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">filter_only</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">filter_only</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Filters&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">left_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hardware</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">hardware</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;All Hardware&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
 
         <span class="n">right_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">hardware</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">hardware</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Hardware&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
-        <span class="n">right_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">band_total</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">band_total</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Bandpass&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">right_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">band_total</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">band_total</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Bandpass&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
         <span class="n">right_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">band_total</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">hardware</span><span class="p">(</span><span class="n">band_total</span><span class="o">.</span><span class="n">wave</span><span class="p">)</span> <span class="o">*</span> <span class="n">atm</span><span class="p">(</span><span class="n">band_total</span><span class="o">.</span><span class="n">wave</span><span class="p">))</span>
 
     <span class="n">left_ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Wavelength ($\AA$)&#39;</span><span class="p">)</span>
@@ -493,13 +496,13 @@ div.rendered_html tbody tr:hover {
     <span class="k">for</span> <span class="n">band_letter</span> <span class="ow">in</span> <span class="s1">&#39;ugrizy&#39;</span><span class="p">:</span>
         <span class="n">hardware</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lsst_hardware_</span><span class="si">{</span><span class="n">band_letter</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
-            <span class="n">axis</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">hardware</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">hardware</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">5</span><span class="p">)</span>
+            <span class="n">axis</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">hardware</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">hardware</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.5</span><span class="p">)</span>
 
     <span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">*</span><span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">())</span>
     <span class="n">pwv_vals</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axes</span><span class="p">):</span>
         <span class="n">pwv</span> <span class="o">=</span> <span class="n">pwv_vals</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wave</span><span class="p">,</span> <span class="n">v1_transmission</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">wave</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=.</span><span class="mi">5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;PWV = </span><span class="si">{</span><span class="n">pwv</span><span class="si">}</span><span class="s1"> mm&#39;</span><span class="p">)</span>
+        <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wave</span><span class="p">,</span> <span class="n">v1_transmission</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">wave</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;PWV = </span><span class="si">{</span><span class="n">pwv</span><span class="si">}</span><span class="s1"> mm&#39;</span><span class="p">)</span>
 
         <span class="n">axis</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;upper left&#39;</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Transmission&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
@@ -528,8 +531,8 @@ div.rendered_html tbody tr:hover {
 <img alt="../_images/notebooks_lsst_filters_7_0.png" src="../_images/notebooks_lsst_filters_7_0.png" />
 </div>
 </div>
-</div>
-<div class="section" id="The-Fiducial-ATM">
+</section>
+<section id="The-Fiducial-ATM">
 <h2>The Fiducial ATM<a class="headerlink" href="#The-Fiducial-ATM" title="Permalink to this headline">¶</a></h2>
 <p>We compare the reddest (largest) PWV absorption feature of the LSST standard atmosphere against the atmospheric model from <code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code>. We compare the LSST atmosphere against PWV absorption for 4mm PWV binned at a 5 angstrom resolution.</p>
 <div class="nbinput nblast docutils container">
@@ -583,12 +586,12 @@ div.rendered_html tbody tr:hover {
     <span class="n">left_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lsst_atm</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">fit_func</span><span class="p">(</span><span class="n">lsst_atm</span><span class="o">.</span><span class="n">wave</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="n">fit_label</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">wave_range</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">continuum_wavelengths</span><span class="p">):</span>
         <span class="n">label</span> <span class="o">=</span> <span class="s1">&#39;Continuum&#39;</span> <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">None</span>
-        <span class="n">left_ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="o">*</span><span class="n">wave_range</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C3&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">left_ax</span><span class="o">.</span><span class="n">axvspan</span><span class="p">(</span><span class="o">*</span><span class="n">wave_range</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;C3&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.1</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
 
     <span class="n">left_ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Wavelength ($\AA$)&#39;</span><span class="p">)</span>
     <span class="n">left_ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Total Transmission&#39;</span><span class="p">)</span>
     <span class="n">left_ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">8000</span><span class="p">,</span> <span class="mi">11000</span><span class="p">)</span>
-    <span class="n">left_ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">left_ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">left_ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">&#39;lower left&#39;</span><span class="p">,</span> <span class="n">framealpha</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Plot comparison of normalized and modeled absorption feature</span>
@@ -652,7 +655,7 @@ div.rendered_html tbody tr:hover {
 
 
 <span class="n">x0</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span>
-<span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">summed_residuals</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)],</span> <span class="n">tol</span><span class="o">=.</span><span class="mi">01</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span><span class="n">summed_residuals</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)],</span> <span class="n">tol</span><span class="o">=</span><span class="mf">.01</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Best fit PWV:&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Best fit Resolution:&#39;</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
@@ -668,8 +671,8 @@ Best fit PWV: 4.000000000490046
 Best fit Resolution: 4.999999802004262
 </pre></div></div>
 </div>
-</div>
-<div class="section" id="Stellar-Fluxes">
+</section>
+<section id="Stellar-Fluxes">
 <h2>Stellar Fluxes<a class="headerlink" href="#Stellar-Fluxes" title="Permalink to this headline">¶</a></h2>
 <p>We take note of how the stellar flux changes in each band relative to PWV = 0. We rely on stellar spectra from the Göttingen spectral library, as demonstrated below.</p>
 <div class="nbinput nblast docutils container">
@@ -692,13 +695,13 @@ Best fit Resolution: 4.999999802004262
     <span class="n">twin_ax</span> <span class="o">=</span> <span class="n">axis</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
 
     <span class="n">ones</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">transmission</span><span class="p">)</span>
-    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">stellar_spectrum</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">stellar_spectrum</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Stellar SED&#39;</span><span class="p">)</span>
+    <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">stellar_spectrum</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">stellar_spectrum</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">.05</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Stellar SED&#39;</span><span class="p">)</span>
     <span class="n">twin_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">transmission</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="n">transmission</span><span class="p">,</span> <span class="n">ones</span><span class="p">,</span> <span class="s1">&#39;Atmosphere&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="s1">&#39;ugrizy&#39;</span><span class="p">):</span>
         <span class="n">color</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;C</span><span class="si">{</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span>
         <span class="n">band</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lsst_hardware_</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-        <span class="n">twin_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">band</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1"> Band&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
+        <span class="n">twin_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">band</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1"> Band&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.4</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
         <span class="n">twin_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">band</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">)</span>
 
     <span class="n">axis</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Wavelength $\AA$&#39;</span><span class="p">)</span>
@@ -786,8 +789,8 @@ Best fit Resolution: 4.999999802004262
 </pre></div>
 </div>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
           </div>
