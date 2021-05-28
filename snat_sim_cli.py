@@ -149,7 +149,12 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
     )
 
     pipeline.validate()
-    pipeline.run()
+    if command_line_args.visualize:
+        pipeline.run_async()
+        pipeline.visualize()
+
+    else:
+        pipeline.run()
 
 
 def create_cli_parser() -> argparse.ArgumentParser:
@@ -329,6 +334,41 @@ def create_cli_parser() -> argparse.ArgumentParser:
         type=float,
         default=None,
         help='Simulate light-curves with a fixed signal to noise ratio.'
+    )
+
+    #######################################################################
+    # Pipeline Visualization
+    #######################################################################
+
+    visualizer = parser.add_argument_group(
+        title='Pipeline Visualization',
+        description='Optionally launch a server instance for monitoring the pipeline in real time')
+
+    visualizer.add_argument(
+        '--visualize',
+        action='store_true',
+        description='Launch a web server for visualizing the current pipeline status.'
+    )
+
+    visualizer.add_argument(
+        '--host',
+        type=str,
+        default=None,
+        description='Host IP used to serve the application from.'
+    )
+
+    visualizer.add_argument(
+        '--port',
+        type=int,
+        default=None,
+        description='Port used to serve the application.'
+    )
+
+    visualizer.add_argument(
+        '--proxy',
+        type=str,
+        default=None,
+        description='Use a proxy to serve the application to a different URL "{input}::{output}".'
     )
 
     return parser
