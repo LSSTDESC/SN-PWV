@@ -342,7 +342,7 @@ def create_cli_parser() -> argparse.ArgumentParser:
 
     visualizer = parser.add_argument_group(
         title='Pipeline Visualization',
-        description='Optionally launch a server instance for monitoring the pipeline in real time')
+        description='Optionally launch a server instance for monitoring the pipeline in real time.')
 
     visualizer.add_argument(
         '--visualize',
