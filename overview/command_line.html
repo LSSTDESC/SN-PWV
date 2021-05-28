@@ -142,7 +142,8 @@ and their default values is provided below.</p>
                       <span class="p">[</span><span class="o">--</span><span class="n">cut_SrfcTemp</span> <span class="n">CUT_SRFCTEMP</span> <span class="n">CUT_SRFCTEMP</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">cut_SrfcRH</span> <span class="n">CUT_SRFCRH</span> <span class="n">CUT_SRFCRH</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">cut_ZenithDelay</span> <span class="n">CUT_ZENITHDELAY</span> <span class="n">CUT_ZENITHDELAY</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">scatter</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fixed</span><span class="o">-</span><span class="n">snr</span> <span class="n">FIXED_SNR</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">no</span><span class="o">-</span><span class="n">scatter</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">fixed</span><span class="o">-</span><span class="n">snr</span> <span class="n">FIXED_SNR</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">visualize</span><span class="p">]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">host</span> <span class="n">HOST</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">port</span> <span class="n">PORT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">proxy</span> <span class="n">PROXY</span><span class="p">]</span>
 </pre></div>
 </div>
 <section id="Named Arguments">
@@ -167,7 +168,7 @@ and their default values is provided below.</p>
 <dd><p>Output file path (a .csv extension is enforced).</p>
 </dd>
 <dt><kbd>--overwrite</kbd></dt>
-<dd><p>Allow existing results to be overwritten.</p>
+<dd><p>Flag to allow existing results to be overwritten.</p>
 <p>Default: False</p>
 </dd>
 </dl>
@@ -254,11 +255,30 @@ and their default values is provided below.</p>
 <p>Options used when debugging pipeline behavior.</p>
 <dl class="option-list">
 <dt><kbd>--no-scatter</kbd></dt>
-<dd><p>Turn off added scatter when simulating light-curves.</p>
+<dd><p>Flag used to turn off added scatter when simulating light-curves.</p>
 <p>Default: False</p>
 </dd>
 <dt><kbd>--fixed-snr</kbd></dt>
 <dd><p>Simulate light-curves with a fixed signal to noise ratio.</p>
+</dd>
+</dl>
+</section>
+<section id="Pipeline Visualization">
+<h2>Pipeline Visualization<a class="headerlink" href="#Pipeline Visualization" title="Permalink to this headline">¶</a></h2>
+<p>Optionally launch a server instance for monitoring the pipeline in real time.</p>
+<dl class="option-list">
+<dt><kbd>--visualize</kbd></dt>
+<dd><p>Flag used to launch a web server for visualizing the current pipeline status.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--host</kbd></dt>
+<dd><p>Optionally define the host IP used to serve the application from.</p>
+</dd>
+<dt><kbd>--port</kbd></dt>
+<dd><p>Optionally define the port used to serve the application.</p>
+</dd>
+<dt><kbd>--proxy</kbd></dt>
+<dd><p>Optionally use a proxy to serve the application to a different URL “{input}::{output}”.</p>
 </dd>
 </dl>
 </section>
