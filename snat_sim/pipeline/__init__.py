@@ -133,4 +133,4 @@ class FittingPipeline(Pipeline):
             self.fit_light_curves.input.maxsize = max_queue * simulation_pool
             self.write_to_disk.input.maxsize = max_queue * simulation_pool
             
-        super(FittingPipeline, self).__init__()
+        super().__init__()

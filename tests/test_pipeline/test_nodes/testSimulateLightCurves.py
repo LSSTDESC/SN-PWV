@@ -1,5 +1,5 @@
 """Tests for the ``snat_sim.pipeline.nodes.LightCurveSimulation`` class"""
-
+from time import sleep
 from unittest import TestCase
 
 import pandas as pd
@@ -31,6 +31,7 @@ class ResultRouting(TestCase):
 
         for node in (self.source, self.node, self.success_target, self.failure_target):
             node.execute()
+            sleep(1)
 
     def test_simulation_routed_to_success_output(self) -> None:
         """Test successful simulations are sent to the ``success_output`` connector"""
