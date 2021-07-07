@@ -105,7 +105,7 @@ class SimulateLightCurves(Node):
         self.cosmo = cosmo
 
         # Node connectors
-        self.input = Input('Simulation Cadence Input')
+        self.input = Input('Simulated Cadence')
         self.success_output = Output('Simulation Success')
         self.failure_output = Output('Simulation Failure')
         super().__init__(num_processes=num_processes)
@@ -175,7 +175,7 @@ class FitLightCurves(Node):
         self.bounds = bounds
 
         # Node Connectors
-        self.input = Input('Fitting Light-Curve Input')
+        self.input = Input('Simulated Light-Curve')
         self.success_output = Output('Fitting Success')
         self.failure_output = Output('Fitting Failure')
         super(FitLightCurves, self).__init__(num_processes=num_processes)
@@ -241,7 +241,7 @@ class WritePipelinePacket(Target):
         self.debug = False
 
         self.out_path = Path(out_path)
-        self.input = Input('Writing To Disk Input')
+        self.input = Input('Data To Write')
         self.file_store: Optional[pd.HDFStore] = None
         super().__init__(num_processes=num_processes)
 
