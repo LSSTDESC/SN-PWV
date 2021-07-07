@@ -108,7 +108,7 @@ class SimulateLightCurves(Node):
         self.input = Input('Simulation Cadence Input')
         self.success_output = Output('Simulation Success')
         self.failure_output = Output('Simulation Failure')
-        super().__init__(num_processes)
+        super().__init__(num_processes=num_processes)
 
     def simulate_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> LightCurve:
         """Duplicate a plastic light-curve using the simulation model
@@ -178,7 +178,7 @@ class FitLightCurves(Node):
         self.input = Input('Fitting Light-Curve Input')
         self.success_output = Output('Fitting Success')
         self.failure_output = Output('Fitting Failure')
-        super(FitLightCurves, self).__init__(num_processes)
+        super(FitLightCurves, self).__init__(num_processes=num_processes)
 
     def fit_lc(self, light_curve: LightCurve, initial_guess: Dict[str, float]) -> Tuple[SNFitResult, SNModel]:
         """Fit the given light-curve
@@ -243,7 +243,7 @@ class WritePipelinePacket(Target):
         self.out_path = Path(out_path)
         self.input = Input('Writing To Disk Input')
         self.file_store: Optional[pd.HDFStore] = None
-        super().__init__(num_processes)
+        super().__init__(num_processes=num_processes)
 
     def write_packet(self, packet: PipelinePacket) -> None:
         """Write a pipeline packet to the output file"""
