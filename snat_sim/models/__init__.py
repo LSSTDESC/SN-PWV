@@ -120,8 +120,8 @@ Fitting Light-Curves
 ^^^^^^^^^^^^^^^^^^^^
 
 Photometric data can be fit directly from the model using the ``fit_lc`` method.
-Notice in the below example that the returned object types are classes from the
-``snat_sim`` package:
+``sncosmo`` users should note that the return signature is not the same
+as ``sncosmo``.:
 
 .. doctest:: python
 
