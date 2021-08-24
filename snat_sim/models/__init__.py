@@ -51,10 +51,10 @@ The ``SNModel`` class from ``snat_sim`` acts as a drop-in replacement for
 the ``Model`` classes built into ``sncosmo`` but provides extended
 functionality.
 
-Supernova models are instantiated using a spectral template with the addition of
-optional observer or rest-frame effects. In the
-following example, atmospheric propagation effects due to precipitable water
-vapor are added to a Salt2 supernova model.
+Supernova models are instantiated using a spectral template with the addition
+of optional observer or rest-frame effects. In the following example,
+atmospheric propagation effects due to precipitable water vapor are added
+to a Salt2 supernova model.
 
 .. doctest:: python
 
@@ -131,9 +131,6 @@ as ``sncosmo``.:
 
    >>> print(type(fit_result))
    <class 'snat_sim.models.supernova.SNFitResult'>
-
-   >>> print(type(fit_result.fitted_model))
-   <class 'snat_sim.models.supernova.SNModel'>
 
 The ``SNFitResult`` object is similar to the ``Result`` class from ``sncosmo``
 but **is not backward compatible**. ``SNFitResult`` instances provide access
