@@ -20,6 +20,7 @@ jobs:
     - name: Get pip cache dir
       id: pip-cache
       run: |
+        python -m pip install --upgrade pip
         echo "::set-output name=dir::$(pip cache dir)"
 
     - name: Cache Python packages
@@ -37,7 +38,6 @@ jobs:
 
     - name: Install test dependencies
       run: |
-        python -m pip install --upgrade pip
         pip install coverage
         pip install coveralls
 
