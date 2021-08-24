@@ -18,7 +18,7 @@ class ResultRouting(TestCase):
 
         # Set up separate target node for each of the ``SimulateLightCurves`` output connectors
         self.source = MockSource()
-        self.node = SimulateLightCurves(SNModel('salt2-extended'), num_processes=0)
+        self.node = SimulateLightCurves(SNModel('salt2-extended'))
         self.success_target = MockTarget()
         self.failure_target = MockTarget()
 

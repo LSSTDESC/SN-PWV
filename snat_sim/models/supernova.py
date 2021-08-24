@@ -14,6 +14,7 @@ import sncosmo
 
 from .light_curve import LightCurve, ObservedCadence
 from .pwv import VariablePropagationEffect
+from .. import constants as const
 from .. import types
 
 
@@ -156,7 +157,7 @@ class SNModel(sncosmo.Model):
             maxcall: int = 10000,
             phase_range: List[types.Numeric] = None,
             wave_range: List[types.Numeric] = None
-    ) -> Tuple[SNFitResult, SNModel]:
+    ) -> SNFitResult:
         """Fit model parameters to photometric data via a chi-squared minimization
 
         Fitting behavior:
@@ -206,7 +207,10 @@ class SNModel(sncosmo.Model):
             warn=False
         )
 
-        return SNFitResult(result), SNModel.from_sncosmo(fitted_model)
+        result = SNFitResult(result)
+        result['apparent_bessellb'] = fitted_model.source.bandmag('bessellb', 'ab', phase=0)
+        result['absolute_bessellb'] = fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo)
+        return result
 
 
 class SNFitResult(sncosmo.utils.Result):
