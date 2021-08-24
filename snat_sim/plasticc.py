@@ -169,7 +169,8 @@ class PLAsTICC:
 
                 yield int(meta['SNID'].strip()), params, cadence, lc
 
-            yield int(meta['SNID'].strip()), params, cadence
+            else:
+                yield int(meta['SNID'].strip()), params, cadence
 
     def iter_cadence(self, iter_lim: int = None, include_lc=False, verbose: bool = True) -> Iterator[YieldedData]:
         """Iterate over available cadence data for each supernova
