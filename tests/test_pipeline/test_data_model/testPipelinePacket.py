@@ -60,9 +60,11 @@ class FittedParamsToPandas(TestCase):
         fit_params = ['snid']
         fit_params.extend('fit_' + param for param in self.packet.fit_result.param_names)
         fit_params.extend('err_' + param for param in self.packet.fit_result.param_names)
-        fit_params.extend(('chisq', 'ndof', 'mb', 'abs_mag'))
+
+        # Compare just the first few columns which are generated dynamically
+        # using the parameter names. Ignore the static names.
         columns = self.packet.fitted_params_to_pandas().columns
-        np.testing.assert_array_equal(fit_params, columns)
+        np.testing.assert_array_equal(fit_params, columns[:len(fit_params)])
 
     def test_values_match_params(self) -> None:
         """Test the values of the returned dataframe match simulated parameters"""
@@ -73,8 +75,8 @@ class FittedParamsToPandas(TestCase):
         self.assertEqual(self.packet.fit_result.chisq, returned_data['chisq'], 'Incorrect chisq')
         self.assertEqual(self.packet.fit_result.ndof, returned_data['ndof'], 'Incorrect ndof')
 
-        for param in self.packet.fit_result.param_names:
-            fit_result = self.packet.fitted_model[param]
+        for i, param in enumerate(self.packet.fit_result.param_names):
+            fit_result = self.packet.fit_result.parameters[i]
             return_val = returned_data[f'fit_{param}']
             self.assertEqual(fit_result, return_val, f'Incorrect fit value for {param}')
 

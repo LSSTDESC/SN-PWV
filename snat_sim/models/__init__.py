@@ -51,10 +51,10 @@ The ``SNModel`` class from ``snat_sim`` acts as a drop-in replacement for
 the ``Model`` classes built into ``sncosmo`` but provides extended
 functionality.
 
-Supernova models are instantiated using a spectral template with the addition of
-optional observer or rest-frame effects. In the
-following example, atmospheric propagation effects due to precipitable water
-vapor are added to a Salt2 supernova model.
+Supernova models are instantiated using a spectral template with the addition
+of optional observer or rest-frame effects. In the following example,
+atmospheric propagation effects due to precipitable water vapor are added
+to a Salt2 supernova model.
 
 .. doctest:: python
 
@@ -120,20 +120,17 @@ Fitting Light-Curves
 ^^^^^^^^^^^^^^^^^^^^
 
 Photometric data can be fit directly from the model using the ``fit_lc`` method.
-Notice in the below example that the returned object types are classes from the
-``snat_sim`` package:
+``sncosmo`` users should note that the return signature is not the same
+as ``sncosmo``.:
 
 .. doctest:: python
 
    >>> supernova_model.set(z=.5, t0=55100.0)
-   >>> fit_result, fitted_model = supernova_model.fit_lc(
+   >>> fit_result = supernova_model.fit_lc(
    ...     light_curve_data, vparam_names=['x0', 'x1', 'c'])
 
    >>> print(type(fit_result))
    <class 'snat_sim.models.supernova.SNFitResult'>
-
-   >>> print(type(fitted_model))
-   <class 'snat_sim.models.supernova.SNModel'>
 
 The ``SNFitResult`` object is similar to the ``Result`` class from ``sncosmo``
 but **is not backward compatible**. ``SNFitResult`` instances provide access

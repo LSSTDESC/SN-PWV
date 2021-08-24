@@ -205,7 +205,7 @@ class FitLightCurves(Node):
 
         for packet in self.input.iter_get():
             try:
-                packet.fit_result, packet.fitted_model = self.fit_lc(packet.light_curve, packet.sim_params)
+                packet.fit_result = self.fit_lc(packet.light_curve, packet.sim_params)
                 packet.covariance = packet.fit_result.salt_covariance_linear()
 
             except Exception as excep:

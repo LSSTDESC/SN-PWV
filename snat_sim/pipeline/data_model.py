@@ -23,13 +23,12 @@ and the cadence used in the simulation.
    >>> # Set an initial guess for fitting the model parameters
    >>> sn_model.update(model_parameters)
 
-   >>> fit_result, fitted_model = sn_model.fit_lc(light_curve, vparam_names=['x0', 'x1', 'c'])
+   >>> fit_result = sn_model.fit_lc(light_curve, vparam_names=['x0', 'x1', 'c'])
    >>> packet = PipelinePacket(
    ...     snid=1234,                    # Unique SN identifier
    ...     sim_params=model_parameters,  # Parameters used to simulate the light-curve
    ...     light_curve=light_curve,      # The simulated light-curve
    ...     fit_result=fit_result,        # ``SNFitResult`` object
-   ...     fitted_model=fitted_model,    # The fitted model (set to best fit parameter values)
    ...     message='This fit was a success!'
    ... )
 
@@ -93,7 +92,7 @@ class PipelinePacket:
             Parameters recovered from fitting a light-curve
         """
 
-        if None in (self.fit_result, self.fitted_model):
+        if self.fit_result is None:
             raise ValueError('Fit results are not stored in the data packet.')
 
         col_names = ['snid']
@@ -101,8 +100,8 @@ class PipelinePacket:
         col_names.extend('err_' + param for param in self.fit_result.param_names)
         col_names.append('chisq')
         col_names.append('ndof')
-        col_names.append('mb')
-        col_names.append('abs_mag')
+        col_names.append('apparent_bessellb')
+        col_names.append('absolute_bessellb')
         # col_names.append('message')
 
         data_list = [self.snid]
@@ -110,9 +109,8 @@ class PipelinePacket:
         data_list.extend(self.fit_result.errors.get(p, MASK_VALUE) for p in self.fit_result.param_names)
         data_list.append(self.fit_result.chisq)
         data_list.append(self.fit_result.ndof)
-        data_list.append(self.fitted_model.source.bandmag('bessellb', 'ab', phase=0))
-        data_list.append(self.fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo))
-        # data_list.append(self.message)
+        data_list.append(self.fit_result.apparent_bessellb)
+        data_list.append(self.fit_result.absolute_bessellb)
         return pd.DataFrame(pd.Series(data_list, index=col_names)).T
 
     def packet_status_to_pandas(self) -> pd.DataFrame:
