@@ -144,10 +144,12 @@
 <div class="viewcode-block" id="setup_environment"><a class="viewcode-back" href="../../api/utils/utils.html#snat_sim.utils.setup_environment">[docs]</a><span class="k">def</span> <span class="nf">setup_environment</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Register package integrations with third party dependencies&quot;&quot;&quot;</span>
 
+    <span class="c1"># Importing these modules auto registers them with pandas</span>
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">cov_utils</span>
     <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">time_series</span>
-    <span class="kn">from</span> <span class="nn">.filters</span> <span class="kn">import</span> <span class="n">register_lsst_filters</span><span class="p">,</span> <span class="n">register_decam_filters</span>
 
+    <span class="c1"># Register custom filter profiles with sncosmo</span>
+    <span class="kn">from</span> <span class="nn">.filters</span> <span class="kn">import</span> <span class="n">register_lsst_filters</span><span class="p">,</span> <span class="n">register_decam_filters</span>
     <span class="n">register_lsst_filters</span><span class="p">()</span>
     <span class="n">register_decam_filters</span><span class="p">()</span></div>
 </pre></div>
