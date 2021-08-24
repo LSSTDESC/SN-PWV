@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Cache Python Packages
         uses: actions/cache@v2
         with:
@@ -18,12 +18,12 @@ jobs:
           key: ${{ runner.os }}-py3.8-pip-${{ hashFiles('setup.py') }}
           restore-keys: |
             ${{ runner.os }}-py3.8-pip-
-      
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-                 
+
       - name: Install dependencies
         run: |
           pip install . 
@@ -35,12 +35,11 @@ jobs:
         working-directory: ./docs
         run: make html SPHINXOPTS="-W --keep-going"  # Raise warnings as errors, but keep building anyways.
 
-        
   Test-Examples:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      
+
       - name: Cache Python Packages
         uses: actions/cache@v2
         with:
@@ -48,12 +47,12 @@ jobs:
           key: ${{ runner.os }}-py3.8-pip-${{ hashFiles('setup.py') }}
           restore-keys: |
             ${{ runner.os }}-py3.8-pip-
-      
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-                 
+
       - name: Install Python Dependencies
         run: |
           pip install . 
