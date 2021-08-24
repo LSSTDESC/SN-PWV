@@ -126,13 +126,13 @@ Notice in the below example that the returned object types are classes from the
 .. doctest:: python
 
    >>> supernova_model.set(z=.5, t0=55100.0)
-   >>> fit_result, fitted_model = supernova_model.fit_lc(
+   >>> fit_result = supernova_model.fit_lc(
    ...     light_curve_data, vparam_names=['x0', 'x1', 'c'])
 
    >>> print(type(fit_result))
    <class 'snat_sim.models.supernova.SNFitResult'>
 
-   >>> print(type(fitted_model))
+   >>> print(type(fit_result.fitted_model))
    <class 'snat_sim.models.supernova.SNModel'>
 
 The ``SNFitResult`` object is similar to the ``Result`` class from ``sncosmo``

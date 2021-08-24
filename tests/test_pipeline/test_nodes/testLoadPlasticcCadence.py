@@ -18,7 +18,7 @@ class LoadsCorrectSimulationData(TestCase):
 
         # Create a mock pipeline
         cadence = PLAsTICC('alt_sched', 11)
-        load_action = LoadPlasticcCadence(cadence, num_processes=0)
+        load_action = LoadPlasticcCadence(cadence)
         mock_target = MockTarget()
 
         # Execute the pipeline

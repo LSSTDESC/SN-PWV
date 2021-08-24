@@ -27,7 +27,7 @@ class GenericSetup:
 
         # Create a mock pipeline for fitting the packet's light-curve
         source = MockSource([cls.packet])
-        cls.node = FitLightCurves(SNModel('salt2-extended'), vparams=vparams, num_processes=0)
+        cls.node = FitLightCurves(SNModel('salt2-extended'), vparams=vparams)
         cls.success_target = MockTarget()
         cls.failure_target = MockTarget()
 
@@ -54,14 +54,13 @@ class SuccessfulFitOutput(TestCase, GenericSetup):
         """Check each individual output value from the fitting node"""
 
         # Calculate expected values
-        fitted_result, fitted_model = self.node.fit_lc(self.packet.light_curve, self.packet.sim_params)
+        fitted_result = self.node.fit_lc(self.packet.light_curve, self.packet.sim_params)
 
         # Compare those results against actual values
         pipeline_result = self.success_target.accumulated_data[0]
         self.assertEqual(self.packet.snid, pipeline_result.snid)
         self.assertEqual(self.packet.sim_params, pipeline_result.sim_params)
         self.assertEqual(fitted_result, pipeline_result.fit_result)
-        np.testing.assert_array_equal(fitted_model.parameters, pipeline_result.fitted_model.parameters)
         self.assertEqual('FitLightCurves: Minimization exited successfully.', pipeline_result.message)
 
 

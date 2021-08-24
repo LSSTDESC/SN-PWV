@@ -1,6 +1,7 @@
 """Interactive Bokeh application for plotting light-curve simulations"""
 
 import sys
+from copy import copy
 from pathlib import Path
 
 import numpy as np
@@ -207,13 +208,17 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
         )
 
         try:
-            result, fitted_model = self.sn_model_without_pwv.fit_lc(
+            result = self.sn_model_without_pwv.fit_lc(
                 self.sim_data,
                 vparam_names=['t0', 'x0', 'x1', 'c'])
 
         except Exception as e:
             self.fit_results_div.update(text=str(e))
             return
+
+        else:
+            fitted_model = copy(self.sn_model_without_pwv)
+            fitted_model.update(dict(zip(result.param_names, result.parameters)))
 
         # Set fitted param sliders to reflect the fitted parameters
         self.fit_t0_slider.update(value=fitted_model['t0'])
