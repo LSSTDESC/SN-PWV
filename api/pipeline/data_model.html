@@ -134,13 +134,12 @@ and the cadence used in the simulation.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Set an initial guess for fitting the model parameters</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">sn_model</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">model_parameters</span><span class="p">)</span>
 
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fit_result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">sn_model</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">,</span> <span class="n">vparam_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit_result</span> <span class="o">=</span> <span class="n">sn_model</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="p">,</span> <span class="n">vparam_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">packet</span> <span class="o">=</span> <span class="n">PipelinePacket</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">snid</span><span class="o">=</span><span class="mi">1234</span><span class="p">,</span>                    <span class="c1"># Unique SN identifier</span>
 <span class="gp">... </span>    <span class="n">sim_params</span><span class="o">=</span><span class="n">model_parameters</span><span class="p">,</span>  <span class="c1"># Parameters used to simulate the light-curve</span>
 <span class="gp">... </span>    <span class="n">light_curve</span><span class="o">=</span><span class="n">light_curve</span><span class="p">,</span>      <span class="c1"># The simulated light-curve</span>
 <span class="gp">... </span>    <span class="n">fit_result</span><span class="o">=</span><span class="n">fit_result</span><span class="p">,</span>        <span class="c1"># ``SNFitResult`` object</span>
-<span class="gp">... </span>    <span class="n">fitted_model</span><span class="o">=</span><span class="n">fitted_model</span><span class="p">,</span>    <span class="c1"># The fitted model (set to best fit parameter values)</span>
 <span class="gp">... </span>    <span class="n">message</span><span class="o">=</span><span class="s1">&#39;This fit was a success!&#39;</span>
 <span class="gp">... </span><span class="p">)</span>
 </pre></div>

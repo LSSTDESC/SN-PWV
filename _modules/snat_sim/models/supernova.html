@@ -129,6 +129,7 @@
 
 <span class="kn">from</span> <span class="nn">.light_curve</span> <span class="kn">import</span> <span class="n">LightCurve</span><span class="p">,</span> <span class="n">ObservedCadence</span>
 <span class="kn">from</span> <span class="nn">.pwv</span> <span class="kn">import</span> <span class="n">VariablePropagationEffect</span>
+<span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">..</span> <span class="kn">import</span> <span class="n">types</span>
 
 
@@ -271,7 +272,7 @@
             <span class="n">maxcall</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span>
             <span class="n">phase_range</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
             <span class="n">wave_range</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">types</span><span class="o">.</span><span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">SNFitResult</span><span class="p">,</span> <span class="n">SNModel</span><span class="p">]:</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SNFitResult</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Fit model parameters to photometric data via a chi-squared minimization</span>
 
 <span class="sd">        Fitting behavior:</span>
@@ -321,7 +322,10 @@
             <span class="n">warn</span><span class="o">=</span><span class="kc">False</span>
         <span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">SNFitResult</span><span class="p">(</span><span class="n">result</span><span class="p">),</span> <span class="n">SNModel</span><span class="o">.</span><span class="n">from_sncosmo</span><span class="p">(</span><span class="n">fitted_model</span><span class="p">)</span></div></div>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">SNFitResult</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;apparent_bessellb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitted_model</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">[</span><span class="s1">&#39;absolute_bessellb&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">fitted_model</span><span class="o">.</span><span class="n">source_peakabsmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div></div>
 
 
 <div class="viewcode-block" id="SNFitResult"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.supernova.SNFitResult">[docs]</a><span class="k">class</span> <span class="nc">SNFitResult</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">Result</span><span class="p">):</span>

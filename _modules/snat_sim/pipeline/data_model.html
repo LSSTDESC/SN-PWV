@@ -139,13 +139,12 @@
 <span class="sd">   &gt;&gt;&gt; # Set an initial guess for fitting the model parameters</span>
 <span class="sd">   &gt;&gt;&gt; sn_model.update(model_parameters)</span>
 
-<span class="sd">   &gt;&gt;&gt; fit_result, fitted_model = sn_model.fit_lc(light_curve, vparam_names=[&#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;])</span>
+<span class="sd">   &gt;&gt;&gt; fit_result = sn_model.fit_lc(light_curve, vparam_names=[&#39;x0&#39;, &#39;x1&#39;, &#39;c&#39;])</span>
 <span class="sd">   &gt;&gt;&gt; packet = PipelinePacket(</span>
 <span class="sd">   ...     snid=1234,                    # Unique SN identifier</span>
 <span class="sd">   ...     sim_params=model_parameters,  # Parameters used to simulate the light-curve</span>
 <span class="sd">   ...     light_curve=light_curve,      # The simulated light-curve</span>
 <span class="sd">   ...     fit_result=fit_result,        # ``SNFitResult`` object</span>
-<span class="sd">   ...     fitted_model=fitted_model,    # The fitted model (set to best fit parameter values)</span>
 <span class="sd">   ...     message=&#39;This fit was a success!&#39;</span>
 <span class="sd">   ... )</span>
 
@@ -209,7 +208,7 @@
 <span class="sd">            Parameters recovered from fitting a light-curve</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">if</span> <span class="kc">None</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fitted_model</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Fit results are not stored in the data packet.&#39;</span><span class="p">)</span>
 
         <span class="n">col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;snid&#39;</span><span class="p">]</span>
@@ -217,8 +216,8 @@
         <span class="n">col_names</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="s1">&#39;err_&#39;</span> <span class="o">+</span> <span class="n">param</span> <span class="k">for</span> <span class="n">param</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;chisq&#39;</span><span class="p">)</span>
         <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;ndof&#39;</span><span class="p">)</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;mb&#39;</span><span class="p">)</span>
-        <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;abs_mag&#39;</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;apparent_bessellb&#39;</span><span class="p">)</span>
+        <span class="n">col_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;absolute_bessellb&#39;</span><span class="p">)</span>
         <span class="c1"># col_names.append(&#39;message&#39;)</span>
 
         <span class="n">data_list</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">snid</span><span class="p">]</span>
@@ -226,9 +225,8 @@
         <span class="n">data_list</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">MASK_VALUE</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">param_names</span><span class="p">)</span>
         <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">chisq</span><span class="p">)</span>
         <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">ndof</span><span class="p">)</span>
-        <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">source</span><span class="o">.</span><span class="n">bandmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
-        <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fitted_model</span><span class="o">.</span><span class="n">source_peakabsmag</span><span class="p">(</span><span class="s1">&#39;bessellb&#39;</span><span class="p">,</span> <span class="s1">&#39;ab&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">))</span>
-        <span class="c1"># data_list.append(self.message)</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">apparent_bessellb</span><span class="p">)</span>
+        <span class="n">data_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_result</span><span class="o">.</span><span class="n">absolute_bessellb</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data_list</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">col_names</span><span class="p">))</span><span class="o">.</span><span class="n">T</span></div>
 
 <div class="viewcode-block" id="PipelinePacket.packet_status_to_pandas"><a class="viewcode-back" href="../../../api/pipeline/data_model.html#snat_sim.pipeline.data_model.PipelinePacket.packet_status_to_pandas">[docs]</a>    <span class="k">def</span> <span class="nf">packet_status_to_pandas</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>

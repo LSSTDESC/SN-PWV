@@ -205,10 +205,10 @@ backward compatible with the <code class="docutils literal notranslate"><span cl
 The <code class="docutils literal notranslate"><span class="pre">SNModel</span></code> class from <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> acts as a drop-in replacement for
 the <code class="docutils literal notranslate"><span class="pre">Model</span></code> classes built into <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but provides extended
 functionality.</p>
-<p>Supernova models are instantiated using a spectral template with the addition of
-optional observer or rest-frame effects. In the
-following example, atmospheric propagation effects due to precipitable water
-vapor are added to a Salt2 supernova model.</p>
+<p>Supernova models are instantiated using a spectral template with the addition
+of optional observer or rest-frame effects. In the following example,
+atmospheric propagation effects due to precipitable water vapor are added
+to a Salt2 supernova model.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">models</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create a supernova model</span>
@@ -264,17 +264,14 @@ easy interface for casting the data into other commonly used object types.</p>
 <section id="fitting-light-curves">
 <h3>Fitting Light-Curves<a class="headerlink" href="#fitting-light-curves" title="Permalink to this headline">¶</a></h3>
 <p>Photometric data can be fit directly from the model using the <code class="docutils literal notranslate"><span class="pre">fit_lc</span></code> method.
-Notice in the below example that the returned object types are classes from the
-<code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package:</p>
+<code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> users should note that the return signature is not the same
+as <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.:</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">supernova_model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="mf">.5</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">55100.0</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">fit_result</span><span class="p">,</span> <span class="n">fitted_model</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fit_result</span> <span class="o">=</span> <span class="n">supernova_model</span><span class="o">.</span><span class="n">fit_lc</span><span class="p">(</span>
 <span class="gp">... </span>    <span class="n">light_curve_data</span><span class="p">,</span> <span class="n">vparam_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">])</span>
 
 <span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">fit_result</span><span class="p">))</span>
 <span class="go">&lt;class &#39;snat_sim.models.supernova.SNFitResult&#39;&gt;</span>
-
-<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">fitted_model</span><span class="p">))</span>
-<span class="go">&lt;class &#39;snat_sim.models.supernova.SNModel&#39;&gt;</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">SNFitResult</span></code> object is similar to the <code class="docutils literal notranslate"><span class="pre">Result</span></code> class from <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>
