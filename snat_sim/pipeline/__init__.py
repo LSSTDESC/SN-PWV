@@ -75,7 +75,8 @@ class FittingPipeline(Pipeline):
             catalog: VariableCatalog = None,
             add_scatter: bool = True,
             fixed_snr: Optional[float] = None,
-            overwrite: bool = False
+            overwrite: bool = False,
+            write_lc_sims:bool=False
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -93,7 +94,8 @@ class FittingPipeline(Pipeline):
             catalog: Reference star catalog to calibrate simulated supernova with
             add_scatter: Add randomly generated scatter to simulated light-curve points
             fixed_snr: Simulate light-curves with a fixed signal to noise ratio
-            overwrite: Whether to overwrite an existing output file
+            overwrite: Whether to allow overwriting an existing output file
+            write_lc_sims: Include simulated light_curves in the
         """
 
         out_path = Path(out_path)
@@ -105,7 +107,7 @@ class FittingPipeline(Pipeline):
         # Define the nodes of the analysis pipeline
         cadence = PLAsTICC(cadence, model=11)
         self.load_plastic = LoadPlasticcCadence(cadence, iter_lim=iter_lim)
-        self.write_to_disk = WritePipelinePacket(out_path)
+        self.write_to_disk = WritePipelinePacket(out_path, write_lc_sims)
 
         self.simulate_light_curves = SimulateLightCurves(
             sn_model=sim_model,
