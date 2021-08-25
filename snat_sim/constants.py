@@ -60,7 +60,9 @@ betoule_abs_mb = -19.05
 betoule_H0 = 70
 betoule_cosmo = _FlatLambdaCDM(H0=betoule_H0, Om0=betoule_omega_m)
 
-# Start dates for each season (summer, spring, winter, fall)
+# Start dates for each season
+# 2020 was specifically chosen because it is a leap year.
+# This makes certain datetime calculations easier
 jun_solstice = datetime(2020, 6, 21, tzinfo=utc)
 dec_solstice = datetime(2020, 12, 21, tzinfo=utc)
 mar_equinox = datetime(2020, 3, 20, tzinfo=utc)
