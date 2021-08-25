@@ -118,7 +118,7 @@ class AdvancedNamespace(argparse.Namespace):
         return models.VariableCatalog(self.pwv_model, *self.ref_stars)
 
     @property
-    def add_scatter(self):
+    def add_scatter(self) -> bool:
         """Whether to include added scatter in the light-curve simulations."""
 
         return not self.no_scatter
@@ -145,7 +145,8 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         catalog=command_line_args.catalog,
         add_scatter=command_line_args.add_scatter,
         fixed_snr=command_line_args.fixed_snr,
-        overwrite=command_line_args.overwrite
+        overwrite=command_line_args.overwrite,
+        write_lc_sims=command_line_args.write_lc_sims
     )
 
     pipeline.validate()
@@ -202,6 +203,13 @@ def create_cli_parser() -> argparse.ArgumentParser:
         '--overwrite',
         action='store_true',
         help='Flag to allow existing results to be overwritten.'
+    )
+
+    parser.add_argument(
+        '--write_lc_sims',
+        action='store_true',
+        help='Flag to include simulated light curves in the pipeline output file.'
+             ' Note the added IO may noticeably increase the pipeline runtime.'
     )
 
     #######################################################################
