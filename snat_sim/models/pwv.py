@@ -256,9 +256,11 @@ class PWVModel:
         summer = tsu.datetime_to_sec_in_year(const.dec_solstice)
 
         # Separate PWV data based on season
-        winter_pwv = self.pwv_model_data[(self.pwv_model_data.index < spring) | (self.pwv_model_data.index > winter)]
+        # THe cosed is based on southern hemisphere definitions for each season
+        # This means the summer spans the new year, hence the use of an | operator
+        winter_pwv = self.pwv_model_data[(self.pwv_model_data.index < spring) & (self.pwv_model_data.index > winter)]
         spring_pwv = self.pwv_model_data[(self.pwv_model_data.index > spring) & (self.pwv_model_data.index < summer)]
-        summer_pwv = self.pwv_model_data[(self.pwv_model_data.index > summer) & (self.pwv_model_data.index < fall)]
+        summer_pwv = self.pwv_model_data[(self.pwv_model_data.index > summer) | (self.pwv_model_data.index < fall)]
         fall_pwv = self.pwv_model_data[(self.pwv_model_data.index > fall) & (self.pwv_model_data.index < winter)]
 
         return {
