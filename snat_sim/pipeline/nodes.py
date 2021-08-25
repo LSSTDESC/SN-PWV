@@ -224,18 +224,14 @@ class WritePipelinePacket(Target):
         input: A pipeline packet
     """
 
-    def __init__(self, out_path: Union[str, Path], num_processes=1) -> None:
+    def __init__(self, out_path: Union[str, Path]) -> None:
         """Output node for writing HDF5 data to disk
 
-        This node can only be run using a single process. This can be the main
-        process (``num_processes=0``) or a single forked process (``num_processes=1``.)
+        This node can only be run using a single process.
 
         Args:
             out_path: Path to write data to in HDF5 format
         """
-
-        if num_processes not in (0, 1):
-            raise RuntimeError('Number of processes for ``LoadPlasticcCadence`` must be 0 or 1.')
 
         # Make true to raise errors instead of converting them to warnings
         self.debug = False
@@ -243,7 +239,7 @@ class WritePipelinePacket(Target):
         self.out_path = Path(out_path)
         self.input = Input('Data To Write')
         self.file_store: Optional[pd.HDFStore] = None
-        super().__init__(num_processes=num_processes)
+        super().__init__(num_processes=1)
 
     def write_packet(self, packet: PipelinePacket) -> None:
         """Write a pipeline packet to the output file"""
