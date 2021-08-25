@@ -250,10 +250,10 @@ class PWVModel:
         """
 
         # Rough estimates for the start of each season
-        spring = tsu.datetime_to_sec_in_year(const.first_equinox)
-        summer = tsu.datetime_to_sec_in_year(const.first_solstice)
-        fall = tsu.datetime_to_sec_in_year(const.second_equinox)
-        winter = tsu.datetime_to_sec_in_year(const.second_solstice)
+        fall = tsu.datetime_to_sec_in_year(const.mar_equinox)
+        winter = tsu.datetime_to_sec_in_year(const.jun_solstice)
+        spring = tsu.datetime_to_sec_in_year(const.sep_equinox)
+        summer = tsu.datetime_to_sec_in_year(const.dec_solstice)
 
         # Separate PWV data based on season
         winter_pwv = self.pwv_model_data[(self.pwv_model_data.index < spring) | (self.pwv_model_data.index > winter)]
@@ -549,14 +549,18 @@ class SeasonalPWVTrans(AbstractVariablePWVEffect):
     def __init__(self, time_format: str = 'mjd', transmission_res: float = 5.) -> None:
         """Time variable atmospheric transmission due to PWV that changes per season
 
+        Season names are defined using the southern hemisphere
+
         Effect Parameters:
             ra: Target Right Ascension in degrees
             dec: Target Declination in degrees
             lat: Observer latitude in degrees (defaults to location of VRO)
             lon: Observer longitude in degrees (defaults to location of VRO)
             alt: Observer altitude in meters  (defaults to height of VRO)
-            winter:
-
+            winter: PWV concentration in the winter
+            spring: PWV concentration in the spring
+            summer: PWV concentration in the summer
+            fall: PWV concentration in the fall
 
         Args:
             time_format: Astropy recognized time format used by the ``pwv_interpolator``
