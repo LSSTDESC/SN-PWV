@@ -82,7 +82,6 @@ class PipelinePacket:
 
         out_data = pd.Series(self.sim_params)
         out_data['snid'] = self.snid
-        # out_data['message'] = self.message
         return pd.DataFrame(out_data).T
 
     def fitted_params_to_pandas(self) -> pd.DataFrame:
