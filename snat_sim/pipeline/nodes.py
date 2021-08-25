@@ -224,21 +224,21 @@ class WritePipelinePacket(Target):
         input: A pipeline packet
     """
 
-    def __init__(self, out_path: Union[str, Path], include_light_curve: bool = False) -> None:
+    def __init__(self, out_path: Union[str, Path], write_lc_sims: bool = False) -> None:
         """Output node for writing HDF5 data to disk
 
         This node can only be run using a single process.
 
         Args:
             out_path: Path to write data to in HDF5 format
-            include_light_curve: Whether to include simulated lightcurves in the data written to disk
+            write_lc_sims: Whether to include simulated light-curves in the data written to disk
         """
 
         # Make true to raise errors instead of converting them to warnings
         self.debug = False
 
         self.out_path = Path(out_path)
-        self.include_light_curve = include_light_curve
+        self.write_lc_sims = write_lc_sims
         self.input = Input('Data To Write')
         self.file_store: Optional[pd.HDFStore] = None
         super().__init__(num_processes=1)
@@ -250,7 +250,7 @@ class WritePipelinePacket(Target):
         self.file_store.append('simulation/params', packet.sim_params_to_pandas())
         self.file_store.append('message', packet.packet_status_to_pandas().astype(str), min_itemsize={'message': 250})
 
-        if self.include_light_curve and packet.light_curve is not None:
+        if self.write_lc_sims and packet.light_curve is not None:
             self.file_store.put(f'simulation/lcs/{packet.snid}', packet.light_curve.to_pandas())
 
         if packet.fit_result is not None:
