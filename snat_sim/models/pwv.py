@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import abc
 import warnings
-from datetime import datetime
 from typing import *
 
 import numpy as np
@@ -18,7 +17,6 @@ from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
 from pwv_kpno.gps_pwv import GPSReceiver
 from pwv_kpno.transmission import calc_pwv_eff
-from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
 
 from snat_sim.utils.caching import Cache
@@ -252,10 +250,10 @@ class PWVModel:
         """
 
         # Rough estimates for the start of each season
-        spring = tsu.datetime_to_sec_in_year(datetime(2020, 3, 20, tzinfo=utc))
-        summer = tsu.datetime_to_sec_in_year(datetime(2020, 6, 21, tzinfo=utc))
-        fall = tsu.datetime_to_sec_in_year(datetime(2020, 9, 22, tzinfo=utc))
-        winter = tsu.datetime_to_sec_in_year(datetime(2020, 12, 21, tzinfo=utc))
+        spring = tsu.datetime_to_sec_in_year(const.first_equinox)
+        summer = tsu.datetime_to_sec_in_year(const.first_solstice)
+        fall = tsu.datetime_to_sec_in_year(const.second_equinox)
+        winter = tsu.datetime_to_sec_in_year(const.second_solstice)
 
         # Separate PWV data based on season
         winter_pwv = self.pwv_model_data[(self.pwv_model_data.index < spring) | (self.pwv_model_data.index > winter)]
