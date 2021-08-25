@@ -284,7 +284,7 @@ failure_output: Emits pipeline packets for cases where the fitting procedure fai
 
 <dl class="py class">
 <dt class="sig sig-object py" id="snat_sim.pipeline.nodes.WritePipelinePacket">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></span><span class="sig-name descname"><span class="pre">WritePipelinePacket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.nodes.</span></span><span class="sig-name descname"><span class="pre">WritePipelinePacket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_lc_sims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket" title="Permalink to this definition">¶</a></dt>
 <dd><p>Pipeline node for writing pipeline packets to disk</p>
 <dl class="simple">
 <dt>Connectors:</dt><dd><p>input: A pipeline packet</p>
@@ -292,13 +292,15 @@ failure_output: Emits pipeline packets for cases where the fitting procedure fai
 </dl>
 <dl class="py method">
 <dt class="sig sig-object py" id="snat_sim.pipeline.nodes.WritePipelinePacket.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_processes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.__init__" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">out_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">write_lc_sims</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/nodes.html#WritePipelinePacket.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.nodes.WritePipelinePacket.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Output node for writing HDF5 data to disk</p>
-<p>This node can only be run using a single process. This can be the main
-process (<code class="docutils literal notranslate"><span class="pre">num_processes=0</span></code>) or a single forked process (<code class="docutils literal notranslate"><span class="pre">num_processes=1</span></code>.)</p>
+<p>This node can only be run using a single process.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>out_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path to write data to in HDF5 format</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>out_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path to write data to in HDF5 format</p></li>
+<li><p><strong>write_lc_sims</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to include simulated light-curves in the data written to disk</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>

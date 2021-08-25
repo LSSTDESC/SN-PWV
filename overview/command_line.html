@@ -127,8 +127,9 @@ for running the analysis pipeline. An outline of the command line arguments
 and their default values is provided below.</p>
 <div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">fitting_cli</span><span class="o">.</span><span class="n">py</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="o">-</span><span class="n">c</span> <span class="n">CADENCE</span> <span class="p">[</span><span class="o">-</span><span class="n">s</span> <span class="n">SIM_POOL_SIZE</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">f</span> <span class="n">FIT_POOL_SIZE</span><span class="p">]</span>
                       <span class="p">[</span><span class="o">-</span><span class="n">i</span> <span class="n">ITER_LIM</span><span class="p">]</span> <span class="o">-</span><span class="n">o</span> <span class="n">OUT_PATH</span> <span class="p">[</span><span class="o">--</span><span class="n">overwrite</span><span class="p">]</span>
-                      <span class="p">[</span><span class="o">--</span><span class="n">sim_source</span> <span class="n">SIM_SOURCE</span><span class="p">]</span> <span class="o">--</span><span class="n">sim_variability</span>
-                      <span class="n">SIM_VARIABILITY</span> <span class="p">[</span><span class="o">--</span><span class="n">ref_stars</span> <span class="n">REF_STARS</span> <span class="p">[</span><span class="n">REF_STARS</span> <span class="o">...</span><span class="p">]]</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">write_lc_sims</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">sim_source</span> <span class="n">SIM_SOURCE</span><span class="p">]</span>
+                      <span class="o">--</span><span class="n">sim_variability</span> <span class="n">SIM_VARIABILITY</span>
+                      <span class="p">[</span><span class="o">--</span><span class="n">ref_stars</span> <span class="n">REF_STARS</span> <span class="p">[</span><span class="n">REF_STARS</span> <span class="o">...</span><span class="p">]]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">fit_source</span> <span class="n">FIT_SOURCE</span><span class="p">]</span> <span class="o">--</span><span class="n">fit_variability</span>
                       <span class="n">FIT_VARIABILITY</span> <span class="p">[</span><span class="o">--</span><span class="n">vparams</span> <span class="n">VPARAMS</span> <span class="p">[</span><span class="n">VPARAMS</span> <span class="o">...</span><span class="p">]]</span>
                       <span class="p">[</span><span class="o">--</span><span class="n">bound_z</span> <span class="n">BOUND_Z</span> <span class="n">BOUND_Z</span><span class="p">]</span>
@@ -169,6 +170,10 @@ and their default values is provided below.</p>
 </dd>
 <dt><kbd>--overwrite</kbd></dt>
 <dd><p>Flag to allow existing results to be overwritten.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--write_lc_sims</kbd></dt>
+<dd><p>Flag to include simulated light curves in the pipeline output file. Note the added IO may noticeably increase the pipeline runtime.</p>
 <p>Default: False</p>
 </dd>
 </dl>
