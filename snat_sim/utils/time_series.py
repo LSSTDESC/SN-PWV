@@ -62,6 +62,7 @@ import pandas as pd
 from astropy import units as u
 
 from .. import types
+from .. import constants as const
 
 
 def datetime_to_sec_in_year(date: types.DateColl) -> types.NumpyLike:
@@ -102,6 +103,7 @@ def datetime_to_season(date: types.DateColl) -> np.ndarray:
     """Determine the calendar season corresponding to a given datetime
 
     Seasons are labeled as 'winter', 'spring', 'summer', or 'fall'.
+    All season names are defined as being in the southern hemisphere.
 
     Args:
         date: Datetime value(s)
@@ -110,13 +112,14 @@ def datetime_to_season(date: types.DateColl) -> np.ndarray:
         An array of strings
     """
 
-    dummy_year = 2000  # dummy leap year to allow input X-02-29 (leap day)
+    dummy_year = const.jun_solstice.year
+
     seasons = [
-        ('winter', (dt.date(dummy_year, 1, 1), dt.date(dummy_year, 3, 20))),
-        ('spring', (dt.date(dummy_year, 3, 20), dt.date(dummy_year, 6, 20))),
-        ('summer', (dt.date(dummy_year, 6, 20), dt.date(dummy_year, 9, 22))),
-        ('fall', (dt.date(dummy_year, 9, 22), dt.date(dummy_year, 12, 20))),
-        ('winter', (dt.date(dummy_year, 12, 20), dt.date(dummy_year + 1, 1, 1)))
+        ('summer', (dt.date(dummy_year, 1, 1), const.mar_equinox.date())),
+        ('fall', (const.mar_equinox.date(), const.jun_solstice.date())),
+        ('winter', (const.jun_solstice.date(), const.sep_equinox.date())),
+        ('spring', (const.sep_equinox.date(), const.dec_solstice.date())),
+        ('summer', (const.dec_solstice.date(), dt.date(dummy_year + 1, 1, 1)))
     ]
 
     date = date.date().replace(year=dummy_year)

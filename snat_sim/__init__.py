@@ -15,6 +15,6 @@ __author__ = 'Dark Energy Science Collaboration'
 __maintainer__ = 'Daniel Perrefort'
 __license__ = 'GPL 3.0'
 
-_setup_environment()
 warnings.simplefilter('ignore', category=DeprecationWarning)
 warnings.filterwarnings('ignore', category=NaturalNameWarning)
+_setup_environment()

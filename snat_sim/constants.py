@@ -32,9 +32,20 @@ below.
 | ``betoule_cosmo``            | ``astropy.Cosmology`` object representing    |
 |                              | the best fit cosmology in Betoule+ 2014.     |
 +------------------------------+----------------------------------------------+
+| ``jun_solstice``             | Date of the first solstice in 2020.          |
++------------------------------+----------------------------------------------+
+| ``dec_solstice``             | Date of the second solstice in 2020.         |
++------------------------------+----------------------------------------------+
+| ``mar_equinox``              | Date of the first equinox in 2020.           |
++------------------------------+----------------------------------------------+
+| ``sep_equinox``              | Date of the second equinox in 2020.          |
++------------------------------+----------------------------------------------+
 """
 
+from datetime import datetime
+
 from astropy.cosmology import FlatLambdaCDM as _FlatLambdaCDM
+from pytz import utc
 
 # Vera Rubin Observatory coordinates from Google Maps
 vro_latitude = -30.244573
@@ -48,3 +59,11 @@ betoule_omega_m = 0.295
 betoule_abs_mb = -19.05
 betoule_H0 = 70
 betoule_cosmo = _FlatLambdaCDM(H0=betoule_H0, Om0=betoule_omega_m)
+
+# Start dates for each season
+# 2020 was specifically chosen because it is a leap year.
+# This makes certain datetime calculations easier
+jun_solstice = datetime(2020, 6, 21, tzinfo=utc)
+dec_solstice = datetime(2020, 12, 21, tzinfo=utc)
+mar_equinox = datetime(2020, 3, 20, tzinfo=utc)
+sep_equinox = datetime(2020, 9, 22, tzinfo=utc)

@@ -6,7 +6,6 @@ from __future__ import annotations
 
 import abc
 import warnings
-from datetime import datetime
 from typing import *
 
 import numpy as np
@@ -18,7 +17,6 @@ from astropy.time import Time
 from pwv_kpno.defaults import v1_transmission
 from pwv_kpno.gps_pwv import GPSReceiver
 from pwv_kpno.transmission import calc_pwv_eff
-from pytz import utc
 from scipy.interpolate import RegularGridInterpolator
 
 from snat_sim.utils.caching import Cache
@@ -252,15 +250,17 @@ class PWVModel:
         """
 
         # Rough estimates for the start of each season
-        spring = tsu.datetime_to_sec_in_year(datetime(2020, 3, 20, tzinfo=utc))
-        summer = tsu.datetime_to_sec_in_year(datetime(2020, 6, 21, tzinfo=utc))
-        fall = tsu.datetime_to_sec_in_year(datetime(2020, 9, 22, tzinfo=utc))
-        winter = tsu.datetime_to_sec_in_year(datetime(2020, 12, 21, tzinfo=utc))
+        fall = tsu.datetime_to_sec_in_year(const.mar_equinox)
+        winter = tsu.datetime_to_sec_in_year(const.jun_solstice)
+        spring = tsu.datetime_to_sec_in_year(const.sep_equinox)
+        summer = tsu.datetime_to_sec_in_year(const.dec_solstice)
 
         # Separate PWV data based on season
-        winter_pwv = self.pwv_model_data[(self.pwv_model_data.index < spring) | (self.pwv_model_data.index > winter)]
+        # THe cosed is based on southern hemisphere definitions for each season
+        # This means the summer spans the new year, hence the use of an | operator
+        winter_pwv = self.pwv_model_data[(self.pwv_model_data.index < spring) & (self.pwv_model_data.index > winter)]
         spring_pwv = self.pwv_model_data[(self.pwv_model_data.index > spring) & (self.pwv_model_data.index < summer)]
-        summer_pwv = self.pwv_model_data[(self.pwv_model_data.index > summer) & (self.pwv_model_data.index < fall)]
+        summer_pwv = self.pwv_model_data[(self.pwv_model_data.index > summer) | (self.pwv_model_data.index < fall)]
         fall_pwv = self.pwv_model_data[(self.pwv_model_data.index > fall) & (self.pwv_model_data.index < winter)]
 
         return {
@@ -551,14 +551,18 @@ class SeasonalPWVTrans(AbstractVariablePWVEffect):
     def __init__(self, time_format: str = 'mjd', transmission_res: float = 5.) -> None:
         """Time variable atmospheric transmission due to PWV that changes per season
 
+        Season names are defined using the southern hemisphere
+
         Effect Parameters:
             ra: Target Right Ascension in degrees
             dec: Target Declination in degrees
             lat: Observer latitude in degrees (defaults to location of VRO)
             lon: Observer longitude in degrees (defaults to location of VRO)
             alt: Observer altitude in meters  (defaults to height of VRO)
-            winter:
-
+            winter: PWV concentration in the winter
+            spring: PWV concentration in the spring
+            summer: PWV concentration in the summer
+            fall: PWV concentration in the fall
 
         Args:
             time_format: Astropy recognized time format used by the ``pwv_interpolator``

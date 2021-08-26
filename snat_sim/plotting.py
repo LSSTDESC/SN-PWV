@@ -325,7 +325,10 @@ def plot_spectral_template(
 
 
 def plot_spectrum(
-        wave: np.array, flux: np.array, figsize: Tuple[Numeric, Numeric] = (9, 3), hardware_only=False
+        wave: np.array,
+        flux: np.array,
+        figsize: Tuple[Numeric, Numeric] = (9, 3),
+        hardware_only=False
 ) -> Tuple[plt.figure, plt.Axes]:
     """Plot a spectrum over the per-filter LSST hardware throughput
 
@@ -333,6 +336,7 @@ def plot_spectrum(
         wave: Spectrum wavelengths in Angstroms
         flux: Flux of the spectrum in arbitrary units
         figsize: Size of the figure
+        hardware_only: Only include hardware contributions in the plotted filters
 
     Returns:
         The matplotlib figure and axis
@@ -350,9 +354,9 @@ def plot_spectrum(
 
     prefix = 'lsst_hardware_' if hardware_only else 'lsst_total_'
     for filter_abbrev in 'ugrizy':
-        filt = sncosmo.get_bandpass(f'{prefix}{filter_abbrev}')
-        twin_ax.fill_between(wave, filt(wave), alpha=.3, label=filter_abbrev)
-        twin_ax.plot(wave, filt(wave))
+        bandpass = sncosmo.get_bandpass(f'{prefix}{filter_abbrev}')
+        twin_ax.fill_between(wave, bandpass(wave), alpha=.3, label=filter_abbrev)
+        twin_ax.plot(wave, bandpass(wave))
 
     axis.plot(wave, flux, color='k')
     return fig, axis
@@ -544,15 +548,15 @@ def plot_year_pwv_vs_time(
     dec_equinox = datetime(year, 12, 21, tzinfo=utc)
 
     # Separate data based on season
-    winter_pwv = pwv_series[(pwv_series.index < mar_equinox) | (pwv_series.index > dec_equinox)]
-    spring_pwv = pwv_series[(pwv_series.index > mar_equinox) & (pwv_series.index < jun_equinox)]
-    summer_pwv = pwv_series[(pwv_series.index > jun_equinox) & (pwv_series.index < sep_equinox)]
-    fall_pwv = pwv_series[(pwv_series.index > sep_equinox) & (pwv_series.index < dec_equinox)]
+    summer_pwv = pwv_series[(pwv_series.index < mar_equinox) | (pwv_series.index > dec_equinox)]
+    fall_pwv = pwv_series[(pwv_series.index > mar_equinox) & (pwv_series.index < jun_equinox)]
+    winter_pwv = pwv_series[(pwv_series.index > jun_equinox) & (pwv_series.index < sep_equinox)]
+    spring_pwv = pwv_series[(pwv_series.index > sep_equinox) & (pwv_series.index < dec_equinox)]
 
-    print(f'Winter Average: {winter_pwv.mean(): .2f} +\\- {winter_pwv.std(): .2f} mm')
-    print(f'Spring Average: {spring_pwv.mean(): .2f} +\\- {spring_pwv.std(): .2f} mm')
     print(f'Summer Average: {summer_pwv.mean(): .2f} +\\- {summer_pwv.std(): .2f} mm')
     print(f'Fall Average:  {fall_pwv.mean(): .2f} +\\- {fall_pwv.std(): .2f} mm')
+    print(f'Winter Average: {winter_pwv.mean(): .2f} +\\- {winter_pwv.std(): .2f} mm')
+    print(f'Spring Average: {spring_pwv.mean(): .2f} +\\- {spring_pwv.std(): .2f} mm')
 
     fig, axis = plt.subplots(figsize=figsize)
     axis.set_ylabel('PWV (mm)')
@@ -727,8 +731,10 @@ def compare_prop_effects(
         The matplotlib figure and axis
     """
 
-    # Disable airmass scaling so we get values at zenith
     variable = copy(variable)
+
+    # Disable airmass scaling so we get values at zenith
+    # noinspection PyProtectedMember
     variable._pwv_model.calc_airmass = lambda *args, **kwargs: 1
 
     pwv_data = pwv_data.sort_index()

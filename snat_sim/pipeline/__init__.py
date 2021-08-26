@@ -76,7 +76,7 @@ class FittingPipeline(Pipeline):
             add_scatter: bool = True,
             fixed_snr: Optional[float] = None,
             overwrite: bool = False,
-            write_lc_sims:bool=False
+            write_lc_sims: bool = False
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
 
@@ -134,5 +134,5 @@ class FittingPipeline(Pipeline):
             self.simulate_light_curves.input.maxsize = max_queue
             self.fit_light_curves.input.maxsize = max_queue * simulation_pool
             self.write_to_disk.input.maxsize = max_queue * simulation_pool
-            
+
         super().__init__()
