@@ -950,13 +950,17 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 <dt class="sig sig-object py" id="snat_sim.models.pwv.SeasonalPWVTrans.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mjd'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">transmission_res</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#SeasonalPWVTrans.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.SeasonalPWVTrans.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Time variable atmospheric transmission due to PWV that changes per season</p>
+<p>Season names are defined using the southern hemisphere</p>
 <dl class="simple">
 <dt>Effect Parameters:</dt><dd><p>ra: Target Right Ascension in degrees
 dec: Target Declination in degrees
 lat: Observer latitude in degrees (defaults to location of VRO)
 lon: Observer longitude in degrees (defaults to location of VRO)
 alt: Observer altitude in meters  (defaults to height of VRO)
-winter:</p>
+winter: PWV concentration in the winter
+spring: PWV concentration in the spring
+summer: PWV concentration in the summer
+fall: PWV concentration in the fall</p>
 </dd>
 </dl>
 <dl class="field-list simple">

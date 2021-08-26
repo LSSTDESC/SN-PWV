@@ -121,7 +121,6 @@
 
 <span class="kn">import</span> <span class="nn">abc</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
-<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="o">*</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -133,7 +132,6 @@
 <span class="kn">from</span> <span class="nn">pwv_kpno.defaults</span> <span class="kn">import</span> <span class="n">v1_transmission</span>
 <span class="kn">from</span> <span class="nn">pwv_kpno.gps_pwv</span> <span class="kn">import</span> <span class="n">GPSReceiver</span>
 <span class="kn">from</span> <span class="nn">pwv_kpno.transmission</span> <span class="kn">import</span> <span class="n">calc_pwv_eff</span>
-<span class="kn">from</span> <span class="nn">pytz</span> <span class="kn">import</span> <span class="n">utc</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">RegularGridInterpolator</span>
 
 <span class="kn">from</span> <span class="nn">snat_sim.utils.caching</span> <span class="kn">import</span> <span class="n">Cache</span>
@@ -367,15 +365,17 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Rough estimates for the start of each season</span>
-        <span class="n">spring</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">utc</span><span class="p">))</span>
-        <span class="n">summer</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">utc</span><span class="p">))</span>
-        <span class="n">fall</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">22</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">utc</span><span class="p">))</span>
-        <span class="n">winter</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">datetime</span><span class="p">(</span><span class="mi">2020</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">21</span><span class="p">,</span> <span class="n">tzinfo</span><span class="o">=</span><span class="n">utc</span><span class="p">))</span>
+        <span class="n">fall</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">mar_equinox</span><span class="p">)</span>
+        <span class="n">winter</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">jun_solstice</span><span class="p">)</span>
+        <span class="n">spring</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">sep_equinox</span><span class="p">)</span>
+        <span class="n">summer</span> <span class="o">=</span> <span class="n">tsu</span><span class="o">.</span><span class="n">datetime_to_sec_in_year</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">dec_solstice</span><span class="p">)</span>
 
         <span class="c1"># Separate PWV data based on season</span>
-        <span class="n">winter_pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">spring</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">winter</span><span class="p">)]</span>
+        <span class="c1"># THe cosed is based on southern hemisphere definitions for each season</span>
+        <span class="c1"># This means the summer spans the new year, hence the use of an | operator</span>
+        <span class="n">winter_pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">spring</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">winter</span><span class="p">)]</span>
         <span class="n">spring_pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">spring</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">summer</span><span class="p">)]</span>
-        <span class="n">summer_pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">summer</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">fall</span><span class="p">)]</span>
+        <span class="n">summer_pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">summer</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">fall</span><span class="p">)]</span>
         <span class="n">fall_pwv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&gt;</span> <span class="n">fall</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pwv_model_data</span><span class="o">.</span><span class="n">index</span> <span class="o">&lt;</span> <span class="n">winter</span><span class="p">)]</span>
 
         <span class="k">return</span> <span class="p">{</span>
@@ -666,14 +666,18 @@
 <div class="viewcode-block" id="SeasonalPWVTrans.__init__"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.SeasonalPWVTrans.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span><span class="p">,</span> <span class="n">transmission_res</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Time variable atmospheric transmission due to PWV that changes per season</span>
 
+<span class="sd">        Season names are defined using the southern hemisphere</span>
+
 <span class="sd">        Effect Parameters:</span>
 <span class="sd">            ra: Target Right Ascension in degrees</span>
 <span class="sd">            dec: Target Declination in degrees</span>
 <span class="sd">            lat: Observer latitude in degrees (defaults to location of VRO)</span>
 <span class="sd">            lon: Observer longitude in degrees (defaults to location of VRO)</span>
 <span class="sd">            alt: Observer altitude in meters  (defaults to height of VRO)</span>
-<span class="sd">            winter:</span>
-
+<span class="sd">            winter: PWV concentration in the winter</span>
+<span class="sd">            spring: PWV concentration in the spring</span>
+<span class="sd">            summer: PWV concentration in the summer</span>
+<span class="sd">            fall: PWV concentration in the fall</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            time_format: Astropy recognized time format used by the ``pwv_interpolator``</span>
