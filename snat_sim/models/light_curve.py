@@ -20,7 +20,7 @@ for column_name, alias_set in sncosmo.photdata.PHOTDATA_ALIASES.items():
         SNCOSMO_ALIASES[alias] = column_name
 
 
-# noinspection PyAttributeOutsideInit,PyUnresolvedReferences
+# noinspection PyAttributeOutsideInit,PyUnresolvedReferences,PyMissingOrEmptyDocstring
 @dataclass
 class ObservedCadence:
     """The observational sampling of an astronomical light-curve

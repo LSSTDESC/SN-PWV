@@ -180,7 +180,7 @@ class FitLightCurves(Node):
         self.failure_output = Output('Fitting Failure')
         super(FitLightCurves, self).__init__(num_processes=num_processes)
 
-    def fit_lc(self, light_curve: LightCurve, initial_guess: Dict[str, float]) -> Tuple[SNFitResult, SNModel]:
+    def fit_lc(self, light_curve: LightCurve, initial_guess: Dict[str, float]) -> SNFitResult:
         """Fit the given light-curve
 
         Args:
@@ -262,6 +262,7 @@ class WritePipelinePacket(Target):
     def setup(self) -> None:
         """Open a file accessor object"""
 
+        # noinspection PyTypeChecker
         self.file_store = pd.HDFStore(self.out_path, mode='w')
 
     def teardown(self) -> None:

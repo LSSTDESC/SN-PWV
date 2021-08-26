@@ -43,7 +43,6 @@ from typing import Optional
 
 import pandas as pd
 
-from .. import constants as const
 from .. import types
 from ..models import LightCurve, ObservedCadence, SNFitResult, SNModel
 

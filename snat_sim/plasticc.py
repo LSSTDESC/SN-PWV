@@ -37,7 +37,7 @@ be included with the iterator:
 .. code-block:: python
 
    >>> lc_iterator = lc_data.iter_cadence(iter_lim=10, include_lc=True, verbose=False)
-   >>> snid, sim_params, cadence , lc = next(lc_iterator)
+   >>> snid, sim_params, cadence, lc = next(lc_iterator)
 
 Module Docs
 -----------
@@ -57,7 +57,8 @@ from .data_paths import paths_at_init
 from .models import LightCurve, ObservedCadence
 from .types import NumericalParams
 
-YieldedData = Tuple[int, NumericalParams, ObservedCadence]
+YieldedWithoutLC = Tuple[int, NumericalParams, ObservedCadence]
+YieldedWithLC = Tuple[int, NumericalParams, ObservedCadence, LightCurve]
 
 
 class PLAsTICC:
@@ -95,8 +96,18 @@ class PLAsTICC:
 
         return total_lc
 
+    @overload
     @staticmethod
-    def _iter_cadence_for_header(header_path: types.PathLike, include_lc=False) -> Iterator[YieldedData]:
+    def _iter_cadence_for_header(header_path: types.PathLike, include_lc: bool = False) -> Iterator[YieldedWithoutLC]:
+        ...  # pragma: no cover
+
+    @overload
+    @staticmethod
+    def _iter_cadence_for_header(header_path: types.PathLike, include_lc: bool = True) -> Iterator[YieldedWithLC]:
+        ...  # pragma: no cover
+
+    @staticmethod
+    def _iter_cadence_for_header(header_path, include_lc=False):
         """Iterate over cadence data from a given header file
 
         Files are expected to be written in pairs of a header file 
@@ -172,7 +183,19 @@ class PLAsTICC:
             else:
                 yield int(meta['SNID'].strip()), params, cadence
 
-    def iter_cadence(self, iter_lim: int = None, include_lc=False, verbose: bool = True) -> Iterator[YieldedData]:
+    @overload
+    def iter_cadence(
+            self, iter_lim: int = None, include_lc: bool = False, verbose: bool = True
+    ) -> Iterator[YieldedWithoutLC]:
+        ...  # pragma: no cover
+
+    @overload
+    def iter_cadence(
+            self, iter_lim: int = None, include_lc: bool = True, verbose: bool = True
+    ) -> Iterator[YieldedWithLC]:
+        ...  # pragma: no cover
+
+    def iter_cadence(self, iter_lim=None, include_lc=False, verbose=True):
         """Iterate over available cadence data for each supernova
 
         Args:

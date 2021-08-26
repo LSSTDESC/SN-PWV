@@ -35,10 +35,12 @@ Module API
 ----------
 """
 
+from __future__ import annotations
+
 import inspect
 import sys
 from collections import OrderedDict
-from typing import Any, Callable, Hashable
+from typing import Any, Callable, Hashable, Tuple, Type
 
 import numpy as np
 
@@ -119,6 +121,6 @@ class Cache(MemoryCache):
             self[key] = new_val
             return new_val
 
-    def __reduce__(self):
+    def __reduce__(self) -> Tuple[Type[Cache], Tuple]:
         # Ensures instances can be pickled
         return self.__class__, (self.function, self.cache_size, *self.numpy_args)
