@@ -172,7 +172,6 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 
-<span class="c1"># noinspection PyPep8Naming</span>
 <div class="viewcode-block" id="CovarianceAccessor"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor">[docs]</a><span class="nd">@pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">extensions</span><span class="o">.</span><span class="n">register_dataframe_accessor</span><span class="p">(</span><span class="s1">&#39;cov_utils&#39;</span><span class="p">)</span>
 <span class="k">class</span> <span class="nc">CovarianceAccessor</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Pandas DataFrame accessor for covariance calculations&quot;&quot;&quot;</span>
@@ -191,7 +190,7 @@
 
 <div class="viewcode-block" id="CovarianceAccessor.from_array"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.from_array">[docs]</a>    <span class="nd">@classmethod</span>
     <span class="k">def</span> <span class="nf">from_array</span><span class="p">(</span>
-            <span class="bp">cls</span><span class="p">,</span> <span class="n">covArray</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">paramNames</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">normalized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">cls</span><span class="p">,</span> <span class="n">cov_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">param_names</span><span class="p">:</span> <span class="n">Collection</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">normalized</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Instantiates a Dataframe covariance matrix using data from a `numpy.ndarray` object.</span>
 
@@ -200,8 +199,8 @@
 <span class="sd">        enabling easy access by index or names.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            covArray: Array of the covariance</span>
-<span class="sd">            paramNames: Collection of strings</span>
+<span class="sd">            cov_array: Array of the covariance</span>
+<span class="sd">            param_names: Collection of strings</span>
 <span class="sd">            normalized: Whether to return the normalized covariance matrix</span>
 
 <span class="sd">        Returns:</span>
@@ -210,18 +209,18 @@
 <span class="sd">            column names chosen by pandas.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="n">length</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">covArray</span><span class="p">)</span>
+        <span class="n">length</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">cov_array</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">length</span> <span class="o">!=</span> <span class="n">width</span><span class="p">:</span>  <span class="c1"># Check for the covariance matrix being square, not checking for symmetry</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The covariance matrix is not square; length!=width&#39;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">paramNames</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">paramNames</span><span class="p">)</span> <span class="o">!=</span> <span class="n">width</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">param_names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">param_names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">width</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;The number of parameters must match the length of the covariance matrix&#39;</span><span class="p">)</span>
 
-            <span class="n">cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">covArray</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">paramNames</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">paramNames</span><span class="p">)</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cov_array</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">param_names</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">param_names</span><span class="p">)</span>
 
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">covArray</span><span class="p">)</span>
+            <span class="n">cov</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">cov_array</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">normalized</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">cov</span>
@@ -236,15 +235,17 @@
 
         <span class="k">return</span> <span class="n">cov</span></div>
 
+    <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">paramValue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_name</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">param_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
+    <span class="c1"># noinspection PyMissingOrEmptyDocstring</span>
     <span class="nd">@overload</span>
-    <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">paramValue</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param_value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">factor</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
 
-<div class="viewcode-block" id="CovarianceAccessor.log_covariance"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance">[docs]</a>    <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramName</span><span class="p">,</span> <span class="n">paramValue</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+<div class="viewcode-block" id="CovarianceAccessor.log_covariance"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.log_covariance">[docs]</a>    <span class="k">def</span> <span class="nf">log_covariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_name</span><span class="p">,</span> <span class="n">param_value</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Covariance of the parameters with parameter paramName replaced by</span>
 <span class="sd">        factor * np.log(param) everywhere, and its true value is paramValue,</span>
@@ -255,39 +256,40 @@
 <span class="sd">        the factor should be ``-2.5 / np.log(10)``</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            paramName: Parameter name or integer index specifying the position of the desired variable</span>
-<span class="sd">            paramValue: True or estimated value of the variable itself</span>
+<span class="sd">            param_name: Parameter name or integer index specifying the position of the desired variable</span>
+<span class="sd">            param_value: True or estimated value of the variable itself</span>
 <span class="sd">            factor: Factor multiplying the natural logarithm</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">covariance_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">paramName</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">param_name</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="n">cov</span> <span class="o">=</span> <span class="n">covariance_df</span><span class="o">.</span><span class="n">values</span>
-            <span class="n">cov</span><span class="p">[:,</span> <span class="n">paramName</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">cov</span><span class="p">[:,</span> <span class="n">paramName</span><span class="p">]</span> <span class="o">/</span> <span class="n">paramValue</span>
-            <span class="n">cov</span><span class="p">[</span><span class="n">paramName</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">cov</span><span class="p">[</span><span class="n">paramName</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">paramValue</span>
+            <span class="n">cov</span><span class="p">[:,</span> <span class="n">param_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">cov</span><span class="p">[:,</span> <span class="n">param_name</span><span class="p">]</span> <span class="o">/</span> <span class="n">param_value</span>
+            <span class="n">cov</span><span class="p">[</span><span class="n">param_name</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">cov</span><span class="p">[</span><span class="n">param_name</span><span class="p">,</span> <span class="p">:]</span> <span class="o">/</span> <span class="n">param_value</span>
             <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;Parameter name specified as index. Returning covariance as numpy array.&#39;</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">cov</span>
 
-        <span class="n">covariance_df</span><span class="p">[</span><span class="n">paramName</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">covariance_df</span><span class="p">[</span><span class="n">paramName</span><span class="p">]</span> <span class="o">/</span> <span class="n">paramValue</span>
-        <span class="n">covariance_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">paramName</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">covariance_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">paramName</span><span class="p">]</span> <span class="o">/</span> <span class="n">paramValue</span>
+        <span class="n">covariance_df</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">covariance_df</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span> <span class="o">/</span> <span class="n">param_value</span>
+        <span class="n">covariance_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">factor</span> <span class="o">*</span> <span class="n">covariance_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">param_name</span><span class="p">]</span> <span class="o">/</span> <span class="n">param_value</span>
 
         <span class="k">return</span> <span class="n">covariance_df</span></div>
 
-<div class="viewcode-block" id="CovarianceAccessor.subcovariance"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance">[docs]</a>    <span class="k">def</span> <span class="nf">subcovariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">paramList</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<div class="viewcode-block" id="CovarianceAccessor.subcovariance"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.subcovariance">[docs]</a>    <span class="k">def</span> <span class="nf">subcovariance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">param_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Returns the covariance of a subset of parameters in a covariance dataFrame.</span>
 
 <span class="sd">        The set of parameters in paramList must be a subset of the columns and</span>
 <span class="sd">        indices of covariance.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            paramList: List of parameters for which the subCovariance matrix is desired</span>
+<span class="sd">            param_list: List of parameters for which the subCovariance matrix is desired</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            The covariance of the given parameters</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">paramList</span><span class="p">,</span> <span class="n">paramList</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_obj</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">param_list</span><span class="p">,</span> <span class="n">param_list</span><span class="p">]</span></div>
 
+    <span class="c1"># noinspection PyPep8Naming</span>
 <div class="viewcode-block" id="CovarianceAccessor.expAVsquare"><a class="viewcode-back" href="../../../api/utils/cov_utils.html#snat_sim.utils.cov_utils.CovarianceAccessor.expAVsquare">[docs]</a>    <span class="k">def</span> <span class="nf">expAVsquare</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">A</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;The expectation of ``(A^T * V) ** 2`` where A is a constant vector and V is</span>
 <span class="sd">        a random vector ``V ~ N(0., covV)`` by computing ``A^T * covV * A``</span>

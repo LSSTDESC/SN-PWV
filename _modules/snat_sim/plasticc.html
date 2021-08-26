@@ -152,7 +152,7 @@
 <span class="sd">.. code-block:: python</span>
 
 <span class="sd">   &gt;&gt;&gt; lc_iterator = lc_data.iter_cadence(iter_lim=10, include_lc=True, verbose=False)</span>
-<span class="sd">   &gt;&gt;&gt; snid, sim_params, cadence , lc = next(lc_iterator)</span>
+<span class="sd">   &gt;&gt;&gt; snid, sim_params, cadence, lc = next(lc_iterator)</span>
 
 <span class="sd">Module Docs</span>
 <span class="sd">-----------</span>
@@ -172,7 +172,8 @@
 <span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">LightCurve</span><span class="p">,</span> <span class="n">ObservedCadence</span>
 <span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">NumericalParams</span>
 
-<span class="n">YieldedData</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">NumericalParams</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">]</span>
+<span class="n">YieldedWithoutLC</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">NumericalParams</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">]</span>
+<span class="n">YieldedWithLC</span> <span class="o">=</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">NumericalParams</span><span class="p">,</span> <span class="n">ObservedCadence</span><span class="p">,</span> <span class="n">LightCurve</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="PLAsTICC"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLAsTICC">[docs]</a><span class="k">class</span> <span class="nc">PLAsTICC</span><span class="p">:</span>
@@ -210,8 +211,18 @@
 
         <span class="k">return</span> <span class="n">total_lc</span></div>
 
+    <span class="nd">@overload</span>
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">_iter_cadence_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">YieldedData</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">_iter_cadence_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">include_lc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">YieldedWithoutLC</span><span class="p">]:</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
+
+    <span class="nd">@overload</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_iter_cadence_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">:</span> <span class="n">types</span><span class="o">.</span><span class="n">PathLike</span><span class="p">,</span> <span class="n">include_lc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">YieldedWithLC</span><span class="p">]:</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_iter_cadence_for_header</span><span class="p">(</span><span class="n">header_path</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over cadence data from a given header file</span>
 
 <span class="sd">        Files are expected to be written in pairs of a header file </span>
@@ -287,7 +298,19 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">yield</span> <span class="nb">int</span><span class="p">(</span><span class="n">meta</span><span class="p">[</span><span class="s1">&#39;SNID&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()),</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span>
 
-<div class="viewcode-block" id="PLAsTICC.iter_cadence"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLAsTICC.iter_cadence">[docs]</a>    <span class="k">def</span> <span class="nf">iter_cadence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">YieldedData</span><span class="p">]:</span>
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">iter_cadence</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">include_lc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">YieldedWithoutLC</span><span class="p">]:</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
+
+    <span class="nd">@overload</span>
+    <span class="k">def</span> <span class="nf">iter_cadence</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">include_lc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Iterator</span><span class="p">[</span><span class="n">YieldedWithLC</span><span class="p">]:</span>
+        <span class="o">...</span>  <span class="c1"># pragma: no cover</span>
+
+<div class="viewcode-block" id="PLAsTICC.iter_cadence"><a class="viewcode-back" href="../../api/plasticc.html#snat_sim.plasticc.PLAsTICC.iter_cadence">[docs]</a>    <span class="k">def</span> <span class="nf">iter_cadence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">iter_lim</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Iterate over available cadence data for each supernova</span>
 
 <span class="sd">        Args:</span>

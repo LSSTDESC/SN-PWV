@@ -439,7 +439,10 @@
 
 
 <div class="viewcode-block" id="plot_spectrum"><a class="viewcode-back" href="../../api/plotting.html#snat_sim.plotting.plot_spectrum">[docs]</a><span class="k">def</span> <span class="nf">plot_spectrum</span><span class="p">(</span>
-        <span class="n">wave</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span> <span class="n">figsize</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span> <span class="n">hardware_only</span><span class="o">=</span><span class="kc">False</span>
+        <span class="n">wave</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+        <span class="n">flux</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+        <span class="n">figsize</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+        <span class="n">hardware_only</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">,</span> <span class="n">plt</span><span class="o">.</span><span class="n">Axes</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Plot a spectrum over the per-filter LSST hardware throughput</span>
 
@@ -447,6 +450,7 @@
 <span class="sd">        wave: Spectrum wavelengths in Angstroms</span>
 <span class="sd">        flux: Flux of the spectrum in arbitrary units</span>
 <span class="sd">        figsize: Size of the figure</span>
+<span class="sd">        hardware_only: Only include hardware contributions in the plotted filters</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The matplotlib figure and axis</span>
@@ -464,9 +468,9 @@
 
     <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;lsst_hardware_&#39;</span> <span class="k">if</span> <span class="n">hardware_only</span> <span class="k">else</span> <span class="s1">&#39;lsst_total_&#39;</span>
     <span class="k">for</span> <span class="n">filter_abbrev</span> <span class="ow">in</span> <span class="s1">&#39;ugrizy&#39;</span><span class="p">:</span>
-        <span class="n">filt</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">filter_abbrev</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="n">twin_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">wave</span><span class="p">,</span> <span class="n">filt</span><span class="p">(</span><span class="n">wave</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">filter_abbrev</span><span class="p">)</span>
-        <span class="n">twin_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wave</span><span class="p">,</span> <span class="n">filt</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
+        <span class="n">bandpass</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">prefix</span><span class="si">}{</span><span class="n">filter_abbrev</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">twin_ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">wave</span><span class="p">,</span> <span class="n">bandpass</span><span class="p">(</span><span class="n">wave</span><span class="p">),</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">.3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">filter_abbrev</span><span class="p">)</span>
+        <span class="n">twin_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wave</span><span class="p">,</span> <span class="n">bandpass</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
 
     <span class="n">axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wave</span><span class="p">,</span> <span class="n">flux</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axis</span></div>
@@ -841,8 +845,10 @@
 <span class="sd">        The matplotlib figure and axis</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1"># Disable airmass scaling so we get values at zenith</span>
     <span class="n">variable</span> <span class="o">=</span> <span class="n">copy</span><span class="p">(</span><span class="n">variable</span><span class="p">)</span>
+
+    <span class="c1"># Disable airmass scaling so we get values at zenith</span>
+    <span class="c1"># noinspection PyProtectedMember</span>
     <span class="n">variable</span><span class="o">.</span><span class="n">_pwv_model</span><span class="o">.</span><span class="n">calc_airmass</span> <span class="o">=</span> <span class="k">lambda</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">:</span> <span class="mi">1</span>
 
     <span class="n">pwv_data</span> <span class="o">=</span> <span class="n">pwv_data</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>

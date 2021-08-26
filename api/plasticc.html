@@ -154,7 +154,7 @@ since it has to load data into memory as chunks.</p>
 <p>The light-curve simulated by PLAsTICC for each cadence can optionally
 be included with the iterator:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lc_iterator</span> <span class="o">=</span> <span class="n">lc_data</span><span class="o">.</span><span class="n">iter_cadence</span><span class="p">(</span><span class="n">iter_lim</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">include_lc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">snid</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">,</span> <span class="n">cadence</span> <span class="p">,</span> <span class="n">lc</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">lc_iterator</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">snid</span><span class="p">,</span> <span class="n">sim_params</span><span class="p">,</span> <span class="n">cadence</span><span class="p">,</span> <span class="n">lc</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">lc_iterator</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -218,9 +218,9 @@ be included with the iterator:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>iter_lim</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Limit the number of iterated light-curves</p></li>
+<li><p><strong>iter_lim</strong> – Limit the number of iterated light-curves</p></li>
 <li><p><strong>include_lc</strong> – Include the PLAsTICC simulated light-curve with iterator outputs</p></li>
-<li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Display a progress bar</p></li>
+<li><p><strong>verbose</strong> – Display a progress bar</p></li>
 </ul>
 </dd>
 <dt class="field-even">Yields</dt>
@@ -229,9 +229,6 @@ be included with the iterator:</p>
 <li><p>The parameters used in the simulation</p></li>
 <li><p>The cadence of the simulation</p></li>
 </ul>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Iterator</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <a class="reference internal" href="models.html#snat_sim.models.light_curve.ObservedCadence" title="snat_sim.models.light_curve.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>]]</p>
 </dd>
 </dl>
 </dd></dl>
