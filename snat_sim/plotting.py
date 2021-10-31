@@ -48,6 +48,7 @@ from pytz import utc
 
 from . import constants as const
 from . import models
+from .models import PWVTransmissionModel
 from .types import Numeric
 
 
@@ -846,7 +847,7 @@ def plot_flux_variation(
 
 
 def plot_delta_sn_flux(
-        pwv: float = 4, wave_min: float = 6500, wave_max: float = 10000, figsize: Tuple[Numeric, Numeric] = (8, 4)
+        pwv: float = 4, wave_min: float = 6500, wave_max: float = 10000, figsize: Tuple[Numeric, Numeric] = (8, 6)
 ) -> Tuple[plt.figure, np.array]:
     """Plot the change to spectroscopic SN Ia flux over wavelength and redshift
 
@@ -862,25 +863,30 @@ def plot_delta_sn_flux(
         The matplotlib figure and and array of matplotlib axes
     """
 
-    model = models.SNModel('salt2-extended')
-    model.add_effect(models.StaticPWVTrans(transmission_res=10), '', 'obs')
+    sn_model = models.SNModel('salt2-extended')
+    sn_model.add_effect(models.StaticPWVTrans(transmission_res=10), '', 'obs')
+    transmission_model = PWVTransmissionModel(resolution=5)
 
     delta_flux = []
     wave = np.arange(wave_min, wave_max)
     for z in np.arange(0.0001, 1.01, .1):
-        model.set(z=z, pwv=pwv)
-        flux = model.flux(0, wave)
+        sn_model.set(z=z, pwv=pwv)
+        flux = sn_model.flux(0, wave)
 
-        model.set(pwv=0)
-        flux_model = model.flux(0, wave)
+        sn_model.set(pwv=0)
+        flux_model = sn_model.flux(0, wave)
 
         delta_flux.append(flux - flux_model)
 
-    fig, (top_ax, bottom_ax) = plt.subplots(
-        nrows=2, figsize=figsize, sharex='col',
-        gridspec_kw={'height_ratios': [4, 1.75]})
+    fig, (top_axis, middle_axis, bottom_ax) = plt.subplots(
+        nrows=3, figsize=figsize, sharex='col',
+        gridspec_kw={'height_ratios': [1.75, 4, 1.75]})
 
-    top_ax.imshow(
+    wave_arr = np.arange(wave_min, wave_max)
+    trans = transmission_model.calc_transmission(pwv, wave_arr)
+    top_axis.plot(wave_arr, 100 * trans)
+
+    middle_axis.imshow(
         delta_flux,
         origin='lower',
         extent=[wave_min, wave_max, 0, 1],
@@ -890,13 +896,14 @@ def plot_delta_sn_flux(
     # Plot the band passes
     for b in 'rizy':
         band = sncosmo.get_bandpass(f'lsst_total_{b}')
-        bottom_ax.plot(band.wave, band.trans, label=f'{b} Band')
+        bottom_ax.plot(band.wave, band.trans, label=f'{b}')
 
-    # Format top axis
-    top_ax.set_title('Change in spectral SN Ia flux due to PWV')
-    top_ax.set_ylabel('Redshift (z)')
+    # Format each axis
+    top_axis.set_title(f'Change in spectral SN Ia flux due to PWV ({pwv} mm)')
+    top_axis.set_ylabel('Transmission (%)')
 
-    # Format bottom axis
+    middle_axis.set_ylabel('Redshift (z)')
+
     bottom_ax.set_ylim(0, 1)
     bottom_ax.set_xlim(wave_min, wave_max)
     bottom_ax.set_xlabel(r'Wavelength $\AA$')
@@ -908,4 +915,4 @@ def plot_delta_sn_flux(
 
     plt.subplots_adjust(hspace=0)
 
-    return fig, np.array([top_ax, bottom_ax])
+    return fig, np.array([middle_axis, bottom_ax])
