@@ -159,10 +159,12 @@ class TSUAccessor:
         input_data = self._obj.dropna().sort_index()
         years = np.array([year, *supp_years])
 
+        if input_data.empty:
+            raise ValueError(f'No PWV data available for years: {years}')
+
         # Check for years with no available data
-        missing_years = years[~np.isin(years, input_data.index.year)]
-        if missing_years:
-            raise ValueError(f'No data for years: {missing_years}')
+        if missing_years := years[~np.isin(years, input_data.index.year)]:
+            raise ValueError(f'No PWV data available for years: {missing_years}')
 
         # Keep only data for the given years while maintaining priority order
         stacked_pwv = pd.concat(

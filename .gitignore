@@ -32,3 +32,5 @@ docs/build
 *.pdf
 
 docs/build
+data/validation
+data/snat_sim_runs
