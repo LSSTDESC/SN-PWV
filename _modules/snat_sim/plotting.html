@@ -163,6 +163,7 @@
 
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">.</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">PWVTransmissionModel</span>
 <span class="kn">from</span> <span class="nn">.types</span> <span class="kn">import</span> <span class="n">Numeric</span>
 
 
@@ -961,7 +962,7 @@
 
 
 <div class="viewcode-block" id="plot_delta_sn_flux"><a class="viewcode-back" href="../../api/plotting.html#snat_sim.plotting.plot_delta_sn_flux">[docs]</a><span class="k">def</span> <span class="nf">plot_delta_sn_flux</span><span class="p">(</span>
-        <span class="n">pwv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">wave_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">6500</span><span class="p">,</span> <span class="n">wave_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">figsize</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">pwv</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">wave_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">6500</span><span class="p">,</span> <span class="n">wave_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10000</span><span class="p">,</span> <span class="n">figsize</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Numeric</span><span class="p">,</span> <span class="n">Numeric</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Plot the change to spectroscopic SN Ia flux over wavelength and redshift</span>
 
@@ -977,25 +978,30 @@
 <span class="sd">        The matplotlib figure and and array of matplotlib axes</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
-    <span class="n">model</span><span class="o">.</span><span class="n">add_effect</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">StaticPWVTrans</span><span class="p">(</span><span class="n">transmission_res</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">)</span>
+    <span class="n">sn_model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
+    <span class="n">sn_model</span><span class="o">.</span><span class="n">add_effect</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">StaticPWVTrans</span><span class="p">(</span><span class="n">transmission_res</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">)</span>
+    <span class="n">transmission_model</span> <span class="o">=</span> <span class="n">PWVTransmissionModel</span><span class="p">(</span><span class="n">resolution</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
 
     <span class="n">delta_flux</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">wave</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">wave_min</span><span class="p">,</span> <span class="n">wave_max</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">z</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0001</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span> <span class="mf">.1</span><span class="p">):</span>
-        <span class="n">model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">)</span>
-        <span class="n">flux</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">flux</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wave</span><span class="p">)</span>
+        <span class="n">sn_model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">z</span><span class="o">=</span><span class="n">z</span><span class="p">,</span> <span class="n">pwv</span><span class="o">=</span><span class="n">pwv</span><span class="p">)</span>
+        <span class="n">flux</span> <span class="o">=</span> <span class="n">sn_model</span><span class="o">.</span><span class="n">flux</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wave</span><span class="p">)</span>
 
-        <span class="n">model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">pwv</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
-        <span class="n">flux_model</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">flux</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wave</span><span class="p">)</span>
+        <span class="n">sn_model</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="n">pwv</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">flux_model</span> <span class="o">=</span> <span class="n">sn_model</span><span class="o">.</span><span class="n">flux</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">wave</span><span class="p">)</span>
 
         <span class="n">delta_flux</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">flux</span> <span class="o">-</span> <span class="n">flux_model</span><span class="p">)</span>
 
-    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">top_ax</span><span class="p">,</span> <span class="n">bottom_ax</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
-        <span class="n">nrows</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s1">&#39;col&#39;</span><span class="p">,</span>
-        <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">]})</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="p">(</span><span class="n">top_axis</span><span class="p">,</span> <span class="n">middle_axis</span><span class="p">,</span> <span class="n">bottom_ax</span><span class="p">)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+        <span class="n">nrows</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="n">sharex</span><span class="o">=</span><span class="s1">&#39;col&#39;</span><span class="p">,</span>
+        <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;height_ratios&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.75</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mf">1.75</span><span class="p">]})</span>
 
-    <span class="n">top_ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
+    <span class="n">wave_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">wave_min</span><span class="p">,</span> <span class="n">wave_max</span><span class="p">)</span>
+    <span class="n">trans</span> <span class="o">=</span> <span class="n">transmission_model</span><span class="o">.</span><span class="n">calc_transmission</span><span class="p">(</span><span class="n">pwv</span><span class="p">,</span> <span class="n">wave_arr</span><span class="p">)</span>
+    <span class="n">top_axis</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wave_arr</span><span class="p">,</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">trans</span><span class="p">)</span>
+
+    <span class="n">middle_axis</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span>
         <span class="n">delta_flux</span><span class="p">,</span>
         <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span>
         <span class="n">extent</span><span class="o">=</span><span class="p">[</span><span class="n">wave_min</span><span class="p">,</span> <span class="n">wave_max</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
@@ -1005,13 +1011,14 @@
     <span class="c1"># Plot the band passes</span>
     <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="s1">&#39;rizy&#39;</span><span class="p">:</span>
         <span class="n">band</span> <span class="o">=</span> <span class="n">sncosmo</span><span class="o">.</span><span class="n">get_bandpass</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;lsst_total_</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
-        <span class="n">bottom_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">band</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1"> Band&#39;</span><span class="p">)</span>
+        <span class="n">bottom_ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">wave</span><span class="p">,</span> <span class="n">band</span><span class="o">.</span><span class="n">trans</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
-    <span class="c1"># Format top axis</span>
-    <span class="n">top_ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Change in spectral SN Ia flux due to PWV&#39;</span><span class="p">)</span>
-    <span class="n">top_ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Redshift (z)&#39;</span><span class="p">)</span>
+    <span class="c1"># Format each axis</span>
+    <span class="n">top_axis</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Change in spectral SN Ia flux due to PWV (</span><span class="si">{</span><span class="n">pwv</span><span class="si">}</span><span class="s1"> mm)&#39;</span><span class="p">)</span>
+    <span class="n">top_axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Transmission (%)&#39;</span><span class="p">)</span>
 
-    <span class="c1"># Format bottom axis</span>
+    <span class="n">middle_axis</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Redshift (z)&#39;</span><span class="p">)</span>
+
     <span class="n">bottom_ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
     <span class="n">bottom_ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="n">wave_min</span><span class="p">,</span> <span class="n">wave_max</span><span class="p">)</span>
     <span class="n">bottom_ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Wavelength $\AA$&#39;</span><span class="p">)</span>
@@ -1023,7 +1030,7 @@
 
     <span class="n">plt</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">top_ax</span><span class="p">,</span> <span class="n">bottom_ax</span><span class="p">])</span></div>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">middle_axis</span><span class="p">,</span> <span class="n">bottom_ax</span><span class="p">])</span></div>
 </pre></div>
 
           </div>
