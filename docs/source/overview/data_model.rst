@@ -47,39 +47,76 @@ the simulation for a given SNe was successful.
 simulation/params
 ^^^^^^^^^^^^^^^^^
 
+Simulation parameters are appended to the ``simulation/params`` for every single simulation
+regardless of the success of the simulation.
+
 +-----------------+---------------+---------------------------------------------------------------------+
 | Column Name     | Data Type     | Description                                                         |
 +=================+===============+=====================================================================+
 | ``snid``        | String        | The ID of each simulated supernova.                                 |
 +-----------------+---------------+---------------------------------------------------------------------+
-| ``<param>``     | Float         |                                                                     |
+| ``<param>``     | Float         | The value of the parameter used in the simulation.                  |
 +-----------------+---------------+---------------------------------------------------------------------+
 
 simulation/<ID>
 ^^^^^^^^^^^^^^^
 
+The ``simulation/<ID>`` tables provide the simulated light curve for each supernova.
+
+.. important:: The ``simulation/<ID>`` tables are only created if writing light-curves to
+   disk is enabled via the appropriate command line arguments.
+
++-----------------+---------------+----------------------------------------------------------------------+
+| Column Name     | Data Type     | Description                                                          |
++=================+===============+======================================================================+
+| ``band``        | String        | The name of the bandpass for the simulated observation.              |
++-----------------+---------------+----------------------------------------------------------------------+
+| ``flux``        | Float         | The simulated observed flux through a given band.                    |
++-----------------+---------------+----------------------------------------------------------------------+
+| ``fluxerr``     | Float         | The error in ``flux``.                                               |
++-----------------+---------------+----------------------------------------------------------------------+
+| ``zp``          | Float         | The photometric zero point of the observation.                       |
++-----------------+---------------+----------------------------------------------------------------------+
+| ``zpsys``       | Float         | The name of the zero point system used when simulating flux.         |
++-----------------+---------------+----------------------------------------------------------------------+
+| ``phot_flag``   | Integer       | Either 0 (non-detection), 4096 (detection), or 6144 (first trigger). |
++-----------------+---------------+----------------------------------------------------------------------+
+
+
 fitting/params
 ^^^^^^^^^^^^^^
+
+Entries in the ``fitting/params`` table are only provided for simulations that result in successful fits.
+Any fits that fail to converge are not written to the table.
+
+Precalculated B-band magnitudes are determined using the ``bessellb`` filter built-in to
+sncosmo and the Betoule+ 2014 cosmology.
 
 +-----------------------+---------------+---------------------------------------------------------------------+
 | Column Name           | Data Type     | Description                                                         |
 +=======================+===============+=====================================================================+
 | ``snid``              | String        | The ID of each simulated supernova.                                 |
 +-----------------------+---------------+---------------------------------------------------------------------+
-| ``fit_<param>``       | Float         |                                                                     |
+| ``fit_<param>``       | Float         | The value of the parameter recovered from the fit.                  |
 +-----------------------+---------------+---------------------------------------------------------------------+
-| ``err_<param>``       | Float         |                                                                     |
+| ``err_<param>``       | Float         | The estimated error in the fitted parameter.                        |
 +-----------------------+---------------+---------------------------------------------------------------------+
-| ``chisq``             | Float         |                                                                     |
+| ``chisq``             | Float         | The chisquared of the fit result.                                   |
 +-----------------------+---------------+---------------------------------------------------------------------+
-| ``ndof``              | Float         |                                                                     |
+| ``ndof``              | Float         | Number of degrees of freedom in the fit.                            |
 +-----------------------+---------------+---------------------------------------------------------------------+
-| ``apparent_bessellb`` | Float         |                                                                     |
+| ``apparent_bessellb`` | Float         | Apparent b-band magnitude of the fitted model at peak.              |
 +-----------------------+---------------+---------------------------------------------------------------------+
-| ``absolute_bessellb`` | Float         |                                                                     |
+| ``absolute_bessellb`` | Float         | Absolute b-band magnitude of the fitted model at peak.              |
 +-----------------------+---------------+---------------------------------------------------------------------+
 
 fitting/covariance/<ID>
 ^^^^^^^^^^^^^^^^^^^^^^^
 
+Column names in the ``fitting/covariance/<ID>`` tables act as labels for the rows and columns of the covariance matrix.
 
++-----------------------+---------------+---------------------------------------------------------------------+
+| Column Name           | Data Type     | Description                                                         |
++=======================+===============+=====================================================================+
+| ``<param>``           | Float         | A column of the covariance matrix.                                  |
++-----------------------+---------------+---------------------------------------------------------------------+
