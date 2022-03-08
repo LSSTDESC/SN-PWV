@@ -46,7 +46,7 @@ jobs:
 
     - name: Run tests with coverage
       run: |
-        coverage run -m unittest
+        coverage run -m unittest -v
         coverage report 
         
     - uses: paambaati/codeclimate-action@v2.5.3
