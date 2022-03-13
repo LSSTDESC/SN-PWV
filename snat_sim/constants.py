@@ -3,7 +3,7 @@ the parent package. Units used for each value are summarized in the table
 below.
 
 +------------------------------+----------------------------------------------+
-| Value                        | Description                                  |
+| Variable Name                | Description                                  |
 +==============================+==============================================+
 | ``vro_latitude``             | Latitude of the Vera Rubin Observatory in    |
 |                              | degrees.                                     |

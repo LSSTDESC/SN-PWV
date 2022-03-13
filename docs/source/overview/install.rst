@@ -8,6 +8,9 @@ steps outlined below to install and configure the package.
 Running at NERSC
 ----------------
 
+.. warning:: Preconfigured support for running at NERSC is no longer supported.
+   See the **Using a Custom Environment** section instead.
+
 If you are running this analysis on the Cori filesystem at NERSC,
 most of the setup procedure has already been completed for you.
 The only manual setup task is to define an appropriate
