@@ -30,7 +30,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Package Integrations" href="integrations.html" />
-    <link rel="prev" title="Installation and Setup" href="install.html" />
+    <link rel="prev" title="Output Data Model" href="data_model.html" />
   
    
 
@@ -48,7 +48,7 @@
           <a href="integrations.html" title="Package Integrations"
              accesskey="N">next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation and Setup"
+          <a href="data_model.html" title="Output Data Model"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Data Provenance</a></li> 
@@ -85,9 +85,10 @@
       <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_line.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="data_model.html">Output Data Model</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Data Provenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="integrations.html">Package Integrations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Notebooks / Science Examples</span></p>
 <ul>
@@ -122,9 +123,8 @@
             
   <section id="data-provenance">
 <h1>Data Provenance<a class="headerlink" href="#data-provenance" title="Permalink to this headline">¶</a></h1>
-<p>This project takes advantage of published data from multiple external research
-efforts. Listed below is a summary of
-data sets used by this project and their origins.</p>
+<p>This project takes advantage of published data from multiple external research efforts.
+Listed below is a summary of data sets used by this project and their origins.</p>
 <section id="atmospheric-measurements">
 <h2>Atmospheric Measurements<a class="headerlink" href="#atmospheric-measurements" title="Permalink to this headline">¶</a></h2>
 <p><strong>Repository Path:</strong> Data access provided by the <a class="reference external" href="https://mwvgroup.github.io/pwv_kpno/">pwv_kpno package</a>.</p>
@@ -169,10 +169,15 @@ Requirements Document (SRD).</p>
 <p><strong>Repository Path:</strong> <em>Not included with project source code</em></p>
 <p><strong>Data Source:</strong> Data is published by DESC and hosted on <a class="reference external" href="https://zenodo.org/">Zenodo</a>.</p>
 <dl class="simple">
-<dt><strong>Description:</strong></dt><dd><p>SN light-curves were simulated using a variety of cadences and supernova models.
-Developers can reference the assumed data model <a class="reference external" href="plasticc_model.html">here</a>.</p>
+<dt><strong>Description:</strong></dt><dd><p>SN light-curves were simulated by the DESC PLAsTICC team using a variety of cadences and supernova models.
+The parameters used in these simulations (E.g., on sky position, salt2 parameters, observation time) are used
+as inputs for this project.</p>
 </dd>
 </dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Developers can reference the assumed PLAsTICC data model <a class="reference external" href="plasticc_model.html">here</a>.</p>
+</div>
 </section>
 <section id="stellar-spectra">
 <h2>Stellar Spectra<a class="headerlink" href="#stellar-spectra" title="Permalink to this headline">¶</a></h2>
@@ -205,7 +210,7 @@ additional spectra being downloaded on an “as needed” basis.</p>
           <a href="integrations.html" title="Package Integrations"
              >next</a> |</li>
         <li class="right" >
-          <a href="install.html" title="Installation and Setup"
+          <a href="data_model.html" title="Output Data Model"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">SNAT-SIM</a> &#187;</li>
         <li class="nav-item nav-item-this"><a href="">Data Provenance</a></li> 
@@ -218,7 +223,7 @@ additional spectra being downloaded on an “as needed” basis.</p>
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2022, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

@@ -27,8 +27,8 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="PWV Modeling" href="pwv_modeling.html" />
@@ -87,9 +87,10 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/data_model.html">Output Data Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/integrations.html">Package Integrations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Notebooks / Science Examples</span></p>
 <ul class="current">
@@ -340,7 +341,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -385,8 +386,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span>
 
 <span class="kn">import</span> <span class="nn">itertools</span>
@@ -399,19 +399,16 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
 <span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">sn_magnitudes</span><span class="p">,</span> <span class="n">plotting</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">tests.mock</span> <span class="kn">import</span> <span class="n">create_mock_cadence</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;figs&#39;</span> <span class="o">/</span> <span class="s1">&#39;delta_mag&#39;</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)</span> <span class="o">/</span> <span class="s1">&#39;figs&#39;</span> <span class="o">/</span> <span class="s1">&#39;delta_mag&#39;</span>
 <span class="n">fig_dir</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <p>We set some parameters for later use and create a Model that has a temporally static PWV transmission effect.</p>
@@ -419,8 +416,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">model_without_pwv</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_without_pwv</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
 <span class="n">model_with_pwv</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
 <span class="n">model_with_pwv</span><span class="o">.</span><span class="n">add_effect</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">StaticPWVTrans</span><span class="p">(),</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;obs&#39;</span><span class="p">)</span>
 
@@ -429,8 +425,7 @@ div.rendered_html tbody tr:hover {
 
 <span class="c1"># We make sure to use bands without an Atm. component</span>
 <span class="n">bands</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s1">&#39;lsst_hardware_</span><span class="si">{</span><span class="n">b</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="s1">&#39;grizy&#39;</span><span class="p">]</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <section id="Spectral-Template">
@@ -440,11 +435,9 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_spectral_template</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_spectral_template</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4000</span><span class="p">,</span> <span class="mi">10000</span><span class="p">),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">pwv</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;spectral_template.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -462,10 +455,8 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">tabulated_mag</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">tabulate_mag</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bands</span><span class="p">)</span>
-
-</pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tabulated_mag</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">tabulate_mag</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bands</span><span class="p">)</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -480,12 +471,10 @@ Tabulating Mag: 100%|██████████| 1155/1155 [00:02&lt;00:00, 
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_magnitude</span><span class="p">(</span><span class="n">tabulated_mag</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_magnitude</span><span class="p">(</span><span class="n">tabulated_mag</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Simulated magnitudes for PWV and Redshift&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;tabulated_magnitudes.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -506,11 +495,9 @@ Tabulating Mag: 100%|██████████| 1155/1155 [00:02&lt;00:00, 
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">reference_pwv_config</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">get_config_pwv_vals</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">reference_pwv_config</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">get_config_pwv_vals</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">reference_pwv_config</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -526,14 +513,12 @@ Tabulating Mag: 100%|██████████| 1155/1155 [00:02&lt;00:00, 
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">tabulated_fiducial_mag</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">tabulate_fiducial_mag</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">tabulated_fiducial_mag</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">tabulate_fiducial_mag</span><span class="p">(</span>
         <span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">reference_pwv_config</span><span class="p">)</span>
 
 <span class="n">tabulated_delta_mag</span><span class="p">,</span> <span class="n">tabulated_slope</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_delta_mag</span><span class="p">(</span>
     <span class="n">tabulated_mag</span><span class="p">,</span> <span class="n">tabulated_fiducial_mag</span><span class="p">,</span> <span class="n">reference_pwv_config</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -548,8 +533,7 @@ Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 54
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_pwv_mag_effects</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_pwv_mag_effects</span><span class="p">(</span>
     <span class="n">pwv_vals</span><span class="p">,</span>
     <span class="n">z_vals</span><span class="p">,</span>
     <span class="n">tabulated_delta_mag</span><span class="p">,</span>
@@ -558,8 +542,7 @@ Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 54
 
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;PWV Impact on Simulated magnitudes (Relative to Fiducial Atm.)&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;tabulated_pwv_effects.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -581,11 +564,9 @@ curves should be different in each band.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">cadence</span> <span class="o">=</span> <span class="n">create_mock_cadence</span><span class="p">(</span><span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">cadence</span> <span class="o">=</span> <span class="n">create_mock_cadence</span><span class="p">(</span><span class="n">bands</span><span class="o">=</span><span class="n">bands</span><span class="p">)</span>
 <span class="n">cadence</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -624,8 +605,7 @@ curves should be different in each band.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">snr</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">snr</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterator over SN light-curves for combination of PWV and z values</span>
 
 <span class="sd">    Args:</span>
@@ -653,16 +633,14 @@ curves should be different in each band.</p>
         <span class="n">light_curve</span><span class="o">.</span><span class="n">meta</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">param_names</span><span class="p">,</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
 
         <span class="k">yield</span> <span class="n">light_curve</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Fit light curves</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fit light curves</span>
 <span class="n">vparams</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 <span class="n">light_curves</span> <span class="o">=</span> <span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 
@@ -673,8 +651,7 @@ curves should be different in each band.</p>
     <span class="n">bands</span><span class="p">,</span>
     <span class="n">pwv_vals</span><span class="p">,</span>
     <span class="n">z_vals</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -689,8 +666,7 @@ Light-Curves: 100%|██████████| 231/231 [01:53&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Fit light curves at reference PWV vals</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fit light curves at reference PWV vals</span>
 <span class="n">reference_pwv_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;slope_start&#39;</span><span class="p">],</span> <span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;reference_pwv&#39;</span><span class="p">],</span> <span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;slope_end&#39;</span><span class="p">]]</span>
 <span class="n">reference_light_curves</span> <span class="o">=</span> <span class="n">iter_lcs_fixed_snr</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">reference_pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 
@@ -718,12 +694,10 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_magnitude</span><span class="p">(</span><span class="n">fitted_mag</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_magnitude</span><span class="p">(</span><span class="n">fitted_mag</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Fitted Magnitude (Uncorrected)&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;fitted_magnitudes.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -741,12 +715,10 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_fitted_params</span><span class="p">(</span><span class="n">fitted_params</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bands</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_fitted_params</span><span class="p">(</span><span class="n">fitted_params</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bands</span><span class="p">)</span>
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Fitted Parameters&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;fitted_parameters.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -761,19 +733,16 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">corrected_delta_mag</span><span class="p">,</span> <span class="n">corrected_slope</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_delta_mag</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">corrected_delta_mag</span><span class="p">,</span> <span class="n">corrected_slope</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_delta_mag</span><span class="p">(</span>
     <span class="n">fitted_mag</span><span class="p">,</span> <span class="n">fitted_fiducial_mag</span><span class="p">,</span> <span class="n">reference_pwv_config</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_pwv_mag_effects</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_pwv_mag_effects</span><span class="p">(</span>
     <span class="n">pwv_vals</span><span class="p">,</span>
     <span class="n">z_vals</span><span class="p">,</span>
     <span class="n">corrected_delta_mag</span><span class="p">,</span>
@@ -782,8 +751,7 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;PWV Impact on Fitted Magnitudes (Relative to Fiducial Atm.)&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;fitted_pwv_effects.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -798,8 +766,7 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Determine corrected magnitude from fits</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Determine corrected magnitude from fits</span>
 <span class="n">corrected_mag</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="n">corrected_fiducial_mag</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
@@ -809,27 +776,23 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
     <span class="c1"># Get fiducial mag (calibrated)</span>
     <span class="n">corrected_fiducial_mag</span><span class="p">[</span><span class="n">band</span><span class="p">]</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">correct_mag</span><span class="p">(</span>
         <span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">fitted_fiducial_mag</span><span class="p">[</span><span class="n">band</span><span class="p">],</span> <span class="n">fitted_fiducial_params</span><span class="p">[</span><span class="n">band</span><span class="p">])</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">corrected_delta_mag</span><span class="p">,</span> <span class="n">corrected_slope</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_delta_mag</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">corrected_delta_mag</span><span class="p">,</span> <span class="n">corrected_slope</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_delta_mag</span><span class="p">(</span>
         <span class="n">corrected_mag</span><span class="p">,</span> <span class="n">corrected_fiducial_mag</span><span class="p">,</span> <span class="n">reference_pwv_config</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[20]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_pwv_mag_effects</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_pwv_mag_effects</span><span class="p">(</span>
     <span class="n">pwv_vals</span><span class="p">,</span>
     <span class="n">z_vals</span><span class="p">,</span>
     <span class="n">corrected_delta_mag</span><span class="p">,</span>
@@ -838,8 +801,7 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;PWV Impact on Calibrated Magnitudes (Relative to Fiducial Atm.)&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;corr_pwv_effects.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -860,8 +822,7 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">iter_light_curves_with_ref</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">),</span> <span class="n">snr</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">iter_light_curves_with_ref</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">pwv_arr</span><span class="p">,</span> <span class="n">z_arr</span><span class="p">,</span> <span class="n">spectral_types</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;G2&#39;</span><span class="p">,</span> <span class="s1">&#39;M5&#39;</span><span class="p">,</span> <span class="s1">&#39;K2&#39;</span><span class="p">),</span> <span class="n">snr</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Iterator over SN light-curves calibrated to a set of reference stars</span>
 
 <span class="sd">    Args:</span>
@@ -889,13 +850,11 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[22]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">vparams</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">vparams</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;x0&#39;</span><span class="p">,</span> <span class="s1">&#39;x1&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">]</span>
 <span class="n">light_curves_with_ref</span> <span class="o">=</span> <span class="n">iter_light_curves_with_ref</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 <span class="n">fitted_mag_with_ref</span><span class="p">,</span> <span class="n">fitted_params_with_ref</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">fit_mag</span><span class="p">(</span>
         <span class="n">model_without_pwv</span><span class="p">,</span> <span class="n">light_curves_with_ref</span><span class="p">,</span> <span class="n">vparams</span><span class="p">,</span> <span class="n">bands</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;t0&#39;</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)})</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -910,11 +869,9 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[23]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_magnitude</span><span class="p">(</span><span class="n">fitted_mag_with_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_magnitude</span><span class="p">(</span><span class="n">fitted_mag_with_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Magnitude from fit to SN - Ref&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -928,11 +885,9 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[24]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_fitted_params</span><span class="p">(</span><span class="n">fitted_params_with_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bands</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_fitted_params</span><span class="p">(</span><span class="n">fitted_params_with_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">bands</span><span class="p">)</span>
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Parameters from fit to SN - Ref&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -946,25 +901,21 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[25]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Determine corrected magnitude from fits</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Determine corrected magnitude from fits</span>
 <span class="n">corrected_mag_with_ref</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="k">for</span> <span class="n">band</span> <span class="ow">in</span> <span class="n">bands</span><span class="p">:</span>
     <span class="n">corrected_mag_with_ref</span><span class="p">[</span><span class="n">band</span><span class="p">]</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">correct_mag</span><span class="p">(</span>
         <span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">fitted_mag_with_ref</span><span class="p">[</span><span class="n">band</span><span class="p">],</span> <span class="n">fitted_params_with_ref</span><span class="p">[</span><span class="n">band</span><span class="p">])</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[26]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_magnitude</span><span class="p">(</span><span class="n">corrected_mag_with_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_magnitude</span><span class="p">(</span><span class="n">corrected_mag_with_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 <span class="n">_</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;Corrected Magnitude from fit to SN - Ref&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -978,8 +929,7 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[27]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">_pwv_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pwv_vals</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">_pwv_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pwv_vals</span><span class="p">)</span>
 <span class="n">reference_idx</span> <span class="o">=</span> <span class="n">_pwv_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;reference_pwv&#39;</span><span class="p">])</span>
 <span class="n">slope_start_idx</span> <span class="o">=</span> <span class="n">_pwv_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;slope_start&#39;</span><span class="p">])</span>
 <span class="n">slope_end_idx</span> <span class="o">=</span> <span class="n">_pwv_list</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">reference_pwv_config</span><span class="p">[</span><span class="s1">&#39;slope_end&#39;</span><span class="p">])</span>
@@ -999,8 +949,7 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[28]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">corrected_delta_mag_with_ref</span><span class="p">,</span> <span class="n">corrected_slope_with_ref</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_delta_mag</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">corrected_delta_mag_with_ref</span><span class="p">,</span> <span class="n">corrected_slope_with_ref</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_delta_mag</span><span class="p">(</span>
         <span class="n">corrected_mag_with_ref</span><span class="p">,</span> <span class="n">corrected_fiducial_mag_with_ref</span><span class="p">,</span> <span class="n">reference_pwv_config</span><span class="p">)</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plotting</span><span class="o">.</span><span class="n">plot_pwv_mag_effects</span><span class="p">(</span>
@@ -1012,8 +961,7 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 
 <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="s1">&#39;PWV Impact on Corrected Magnitude from fit to SN - Ref&#39;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">1.05</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;corr_pwv_effects_with_ref_star.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1033,28 +981,24 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># The params are band independent so we use the r-band values</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># The params are band independent so we use the r-band values</span>
 <span class="n">calib_factor</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_calibration_factor_for_params</span><span class="p">(</span>
     <span class="n">model_without_pwv</span><span class="p">,</span> <span class="n">fitted_params</span><span class="p">[</span><span class="s1">&#39;lsst_hardware_r&#39;</span><span class="p">])</span>
 
 <span class="n">fitted_mu</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_mu_for_params</span><span class="p">(</span>
     <span class="n">model_without_pwv</span><span class="p">,</span> <span class="n">fitted_params</span><span class="p">[</span><span class="s1">&#39;lsst_hardware_r&#39;</span><span class="p">])</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[30]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Account for (what I think is) a numerical error between astropy and sncosmo</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Account for (what I think is) a numerical error between astropy and sncosmo</span>
 <span class="n">numerical_error_offset</span> <span class="o">=</span> <span class="n">fitted_mu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">z_vals</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
 
 <span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_mu</span><span class="p">(</span><span class="n">fitted_mu</span> <span class="o">-</span> <span class="n">numerical_error_offset</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1068,11 +1012,9 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[31]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_mu</span><span class="p">(</span><span class="n">fitted_mu</span> <span class="o">+</span> <span class="n">calib_factor</span> <span class="o">-</span> <span class="n">numerical_error_offset</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_mu</span><span class="p">(</span><span class="n">fitted_mu</span> <span class="o">+</span> <span class="n">calib_factor</span> <span class="o">-</span> <span class="n">numerical_error_offset</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;mu_pwv_effects.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1089,25 +1031,21 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">calib_factor_with_ref</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_calibration_factor_for_params</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">calib_factor_with_ref</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_calibration_factor_for_params</span><span class="p">(</span>
     <span class="n">model_without_pwv</span><span class="p">,</span> <span class="n">fitted_params_with_ref</span><span class="p">[</span><span class="s1">&#39;lsst_hardware_r&#39;</span><span class="p">])</span>
 
 <span class="n">fitted_mu_with_ref</span> <span class="o">=</span> <span class="n">sn_magnitudes</span><span class="o">.</span><span class="n">calc_mu_for_params</span><span class="p">(</span>
     <span class="n">model_without_pwv</span><span class="p">,</span> <span class="n">fitted_params_with_ref</span><span class="p">[</span><span class="s1">&#39;lsst_hardware_r&#39;</span><span class="p">])</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[33]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">numerical_error_offset_ref</span> <span class="o">=</span> <span class="n">fitted_mu_with_ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">z_vals</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">numerical_error_offset_ref</span> <span class="o">=</span> <span class="n">fitted_mu_with_ref</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="o">.</span><span class="n">distmod</span><span class="p">(</span><span class="n">z_vals</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
 <span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_mu</span><span class="p">(</span><span class="n">fitted_mu_with_ref</span> <span class="o">-</span> <span class="n">numerical_error_offset_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1121,11 +1059,9 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[34]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_mu</span><span class="p">(</span><span class="n">fitted_mu_with_ref</span> <span class="o">+</span> <span class="n">calib_factor_with_ref</span> <span class="o">-</span> <span class="n">numerical_error_offset_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_mu</span><span class="p">(</span><span class="n">fitted_mu_with_ref</span> <span class="o">+</span> <span class="n">calib_factor_with_ref</span> <span class="o">-</span> <span class="n">numerical_error_offset_ref</span><span class="p">,</span> <span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;mu_pwv_effects_with_ref.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1143,8 +1079,7 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">colors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">bands</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">colors</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">bands</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">bands</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
 </pre></div>
 </div>
 </div>
@@ -1152,11 +1087,9 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[36]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_colors</span><span class="p">(</span><span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">tabulated_mag</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_colors</span><span class="p">(</span><span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">tabulated_mag</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;delta_tabulated_corrected_color.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1170,11 +1103,9 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[37]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_colors</span><span class="p">(</span><span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">corrected_mag</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_colors</span><span class="p">(</span><span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">corrected_mag</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;delta_fitted_corrected_color.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1188,11 +1119,9 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[38]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_colors</span><span class="p">(</span><span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">corrected_mag_with_ref</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plotting</span><span class="o">.</span><span class="n">plot_delta_colors</span><span class="p">(</span><span class="n">pwv_vals</span><span class="p">,</span> <span class="n">z_vals</span><span class="p">,</span> <span class="n">corrected_mag_with_ref</span><span class="p">,</span> <span class="n">colors</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">fig_dir</span> <span class="o">/</span> <span class="s1">&#39;delta_fitted_color_with_ref.pdf&#39;</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -1206,8 +1135,7 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
@@ -1245,7 +1173,7 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2022, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

@@ -27,8 +27,8 @@
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
     <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
-    <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="snat_sim.models" href="../api/models.html" />
@@ -87,9 +87,10 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/data_model.html">Output Data Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/integrations.html">Package Integrations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Notebooks / Science Examples</span></p>
 <ul class="current">
@@ -337,7 +338,7 @@ div.nboutput.container div.output_area > div[class^='highlight']{
 }
 
 /* hide copybtn icon on prompts (needed for 'sphinx_copybutton') */
-.prompt a.copybtn {
+.prompt .copybtn {
     display: none;
 }
 
@@ -383,8 +384,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">sys</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
 
 <span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span>
 
@@ -399,19 +399,16 @@ div.rendered_html tbody tr:hover {
 
 <span class="kn">from</span> <span class="nn">snat_sim</span> <span class="kn">import</span> <span class="n">models</span><span class="p">,</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span> <span class="nn">snat_sim.plasticc</span> <span class="kn">import</span> <span class="n">PLAsTICC</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">snat_sim.data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">snat_sim.data_paths</span> <span class="kn">import</span> <span class="n">paths_at_init</span>
 <span class="n">paths_at_init</span><span class="o">.</span><span class="n">get_plasticc_dir</span><span class="p">()</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -427,10 +424,8 @@ PosixPath(&#39;/home/djperrefort/Github/SN-PWV/data/plasticc&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
-
-</pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="p">[</span><span class="s1">&#39;figure.dpi&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">100</span>
+<br/></pre></div>
 </div>
 </div>
 <section id="The-PLAsTICC-Data">
@@ -440,10 +435,8 @@ PosixPath(&#39;/home/djperrefort/Github/SN-PWV/data/plasticc&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">PLAsTICC</span><span class="o">.</span><span class="n">get_available_cadences</span><span class="p">()</span>
-
-</pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">PLAsTICC</span><span class="o">.</span><span class="n">get_available_cadences</span><span class="p">()</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -460,8 +453,7 @@ PosixPath(&#39;/home/djperrefort/Github/SN-PWV/data/plasticc&#39;)
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">alt_sched</span> <span class="o">=</span> <span class="n">PLAsTICC</span><span class="p">(</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alt_sched</span> <span class="o">=</span> <span class="n">PLAsTICC</span><span class="p">(</span><span class="s1">&#39;alt_sched&#39;</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
 <span class="n">demo_header_files</span> <span class="o">=</span> <span class="n">alt_sched</span><span class="o">.</span><span class="n">get_model_headers</span><span class="p">()</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Available Light-curves: &#39;</span><span class="p">,</span> <span class="n">alt_sched</span><span class="o">.</span><span class="n">count_light_curves</span><span class="p">())</span>
 </pre></div>
@@ -479,19 +471,16 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="c1"># Data is loaded into memory in chunks. This cell may take a second.</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Data is loaded into memory in chunks. This cell may take a second.</span>
 <span class="n">snid</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span><span class="p">,</span> <span class="n">light_curve</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">alt_sched</span><span class="o">.</span><span class="n">iter_cadence</span><span class="p">(</span><span class="n">include_lc</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">light_curve</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">light_curve</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -531,10 +520,8 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sncosmo</span><span class="o">.</span><span class="n">plot_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">());</span>
-
-</pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sncosmo</span><span class="o">.</span><span class="n">plot_lc</span><span class="p">(</span><span class="n">light_curve</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">());</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -552,25 +539,21 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">model_for_sim</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">model_for_sim</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">)</span>
 <span class="n">model_for_sim</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="n">p</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">param_names</span><span class="p">})</span>
 <span class="n">model_for_sim</span><span class="o">.</span><span class="n">set_source_peakabsmag</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_abs_mb</span><span class="p">,</span> <span class="s1">&#39;standard::b&#39;</span><span class="p">,</span> <span class="s1">&#39;AB&#39;</span><span class="p">,</span> <span class="n">cosmo</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">betoule_cosmo</span><span class="p">)</span>
 
 <span class="n">cadence</span><span class="o">.</span><span class="n">zp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">cadence</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span> <span class="mi">30</span><span class="p">)</span>
 <span class="n">duplicated_lc</span> <span class="o">=</span> <span class="n">model_for_sim</span><span class="o">.</span><span class="n">simulate_lc</span><span class="p">(</span><span class="n">cadence</span><span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">duplicated_lc</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">()</span>
-
-</pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">duplicated_lc</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">()</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -611,10 +594,8 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">sncosmo</span><span class="o">.</span><span class="n">plot_lc</span><span class="p">(</span><span class="n">duplicated_lc</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">());</span>
-
-</pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sncosmo</span><span class="o">.</span><span class="n">plot_lc</span><span class="p">(</span><span class="n">duplicated_lc</span><span class="o">.</span><span class="n">to_astropy</span><span class="p">());</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -629,8 +610,7 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[12]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">compile_light_curves</span><span class="p">(</span><span class="n">dao</span><span class="p">:</span> <span class="n">PLAsTICC</span><span class="p">,</span> <span class="n">override_zp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compile_light_curves</span><span class="p">(</span><span class="n">dao</span><span class="p">:</span> <span class="n">PLAsTICC</span><span class="p">,</span> <span class="n">override_zp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Create stacked tables for PLAsTICC simulated light-curves and their duplicated simulations</span>
 
 <span class="sd">    Args:</span>
@@ -708,10 +688,8 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plot_snr_distributions</span><span class="p">(</span><span class="n">alt_sched</span><span class="p">)</span>
-
-</pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_snr_distributions</span><span class="p">(</span><span class="n">alt_sched</span><span class="p">)</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -729,12 +707,10 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">ctio</span> <span class="o">=</span> <span class="n">GPSReceiver</span><span class="p">(</span><span class="s1">&#39;CTIO&#39;</span><span class="p">,</span> <span class="n">data_cuts</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PWV&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">)]})</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ctio</span> <span class="o">=</span> <span class="n">GPSReceiver</span><span class="p">(</span><span class="s1">&#39;CTIO&#39;</span><span class="p">,</span> <span class="n">data_cuts</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;PWV&#39;</span><span class="p">:</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">25</span><span class="p">)]})</span>
 <span class="n">ctio</span><span class="o">.</span><span class="n">download_available_data</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="nb">range</span><span class="p">(</span><span class="mi">2012</span><span class="p">,</span> <span class="mi">2018</span><span class="p">))</span>
 <span class="n">pwv_model</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PWVModel</span><span class="o">.</span><span class="n">from_suominet_receiver</span><span class="p">(</span><span class="n">ctio</span><span class="p">,</span> <span class="mi">2016</span><span class="p">,</span> <span class="p">[</span><span class="mi">2017</span><span class="p">])</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <p>Next we need a SN Model that incorporates the PWV concentration along line of sight (i.e. the PWV scaled for the airmass at the time of observation). The <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package doesn’t have a clearly defined approach to adding time variable propagation effects. We use custom classes from the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package instead, which mimic <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> but include time variable propagation effects.</p>
@@ -742,8 +718,7 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">pwv_effect</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">VariablePWVTrans</span><span class="p">(</span><span class="n">pwv_model</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pwv_effect</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">VariablePWVTrans</span><span class="p">(</span><span class="n">pwv_model</span><span class="p">)</span>
 
 <span class="n">demo_model_with_pwv</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">SNModel</span><span class="p">(</span>
     <span class="n">source</span><span class="o">=</span><span class="s1">&#39;salt2-extended&#39;</span><span class="p">,</span>
@@ -751,16 +726,14 @@ Available Light-curves:  115
     <span class="n">effect_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">],</span>
     <span class="n">effect_frames</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;obs&#39;</span><span class="p">]</span>
 <span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[16]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">plot_variable_pwv_sn_model</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_variable_pwv_sn_model</span><span class="p">(</span><span class="n">model_with_pwv</span><span class="p">,</span> <span class="n">phase</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Over plot a sncosmo model with and without temporally variable PWV</span>
 
 <span class="sd">    Args:</span>
@@ -790,16 +763,14 @@ Available Light-curves:  115
     <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">wave</span><span class="p">),</span> <span class="nb">max</span><span class="p">(</span><span class="n">wave</span><span class="p">))</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[17]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plot_variable_pwv_sn_model</span><span class="p">(</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_variable_pwv_sn_model</span><span class="p">(</span>
     <span class="n">demo_model_with_pwv</span><span class="p">,</span>
     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s1">&#39;z&#39;</span><span class="p">:</span> <span class="mf">0.752069652</span><span class="p">,</span>
@@ -808,8 +779,7 @@ Available Light-curves:  115
         <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span>
     <span class="p">}</span>
 <span class="p">)</span>
-
-</pre></div>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -824,8 +794,7 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[18]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="k">def</span> <span class="nf">plot_airmass_validation</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">plot_airmass_validation</span><span class="p">(</span><span class="n">cadence</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span> <span class="n">mjd</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Plot the airmass of simulated PLAsTICC SNe locations as observed from LSST</span>
 
 <span class="sd">    Args:</span>
@@ -867,10 +836,8 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[19]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span><span class="n">plot_airmass_validation</span><span class="p">(</span><span class="n">alt_sched</span><span class="p">)</span>
-
-</pre></div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">plot_airmass_validation</span><span class="p">(</span><span class="n">alt_sched</span><span class="p">)</span>
+<br/></pre></div>
 </div>
 </div>
 <div class="nboutput nblast docutils container">
@@ -884,8 +851,7 @@ Available Light-curves:  115
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre>
-<span></span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
 </pre></div>
 </div>
 </div>
@@ -923,7 +889,7 @@ Available Light-curves:  115
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2022, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>

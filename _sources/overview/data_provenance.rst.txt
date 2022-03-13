@@ -1,9 +1,8 @@
 Data Provenance
 ===============
 
-This project takes advantage of published data from multiple external research
-efforts. Listed below is a summary of
-data sets used by this project and their origins.
+This project takes advantage of published data from multiple external research efforts.
+Listed below is a summary of data sets used by this project and their origins.
 
 Atmospheric Measurements
 ------------------------
@@ -56,8 +55,11 @@ Light-Curve Simulations
 **Data Source:** Data is published by DESC and hosted on `Zenodo <https://zenodo.org/>`_.
 
 **Description:**
-    SN light-curves were simulated using a variety of cadences and supernova models.
-    Developers can reference the assumed data model `here <plasticc_model.html>`_.
+    SN light-curves were simulated by the DESC PLAsTICC team using a variety of cadences and supernova models.
+    The parameters used in these simulations (E.g., on sky position, salt2 parameters, observation time) are used
+    as inputs for this project.
+
+.. note:: Developers can reference the assumed PLAsTICC data model `here <plasticc_model.html>`_.
 
 Stellar Spectra
 ---------------

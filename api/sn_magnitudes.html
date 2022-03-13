@@ -81,9 +81,10 @@
       <ul>
 <li class="toctree-l1"><a class="reference internal" href="../index.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/install.html">Installation and Setup</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview/data_model.html">Output Data Model</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/data_provenance.html">Data Provenance</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../overview/integrations.html">Package Integrations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../overview/command_line.html">Command Line Interface</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Notebooks / Science Examples</span></p>
 <ul>
@@ -246,7 +247,7 @@ to a model and leaving all other parameters unchanged.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], …]</p>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>Dictionary with arrays for fitted magnitude at each PWV and redshift
@@ -270,7 +271,7 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], …]</p>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p><ul class="simple">
@@ -284,7 +285,7 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="snat_sim.sn_magnitudes.calc_mu_for_model">
-<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">calc_mu_for_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">model</span></em>, <em class="sig-param"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></em>, <em class="sig-param"><span class="pre">Om0=0.295</span></em>, <em class="sig-param"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></em>, <em class="sig-param"><span class="pre">Neff=3.04</span></em>, <em class="sig-param"><span class="pre">m_nu=None</span></em>, <em class="sig-param"><span class="pre">Ob0=None)</span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_mu_for_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_mu_for_model" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">calc_mu_for_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Om0=0.295</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Neff=3.04</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_nu=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ob0=None)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_mu_for_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_mu_for_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the distance modulus of a model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -374,7 +375,7 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 </script>
 <script type="text/javascript" src="../_static/js/bootstrap.js"></script>
   <div class="footer">
-    &copy; Copyright 2020, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
+    &copy; Copyright 2022, Dark Energy Science Collaboration. Created using <a href="http://sphinx.pocoo.org/">Sphinx</a>.
   </div>
   </body>
 </html>
