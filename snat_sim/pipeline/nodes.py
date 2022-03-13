@@ -180,7 +180,7 @@ class FitLightCurves(Node):
         self.failure_output = Output('Fitting Failure')
         super(FitLightCurves, self).__init__(num_processes=num_processes)
 
-    def fit_lc(self, light_curve: LightCurve, initial_guess: Dict[str, float]) -> Tuple[SNFitResult, SNModel]:
+    def fit_lc(self, light_curve: LightCurve, initial_guess: Dict[str, float]) -> SNFitResult:
         """Fit the given light-curve
 
         Args:
@@ -205,7 +205,7 @@ class FitLightCurves(Node):
 
         for packet in self.input.iter_get():
             try:
-                packet.fit_result, packet.fitted_model = self.fit_lc(packet.light_curve, packet.sim_params)
+                packet.fit_result = self.fit_lc(packet.light_curve, packet.sim_params)
                 packet.covariance = packet.fit_result.salt_covariance_linear()
 
             except Exception as excep:
@@ -224,26 +224,24 @@ class WritePipelinePacket(Target):
         input: A pipeline packet
     """
 
-    def __init__(self, out_path: Union[str, Path], num_processes=1) -> None:
+    def __init__(self, out_path: Union[str, Path], write_lc_sims: bool = False) -> None:
         """Output node for writing HDF5 data to disk
 
-        This node can only be run using a single process. This can be the main
-        process (``num_processes=0``) or a single forked process (``num_processes=1``.)
+        This node can only be run using a single process.
 
         Args:
             out_path: Path to write data to in HDF5 format
+            write_lc_sims: Whether to include simulated light-curves in the data written to disk
         """
-
-        if num_processes not in (0, 1):
-            raise RuntimeError('Number of processes for ``LoadPlasticcCadence`` must be 0 or 1.')
 
         # Make true to raise errors instead of converting them to warnings
         self.debug = False
 
         self.out_path = Path(out_path)
+        self.write_lc_sims = write_lc_sims
         self.input = Input('Data To Write')
         self.file_store: Optional[pd.HDFStore] = None
-        super().__init__(num_processes=num_processes)
+        super().__init__(num_processes=1)
 
     def write_packet(self, packet: PipelinePacket) -> None:
         """Write a pipeline packet to the output file"""
@@ -252,10 +250,10 @@ class WritePipelinePacket(Target):
         self.file_store.append('simulation/params', packet.sim_params_to_pandas())
         self.file_store.append('message', packet.packet_status_to_pandas().astype(str), min_itemsize={'message': 250})
 
-        if packet.light_curve is not None:  # else: simulation failed
+        if self.write_lc_sims and packet.light_curve is not None:
             self.file_store.put(f'simulation/lcs/{packet.snid}', packet.light_curve.to_pandas())
 
-        if packet.fit_result is not None:  # else: fit failed
+        if packet.fit_result is not None:
             self.file_store.append('fitting/params', packet.fitted_params_to_pandas())
 
         if packet.covariance is not None:
@@ -264,6 +262,7 @@ class WritePipelinePacket(Target):
     def setup(self) -> None:
         """Open a file accessor object"""
 
+        # noinspection PyTypeChecker
         self.file_store = pd.HDFStore(self.out_path, mode='w')
 
     def teardown(self) -> None:

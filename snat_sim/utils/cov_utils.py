@@ -56,7 +56,6 @@ import numpy as np
 import pandas as pd
 
 
-# noinspection PyPep8Naming
 @pd.api.extensions.register_dataframe_accessor('cov_utils')
 class CovarianceAccessor:
     """Pandas DataFrame accessor for covariance calculations"""
@@ -75,7 +74,7 @@ class CovarianceAccessor:
 
     @classmethod
     def from_array(
-            cls, covArray: np.ndarray, paramNames: Collection[str] = None, normalized: bool = False
+            cls, cov_array: np.ndarray, param_names: Collection[str] = None, normalized: bool = False
     ) -> pd.DataFrame:
         """Instantiates a Dataframe covariance matrix using data from a `numpy.ndarray` object.
 
@@ -84,8 +83,8 @@ class CovarianceAccessor:
         enabling easy access by index or names.
 
         Args:
-            covArray: Array of the covariance
-            paramNames: Collection of strings
+            cov_array: Array of the covariance
+            param_names: Collection of strings
             normalized: Whether to return the normalized covariance matrix
 
         Returns:
@@ -94,18 +93,18 @@ class CovarianceAccessor:
             column names chosen by pandas.
         """
 
-        length, width = np.shape(covArray)
+        length, width = np.shape(cov_array)
         if length != width:  # Check for the covariance matrix being square, not checking for symmetry
             raise ValueError('The covariance matrix is not square; length!=width')
 
-        if paramNames is not None:
-            if len(paramNames) != width:
+        if param_names is not None:
+            if len(param_names) != width:
                 raise ValueError('The number of parameters must match the length of the covariance matrix')
 
-            cov = pd.DataFrame(covArray, columns=paramNames, index=paramNames)
+            cov = pd.DataFrame(cov_array, columns=param_names, index=param_names)
 
         else:
-            cov = pd.DataFrame(covArray)
+            cov = pd.DataFrame(cov_array)
 
         if not normalized:
             return cov
@@ -120,15 +119,17 @@ class CovarianceAccessor:
 
         return cov
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
-    def log_covariance(self, paramName: int, paramValue: float, factor: float = 1.) -> np.ndarray:
+    def log_covariance(self, param_name: int, param_value: float, factor: float = 1.) -> np.ndarray:
         ...  # pragma: no cover
 
+    # noinspection PyMissingOrEmptyDocstring
     @overload
-    def log_covariance(self, paramName: str, paramValue: float, factor: float = 1.) -> pd.DataFrame:
+    def log_covariance(self, param_name: str, param_value: float, factor: float = 1.) -> pd.DataFrame:
         ...  # pragma: no cover
 
-    def log_covariance(self, paramName, paramValue, factor=1.):
+    def log_covariance(self, param_name, param_value, factor=1.):
         """
         Covariance of the parameters with parameter paramName replaced by
         factor * np.log(param) everywhere, and its true value is paramValue,
@@ -139,39 +140,40 @@ class CovarianceAccessor:
         the factor should be ``-2.5 / np.log(10)``
 
         Args:
-            paramName: Parameter name or integer index specifying the position of the desired variable
-            paramValue: True or estimated value of the variable itself
+            param_name: Parameter name or integer index specifying the position of the desired variable
+            param_value: True or estimated value of the variable itself
             factor: Factor multiplying the natural logarithm
         """
 
         covariance_df = self._obj
-        if isinstance(paramName, int):
+        if isinstance(param_name, int):
             cov = covariance_df.values
-            cov[:, paramName] = factor * cov[:, paramName] / paramValue
-            cov[paramName, :] = factor * cov[paramName, :] / paramValue
+            cov[:, param_name] = factor * cov[:, param_name] / param_value
+            cov[param_name, :] = factor * cov[param_name, :] / param_value
             warn('Parameter name specified as index. Returning covariance as numpy array.')
             return cov
 
-        covariance_df[paramName] = factor * covariance_df[paramName] / paramValue
-        covariance_df.loc[paramName] = factor * covariance_df.loc[paramName] / paramValue
+        covariance_df[param_name] = factor * covariance_df[param_name] / param_value
+        covariance_df.loc[param_name] = factor * covariance_df.loc[param_name] / param_value
 
         return covariance_df
 
-    def subcovariance(self, paramList: List[str]) -> pd.DataFrame:
+    def subcovariance(self, param_list: List[str]) -> pd.DataFrame:
         """Returns the covariance of a subset of parameters in a covariance dataFrame.
 
         The set of parameters in paramList must be a subset of the columns and
         indices of covariance.
 
         Args:
-            paramList: List of parameters for which the subCovariance matrix is desired
+            param_list: List of parameters for which the subCovariance matrix is desired
 
         Returns:
             The covariance of the given parameters
         """
 
-        return self._obj.loc[paramList, paramList]
+        return self._obj.loc[param_list, param_list]
 
+    # noinspection PyPep8Naming
     def expAVsquare(self, A: np.array) -> float:
         """The expectation of ``(A^T * V) ** 2`` where A is a constant vector and V is
         a random vector ``V ~ N(0., covV)`` by computing ``A^T * covV * A``

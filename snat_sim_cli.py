@@ -118,7 +118,7 @@ class AdvancedNamespace(argparse.Namespace):
         return models.VariableCatalog(self.pwv_model, *self.ref_stars)
 
     @property
-    def add_scatter(self):
+    def add_scatter(self) -> bool:
         """Whether to include added scatter in the light-curve simulations."""
 
         return not self.no_scatter
@@ -145,11 +145,17 @@ def run_pipeline(command_line_args: AdvancedNamespace) -> None:
         catalog=command_line_args.catalog,
         add_scatter=command_line_args.add_scatter,
         fixed_snr=command_line_args.fixed_snr,
-        overwrite=command_line_args.overwrite
+        overwrite=command_line_args.overwrite,
+        write_lc_sims=command_line_args.write_lc_sims
     )
 
     pipeline.validate()
-    pipeline.run()
+    if command_line_args.visualize:
+        pipeline.run_async()
+        pipeline.visualize()
+
+    else:
+        pipeline.run()
 
 
 def create_cli_parser() -> argparse.ArgumentParser:
@@ -196,7 +202,14 @@ def create_cli_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         '--overwrite',
         action='store_true',
-        help='Allow existing results to be overwritten.'
+        help='Flag to allow existing results to be overwritten.'
+    )
+
+    parser.add_argument(
+        '--write_lc_sims',
+        action='store_true',
+        help='Flag to include simulated light curves in the pipeline output file.'
+             ' Note the added IO may noticeably increase the pipeline runtime.'
     )
 
     #######################################################################
@@ -321,7 +334,7 @@ def create_cli_parser() -> argparse.ArgumentParser:
     debugging_group.add_argument(
         '--no-scatter',
         action='store_true',
-        help='Turn off added scatter when simulating light-curves.'
+        help='Flag used to turn off added scatter when simulating light-curves.'
     )
 
     debugging_group.add_argument(
@@ -329,6 +342,41 @@ def create_cli_parser() -> argparse.ArgumentParser:
         type=float,
         default=None,
         help='Simulate light-curves with a fixed signal to noise ratio.'
+    )
+
+    #######################################################################
+    # Pipeline Visualization
+    #######################################################################
+
+    visualizer = parser.add_argument_group(
+        title='Pipeline Visualization',
+        description='Optionally launch a server instance for monitoring the pipeline in real time.')
+
+    visualizer.add_argument(
+        '--visualize',
+        action='store_true',
+        help='Flag used to launch a web server for visualizing the current pipeline status.'
+    )
+
+    visualizer.add_argument(
+        '--host',
+        type=str,
+        default=None,
+        help='Optionally define the host IP used to serve the application from.'
+    )
+
+    visualizer.add_argument(
+        '--port',
+        type=int,
+        default=None,
+        help='Optionally define the port used to serve the application.'
+    )
+
+    visualizer.add_argument(
+        '--proxy',
+        type=str,
+        default=None,
+        help='Optionally use a proxy to serve the application to a different URL "{input}::{output}".'
     )
 
     return parser

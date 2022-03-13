@@ -14,6 +14,7 @@ import sncosmo
 
 from .light_curve import LightCurve, ObservedCadence
 from .pwv import VariablePropagationEffect
+from .. import constants as const
 from .. import types
 
 
@@ -156,7 +157,7 @@ class SNModel(sncosmo.Model):
             maxcall: int = 10000,
             phase_range: List[types.Numeric] = None,
             wave_range: List[types.Numeric] = None
-    ) -> Tuple[SNFitResult, SNModel]:
+    ) -> SNFitResult:
         """Fit model parameters to photometric data via a chi-squared minimization
 
         Fitting behavior:
@@ -206,7 +207,10 @@ class SNModel(sncosmo.Model):
             warn=False
         )
 
-        return SNFitResult(result), SNModel.from_sncosmo(fitted_model)
+        result = SNFitResult(result)
+        result['apparent_bessellb'] = fitted_model.source.bandmag('bessellb', 'ab', phase=0)
+        result['absolute_bessellb'] = fitted_model.source_peakabsmag('bessellb', 'ab', cosmo=const.betoule_cosmo)
+        return result
 
 
 class SNFitResult(sncosmo.utils.Result):
@@ -255,7 +259,7 @@ class SNFitResult(sncosmo.utils.Result):
         if self['covariance'] is None:
             return None
 
-        return pd.DataFrame.cov_utils.from_array(self['covariance'], paramNames=self.vparam_names)
+        return pd.DataFrame.cov_utils.from_array(self['covariance'], param_names=self.vparam_names)
 
     def salt_covariance_linear(self, x0_truth: float = None) -> pd.DataFrame:
         """The covariance matrix of apparent magnitude and salt2 parameters
@@ -278,8 +282,8 @@ class SNFitResult(sncosmo.utils.Result):
         factor = - 2.5 / np.log(10)
         # drop other parameters like t0
         cov = self.covariance.copy()
-        cov = cov.cov_utils.subcovariance(paramList=['x0', 'x1', 'c'])
-        covariance = cov.cov_utils.log_covariance(paramName='x0', paramValue=x0, factor=factor)
+        cov = cov.cov_utils.subcovariance(param_list=['x0', 'x1', 'c'])
+        covariance = cov.cov_utils.log_covariance(param_name='x0', param_value=x0, factor=factor)
 
         covariance.rename(columns={'x0': 'mB'}, inplace=True)
         covariance['name'] = covariance.columns
@@ -307,7 +311,7 @@ class SNFitResult(sncosmo.utils.Result):
 
         arr = np.array([1.0, alpha, -beta])
         _cov = self.salt_covariance_linear()
-        sc = _cov.cov_utils.subcovariance(paramList=['mB', 'x1', 'c'])
+        sc = _cov.cov_utils.subcovariance(param_list=['mB', 'x1', 'c'])
         return sc.cov_utils.expAVsquare(arr)
 
     def __repr__(self) -> str:

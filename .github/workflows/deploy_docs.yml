@@ -12,20 +12,26 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      
-      - name: Cache Python Packages
+
+      - name: Get pip cache dir
+        id: pip-cache
+        run: |
+          python -m pip install --upgrade pip
+          echo "::set-output name=dir::$(pip cache dir)"
+
+      - name: Cache Python packages
         uses: actions/cache@v2
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-py3.8-pip-${{ hashFiles('setup.py') }}
+          path: ${{ steps.pip-cache.outputs.dir }}
+          key: ${{ runner.os }}-py${{ matrix.python-version }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-py3.8-pip-
-      
+            ${{ runner.os }}-py${{ matrix.python-version }}-pip-
+
       - name: Set up Python 3.8
         uses: actions/setup-python@v1
         with:
           python-version: 3.8
-                 
+
       - name: Install dependencies
         run: |
           pip install . 
@@ -40,7 +46,7 @@ jobs:
       - name: Commit documentation changes
         run: |
           git clone https://github.com/LSSTDESC/SN-PWV.git --branch gh-pages --single-branch gh-pages --depth 1
-          
+
           rm -rf gh-pages/*  # clear old files away
           cp -r docs/build/html/* gh-pages/  # Add new doc files
           

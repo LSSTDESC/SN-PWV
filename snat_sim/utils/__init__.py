@@ -29,10 +29,12 @@ from . import *
 def setup_environment() -> None:
     """Register package integrations with third party dependencies"""
 
+    # Importing these modules will auto register them with pandas
     from . import cov_utils
     from . import time_series
     from . import cosmology
-    from .filters import register_lsst_filters, register_decam_filters
 
+    # Register custom filter profiles with sncosmo
+    from .filters import register_lsst_filters, register_decam_filters
     register_lsst_filters()
     register_decam_filters()
