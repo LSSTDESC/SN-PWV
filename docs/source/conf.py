@@ -7,6 +7,7 @@
 # -- Path setup --------------------------------------------------------------
 
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import guzzle_sphinx_theme
@@ -18,7 +19,7 @@ sys.path.insert(0, str(package_source_path))
 # -- Project information -----------------------------------------------------
 
 project = 'SNAT_SIM'
-copyright = '2020, Dark Energy Science Collaboration'
+copyright = f'{datetime.now().year}, Dark Energy Science Collaboration'
 author = 'DESC'
 
 # -- General configuration ---------------------------------------------------
