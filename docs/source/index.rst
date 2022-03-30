@@ -81,6 +81,7 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    notebooks/sne_delta_mag.nblink
    notebooks/pwv_modeling.nblink
    notebooks/simulating_lc_for_cadence.nblink
+   notebooks/pipeline_outputs.nblink
 
 .. toctree::
    :hidden:
