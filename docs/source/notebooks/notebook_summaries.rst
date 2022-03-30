@@ -24,6 +24,8 @@ is provided below.
 | `Simulating Light-Curves with a Cadence`_ | Simulates Type Ia Supernova observations using realistic cadences and    |
 |                                           | atmospheric variability expected from LSST.                              |
 +-------------------------------------------+--------------------------------------------------------------------------+
+| `Examining Pipeline Outputs`_             | Examines results from the analysis pipeline.                             |
++-------------------------------------------+--------------------------------------------------------------------------+
 
 .. _LSST Filters: lsst_filters.html
 .. _Effective PWV on a Black Body: pwv_eff_on_black_body.html
