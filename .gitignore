@@ -1,8 +1,5 @@
 # Data files
-tests/test_data
-notebooks/cerro_tololo.ecsv
-data/joblib
-results/
+*.h5
 
 # OS Files
 *.DS_Store
@@ -30,5 +27,4 @@ docs/build
 
 # Rendered figures
 *.pdf
-
-docs/build
+/data/analysis_runs/*.tar.gz

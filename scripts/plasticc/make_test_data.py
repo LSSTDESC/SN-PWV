@@ -3,9 +3,13 @@
 """Create a small subset of PLAsTICC data used for testing / profiling.
 
 Usage:
+
+.. code-block::
    python make_test_data.py [PLAsTICC Data Directory] [Cadence Name] [Model Number]
 
 Example:
+
+.. code-block::
    python make_test_data.py /mnt/md0/sn-sims/ alt_sched 11
 """
 

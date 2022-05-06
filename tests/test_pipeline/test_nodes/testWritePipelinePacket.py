@@ -21,15 +21,17 @@ class InputDataMatchesDisk(TestCase):
 
         cls.packets = [create_mock_pipeline_packet(123), create_mock_pipeline_packet(456)]
         cls.temp_dir = TemporaryDirectory()
-        cls.temp_path = Path(cls.temp_dir.name) / 'tempfile.h5'
 
-        node = WritePipelinePacket(cls.temp_path, True)
+        node = WritePipelinePacket(Path(cls.temp_dir.name) / 'tempfile.h5', True)
         node.debug = True
         moc_source = MockSource(cls.packets)
         moc_source.output.connect(node.input)
 
         moc_source.execute()
         node.execute()
+
+        # Account for the rotation of output files
+        cls.temp_path = Path(cls.temp_dir.name) / 'tempfile_fn0.h5'
 
     @classmethod
     def tearDownClass(cls) -> None:

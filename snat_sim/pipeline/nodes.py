@@ -35,7 +35,12 @@ class LoadPlasticcCadence(Source):
     """
 
     def __init__(
-            self, plasticc_dao: PLAsTICC, iter_lim: int = float('inf'), override_zp: float = 30, num_processes: int = 1
+            self,
+            plasticc_dao: PLAsTICC,
+            iter_lim: int = float('inf'),
+            override_zp: float = 30,
+            verbose: bool = True,
+            num_processes: int = 1
     ) -> None:
         """Source node for loading PLAsTICC cadence data from disk
 
@@ -46,6 +51,7 @@ class LoadPlasticcCadence(Source):
             plasticc_dao: A PLAsTICC data access object
             iter_lim: Exit after loading the given number of light-curves
             override_zp: Overwrite the zero-point used by plasticc with this number
+            verbose: Display a progress bar
             num_processes: Number of processes to allocate to the node (must be 0 or 1 for this node)
         """
 
@@ -55,6 +61,7 @@ class LoadPlasticcCadence(Source):
         self.cadence = plasticc_dao
         self.iter_lim = iter_lim
         self.override_zp = override_zp
+        self.verbose = verbose
 
         # Node connectors
         self.output = Output('Loading Cadence Output')
@@ -63,7 +70,7 @@ class LoadPlasticcCadence(Source):
     def action(self) -> None:
         """Load PLAsTICC cadence data from disk"""
 
-        for snid, params, cadence in self.cadence.iter_cadence(iter_lim=self.iter_lim):
+        for snid, params, cadence in self.cadence.iter_cadence(iter_lim=self.iter_lim, verbose=self.verbose):
             cadence.zp = np.full_like(cadence.zp, self.override_zp)
             self.output.put(PipelinePacket(snid, params, cadence))
 
@@ -224,7 +231,7 @@ class WritePipelinePacket(Target):
         input: A pipeline packet
     """
 
-    def __init__(self, out_path: Union[str, Path], write_lc_sims: bool = False) -> None:
+    def __init__(self, out_path: Union[str, Path], write_lc_sims: bool = False, num_processes=1) -> None:
         """Output node for writing HDF5 data to disk
 
         This node can only be run using a single process.
@@ -235,20 +242,49 @@ class WritePipelinePacket(Target):
         """
 
         # Make true to raise errors instead of converting them to warnings
+        self.input = Input('Data To Write')
+        self.write_lc_sims = write_lc_sims
         self.debug = False
 
         self.out_path = Path(out_path)
-        self.write_lc_sims = write_lc_sims
-        self.input = Input('Data To Write')
         self.file_store: Optional[pd.HDFStore] = None
-        super().__init__(num_processes=1)
+        self._num_results_per_file = 10_000
+        self._num_results_in_current_file = 0
+        self._current_file_id = 0
+        super().__init__(num_processes=num_processes)
 
-    def write_packet(self, packet: PipelinePacket) -> None:
+    def _rotate_output_file(self) -> None:
+        """Have the running process close the current output file and start writing to a new one
+
+        Once files get too large the write performance starts to suffer.
+        We address this by closing the current file, incrementing
+        a number in the output file path, and writing data to that new path
+        """
+
+        if self._num_results_in_current_file < self._num_results_per_file:
+            return
+
+        if self.file_store is not None:
+            self.file_store.close()
+
+        # Update output file path
+        old_id = self._current_file_id
+        self._current_file_id += 1
+        new_stem = self.out_path.stem.replace(f'_fn{old_id}', f'_fn{self._current_file_id}')
+        self.out_path = self.out_path.with_stem(new_stem)
+
+        # noinspection PyTypeChecker
+        self.file_store = pd.HDFStore(self.out_path, mode='w')
+        self._num_results_in_current_file = 0
+
+    def _write_packet(self, packet: PipelinePacket) -> None:
         """Write a pipeline packet to the output file"""
+
+        self._rotate_output_file()
 
         # We are taking the simulated parameters as guaranteed to exist
         self.file_store.append('simulation/params', packet.sim_params_to_pandas())
-        self.file_store.append('message', packet.packet_status_to_pandas().astype(str), min_itemsize={'message': 250})
+        self.file_store.append('message', packet.packet_status_to_pandas().astype(str), min_itemsize={'snid': 10, 'message': 250})
 
         if self.write_lc_sims and packet.light_curve is not None:
             self.file_store.put(f'simulation/lcs/{packet.snid}', packet.light_curve.to_pandas())
@@ -259,8 +295,19 @@ class WritePipelinePacket(Target):
         if packet.covariance is not None:
             self.file_store.put(f'fitting/covariance/{packet.snid}', packet.covariance)
 
+        self._num_results_in_current_file += 1
+
     def setup(self) -> None:
         """Open a file accessor object"""
+
+        # If we are writing data to disk in parallel, add the process id to
+        # prevent multiple processes writing to the same file
+        if self.num_processes > 1:
+            import multiprocessing
+            pid = hex(id(multiprocessing.current_process()))  # Use hex for shorter filename
+            self.out_path = self.out_path.with_suffix(f'.{pid}.h5')
+
+        self.out_path = self.out_path.with_stem(self.out_path.stem + f'_fn{self._current_file_id}')
 
         # noinspection PyTypeChecker
         self.file_store = pd.HDFStore(self.out_path, mode='w')
@@ -276,7 +323,7 @@ class WritePipelinePacket(Target):
 
         for packet in self.input.iter_get():
             try:
-                self.write_packet(packet)
+                self._write_packet(packet)
 
             except Exception as excep:
                 if self.debug:

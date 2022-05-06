@@ -69,6 +69,7 @@ class FittingPipeline(Pipeline):
             out_path: Union[str, Path],
             fitting_pool: int = 1,
             simulation_pool: int = 1,
+            writing_pool: int = 1,
             bounds: Dict[str, Tuple[Number, Number]] = None,
             max_queue: int = 100,
             iter_lim: int = float('inf'),
@@ -107,7 +108,7 @@ class FittingPipeline(Pipeline):
         # Define the nodes of the analysis pipeline
         cadence = PLAsTICC(cadence, model=11)
         self.load_plastic = LoadPlasticcCadence(cadence, iter_lim=iter_lim)
-        self.write_to_disk = WritePipelinePacket(out_path, write_lc_sims)
+        self.write_to_disk = WritePipelinePacket(out_path, write_lc_sims, num_processes=writing_pool)
 
         self.simulate_light_curves = SimulateLightCurves(
             sn_model=sim_model,
