@@ -96,3 +96,4 @@ Collaboration, with particular emphasis on the **Code of Conduct** and
    api/plasticc.rst
    api/plotting.rst
    api/sn_magnitudes.rst
+   api/cli.rst

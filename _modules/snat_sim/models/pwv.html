@@ -101,6 +101,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/cli.html">snat_sim.cli</a></li>
 </ul>
 
     
@@ -218,8 +219,14 @@
 
 <div class="viewcode-block" id="PWVModel.calc_airmass"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.PWVModel.calc_airmass">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">calc_airmass</span><span class="p">(</span>
-            <span class="n">time</span><span class="p">,</span> <span class="n">ra</span><span class="p">,</span> <span class="n">dec</span><span class="p">,</span> <span class="n">lat</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">vro_latitude</span><span class="p">,</span> <span class="n">lon</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">vro_longitude</span><span class="p">,</span> <span class="n">alt</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
-            <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;mjd&#39;</span><span class="p">,</span> <span class="n">raise_below_horizon</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">time</span><span class="p">,</span>
+            <span class="n">ra</span><span class="p">,</span>
+            <span class="n">dec</span><span class="p">,</span>
+            <span class="n">lat</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">vro_latitude</span><span class="p">,</span>
+            <span class="n">lon</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">vro_longitude</span><span class="p">,</span>
+            <span class="n">alt</span><span class="o">=</span><span class="n">const</span><span class="o">.</span><span class="n">vro_altitude</span><span class="p">,</span>
+            <span class="n">time_format</span><span class="o">=</span><span class="s1">&#39;mjd&#39;</span><span class="p">,</span>
+            <span class="n">raise_below_horizon</span><span class="o">=</span><span class="kc">True</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Calculate the airmass through which a target is observed</span>
 

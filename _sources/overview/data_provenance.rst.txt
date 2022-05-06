@@ -7,7 +7,7 @@ Listed below is a summary of data sets used by this project and their origins.
 Atmospheric Measurements
 ------------------------
 
-**Repository Path:** Data access provided by the `pwv_kpno package <https://mwvgroup.github.io/pwv_kpno/>`_.
+**Repository Path:** *data/suominet/*
 
 **Data Source:** `The SuomiNet Project <https://www.suominet.ucar.edu/>`_
 
@@ -21,7 +21,7 @@ Atmospheric Measurements
 CTIO Filters
 ------------
 
-**Repository Path:** *data/filters/ctio/**
+**Repository Path:** *data/filters/ctio/*
 
 **Data Source:** `SVO Filter Profile Service <http://svo2.cab.inta-csic.es/theory/fps/>`_
 
@@ -35,7 +35,7 @@ CTIO Filters
 LSST Filters
 ------------
 
-**Repository Path:** *data/filters/lsst/**
+**Repository Path:** *data/filters/lsst/*
 
 **Data Source:** Cloned from https://github.com/lsst/throughputs
 
@@ -64,7 +64,7 @@ Light-Curve Simulations
 Stellar Spectra
 ---------------
 
-**Repository Path:** *data/stellar_spectra/**
+**Repository Path:** *data/stellar_spectra/*
 
 **Data Source:** Sourced from the `Goettingen Spectral Library <http://phoenix.astro.physik.uni-goettingen.de/?page_id=15>`_.
 

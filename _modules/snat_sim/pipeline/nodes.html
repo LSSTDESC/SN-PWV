@@ -102,6 +102,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plasticc.html">snat_sim.plasticc</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/plotting.html">snat_sim.plotting</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../api/sn_magnitudes.html">snat_sim.sn_magnitudes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/cli.html">snat_sim.cli</a></li>
 </ul>
 
     
@@ -152,7 +153,12 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="LoadPlasticcCadence.__init__"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.LoadPlasticcCadence.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-            <span class="bp">self</span><span class="p">,</span> <span class="n">plasticc_dao</span><span class="p">:</span> <span class="n">PLAsTICC</span><span class="p">,</span> <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span> <span class="n">override_zp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span> <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">plasticc_dao</span><span class="p">:</span> <span class="n">PLAsTICC</span><span class="p">,</span>
+            <span class="n">iter_lim</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span>
+            <span class="n">override_zp</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">30</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">num_processes</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Source node for loading PLAsTICC cadence data from disk</span>
 
@@ -163,6 +169,7 @@
 <span class="sd">            plasticc_dao: A PLAsTICC data access object</span>
 <span class="sd">            iter_lim: Exit after loading the given number of light-curves</span>
 <span class="sd">            override_zp: Overwrite the zero-point used by plasticc with this number</span>
+<span class="sd">            verbose: Display a progress bar</span>
 <span class="sd">            num_processes: Number of processes to allocate to the node (must be 0 or 1 for this node)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -172,6 +179,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span> <span class="o">=</span> <span class="n">plasticc_dao</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span> <span class="o">=</span> <span class="n">iter_lim</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">override_zp</span> <span class="o">=</span> <span class="n">override_zp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
 
         <span class="c1"># Node connectors</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">output</span> <span class="o">=</span> <span class="n">Output</span><span class="p">(</span><span class="s1">&#39;Loading Cadence Output&#39;</span><span class="p">)</span>
@@ -180,7 +188,7 @@
 <div class="viewcode-block" id="LoadPlasticcCadence.action"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.LoadPlasticcCadence.action">[docs]</a>    <span class="k">def</span> <span class="nf">action</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Load PLAsTICC cadence data from disk&quot;&quot;&quot;</span>
 
-        <span class="k">for</span> <span class="n">snid</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span><span class="o">.</span><span class="n">iter_cadence</span><span class="p">(</span><span class="n">iter_lim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">snid</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cadence</span><span class="o">.</span><span class="n">iter_cadence</span><span class="p">(</span><span class="n">iter_lim</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">iter_lim</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">):</span>
             <span class="n">cadence</span><span class="o">.</span><span class="n">zp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">cadence</span><span class="o">.</span><span class="n">zp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">override_zp</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">output</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">PipelinePacket</span><span class="p">(</span><span class="n">snid</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">cadence</span><span class="p">))</span></div></div>
 
@@ -341,7 +349,7 @@
 <span class="sd">        input: A pipeline packet</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="WritePipelinePacket.__init__"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.WritePipelinePacket.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">write_lc_sims</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="WritePipelinePacket.__init__"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.WritePipelinePacket.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">out_path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">write_lc_sims</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">num_processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Output node for writing HDF5 data to disk</span>
 
 <span class="sd">        This node can only be run using a single process.</span>
@@ -352,20 +360,49 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Make true to raise errors instead of converting them to warnings</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="s1">&#39;Data To Write&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">write_lc_sims</span> <span class="o">=</span> <span class="n">write_lc_sims</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">debug</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">out_path</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">write_lc_sims</span> <span class="o">=</span> <span class="n">write_lc_sims</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">input</span> <span class="o">=</span> <span class="n">Input</span><span class="p">(</span><span class="s1">&#39;Data To Write&#39;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_results_per_file</span> <span class="o">=</span> <span class="mi">10_000</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_results_in_current_file</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_file_id</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">num_processes</span><span class="o">=</span><span class="n">num_processes</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WritePipelinePacket.write_packet"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.WritePipelinePacket.write_packet">[docs]</a>    <span class="k">def</span> <span class="nf">write_packet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">packet</span><span class="p">:</span> <span class="n">PipelinePacket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">_rotate_output_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Have the running process close the current output file and start writing to a new one</span>
+
+<span class="sd">        Once files get too large the write performance starts to suffer.</span>
+<span class="sd">        We address this by closing the current file, incrementing</span>
+<span class="sd">        a number in the output file path, and writing data to that new path</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_results_in_current_file</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_num_results_per_file</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="c1"># Update output file path</span>
+        <span class="n">old_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_file_id</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_file_id</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">new_stem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">stem</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;_fn</span><span class="si">{</span><span class="n">old_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;_fn</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_file_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">with_stem</span><span class="p">(</span><span class="n">new_stem</span><span class="p">)</span>
+
+        <span class="c1"># noinspection PyTypeChecker</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_results_in_current_file</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">_write_packet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">packet</span><span class="p">:</span> <span class="n">PipelinePacket</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Write a pipeline packet to the output file&quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rotate_output_file</span><span class="p">()</span>
 
         <span class="c1"># We are taking the simulated parameters as guaranteed to exist</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;simulation/params&#39;</span><span class="p">,</span> <span class="n">packet</span><span class="o">.</span><span class="n">sim_params_to_pandas</span><span class="p">())</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="n">packet</span><span class="o">.</span><span class="n">packet_status_to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">min_itemsize</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="mi">250</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="n">packet</span><span class="o">.</span><span class="n">packet_status_to_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">),</span> <span class="n">min_itemsize</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;snid&#39;</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;message&#39;</span><span class="p">:</span> <span class="mi">250</span><span class="p">})</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">write_lc_sims</span> <span class="ow">and</span> <span class="n">packet</span><span class="o">.</span><span class="n">light_curve</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;simulation/lcs/</span><span class="si">{</span><span class="n">packet</span><span class="o">.</span><span class="n">snid</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">packet</span><span class="o">.</span><span class="n">light_curve</span><span class="o">.</span><span class="n">to_pandas</span><span class="p">())</span>
@@ -374,10 +411,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;fitting/params&#39;</span><span class="p">,</span> <span class="n">packet</span><span class="o">.</span><span class="n">fitted_params_to_pandas</span><span class="p">())</span>
 
         <span class="k">if</span> <span class="n">packet</span><span class="o">.</span><span class="n">covariance</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;fitting/covariance/</span><span class="si">{</span><span class="n">packet</span><span class="o">.</span><span class="n">snid</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">packet</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span></div>
+            <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;fitting/covariance/</span><span class="si">{</span><span class="n">packet</span><span class="o">.</span><span class="n">snid</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">packet</span><span class="o">.</span><span class="n">covariance</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_num_results_in_current_file</span> <span class="o">+=</span> <span class="mi">1</span>
 
 <div class="viewcode-block" id="WritePipelinePacket.setup"><a class="viewcode-back" href="../../../api/pipeline/nodes.html#snat_sim.pipeline.nodes.WritePipelinePacket.setup">[docs]</a>    <span class="k">def</span> <span class="nf">setup</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Open a file accessor object&quot;&quot;&quot;</span>
+
+        <span class="c1"># If we are writing data to disk in parallel, add the process id to</span>
+        <span class="c1"># prevent multiple processes writing to the same file</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_processes</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">multiprocessing</span>
+            <span class="n">pid</span> <span class="o">=</span> <span class="nb">hex</span><span class="p">(</span><span class="nb">id</span><span class="p">(</span><span class="n">multiprocessing</span><span class="o">.</span><span class="n">current_process</span><span class="p">()))</span>  <span class="c1"># Use hex for shorter filename</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;.</span><span class="si">{</span><span class="n">pid</span><span class="si">}</span><span class="s1">.h5&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">with_stem</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="o">.</span><span class="n">stem</span> <span class="o">+</span> <span class="sa">f</span><span class="s1">&#39;_fn</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_file_id</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
 
         <span class="c1"># noinspection PyTypeChecker</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">file_store</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">HDFStore</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_path</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span></div>
@@ -393,7 +441,7 @@
 
         <span class="k">for</span> <span class="n">packet</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input</span><span class="o">.</span><span class="n">iter_get</span><span class="p">():</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">write_packet</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_write_packet</span><span class="p">(</span><span class="n">packet</span><span class="p">)</span>
 
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">excep</span><span class="p">:</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">debug</span><span class="p">:</span>
