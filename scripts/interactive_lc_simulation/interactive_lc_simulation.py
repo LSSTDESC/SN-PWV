@@ -1,4 +1,10 @@
-"""Interactive Bokeh application for plotting light-curve simulations"""
+"""Interactive Bokeh application for plotting light-curve simulations
+
+Run this script via the ``bokeh`` command line tool:
+
+.. code-block::
+   bokeh serve [FILE PATH]
+"""
 
 import sys
 from copy import copy
@@ -174,7 +180,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
             y = band_data['flux']
             yerr = band_data['fluxerr']
 
-            circ = self.main_figure.circle(x=x, y=y, color=color)
+            circ = self.main_figure.circle(x=x, y=y, color=color, legend_label=band)
             self.plotted_data.append(circ)
 
             if 0 in self.checkbox.active:
@@ -187,7 +193,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
 
         # Update plot of simulated spectrum
         wave = np.arange(self.sn_model_with_pwv.minwave(), self.sn_model_with_pwv.maxwave())
-        spec_line = self.spec_figure.line(x=wave, y=self.sn_model_with_pwv.flux(0, wave))
+        spec_line = self.spec_figure.line(x=wave, y=self.sn_model_with_pwv.flux(0, wave), legend_label='Observed')
         self.plotted_data.append(spec_line)
 
         # Match fitted param sliders to sim param sliders
@@ -265,7 +271,7 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
             self.plotted_fits.append(line)
 
         wave = np.arange(self.sn_model_without_pwv.minwave(), min(self.sn_model_without_pwv.maxwave(), 12000))
-        spec_line = self.spec_figure.line(x=wave, y=self.sn_model_without_pwv.flux(0, wave), color='red')
+        spec_line = self.spec_figure.line(x=wave, y=self.sn_model_without_pwv.flux(0, wave), color='red', legend_label='Model')
         self.plotted_fits.append(spec_line)
 
 
@@ -276,9 +282,6 @@ class Callbacks(SimulatedParamWidgets, FittedParamWidgets):
 # The figure objects to plot on
 central_figure = figure(plot_height=400, plot_width=700, sizing_mode='scale_both', toolbar_location='above')
 spectrum_figure = figure(plot_height=200, plot_width=700, sizing_mode='scale_both')
-for fig in (central_figure, spectrum_figure):
-    fig.legend.location = "top_left"
-    fig.legend.click_policy = "hide"
 
 # Div for displaying fitted ``Results`` object
 fit_results = models.Div()

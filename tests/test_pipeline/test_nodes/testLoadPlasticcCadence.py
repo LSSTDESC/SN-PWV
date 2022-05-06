@@ -10,7 +10,7 @@ from snat_sim.plasticc import PLAsTICC
 
 
 class LoadsCorrectSimulationData(TestCase):
-    """Test the loading of PLaSTICC data into a test pipeline"""
+    """Test the loading of PLAsTICC data into a test pipeline"""
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -20,9 +20,9 @@ class LoadsCorrectSimulationData(TestCase):
         cadence = PLAsTICC('alt_sched', 11)
         load_action = LoadPlasticcCadence(cadence)
         mock_target = MockTarget()
+        load_action.output.connect(mock_target.input)
 
         # Execute the pipeline
-        load_action.output.connect(mock_target.input)
         load_action.execute()
         mock_target.execute()
 
@@ -33,17 +33,17 @@ class LoadsCorrectSimulationData(TestCase):
         cls.snid, cls.params, cls.cadence = next(cadence.iter_cadence(iter_lim=1, verbose=False))
 
     def test_snid_matches_plasticc_iterator(self) -> None:
-        """Test the SNID matches the value from the PLaSTICC iterator"""
+        """Test the SNID matches the value from the PLAsTICC iterator"""
 
         self.assertEqual(self.snid, self.packet.snid, 'SNID does not match.')
 
     def test_sim_params_match_plasticc_iterator(self) -> None:
-        """Test the simulation parameters match the PLaSTICC iterator"""
+        """Test the simulation parameters match the PLAsTICC iterator"""
 
         self.assertEqual(self.params, self.packet.sim_params, 'Simulation parameters do not match.')
 
     def test_cadence_matches_plasticc_iterator(self) -> None:
-        """Test the cadence data matches the PLaSTICC iterator"""
+        """Test the cadence data matches the PLAsTICC iterator"""
 
         self.assertEqual(self.cadence, self.packet.cadence, 'Observational cadence does not match.')
 

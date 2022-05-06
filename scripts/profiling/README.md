@@ -1,29 +1,15 @@
-This directory contains a series of script for profiling the `snat_sim` analysis 
-pipeline and visualizing the results. Profiling jobs should be submitted using SLURM
-and the included shell scripts. Profiling results can can be visualized using the
-included Python scripts.  
+The `run_profiling.sh` scripts executes the analysis pipeline several times. 
+Each run is executed with a different number of processes allocated to each 
+stage of the analysis process: Simulating light-curves, fitting simulations, 
+and writing results to disk (Note that there is also 1 process that is always 
+allocated to reading in data from disk at the beginning of the pipeline).
 
-## Setup
+The execution time of each pipline run are written to a text file named
+using the number of processes allocated to each stage 
+`$NUM_SIM.$NUM_FIT.$NUM_WRITE.txt`.
 
-Run the following setup tasks in login node before job submission
-1. Enable `conda` from the login node. This only has to be run once.
+The `plot_results.py` script plots the runtime results and prints the best
+runtime(s).
 
-```bash
-module purge
-module load python
-conda init
-```
-
-2. Make sure the ``SN-PWV`` conda environment is defined as follows.
-
-```bash
-wget https://raw.githubusercontent.com/LSSTDESC/SN-PWV/master/cori_env.yml
-conda env create --file cori_env.yml
-```
-
-3. Copy profiling data to scratch directory if not already available. The `alt_sched` cadence is used by default.
-
-```bash
-mkdir -p $SCRATCH/Cadence/alt_sched
-cp -u -r $CADENCE_SIMS/alt_sched/LSST_WFD_alt_sched_MODEL11 $SCRATCH/Cadence/alt_sched/
-```
+To fully understand the results, make sure to check the entire set of 
+arguments passed to the analysis pipeline in `run_profiling.sh`.

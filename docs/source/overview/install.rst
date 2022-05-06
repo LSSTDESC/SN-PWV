@@ -8,8 +8,10 @@ steps outlined below to install and configure the package.
 Running at NERSC
 ----------------
 
-.. warning:: Preconfigured support for running at NERSC is no longer supported.
-   See the **Using a Custom Environment** section instead.
+.. important:: Prebuilt runtime environments are no longer maintained at
+   NERSC for this project. Instruction in this section are included for
+   historical reference only. Please see later documentation sections for
+   other options on running the analysis pipeline.
 
 If you are running this analysis on the Cori filesystem at NERSC,
 most of the setup procedure has already been completed for you.

@@ -102,8 +102,14 @@ class PWVModel:
 
     @staticmethod
     def calc_airmass(
-            time, ra, dec, lat=const.vro_latitude, lon=const.vro_longitude, alt=const.vro_altitude,
-            time_format='mjd', raise_below_horizon=True
+            time,
+            ra,
+            dec,
+            lat=const.vro_latitude,
+            lon=const.vro_longitude,
+            alt=const.vro_altitude,
+            time_format='mjd',
+            raise_below_horizon=True
     ):
         """Calculate the airmass through which a target is observed
 
