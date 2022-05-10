@@ -117,7 +117,7 @@ class SimulateLightCurves(Node):
         self.failure_output = Output('Simulation Failure')
         super().__init__(num_processes=num_processes)
 
-    def simulate_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> LightCurve:
+    def simulate_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> Tuple[LightCurve, SNModel]:
         """Duplicate a plastic light-curve using the simulation model
 
         Args:
