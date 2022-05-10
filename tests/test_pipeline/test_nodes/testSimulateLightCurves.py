@@ -68,10 +68,10 @@ class LightCurveSimulation(TestCase):
         packet = create_mock_pipeline_packet(include_lc=False)
 
         node_without_catalog = SimulateLightCurves(model, add_scatter=False)
-        uncalibrated_lc = node_without_catalog.simulate_lc(packet.sim_params, packet.cadence)
+        uncalibrated_lc, _ = node_without_catalog.simulate_lc(packet.sim_params, packet.cadence)
 
         node_with_catalog = SimulateLightCurves(model, add_scatter=False, catalog=catalog)
-        calibrated_lc = node_with_catalog.simulate_lc(packet.sim_params, packet.cadence)
+        calibrated_lc, _ = node_with_catalog.simulate_lc(packet.sim_params, packet.cadence)
 
         ra, dec = packet.sim_params['ra'], packet.sim_params['dec']
         pd.testing.assert_frame_equal(
