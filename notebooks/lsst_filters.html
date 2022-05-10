@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -378,7 +379,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="LSST-Filters">
-<h1>LSST Filters<a class="headerlink" href="#LSST-Filters" title="Permalink to this headline">¶</a></h1>
+<h1>LSST Filters<a class="headerlink" href="#LSST-Filters" title="Permalink to this heading">¶</a></h1>
 <p>This notebook demonstrates the LSST filter set and the fiducial LSST atmosphere. These transmission functions are compared against spectral templates for stars and SNe.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -409,7 +410,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="Baseline-Filter-Set">
-<h2>Baseline Filter Set<a class="headerlink" href="#Baseline-Filter-Set" title="Permalink to this headline">¶</a></h2>
+<h2>Baseline Filter Set<a class="headerlink" href="#Baseline-Filter-Set" title="Permalink to this heading">¶</a></h2>
 <p>The LSST filter set is provided in enough detail that we can separate the hardware and atmospheric contributions. This allows us to add our own customized atmospheric component(s).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -527,7 +528,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="The-Fiducial-ATM">
-<h2>The Fiducial ATM<a class="headerlink" href="#The-Fiducial-ATM" title="Permalink to this headline">¶</a></h2>
+<h2>The Fiducial ATM<a class="headerlink" href="#The-Fiducial-ATM" title="Permalink to this heading">¶</a></h2>
 <p>We compare the reddest (largest) PWV absorption feature of the LSST standard atmosphere against the atmospheric model from <code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code>. We compare the LSST atmosphere against PWV absorption for 4mm PWV binned at a 5 angstrom resolution.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
@@ -659,7 +660,7 @@ Best fit Resolution: 4.999999802004262
 </div>
 </section>
 <section id="Stellar-Fluxes">
-<h2>Stellar Fluxes<a class="headerlink" href="#Stellar-Fluxes" title="Permalink to this headline">¶</a></h2>
+<h2>Stellar Fluxes<a class="headerlink" href="#Stellar-Fluxes" title="Permalink to this heading">¶</a></h2>
 <p>We take note of how the stellar flux changes in each band relative to PWV = 0. We rely on stellar spectra from the Göttingen spectral library, as demonstrated below.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:

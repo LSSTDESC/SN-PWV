@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -123,7 +124,7 @@
           <div class="document clearer body">
             
   <section id="module-snat_sim.sn_magnitudes">
-<span id="snat-sim-sn-magnitudes"></span><h1>snat_sim.sn_magnitudes<a class="headerlink" href="#module-snat_sim.sn_magnitudes" title="Permalink to this headline">¶</a></h1>
+<span id="snat-sim-sn-magnitudes"></span><h1>snat_sim.sn_magnitudes<a class="headerlink" href="#module-snat_sim.sn_magnitudes" title="Permalink to this heading">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">sn_magnitudes.py</span></code> module is responsible for calculating supernova
 magnitudes as a function of PWV and redshift. Functionality includes calculating
 magnitudes directly from a supernova model or via a light-curve fit.</p>
@@ -133,7 +134,7 @@ magnitudes directly from a supernova model or via a light-curve fit.</p>
 this module is now available elsewhere in the package.</p>
 </div>
 <section id="module-docs">
-<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="snat_sim.sn_magnitudes.get_config_pwv_vals">
 <span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">get_config_pwv_vals</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">config_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PosixPath('/home/runner/work/SN-PWV/SN-PWV/data/defaults/ref_pwv.yaml')</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#get_config_pwv_vals"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.get_config_pwv_vals" title="Permalink to this definition">¶</a></dt>
@@ -147,13 +148,13 @@ this module is now available elsewhere in the package.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>config_path</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path of config file if not default</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dictionary with PWV values in mm</p>
 </dd>
 </dl>
@@ -166,7 +167,7 @@ this module is now available elsewhere in the package.</p>
 <p>Magnitude is calculated for the model by adding PWV effects
 to a model and leaving all other parameters unchanged.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>]) – The sncosmo model to use in the simulations</p></li>
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – Array of PWV values</p></li>
@@ -175,10 +176,10 @@ to a model and leaving all other parameters unchanged.</p>
 <li><p><strong>verbose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Show a progress bar</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A dictionary with 2d arrays for the magnitude at each PWV and redshift</p>
 </dd>
 </dl>
@@ -193,7 +194,7 @@ to a model and leaving all other parameters unchanged.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
 <li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
@@ -201,10 +202,10 @@ to a model and leaving all other parameters unchanged.</p>
 <li><p><strong>fid_pwv_dict</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]]) – Config dictionary for fiducial atmosphere</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A dictionary with fiducial magnitudes in each band</p>
 </dd>
 </dl>
@@ -216,7 +217,7 @@ to a model and leaving all other parameters unchanged.</p>
 <dd><p>Correct fitted supernova magnitude for stretch and color</p>
 <p>calibrated mag = mag + α * x1 - β * c</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – Model used to fit the given magnitudes</p></li>
 <li><p><strong>mag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – (n)d array of magnitudes for pwv and redshift</p></li>
@@ -225,10 +226,10 @@ to a model and leaving all other parameters unchanged.</p>
 <li><p><strong>beta</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]) – Beta parameter value</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Array of calibrated magnitudes with same dimensions as <code class="docutils literal notranslate"><span class="pre">mag</span></code></p>
 </dd>
 </dl>
@@ -240,7 +241,7 @@ to a model and leaving all other parameters unchanged.</p>
 <dd><p>Determine apparent mag by fitting simulated light-curves</p>
 <p>Returned arrays are shape  (len(pwv_arr), len(z_arr)).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use when fitting</p></li>
 <li><p><strong>light_curves</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>]) – Array of light-curves to fit</p></li>
@@ -251,10 +252,10 @@ to a model and leaving all other parameters unchanged.</p>
 <li><p><strong>sncosmo.fit_lc.</strong> (<em>Any arguments for</em>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>Dictionary with arrays for fitted magnitude at each PWV and redshift
 Dictionary with arrays for fitted parameters at each PWV and redshift</p>
 </dd>
@@ -268,17 +269,17 @@ Dictionary with arrays for fitted parameters at each PWV and redshift</p>
 <p>This is also equivalent to determining the apparent magnitude of a SN
 normalized to the magnitude at the fiducial atmosphere.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Dictionary with magnitudes in each band</p></li>
 <li><p><strong>fiducial_mag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Dictionary for fiducial atmosphere mag vals</p></li>
 <li><p><strong>fiducial_pwv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Dictionary for fiducial atmosphere pwv vals</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><ul class="simple">
 <li><p>A dictionary with the change in magnitude for each band</p></li>
 <li><p>A dictionary with the slope (mag / pwv) for each band</p></li>
@@ -293,16 +294,16 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">calc_mu_for_model</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Om0=0.295</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Neff=3.04</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_nu=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ob0=None)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_mu_for_model"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_mu_for_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the distance modulus of a model</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – An sncosmo model</p></li>
 <li><p><strong>cosmo</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code>) – Cosmology to use in the calculation</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>mu = m_B - M_B</p>
 </dd>
 </dl>
@@ -313,16 +314,16 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.sn_magnitudes.</span></span><span class="sig-name descname"><span class="pre">calc_mu_for_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/sn_magnitudes.html#calc_mu_for_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.sn_magnitudes.calc_mu_for_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate the distance modulus for an array of fitted params</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
 <li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – n-dimensional array of parameters</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An array of distance moduli with one dimension less than <code class="docutils literal notranslate"><span class="pre">params</span></code></p>
 </dd>
 </dl>
@@ -334,16 +335,16 @@ normalized to the magnitude at the fiducial atmosphere.</p>
 <dd><p>Calculate the distance modulus for an array of fitted params</p>
 <p>returns constants.alpha * x_1 - constants.beta * c</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>model</strong> (<a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a>) – The sncosmo model to use in the simulations</p></li>
 <li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – n-dimensional array of parameters</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An array of calibration factors with one dimension less than <code class="docutils literal notranslate"><span class="pre">params</span></code></p>
 </dd>
 </dl>

@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -119,19 +120,21 @@
           <div class="document clearer body">
             
   <section id="module-snat_sim.cli">
-<span id="snat-sim-cli"></span><h1>snat_sim.cli<a class="headerlink" href="#module-snat_sim.cli" title="Permalink to this headline">¶</a></h1>
-<p>Commandline interface for simulating light-curves with atmospheric effects
-and then fitting them with a given SN model.</p>
+<span id="snat-sim-cli"></span><h1>snat_sim.cli<a class="headerlink" href="#module-snat_sim.cli" title="Permalink to this heading">¶</a></h1>
+<p>The <cite>cli</cite> module defines a command line interface for interacting with
+the parent package.</p>
+<section id="module-docs">
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="snat_sim.cli.AdvancedNamespace">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">snat_sim.cli.</span></span><span class="sig-name descname"><span class="pre">AdvancedNamespace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/cli.html#AdvancedNamespace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace" title="Permalink to this definition">¶</a></dt>
 <dd><p>Represents parsed command line arguments cast into friendly object types</p>
 <dl class="py property">
 <dt class="sig sig-object py" id="snat_sim.cli.AdvancedNamespace.pwv_model">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pwv_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models.html#snat_sim.models.pwv.PWVModel" title="snat_sim.models.pwv.PWVModel"><span class="pre">snat_sim.models.pwv.PWVModel</span></a></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.pwv_model" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">pwv_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models.html#snat_sim.models.pwv.PWVModel" title="snat_sim.models.pwv.PWVModel"><span class="pre">PWVModel</span></a></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.pwv_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a PWV model based on the command line argument</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="models.html#snat_sim.models.pwv.PWVModel" title="snat_sim.models.pwv.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a></p>
 </dd>
 </dl>
@@ -142,7 +145,7 @@ and then fitting them with a given SN model.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fitting_bounds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Tuple</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.fitting_bounds" title="Permalink to this definition">¶</a></dt>
 <dd><p>Parameter boundaries to enforce when fitting light-curves</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>]</p>
 </dd>
 </dl>
@@ -150,10 +153,10 @@ and then fitting them with a given SN model.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="snat_sim.cli.AdvancedNamespace.simulation_model">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">simulation_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><span class="pre">snat_sim.models.supernova.SNModel</span></a></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.simulation_model" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">simulation_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><span class="pre">SNModel</span></a></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.simulation_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the Supernova model used for fitting light-curves</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a></p>
 </dd>
 </dl>
@@ -161,10 +164,10 @@ and then fitting them with a given SN model.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="snat_sim.cli.AdvancedNamespace.fitting_model">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fitting_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><span class="pre">snat_sim.models.supernova.SNModel</span></a></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.fitting_model" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">fitting_model</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><span class="pre">SNModel</span></a></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.fitting_model" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the Supernova model used for simulating light-curves</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="models.html#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a></p>
 </dd>
 </dl>
@@ -172,10 +175,10 @@ and then fitting them with a given SN model.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="snat_sim.cli.AdvancedNamespace.catalog">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">catalog</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models.html#snat_sim.models.reference_star.VariableCatalog" title="snat_sim.models.reference_star.VariableCatalog"><span class="pre">snat_sim.models.reference_star.VariableCatalog</span></a></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.catalog" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">catalog</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="models.html#snat_sim.models.reference_star.VariableCatalog" title="snat_sim.models.reference_star.VariableCatalog"><span class="pre">VariableCatalog</span></a></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.catalog" title="Permalink to this definition">¶</a></dt>
 <dd><p>The reference star catalog to calibrate simulations with.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="models.html#snat_sim.models.reference_star.VariableCatalog" title="snat_sim.models.reference_star.VariableCatalog"><code class="xref py py-class docutils literal notranslate"><span class="pre">VariableCatalog</span></code></a></p>
 </dd>
 </dl>
@@ -186,7 +189,7 @@ and then fitting them with a given SN model.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">add_scatter</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#snat_sim.cli.AdvancedNamespace.add_scatter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Whether to include added scatter in the light-curve simulations.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd>
 </dl>
@@ -211,6 +214,7 @@ and then fitting them with a given SN model.</p>
 
 </dd></dl>
 
+</section>
 </section>
 
 

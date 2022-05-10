@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -123,19 +124,15 @@
           <div class="document clearer body">
             
   <section id="module-snat_sim.models">
-<span id="snat-sim-models"></span><h1>snat_sim.models<a class="headerlink" href="#module-snat_sim.models" title="Permalink to this headline">¶</a></h1>
+<span id="snat-sim-models"></span><h1>snat_sim.models<a class="headerlink" href="#module-snat_sim.models" title="Permalink to this heading">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">modeling</span></code> module defines classes for modeling physical phenomena.
 This includes SNe Ia light-curves, the propagation of light through atmospheric
 water vapor (with and without variation in time), and the broad-band photometry
 of stellar catalogs.</p>
 <section id="model-summaries">
-<h2>Model Summaries<a class="headerlink" href="#model-summaries" title="Permalink to this headline">¶</a></h2>
+<h2>Model Summaries<a class="headerlink" href="#model-summaries" title="Permalink to this heading">¶</a></h2>
 <p>A summary of the available models is provided below:</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">PWVTransmissionModel</span></code></p></td>
 <td><p>Models atmospheric transmission due to PWV at a fixed resolution</p></td>
@@ -163,10 +160,6 @@ of the <code class="docutils literal notranslate"><span class="pre">sncosmo</spa
 with time. A summary of custom propagation effects provided by the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code>
 package is listed below:</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">StaticPWVTrans</span></code></p></td>
 <td><p>Propagation effect for the atmospheric absorption of light due to time static PWV</p></td>
@@ -182,10 +175,6 @@ package is listed below:</p>
 <p>Simulation results are generally returned using one or more of the following
 object types:</p>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">ObservedCadence</span></code></p></td>
 <td><p>The observational sampling of an astronomical light-curve</p></td>
@@ -200,7 +189,7 @@ object types:</p>
 </table>
 </section>
 <section id="usage-example">
-<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this heading">¶</a></h2>
 <p>To ensure ease of use, supernova modeling with the <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is
 backward compatible with the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package and follows a similar
 <a class="reference external" href="https://sncosmo.readthedocs.io/en/stable/models.html">design pattern</a>.
@@ -226,7 +215,7 @@ to a Salt2 supernova model.</p>
 handled directly from the model class. We consider these two cases seperately
 in the following sections.</p>
 <section id="simulating-light-curves">
-<h3>Simulating Light-Curves<a class="headerlink" href="#simulating-light-curves" title="Permalink to this headline">¶</a></h3>
+<h3>Simulating Light-Curves<a class="headerlink" href="#simulating-light-curves" title="Permalink to this heading">¶</a></h3>
 <p>To simulate a light-curve, you first need to establish the desired light-curve
 cadence (i.e., how the light-curve should be sampled in time):</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cadence</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ObservedCadence</span><span class="p">(</span>
@@ -264,7 +253,7 @@ easy interface for casting the data into other commonly used object types.</p>
 </div>
 </section>
 <section id="fitting-light-curves">
-<h3>Fitting Light-Curves<a class="headerlink" href="#fitting-light-curves" title="Permalink to this headline">¶</a></h3>
+<h3>Fitting Light-Curves<a class="headerlink" href="#fitting-light-curves" title="Permalink to this heading">¶</a></h3>
 <p>Photometric data can be fit directly from the model using the <code class="docutils literal notranslate"><span class="pre">fit_lc</span></code> method.
 <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> users should note that the return signature is not the same
 as <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.:</p>
@@ -318,7 +307,7 @@ distance modulus given the alpha/beta standardization parameters:</p>
 </div>
 </section>
 <section id="calibrating-light-curves">
-<h3>Calibrating Light-Curves<a class="headerlink" href="#calibrating-light-curves" title="Permalink to this headline">¶</a></h3>
+<h3>Calibrating Light-Curves<a class="headerlink" href="#calibrating-light-curves" title="Permalink to this heading">¶</a></h3>
 <p>Your use case may involve calibrating simulated light-curves relative to a
 stellar reference catalog. The spectrum for individual spectral types can be
 retreived using the <code class="docutils literal notranslate"><span class="pre">ReferenceStar</span></code> class:</p>
@@ -349,10 +338,10 @@ stellar types. Catalog instances can be used to calibrate supernoca light-curves
 </section>
 </section>
 <section id="module-docs">
-<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this heading">¶</a></h2>
 </section>
 <section id="module-snat_sim.models.reference_star">
-<span id="reference-stars-api"></span><h2>Reference Stars API<a class="headerlink" href="#module-snat_sim.models.reference_star" title="Permalink to this headline">¶</a></h2>
+<span id="reference-stars-api"></span><h2>Reference Stars API<a class="headerlink" href="#module-snat_sim.models.reference_star" title="Permalink to this heading">¶</a></h2>
 <p>Models for the spectro-photometric flux of stars and their combination into
 reference catalogs.</p>
 <dl class="py class">
@@ -366,7 +355,7 @@ reference catalogs.</p>
 <p>Flux values are returned in phot/cm2/s/angstrom and are index by
 wavelength values in Angstroms.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>spectral_type</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Spectral type (e.g., G2)</p>
 </dd>
 </dl>
@@ -377,7 +366,7 @@ wavelength values in Angstroms.</p>
 <span class="sig-name descname"><span class="pre">to_pandas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.to_pandas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the spectral template as a <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code> object</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
 </dd>
 </dl>
@@ -388,10 +377,10 @@ wavelength values in Angstroms.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_available_types</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.get_available_types"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.get_available_types" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the spectral types available on disk</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list fo spectral types</p>
 </dd>
 </dl>
@@ -402,10 +391,10 @@ wavelength values in Angstroms.</p>
 <span class="sig-name descname"><span class="pre">flux_scaling_dataframe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.flux_scaling_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.flux_scaling_dataframe" title="Permalink to this definition">¶</a></dt>
 <dd><p>Retrieve pre-tabulated scale factors uses when calibrating flux values for PWV absorption</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A DataFrame indexed by PWV with columns for flux</p>
 </dd>
 </dl>
@@ -416,16 +405,16 @@ wavelength values in Angstroms.</p>
 <span class="sig-name descname"><span class="pre">flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the reference star flux values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
 <li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]) – PWV values to get magnitudes for</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
 </dd>
 </dl>
@@ -436,16 +425,16 @@ wavelength values in Angstroms.</p>
 <span class="sig-name descname"><span class="pre">norm_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceStar.norm_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceStar.norm_flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the normalized reference star flux values</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
 <li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]) – PWV values to get magnitudes for</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
 </dd>
 </dl>
@@ -462,7 +451,7 @@ wavelength values in Angstroms.</p>
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">spectral_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceCatalog.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceCatalog.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a reference star catalog composed of the given spectral types</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>*spectral_types</strong> – Spectral types for the catalog (e.g., ‘G2’, ‘M5’, ‘K2’)</p>
 </dd>
 </dl>
@@ -473,16 +462,16 @@ wavelength values in Angstroms.</p>
 <span class="sig-name descname"><span class="pre">average_norm_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#ReferenceCatalog.average_norm_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.ReferenceCatalog.average_norm_flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the average normalized reference star flux</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
 <li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – PWV values to get magnitudes for</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
 </dd>
 </dl>
@@ -495,16 +484,16 @@ wavelength values in Angstroms.</p>
 <p>Recalibrate flux values using the average change in flux of a collection of
 reference stars.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>light_curve</strong> (<a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a>) – Light curve to calibrate</p></li>
 <li><p><strong>pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – PWV value to subtract reference star for</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A modified copy of the <code class="docutils literal notranslate"><span class="pre">light_curve</span></code> argument</p>
 </dd>
 </dl>
@@ -521,7 +510,7 @@ reference stars.</p>
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">spectral_types</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#VariableCatalog.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.VariableCatalog.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a reference star catalog composed of the given spectral types and a PWV model</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>*spectral_types</strong> – Spectral types for the catalog (e.g., ‘G2’, ‘M5’, ‘K2’)</p></li>
 <li><p><strong>pwv_model</strong> (<a class="reference internal" href="#snat_sim.models.pwv.PWVModel" title="snat_sim.models.pwv.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a>) – The PWV model to determine the zenith PWV concentration from</p></li>
@@ -535,7 +524,7 @@ reference stars.</p>
 <span class="sig-name descname"><span class="pre">average_norm_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">30.244573</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">70.7499537</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alt</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1024</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_format</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mjd'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/reference_star.html#VariableCatalog.average_norm_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.reference_star.VariableCatalog.average_norm_flux" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the average normalized reference star flux</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Band to get flux for</p></li>
 <li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>]) – Time at which the target is observed</p></li>
@@ -547,10 +536,10 @@ reference stars.</p>
 <li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The normalized flux at the given PWV value(s)</p>
 </dd>
 </dl>
@@ -563,7 +552,7 @@ reference stars.</p>
 <p>Recalibrate flux values using the average change in flux of a collection of
 reference stars.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>light_curve</strong> (<a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a>) – Yhr light-curve to calibrate</p></li>
 <li><p><strong>ra</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Right Ascension of the target (Deg)</p></li>
@@ -574,10 +563,10 @@ reference stars.</p>
 <li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A modified copy of the <code class="docutils literal notranslate"><span class="pre">light_curve</span></code> argument</p>
 </dd>
 </dl>
@@ -587,7 +576,7 @@ reference stars.</p>
 
 </section>
 <section id="module-snat_sim.models.pwv">
-<span id="pwv-effects-api"></span><h2>PWV Effects API<a class="headerlink" href="#module-snat_sim.models.pwv" title="Permalink to this headline">¶</a></h2>
+<span id="pwv-effects-api"></span><h2>PWV Effects API<a class="headerlink" href="#module-snat_sim.models.pwv" title="Permalink to this heading">¶</a></h2>
 <p>Modeling functionality for Precipitable Water Vapor (PWV) and related
 observational effects.</p>
 <dl class="py class">
@@ -599,7 +588,7 @@ observational effects.</p>
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#PWVModel.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.PWVModel.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a model for time variable PWV by interpolating from a given PWV time series</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>pwv_series</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – PWV values with a datetime index</p>
 </dd>
 </dl>
@@ -610,17 +599,17 @@ observational effects.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_suominet_receiver</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">receiver</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">year</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">supp_years</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#PWVModel.from_suominet_receiver"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.PWVModel.from_suominet_receiver" title="Permalink to this definition">¶</a></dt>
 <dd><p>Construct a <code class="docutils literal notranslate"><span class="pre">PWVModel</span></code> instance using data from a SuomiNet receiver</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>receiver</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">GPSReceiver</span></code>) – GPS receiver to access data from</p></li>
 <li><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Year to use data from when building the model</p></li>
 <li><p><strong>supp_years</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]]) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.pwv.PWVModel" title="snat_sim.models.pwv.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A PWV model that interpolates from data taken by the given receiver</p>
 </dd>
 </dl>
@@ -633,7 +622,7 @@ observational effects.</p>
 <p>Default latitude, longitude, and altitude are set to the Rubin
 Observatory.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time</strong> – Time at which the target is observed</p></li>
 <li><p><strong>ra</strong> – Right Ascension of the target (Deg)</p></li>
@@ -645,7 +634,7 @@ Observatory.</p>
 <li><p><strong>raise_below_horizon</strong> – If true, raise a ValueError for an airmasses less than 1</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Airmass in units of Sec(z)</p>
 </dd>
 </dl>
@@ -658,13 +647,13 @@ Observatory.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">time_format</span></code> argument can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> when passing datetime
 objects for <code class="docutils literal notranslate"><span class="pre">time</span></code> instead of numerical values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time</strong> – The time to interpolate PWV for</p></li>
 <li><p><strong>time_format</strong> – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The PWV at zenith for the given time(s)</p>
 </dd>
 </dl>
@@ -677,7 +666,7 @@ objects for <code class="docutils literal notranslate"><span class="pre">time</s
 <p>The <code class="docutils literal notranslate"><span class="pre">time_format</span></code> argument can be set to <code class="docutils literal notranslate"><span class="pre">None</span></code> when passing datetime
 objects instead of numerical values for <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time</strong> – Time at which the target is observed</p></li>
 <li><p><strong>ra</strong> – Right Ascension of the target (Deg)</p></li>
@@ -688,10 +677,10 @@ objects instead of numerical values for <code class="docutils literal notranslat
 <li><p><strong>time_format</strong> – Astropy supported format of the time value (Default: ‘mjd’)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The PWV concentration along the line of sight to the target</p>
 </dd>
 </dl>
@@ -703,10 +692,10 @@ objects instead of numerical values for <code class="docutils literal notranslat
 <dd><p>Calculate the average PWV in each season</p>
 <p>Assumes seasons based on equinox and solstice dates in the year 2020.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A dictionary with the average PWV in each season (in mm)</p>
 </dd>
 </dl>
@@ -725,7 +714,7 @@ objects instead of numerical values for <code class="docutils literal notranslat
 <p>Transmission values are determined using the <code class="docutils literal notranslate"><span class="pre">v1_transmission</span></code> model
 from the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</span></code> package.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>resolution</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Resolution to bin the atmospheric model to</p>
 </dd>
 </dl>
@@ -738,13 +727,13 @@ from the <code class="docutils literal notranslate"><span class="pre">pwv_kpno</
 <p>Returns a <code class="docutils literal notranslate"><span class="pre">Series</span></code> object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is a scalar, and a <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code>
 object if <code class="docutils literal notranslate"><span class="pre">pwv</span></code> is an array. Wavelengths are expected in angstroms.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv</strong> – Line of sight PWV to interpolate for</p></li>
 <li><p><strong>wave</strong> – Wavelengths to evaluate transmission (Defaults to <code class="docutils literal notranslate"><span class="pre">samp_wave</span></code> attribute)</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The interpolated transmission at the given wavelengths / resolution</p>
 </dd>
 </dl>
@@ -763,17 +752,17 @@ method accepts a <code class="docutils literal notranslate"><span class="pre">ti
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">propagate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#VariablePropagationEffect.propagate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.VariablePropagationEffect.propagate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propagate the flux through the atmosphere</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of wavelength values</p></li>
 <li><p><strong>flux</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of flux values</p></li>
 <li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of time values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An array of flux values after suffering propagation effects</p>
 </dd>
 </dl>
@@ -796,7 +785,7 @@ highest available transmission model available.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>transmission_res</strong> (<em>float</em>) – Reduce the underlying transmission model by binning to the given resolution</p>
 </dd>
 </dl>
@@ -807,7 +796,7 @@ highest available transmission model available.</p>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">transmission_res</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#snat_sim.models.pwv.StaticPWVTrans.transmission_res" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resolution used when binning the underlying atmospheric transmission model</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
 </dl>
@@ -818,16 +807,16 @@ highest available transmission model available.</p>
 <span class="sig-name descname"><span class="pre">propagate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#StaticPWVTrans.propagate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.StaticPWVTrans.propagate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propagate the flux through the atmosphere</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – A 1D array of wavelength values</p></li>
 <li><p><strong>flux</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of flux values</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An array of flux values after suffering from PWV absorption</p>
 </dd>
 </dl>
@@ -850,7 +839,7 @@ highest available transmission model available.</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>transmission_res</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reduce the underlying transmission model by binning to the given resolution</p>
 </dd>
 </dl>
@@ -861,13 +850,13 @@ highest available transmission model available.</p>
 <em class="property"><span class="pre">abstract</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">assumed_pwv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#AbstractVariablePWVEffect.assumed_pwv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.AbstractVariablePWVEffect.assumed_pwv" title="Permalink to this definition">¶</a></dt>
 <dd><p>The PWV concentration used by the propagation effect at a given time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FloatColl</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)) – Time to get the PWV concentration for</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FloatColl</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An array of PWV values in units of mm</p>
 </dd>
 </dl>
@@ -878,17 +867,17 @@ highest available transmission model available.</p>
 <span class="sig-name descname"><span class="pre">propagate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#AbstractVariablePWVEffect.propagate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.AbstractVariablePWVEffect.propagate" title="Permalink to this definition">¶</a></dt>
 <dd><p>Propagate the flux through the atmosphere</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of wavelength values</p></li>
 <li><p><strong>flux</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – An array of flux values</p></li>
 <li><p><strong>time</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Array of time values to determine PWV for</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An array of flux values after suffering from PWV absorption</p>
 </dd>
 </dl>
@@ -915,7 +904,7 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv_model</strong> (<a class="reference internal" href="#snat_sim.models.pwv.PWVModel" title="snat_sim.models.pwv.PWVModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">PWVModel</span></code></a>) – Returns PWV at zenith for a given time value and time format</p></li>
 <li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy recognized time format used by the <code class="docutils literal notranslate"><span class="pre">pwv_interpolator</span></code></p></li>
@@ -930,13 +919,13 @@ alt: Observer altitude in meters  (defaults to height of VRO)</p>
 <span class="sig-name descname"><span class="pre">assumed_pwv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#VariablePWVTrans.assumed_pwv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.VariablePWVTrans.assumed_pwv" title="Permalink to this definition">¶</a></dt>
 <dd><p>The PWV concentration used by the propagation effect at a given time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FloatColl</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)) – Time to get the PWV concentration for</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FloatColl</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An array of PWV values in units of mm</p>
 </dd>
 </dl>
@@ -966,7 +955,7 @@ fall: PWV concentration in the fall</p>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time_format</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Astropy recognized time format used by the <code class="docutils literal notranslate"><span class="pre">pwv_interpolator</span></code></p></li>
 <li><p><strong>transmission_res</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reduce the underlying transmission model by binning to the given resolution</p></li>
@@ -980,13 +969,13 @@ fall: PWV concentration in the fall</p>
 <span class="sig-name descname"><span class="pre">assumed_pwv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/pwv.html#SeasonalPWVTrans.assumed_pwv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.pwv.SeasonalPWVTrans.assumed_pwv" title="Permalink to this definition">¶</a></dt>
 <dd><p>The PWV concentration used by the propagation effect at a given time</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FloatColl</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)) – Time to get the PWV concentration for</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">TypeVar</span></code>(<code class="docutils literal notranslate"><span class="pre">FloatColl</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An array of PWV values in units of mm</p>
 </dd>
 </dl>
@@ -1002,7 +991,7 @@ fall: PWV concentration in the fall</p>
 
 </section>
 <section id="module-snat_sim.models.supernova">
-<span id="supernova-api"></span><h2>Supernova API<a class="headerlink" href="#module-snat_sim.models.supernova" title="Permalink to this headline">¶</a></h2>
+<span id="supernova-api"></span><h2>Supernova API<a class="headerlink" href="#module-snat_sim.models.supernova" title="Permalink to this heading">¶</a></h2>
 <p>Modeling functionality for the spectro-photometric time-sampling of
 supernovae.</p>
 <dl class="py class">
@@ -1014,13 +1003,13 @@ supernovae.</p>
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_sncosmo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/supernova.html#SNModel.from_sncosmo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.supernova.SNModel.from_sncosmo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create an <cite>SNModel`</cite> instance from a <code class="docutils literal notranslate"><span class="pre">sncosmo.Model</span></code> instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>) – The sncosmo model to build from</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.supernova.SNModel" title="snat_sim.models.supernova.SNModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">SNModel</span></code></a></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>An <code class="docutils literal notranslate"><span class="pre">SNModel</span></code> object</p>
 </dd>
 </dl>
@@ -1034,17 +1023,17 @@ supernovae.</p>
 random component drawn from a normal distribution with a standard deviation
 equal to the error of the observation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>cadence</strong> (<a class="reference internal" href="#snat_sim.models.light_curve.ObservedCadence" title="snat_sim.models.light_curve.ObservedCadence"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedCadence</span></code></a>) – Observational cadence to evaluate the light-curve with</p></li>
 <li><p><strong>scatter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to add random noise to the flux values</p></li>
 <li><p><strong>fixed_snr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Optionally simulate the light-curve using a fixed signal to noise ratio</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The simulated light-curve</p>
 </dd>
 </dl>
@@ -1065,7 +1054,7 @@ phase of the model lines up with the latest data point.</p></li>
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> – Table of photometric data.</p></li>
 <li><p><strong>vparam_names</strong> – Model parameters to vary in the fit.</p></li>
@@ -1081,7 +1070,7 @@ phase of the model lines up with the latest data point.</p></li>
 <li><p><strong>wave_range</strong> – If given, discard data with bandpass effective wavelengths outside this range.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The fit result and a copy of the model set to the fitted parameters</p>
 </dd>
 </dl>
@@ -1098,7 +1087,7 @@ phase of the model lines up with the latest data point.</p></li>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">param_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.param_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>The names of the model parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
 </dd>
 </dl>
@@ -1106,10 +1095,10 @@ phase of the model lines up with the latest data point.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="snat_sim.models.supernova.SNFitResult.parameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.series.Series</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.parameters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">parameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Series</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.parameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>The model parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
 </dd>
 </dl>
@@ -1120,7 +1109,7 @@ phase of the model lines up with the latest data point.</p></li>
 <em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vparam_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.vparam_names" title="Permalink to this definition">¶</a></dt>
 <dd><p>List of parameter names varied in the fit</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
 </dd>
 </dl>
@@ -1128,10 +1117,10 @@ phase of the model lines up with the latest data point.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="snat_sim.models.supernova.SNFitResult.vparameters">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vparameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">pandas.core.series.Series</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.vparameters" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">vparameters</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Series</span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.vparameters" title="Permalink to this definition">¶</a></dt>
 <dd><p>The values of the varied parameters</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
 </dd>
 </dl>
@@ -1139,10 +1128,10 @@ phase of the model lines up with the latest data point.</p></li>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="snat_sim.models.supernova.SNFitResult.covariance">
-<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">pandas.core.frame.DataFrame</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.covariance" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">covariance</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Optional</span><span class="p"><span class="pre">[</span></span><span class="pre">DataFrame</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#snat_sim.models.supernova.SNFitResult.covariance" title="Permalink to this definition">¶</a></dt>
 <dd><p>The covariance matrix</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</p>
 </dd>
 </dl>
@@ -1155,13 +1144,13 @@ phase of the model lines up with the latest data point.</p></li>
 <p>Will raise an error if the <cite>x0</cite>, <cite>x1</cite> and <cite>c</cite> parameters are not
 varied in the fit.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>x0_truth</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Optionally assert an alternative x0 value</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The covariance matrix asd a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
 </dl>
@@ -1174,16 +1163,16 @@ varied in the fit.</p>
 <p>Determined using the covariance matrix of apparent magnitude and
 salt2 parameters (See the <code class="docutils literal notranslate"><span class="pre">salt_covariance_linear</span></code> method).</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>alpha</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The stretch correction factor</p></li>
 <li><p><strong>beta</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The color excess correction factor</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The variance in mu</p>
 </dd>
 </dl>
@@ -1193,7 +1182,7 @@ salt2 parameters (See the <code class="docutils literal notranslate"><span class
 
 </section>
 <section id="module-snat_sim.models.light_curve">
-<span id="light-curve-api"></span><h2>Light-Curve API<a class="headerlink" href="#module-snat_sim.models.light_curve" title="Permalink to this headline">¶</a></h2>
+<span id="light-curve-api"></span><h2>Light-Curve API<a class="headerlink" href="#module-snat_sim.models.light_curve" title="Permalink to this heading">¶</a></h2>
 <p>Abstract representations of astronomical time-series data</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="snat_sim.models.light_curve.ObservedCadence">
@@ -1203,7 +1192,7 @@ salt2 parameters (See the <code class="docutils literal notranslate"><span class
 collection of values (one per <code class="docutils literal notranslate"><span class="pre">obs_time</span></code> value), or a single value
 to apply at all observation times.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>obs_times</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Array of observation times for the light-curve</p></li>
 <li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Array of bands for each observation</p></li>
@@ -1220,10 +1209,10 @@ to apply at all observation times.</p>
 <p>The returned table of observations is formatted for use with with
 the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An astropy table representing the observational cadence in <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> format</p>
 </dd>
 </dl>
@@ -1245,7 +1234,7 @@ the <code class="docutils literal notranslate"><span class="pre">sncosmo</span><
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">band</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fluxerr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zpsys</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phot_flag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.__init__" title="Permalink to this definition">¶</a></dt>
 <dd><p>An astronomical light-curve</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>time</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Time values for each observation in a numerical format (e.g. JD or MJD)</p></li>
 <li><p><strong>band</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The band each observation was performed in</p></li>
@@ -1264,13 +1253,13 @@ the <code class="docutils literal notranslate"><span class="pre">sncosmo</span><
 <em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_sncosmo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.from_sncosmo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.from_sncosmo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a <code class="docutils literal notranslate"><span class="pre">LightCurve</span></code> instance from an astropy table in the SNCosmo format</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code>) – A table in the sncosmo format</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A <code class="docutils literal notranslate"><span class="pre">LightCurve</span></code> instance</p>
 </dd>
 </dl>
@@ -1281,10 +1270,10 @@ the <code class="docutils literal notranslate"><span class="pre">sncosmo</span><
 <span class="sig-name descname"><span class="pre">to_astropy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.to_astropy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.to_astropy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the light-curve data as an astropy <code class="docutils literal notranslate"><span class="pre">Table</span></code> formatted for use with sncosmo</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An <code class="docutils literal notranslate"><span class="pre">Table</span></code> instance formatted for use with sncosmo</p>
 </dd>
 </dl>
@@ -1295,10 +1284,10 @@ the <code class="docutils literal notranslate"><span class="pre">sncosmo</span><
 <span class="sig-name descname"><span class="pre">to_pandas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.to_pandas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the light-curve data as a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code> instance with the light-curve data</p>
 </dd>
 </dl>
@@ -1309,7 +1298,7 @@ the <code class="docutils literal notranslate"><span class="pre">sncosmo</span><
 <span class="sig-name descname"><span class="pre">copy</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/models/light_curve.html#LightCurve.copy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.models.light_curve.LightCurve.copy" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a copy of the instance</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="#snat_sim.models.light_curve.LightCurve" title="snat_sim.models.light_curve.LightCurve"><code class="xref py py-class docutils literal notranslate"><span class="pre">LightCurve</span></code></a></p>
 </dd>
 </dl>

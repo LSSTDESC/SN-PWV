@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -123,21 +124,17 @@
           <div class="document clearer body">
             
   <section id="output-data-model">
-<h1>Output Data Model<a class="headerlink" href="#output-data-model" title="Permalink to this headline">¶</a></h1>
+<h1>Output Data Model<a class="headerlink" href="#output-data-model" title="Permalink to this heading">¶</a></h1>
 <p>Data from the analysis pipeline is written to disk in HDF5 (<code class="docutils literal notranslate"><span class="pre">.h5</span></code>) format.
 The number of results written to a single <code class="docutils literal notranslate"><span class="pre">.h5</span></code> file is capped at 5,000.
 If you are simulating a larger number of SNe, or have allocated multiple I/O
 processes at runtime, then results will be written to multiple files.
 The data model for each of these files is identical.</p>
 <section id="hdf5-data-paths">
-<h2>HDF5 Data Paths<a class="headerlink" href="#hdf5-data-paths" title="Permalink to this headline">¶</a></h2>
+<h2>HDF5 Data Paths<a class="headerlink" href="#hdf5-data-paths" title="Permalink to this heading">¶</a></h2>
 <p>Data is written to multiple tables within each HDF5 file.
 The path of each table is provided below along with a summary of the corresponding data.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 29%" />
-<col style="width: 71%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Table Path</p></th>
 <th class="head"><p>Description</p></th>
@@ -162,16 +159,11 @@ The path of each table is provided below along with a summary of the correspondi
 </tbody>
 </table>
 <section id="message">
-<h3>message<a class="headerlink" href="#message" title="Permalink to this headline">¶</a></h3>
+<h3>message<a class="headerlink" href="#message" title="Permalink to this heading">¶</a></h3>
 <p>The schema of the <code class="docutils literal notranslate"><span class="pre">message</span></code>  table is listed below.
 Every simulation has an entry in the message table regardless of whether
 the simulation for a given SNe was successful.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 15%" />
-<col style="width: 68%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Column Name</p></th>
 <th class="head"><p>Data Type</p></th>
@@ -195,15 +187,10 @@ the simulation for a given SNe was successful.</p>
 </table>
 </section>
 <section id="simulation-params">
-<h3>simulation/params<a class="headerlink" href="#simulation-params" title="Permalink to this headline">¶</a></h3>
+<h3>simulation/params<a class="headerlink" href="#simulation-params" title="Permalink to this heading">¶</a></h3>
 <p>Simulation parameters are appended to the <code class="docutils literal notranslate"><span class="pre">simulation/params</span></code> for every single simulation
 regardless of the success of the simulation.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 15%" />
-<col style="width: 68%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Column Name</p></th>
 <th class="head"><p>Data Type</p></th>
@@ -223,7 +210,7 @@ regardless of the success of the simulation.</p>
 </table>
 </section>
 <section id="simulation-id">
-<h3>simulation/&lt;ID&gt;<a class="headerlink" href="#simulation-id" title="Permalink to this headline">¶</a></h3>
+<h3>simulation/&lt;ID&gt;<a class="headerlink" href="#simulation-id" title="Permalink to this heading">¶</a></h3>
 <p>The <code class="docutils literal notranslate"><span class="pre">simulation/&lt;ID&gt;</span></code> tables provide the simulated light curve for each supernova.</p>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
@@ -231,11 +218,6 @@ regardless of the success of the simulation.</p>
 disk is enabled via the appropriate command line arguments.</p>
 </div>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 17%" />
-<col style="width: 15%" />
-<col style="width: 69%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Column Name</p></th>
 <th class="head"><p>Data Type</p></th>
@@ -271,17 +253,12 @@ disk is enabled via the appropriate command line arguments.</p>
 </table>
 </section>
 <section id="fitting-params">
-<h3>fitting/params<a class="headerlink" href="#fitting-params" title="Permalink to this headline">¶</a></h3>
+<h3>fitting/params<a class="headerlink" href="#fitting-params" title="Permalink to this heading">¶</a></h3>
 <p>Entries in the <code class="docutils literal notranslate"><span class="pre">fitting/params</span></code> table are only provided for simulations that result in successful fits.
 Any fits that fail to converge are not written to the table.</p>
 <p>Precalculated B-band magnitudes are determined using the <code class="docutils literal notranslate"><span class="pre">bessellb</span></code> filter built-in to
 sncosmo and the Betoule+ 2014 cosmology.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 21%" />
-<col style="width: 14%" />
-<col style="width: 64%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Column Name</p></th>
 <th class="head"><p>Data Type</p></th>
@@ -321,14 +298,9 @@ sncosmo and the Betoule+ 2014 cosmology.</p>
 </table>
 </section>
 <section id="fitting-covariance-id">
-<h3>fitting/covariance/&lt;ID&gt;<a class="headerlink" href="#fitting-covariance-id" title="Permalink to this headline">¶</a></h3>
+<h3>fitting/covariance/&lt;ID&gt;<a class="headerlink" href="#fitting-covariance-id" title="Permalink to this heading">¶</a></h3>
 <p>Column names in the <code class="docutils literal notranslate"><span class="pre">fitting/covariance/&lt;ID&gt;</span></code> tables act as labels for the rows and columns of the covariance matrix.</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 21%" />
-<col style="width: 14%" />
-<col style="width: 64%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Column Name</p></th>
 <th class="head"><p>Data Type</p></th>

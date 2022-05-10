@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -379,7 +380,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="PWV-Modeling">
-<h1>PWV Modeling<a class="headerlink" href="#PWV-Modeling" title="Permalink to this headline">¶</a></h1>
+<h1>PWV Modeling<a class="headerlink" href="#PWV-Modeling" title="Permalink to this heading">¶</a></h1>
 <p>This notebook outlines an approach for modeling time variable precipitable water vapor (PWV) using real world weather data taken by the SuomiNet project.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -407,7 +408,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="The-Approach">
-<h2>The Approach<a class="headerlink" href="#The-Approach" title="Permalink to this headline">¶</a></h2>
+<h2>The Approach<a class="headerlink" href="#The-Approach" title="Permalink to this heading">¶</a></h2>
 <p>To create a physically reasonable representation of the atmospheric variability at LSST, we use PWV measurements taken at the nearby Cerro Telolo International Observatory (CTIO).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
@@ -689,7 +690,7 @@ Fall Average:   4.97 +\-  2.25 mm
 </div>
 </section>
 <section id="Automated-Model-Building">
-<h2>Automated Model Building<a class="headerlink" href="#Automated-Model-Building" title="Permalink to this headline">¶</a></h2>
+<h2>Automated Model Building<a class="headerlink" href="#Automated-Model-Building" title="Permalink to this heading">¶</a></h2>
 <p>The process outlined above is can be automated by building a <code class="docutils literal notranslate"><span class="pre">PWVModel</span></code> instance directly from a <code class="docutils literal notranslate"><span class="pre">GPSReceiver</span></code> object.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
@@ -712,7 +713,7 @@ Fall Average:   4.97 +\-  2.25 mm
 </div>
 </section>
 <section id="Propagation-Effects">
-<h2>Propagation Effects<a class="headerlink" href="#Propagation-Effects" title="Permalink to this headline">¶</a></h2>
+<h2>Propagation Effects<a class="headerlink" href="#Propagation-Effects" title="Permalink to this heading">¶</a></h2>
 <p>PWV models can be used to add propagation effects to supernova model instances. Propagation effects describe how the the spectral energy distribution of a model is effected by intervening phenomena (in this case, the absorption of light by the atmosphere).</p>
 <p>Propagation effects can represent a time constant PWV concentration, time variable PWV at the full temporal resolution of the underlying model, and as a binned average per season. We demonstrate all three below.</p>
 <div class="nbinput nblast docutils container">
@@ -750,7 +751,7 @@ Fall Average:   4.97 +\-  2.25 mm
 </div>
 </section>
 <section id="Impact-on-SN-Spectra">
-<h2>Impact on SN Spectra<a class="headerlink" href="#Impact-on-SN-Spectra" title="Permalink to this headline">¶</a></h2>
+<h2>Impact on SN Spectra<a class="headerlink" href="#Impact-on-SN-Spectra" title="Permalink to this heading">¶</a></h2>
 <p>To understand the impact of seasonal PWV variability (in a very rudimentary way) we compare the atmospheric transmission for the lowest and highest average seasonal PWV as determined from the final PWV variability model shown above.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:

@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -115,10 +116,10 @@
           <div class="document clearer body">
             
   <section id="module-snat_sim.pipeline.data_model">
-<span id="snat-sim-pipeline-data-model"></span><h1>snat_sim.pipeline.data_model<a class="headerlink" href="#module-snat_sim.pipeline.data_model" title="Permalink to this headline">¶</a></h1>
+<span id="snat-sim-pipeline-data-model"></span><h1>snat_sim.pipeline.data_model<a class="headerlink" href="#module-snat_sim.pipeline.data_model" title="Permalink to this heading">¶</a></h1>
 <p>Defines a standardized data model for communication between pipeline nodes.</p>
 <section id="usage-example">
-<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this heading">¶</a></h2>
 <p>Data models are defined as Python data classes. All fields in the data model
 are onptional except for the supernova identifier (<code class="docutils literal notranslate"><span class="pre">snid</span></code>). Other fields
 include the supernova model parameters used in a light-curve simulation / fit
@@ -148,7 +149,7 @@ and the cadence used in the simulation.</p>
 </div>
 </section>
 <section id="module-docs">
-<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this heading">¶</a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="snat_sim.pipeline.data_model.PipelinePacket">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">snat_sim.pipeline.data_model.</span></span><span class="sig-name descname"><span class="pre">PipelinePacket</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">snid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sim_params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cadence</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">light_curve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fit_result</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fitted_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">covariance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelinePacket"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket" title="Permalink to this definition">¶</a></dt>
@@ -168,10 +169,10 @@ message: Status message</p>
 <span class="sig-name descname"><span class="pre">sim_params_to_pandas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelinePacket.sim_params_to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket.sim_params_to_pandas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return simulated parameters as a pandas Dataframe</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Parameters used in the simulation of light-curves</p>
 </dd>
 </dl>
@@ -182,10 +183,10 @@ message: Status message</p>
 <span class="sig-name descname"><span class="pre">fitted_params_to_pandas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelinePacket.fitted_params_to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket.fitted_params_to_pandas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return fitted parameters as a pandas Dataframe</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Parameters recovered from fitting a light-curve</p>
 </dd>
 </dl>
@@ -196,10 +197,10 @@ message: Status message</p>
 <span class="sig-name descname"><span class="pre">packet_status_to_pandas</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/pipeline/data_model.html#PipelinePacket.packet_status_to_pandas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.pipeline.data_model.PipelinePacket.packet_status_to_pandas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the packet status message as a pandas <code class="docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Dataframe with the snid, fit success status, and result message</p>
 </dd>
 </dl>

@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -115,7 +116,7 @@
           <div class="document clearer body">
             
   <section id="module-snat_sim.utils.filters">
-<span id="snat-sim-utils-filters"></span><h1>snat_sim.utils.filters<a class="headerlink" href="#module-snat_sim.utils.filters" title="Permalink to this headline">¶</a></h1>
+<span id="snat-sim-utils-filters"></span><h1>snat_sim.utils.filters<a class="headerlink" href="#module-snat_sim.utils.filters" title="Permalink to this heading">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">filters</span></code> module is responsible for registering custom filter
 profiles with the <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.  When
 registering filters for a given survey, please check the documentation of the
@@ -123,7 +124,7 @@ corresponding function to determine the names of the newly registered filters.
 Filters only need to be registered once within a given runtime to be
 accessible by <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
 <section id="usage-example">
-<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this heading">¶</a></h2>
 <p>In the below example, filter profiles for the Legacy Survey of
 Space and Time (LSST) are registered with and then retrieved from the
 <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> package.</p>
@@ -157,13 +158,13 @@ Space and Time (LSST) are registered with and then retrieved from the
 </div>
 </section>
 <section id="module-docs">
-<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="snat_sim.utils.filters.register_sncosmo_filter">
 <span class="sig-prename descclassname"><span class="pre">snat_sim.utils.filters.</span></span><span class="sig-name descname"><span class="pre">register_sncosmo_filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trans</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">force</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/filters.html#register_sncosmo_filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.filters.register_sncosmo_filter" title="Permalink to this definition">¶</a></dt>
 <dd><p>Register a filter profile with sncosmo</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Array of wavelength values in Angstroms</p></li>
 <li><p><strong>trans</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Array of transmission values between 0 and 1</p></li>
@@ -171,7 +172,7 @@ Space and Time (LSST) are registered with and then retrieved from the
 <li><p><strong>force</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether to overwrite an existing filter with the given name</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
@@ -190,10 +191,10 @@ Space and Time (LSST) are registered with and then retrieved from the
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>force</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Re-register bands even if they are already registered</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
@@ -220,10 +221,10 @@ Space and Time (LSST) are registered with and then retrieved from the
 </dd>
 </dl>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>force</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Re-register bands even if they are already registered</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>

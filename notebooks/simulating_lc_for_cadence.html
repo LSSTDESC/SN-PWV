@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -378,7 +379,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="Simulating-Light-Curves-with-a-Cadence">
-<h1>Simulating Light-Curves with a Cadence<a class="headerlink" href="#Simulating-Light-Curves-with-a-Cadence" title="Permalink to this headline">¶</a></h1>
+<h1>Simulating Light-Curves with a Cadence<a class="headerlink" href="#Simulating-Light-Curves-with-a-Cadence" title="Permalink to this heading">¶</a></h1>
 <p>This notebook demonstrates the simulation of normal Type Ia Supernova (SN Ia) light-curves using realistic cadences and atmospheric variability expected from LSST. To achieve this we use data from the PLAsTICC simulations to establish the cadence, light-curve parameters, and location of SNe observed by LSST. Light-curves with customized time-variable PWV transmission effects are then simulated using these parameters.</p>
 <p>Plots in this notebook are rendered using a subset of the PLAsTICC simulation data. To access this data, configure your working environment as outlined <a class="reference external" href="https://lsstdesc.org/SN-PWV/overview/install.html">in the docs</a>.</p>
 <div class="nbinput nblast docutils container">
@@ -430,7 +431,7 @@ PosixPath(&#39;/home/djperrefort/Github/SN-PWV/data/plasticc&#39;)
 </div>
 </div>
 <section id="The-PLAsTICC-Data">
-<h2>The PLAsTICC Data<a class="headerlink" href="#The-PLAsTICC-Data" title="Permalink to this headline">¶</a></h2>
+<h2>The PLAsTICC Data<a class="headerlink" href="#The-PLAsTICC-Data" title="Permalink to this heading">¶</a></h2>
 <p>Instead of evaluating different cadences from scratch, we take the PLAsTICC simulations as a starting point. First we check what cadence simulations are available on the notebook’s host server.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -534,7 +535,7 @@ Available Light-curves:  115
 </div>
 </section>
 <section id="Simulating-Light-Curves">
-<h2>Simulating Light-Curves<a class="headerlink" href="#Simulating-Light-Curves" title="Permalink to this headline">¶</a></h2>
+<h2>Simulating Light-Curves<a class="headerlink" href="#Simulating-Light-Curves" title="Permalink to this heading">¶</a></h2>
 <p>Since we need to add in our own atmospheric variability, the pre-tabulated flux values above are of limited use. Instead, we use the PLAsTICC meta-data to establish the cadence and model parameters for each simulated SN. This information is then used to simulate our own light-curves with <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code>.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
@@ -702,7 +703,7 @@ Available Light-curves:  115
 </div>
 </section>
 <section id="Adding-Atmospheric-Effects">
-<h2>Adding Atmospheric Effects<a class="headerlink" href="#Adding-Atmospheric-Effects" title="Permalink to this headline">¶</a></h2>
+<h2>Adding Atmospheric Effects<a class="headerlink" href="#Adding-Atmospheric-Effects" title="Permalink to this heading">¶</a></h2>
 <p>To simulate light-curves with PWV effects, we need a model for the PWV over time. This is easily defined as follows:</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:

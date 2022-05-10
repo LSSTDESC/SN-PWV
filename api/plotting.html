@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -123,16 +124,12 @@
           <div class="document clearer body">
             
   <section id="module-snat_sim.plotting">
-<span id="snat-sim-plotting"></span><h1>snat_sim.plotting<a class="headerlink" href="#module-snat_sim.plotting" title="Permalink to this headline">¶</a></h1>
+<span id="snat-sim-plotting"></span><h1>snat_sim.plotting<a class="headerlink" href="#module-snat_sim.plotting" title="Permalink to this heading">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">plotting</span></code> module provides functions for generating plots of
 analysis results that are visually consistent and easily reproducible.</p>
 <section id="plotting-function-summaries">
-<h2>Plotting Function Summaries<a class="headerlink" href="#plotting-function-summaries" title="Permalink to this headline">¶</a></h2>
+<h2>Plotting Function Summaries<a class="headerlink" href="#plotting-function-summaries" title="Permalink to this heading">¶</a></h2>
 <table class="autosummary longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#snat_sim.plotting.plot_cosmology_fit" title="snat_sim.plotting.plot_cosmology_fit"><code class="xref py py-obj docutils literal notranslate"><span class="pre">plot_cosmology_fit</span></code></a></p></td>
 <td><p>Plot a cosmological fit to a set of supernova data.</p></td>
@@ -186,13 +183,13 @@ analysis results that are visually consistent and easily reproducible.</p>
 </table>
 </section>
 <section id="module-docs">
-<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="snat_sim.plotting.plot_delta_mag_vs_z">
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_delta_mag_vs_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_mag_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_mag_vs_z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_mag_vs_z" title="Permalink to this definition">¶</a></dt>
 <dd><p>Single panel, multi-line plot of change in magnitude vs redshift color coded by PWV</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of PWV values</p></li>
 <li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
@@ -201,7 +198,7 @@ analysis results that are visually consistent and easily reproducible.</p>
 <li><p><strong>label</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Optional label to format with PWV</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
@@ -212,7 +209,7 @@ analysis results that are visually consistent and easily reproducible.</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_delta_mag_vs_pwv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_mag_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_mag_vs_pwv"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_mag_vs_pwv" title="Permalink to this definition">¶</a></dt>
 <dd><p>Single panel, multi-line plot for change in magnitude vs PWV color coded by redshift</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of PWV values</p></li>
 <li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
@@ -221,7 +218,7 @@ analysis results that are visually consistent and easily reproducible.</p>
 <li><p><strong>label</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Optional label to format with redshift</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
@@ -232,7 +229,7 @@ analysis results that are visually consistent and easily reproducible.</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_derivative_mag_vs_z</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slope_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axis</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_derivative_mag_vs_z"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_derivative_mag_vs_z" title="Permalink to this definition">¶</a></dt>
 <dd><p>Single panel, multi-line plot of slope in delta magnitude vs redshift color coded by PWV</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of PWV values</p></li>
 <li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
@@ -240,7 +237,7 @@ analysis results that are visually consistent and easily reproducible.</p>
 <li><p><strong>axis</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">axis</span></code>]) – Optionally plot on a given axis</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
@@ -254,7 +251,7 @@ analysis results that are visually consistent and easily reproducible.</p>
 values. Each array should represent the change in magnitude for each
 given PWV and redshift</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – PWV values used in the calculation</p></li>
 <li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Redshift values used in the calculation</p></li>
@@ -264,10 +261,10 @@ given PWV and redshift</p>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – The size of the figure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
 </dd>
 </dl>
@@ -278,7 +275,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">sci_notation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decimal_digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">precision</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exponent</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#sci_notation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.sci_notation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a string representation of number in scientific notation.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
@@ -289,7 +286,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_spectral_template</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">phase</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(6,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_spectral_template"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_spectral_template" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a spectral template with overlaid PWV and bandpass throughput curves</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>source</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Source</span></code>]) – <code class="docutils literal notranslate"><span class="pre">sncosmo</span></code> source to use as spectral template</p></li>
 <li><p><strong>wave_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – The observer frame wavelengths to plot flux for in Angstroms</p></li>
@@ -300,10 +297,10 @@ given PWV and redshift</p>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – The size of the figure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and an array of matplotlib axes</p>
 </dd>
 </dl>
@@ -314,7 +311,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_spectrum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wave</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">flux</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(9,</span> <span class="pre">3)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hardware_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_spectrum"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_spectrum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a spectrum over the per-filter LSST hardware throughput</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wave</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Spectrum wavelengths in Angstroms</p></li>
 <li><p><strong>flux</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Flux of the spectrum in arbitrary units</p></li>
@@ -322,10 +319,10 @@ given PWV and redshift</p>
 <li><p><strong>hardware_only</strong> – Only include hardware contributions in the plotted filters</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
 </dd>
 </dl>
@@ -336,7 +333,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_magnitude</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mags</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(9,</span> <span class="pre">6)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_magnitude"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_magnitude" title="Permalink to this definition">¶</a></dt>
 <dd><p>Multi-panel plot showing magnitudes in different columns vs PWV and redshift in different rows</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mags</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Simulated magnitude values for each band</p></li>
 <li><p><strong>pwv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of PWV values</p></li>
@@ -344,10 +341,10 @@ given PWV and redshift</p>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – Size of the figure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
 </dd>
 </dl>
@@ -359,7 +356,7 @@ given PWV and redshift</p>
 <dd><p>Multi-panel plot showing subplots for each salt2 parameter vs redshift.</p>
 <p>Multiple lines included for different PWV values.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>fitted_params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Dictionary with fitted parameters in each band</p></li>
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – PWV value used for each supernova fit</p></li>
@@ -367,10 +364,10 @@ given PWV and redshift</p>
 <li><p><strong>bands</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Bands to include in the plot. Must be keys of <code class="docutils literal notranslate"><span class="pre">fitted_params</span></code></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and an array of matplotlib axes</p>
 </dd>
 </dl>
@@ -381,7 +378,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_delta_colors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mag_dict</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colors</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref_pwv</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_colors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_colors" title="Permalink to this definition">¶</a></dt>
 <dd><p>Shows the change in SN color as a function of redshift with each SN color coded by PWV</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of PWV values</p></li>
 <li><p><strong>z_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of redshift values</p></li>
@@ -390,7 +387,7 @@ given PWV and redshift</p>
 <li><p><strong>ref_pwv</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]) – Plot values relative to given reference PWV</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
@@ -401,7 +398,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_delta_mu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z_arr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmo=FlatLambdaCDM(H0=70</span> <span class="pre">km</span> <span class="pre">/</span> <span class="pre">(Mpc</span> <span class="pre">s)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Om0=0.295</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Tcmb0=0</span> <span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Neff=3.04</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">m_nu=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Ob0=None)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_delta_mu"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_delta_mu" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot the variation in fitted distance modulus as a function of redshift and PWV</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mu</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of distance moduli</p></li>
 <li><p><strong>pwv_arr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – Array of PWV values</p></li>
@@ -409,7 +406,7 @@ given PWV and redshift</p>
 <li><p><strong>cosmo</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code>) – Astropy cosmology to compare results against</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
@@ -421,17 +418,17 @@ given PWV and redshift</p>
 <dd><p>Plot PWV measurements taken over a single year as a function of time.</p>
 <p>Set <code class="docutils literal notranslate"><span class="pre">missing=None</span></code> to disable plotting of missing data windows.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv_series</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – Measured PWV index by datetime</p></li>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – Size of the figure in inches</p></li>
 <li><p><strong>missing</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]) – Highlight time ranges larger than given number of days with missing PWV</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
 </dd>
 </dl>
@@ -442,7 +439,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_cosmology_fit</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">abs_mag</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">H0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Om0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">w0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beta</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_cosmology_fit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_cosmology_fit" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot a cosmological fit to a set of supernova data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Results from the snat_sim fitting pipeline</p></li>
 <li><p><strong>abs_mag</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]) – Intrinsic absolute magnitude of SNe Ia</p></li>
@@ -453,10 +450,10 @@ given PWV and redshift</p>
 <li><p><strong>beta</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]) – Fitted nuisance parameter for supernova color correction</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure, fitted distance modulus, and tabulated residuals</p>
 </dd>
 </dl>
@@ -467,7 +464,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_residuals_on_sky</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dec</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">residual</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmap</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'coolwarm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_residuals_on_sky"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_residuals_on_sky" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot hubble residuals as a function of supernova coordinates.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>ra</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Right Ascension for each supernova</p></li>
 <li><p><strong>dec</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>) – Declination of each supernova</p></li>
@@ -476,10 +473,10 @@ given PWV and redshift</p>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – The size of the figure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
 </dd>
 </dl>
@@ -490,7 +487,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">compare_prop_effects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">static</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seasonal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(9,</span> <span class="pre">6)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#compare_prop_effects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.compare_prop_effects" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compare the Zenith PWV assumed by different propagation effects</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv_data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – Series with PWV values and a Datetime index</p></li>
 <li><p><strong>static</strong> (<a class="reference internal" href="models.html#snat_sim.models.pwv.StaticPWVTrans" title="snat_sim.models.pwv.StaticPWVTrans"><code class="xref py py-class docutils literal notranslate"><span class="pre">StaticPWVTrans</span></code></a>) – Static propagation effect</p></li>
@@ -499,10 +496,10 @@ given PWV and redshift</p>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – The size of the figure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
 </dd>
 </dl>
@@ -513,7 +510,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_transmission_variation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_transmission_variation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_transmission_variation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compare the atmospheric transmission function for two PWV concentrations</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The first PWV concentration to plot the transmission for</p></li>
 <li><p><strong>pwv2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The second PWV concentration to plot the transmission for</p></li>
@@ -523,10 +520,10 @@ given PWV and redshift</p>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – The size of the figure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
 </dd>
 </dl>
@@ -537,7 +534,7 @@ given PWV and redshift</p>
 <span class="sig-prename descclassname"><span class="pre">snat_sim.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_flux_variation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pwv1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pwv2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">z</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.55</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_min</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">6500</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wave_max</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">figsize</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(8,</span> <span class="pre">4)</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/snat_sim/plotting.html#plot_flux_variation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.plotting.plot_flux_variation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compare the PWV absorbed flux of a SN IA for two PWV concentrations</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv1</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The first PWV concentration to plot the flux for</p></li>
 <li><p><strong>pwv2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The second PWV concentration to plot the flux for</p></li>
@@ -548,10 +545,10 @@ given PWV and redshift</p>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – The size of the figure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Axes</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and axis</p>
 </dd>
 </dl>
@@ -563,7 +560,7 @@ given PWV and redshift</p>
 <dd><p>Plot the change to spectroscopic SN Ia flux over wavelength and redshift</p>
 <p>An imshow style plot with the change in flux along the color axis.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>pwv</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The PWV concentration to use when determining the change in flux</p></li>
 <li><p><strong>wave_min</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum wavelength to plot</p></li>
@@ -571,10 +568,10 @@ given PWV and redshift</p>
 <li><p><strong>figsize</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>], <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>]]) – The size of the figure</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">figure</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The matplotlib figure and and array of matplotlib axes</p>
 </dd>
 </dl>

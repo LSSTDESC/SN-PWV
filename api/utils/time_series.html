@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/clipboard.min.js"></script>
     <script src="../../_static/copybutton.js"></script>
@@ -115,12 +116,12 @@
           <div class="document clearer body">
             
   <section id="module-snat_sim.utils.time_series">
-<span id="snat-sim-utils-time-series"></span><h1>snat_sim.utils.time_series<a class="headerlink" href="#module-snat_sim.utils.time_series" title="Permalink to this headline">¶</a></h1>
+<span id="snat-sim-utils-time-series"></span><h1>snat_sim.utils.time_series<a class="headerlink" href="#module-snat_sim.utils.time_series" title="Permalink to this heading">¶</a></h1>
 <p>The <code class="docutils literal notranslate"><span class="pre">time_series</span></code> module extends <code class="docutils literal notranslate"><span class="pre">pandas</span></code> functionality
 for manipulating time series data. It is intended support tasks particular to
 dealing with atmospheric / weather data.</p>
 <section id="usage-example">
-<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this headline">¶</a></h2>
+<h2>Usage Example<a class="headerlink" href="#usage-example" title="Permalink to this heading">¶</a></h2>
 <p>As an example, we create a <code class="docutils literal notranslate"><span class="pre">pandas.Series</span></code> object with missing data and
 fill in the missing data using the <code class="docutils literal notranslate"><span class="pre">periodic_interpolation</span></code> method.</p>
 <div class="highlight-pycon3 notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -164,20 +165,20 @@ fill in the missing data using the <code class="docutils literal notranslate"><s
 accessor attribut, see the <code class="docutils literal notranslate"><span class="pre">TSUAccessor</span></code> class.</p>
 </section>
 <section id="module-docs">
-<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this headline">¶</a></h2>
+<h2>Module Docs<a class="headerlink" href="#module-docs" title="Permalink to this heading">¶</a></h2>
 <dl class="py function">
 <dt class="sig sig-object py" id="snat_sim.utils.time_series.datetime_to_sec_in_year">
 <span class="sig-prename descclassname"><span class="pre">snat_sim.utils.time_series.</span></span><span class="sig-name descname"><span class="pre">datetime_to_sec_in_year</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/snat_sim/utils/time_series.html#datetime_to_sec_in_year"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#snat_sim.utils.time_series.datetime_to_sec_in_year" title="Permalink to this definition">¶</a></dt>
 <dd><p>Calculate number of seconds elapsed modulo 1 year.</p>
 <p>Accurate to within a microsecond.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>date</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">datetime</span></code>]]) – Date(s) to calculate seconds for</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float128</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint8</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint16</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint32</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">uint64</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">longlong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ulonglong</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A single float if the input is a single datetime, or a numpy array if the input is a collection.</p>
 </dd>
 </dl>
@@ -205,16 +206,16 @@ supplementary years are exactly the same as they would be if taken during
 the primary year. Priority is given to supplementary years in the order
 specified by the <code class="docutils literal notranslate"><span class="pre">supp_years</span></code> argument.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>year</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Year to supplement data for</p></li>
 <li><p><strong>supp_years</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Collection</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – Years to supplement data with when missing from <code class="docutils literal notranslate"><span class="pre">year</span></code></p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
 </dd>
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A pandas Series object</p>
 </dd>
 </dl>
@@ -228,10 +229,10 @@ specified by the <code class="docutils literal notranslate"><span class="pre">su
 missing values at the beginning and end of the series are
 interpolated assuming a periodic boundary condition.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>An interpolated copy of the passed series</p>
 </dd>
 </dl>
@@ -243,10 +244,10 @@ interpolated assuming a periodic boundary condition.</p>
 <dd><p>Resample the series evenly from the beginning of the
 earliest year through the end of the latest year.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A copy of the passed series interpolated for January first through December 31st</p>
 </dd>
 </dl>

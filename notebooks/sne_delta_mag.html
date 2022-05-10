@@ -1,10 +1,10 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   
   <!-- Licensed under the Apache 2.0 License -->
@@ -23,6 +23,7 @@
     <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../_static/doctools.js"></script>
     <script src="../_static/clipboard.min.js"></script>
     <script src="../_static/copybutton.js"></script>
@@ -381,7 +382,7 @@ div.rendered_html tbody tr:hover {
 }
 </style>
 <section id="PWV-effects-on-SN-Magnitude">
-<h1>PWV effects on SN Magnitude<a class="headerlink" href="#PWV-effects-on-SN-Magnitude" title="Permalink to this headline">¶</a></h1>
+<h1>PWV effects on SN Magnitude<a class="headerlink" href="#PWV-effects-on-SN-Magnitude" title="Permalink to this heading">¶</a></h1>
 <p>This notebook demonstrates the effects of PWV absorption on the apparent magnitude of SNe.</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
@@ -430,7 +431,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </div>
 <section id="Spectral-Template">
-<h2>Spectral Template<a class="headerlink" href="#Spectral-Template" title="Permalink to this headline">¶</a></h2>
+<h2>Spectral Template<a class="headerlink" href="#Spectral-Template" title="Permalink to this heading">¶</a></h2>
 <p>The effect of PWV absorption is fundamentally dependent on the interplay between the SED of the effected object and the PWV transmission function. For this work we consider an extend version of the Salt2 spectral template. We visualize the template as a reference. For easier visualization, the figure below includes dilation effects but does not include the change in flux density due to distance.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
@@ -450,7 +451,7 @@ div.rendered_html tbody tr:hover {
 </div>
 </section>
 <section id="Apparent-magnitude">
-<h2>Apparent magnitude<a class="headerlink" href="#Apparent-magnitude" title="Permalink to this headline">¶</a></h2>
+<h2>Apparent magnitude<a class="headerlink" href="#Apparent-magnitude" title="Permalink to this heading">¶</a></h2>
 <p>We start by considering the direct impact of PWV absorption on simulated SN Ia magnitudes. Apparent magnitudes are simulated for multiple bands, redshifts, and PWV concentrations.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
@@ -559,7 +560,7 @@ curves should be different in each band.</p>
 <hr class="docutils" />
 </section>
 <section id="Change-in-Magnitude-With-Fitting">
-<h2>Change in Magnitude With Fitting<a class="headerlink" href="#Change-in-Magnitude-With-Fitting" title="Permalink to this headline">¶</a></h2>
+<h2>Change in Magnitude With Fitting<a class="headerlink" href="#Change-in-Magnitude-With-Fitting" title="Permalink to this heading">¶</a></h2>
 <p>Instead of tabulating the simulating magnitude, we can instead consider the change in magnitude by simulating light-curves with PWV effects and then fitting a model without a PWV component. For simplicity we use a densely sampled, uniform cadence.</p>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
@@ -817,7 +818,7 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 <hr class="docutils" />
 </section>
 <section id="Relative-to-a-Reference-Star">
-<h2>Relative to a Reference Star<a class="headerlink" href="#Relative-to-a-Reference-Star" title="Permalink to this headline">¶</a></h2>
+<h2>Relative to a Reference Star<a class="headerlink" href="#Relative-to-a-Reference-Star" title="Permalink to this heading">¶</a></h2>
 <p>In practice flux values are calibrated relative to a reference star. To understand how PWV effects SNe fluxes during this process, we normalize the reference star flux to it’s respective fluxes through PWV=0 and take the difference (SNe flux / normalized reference star flux).</p>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[21]:
@@ -974,10 +975,10 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 </div>
 </section>
 <section id="Impact-on-Distance-Modulus">
-<h2>Impact on Distance Modulus<a class="headerlink" href="#Impact-on-Distance-Modulus" title="Permalink to this headline">¶</a></h2>
+<h2>Impact on Distance Modulus<a class="headerlink" href="#Impact-on-Distance-Modulus" title="Permalink to this heading">¶</a></h2>
 <p>Here we consider the impact of PWV on <span class="math notranslate nohighlight">\(\mu\)</span> using fits to SNe flux after calibration to the reference star. We note that there is a disagreement between the distance module calculated by an astropy Cosmology object, and by an SNCosmo model that has been calibrated using that same cosmology. For consistency, we exclusively use SNCosmo values of <span class="math notranslate nohighlight">\(\mu\)</span>.</p>
 <section id="Results-without-using-a-reference-star">
-<h3>Results without using a reference star<a class="headerlink" href="#Results-without-using-a-reference-star" title="Permalink to this headline">¶</a></h3>
+<h3>Results without using a reference star<a class="headerlink" href="#Results-without-using-a-reference-star" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[29]:
 </pre></div>
@@ -1027,7 +1028,7 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 </div>
 </section>
 <section id="Results-with-a-reference-star">
-<h3>Results with a reference star<a class="headerlink" href="#Results-with-a-reference-star" title="Permalink to this headline">¶</a></h3>
+<h3>Results with a reference star<a class="headerlink" href="#Results-with-a-reference-star" title="Permalink to this heading">¶</a></h3>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[32]:
 </pre></div>
@@ -1075,7 +1076,7 @@ Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.0
 </section>
 </section>
 <section id="Change-in-Color">
-<h2>Change in Color<a class="headerlink" href="#Change-in-Color" title="Permalink to this headline">¶</a></h2>
+<h2>Change in Color<a class="headerlink" href="#Change-in-Color" title="Permalink to this heading">¶</a></h2>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[35]:
 </pre></div>
