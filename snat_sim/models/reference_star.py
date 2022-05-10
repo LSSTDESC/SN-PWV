@@ -21,7 +21,7 @@ from ..data_paths import paths_at_init
 
 
 class ReferenceStar:
-    """Representation of spectral data from the Goettingen Spectral Library"""
+    """Representation of modeled stellar spectra from the Goettingen Spectral Library"""
 
     def __init__(self, spectral_type: str) -> None:
         """Load a spectrum for the given spectral type
@@ -128,7 +128,7 @@ class ReferenceStar:
 
         Args:
             band: Band to get flux for
-            pwv: PWV values to get magnitudes for
+            pwv: PWV concentration along the line of sight
 
         Returns:
             The normalized flux at the given PWV value(s)
@@ -148,7 +148,7 @@ class ReferenceStar:
 
         Args:
             band: Band to get flux for
-            pwv: PWV values to get magnitudes for
+            pwv: PWV concentration along the line of sight
 
         Returns:
             The normalized flux at the given PWV value(s)
@@ -185,7 +185,7 @@ class ReferenceCatalog:
 
         Args:
             band: Band to get flux for
-            pwv: PWV values to get magnitudes for
+            pwv: PWV concentration along the line of sight
 
         Returns:
             The normalized flux at the given PWV value(s)
@@ -201,7 +201,7 @@ class ReferenceCatalog:
 
         Args:
             light_curve: Light curve to calibrate
-            pwv: PWV value to subtract reference star for
+            pwv: PWV concentration along the line of sight
 
         Returns:
             A modified copy of the ``light_curve`` argument
@@ -225,7 +225,7 @@ class ReferenceCatalog:
 
 
 class VariableCatalog:
-    """A reference star catalog that determines the time dependent PWV concentration from an underlying PWV model"""
+    """A reference star catalog that determines the time dependent PWV concentration along the line of sight from an underlying PWV model"""
 
     def __init__(self, pwv_model: PWVModel, *spectral_types: str) -> None:
         """Create a reference star catalog composed of the given spectral types and a PWV model

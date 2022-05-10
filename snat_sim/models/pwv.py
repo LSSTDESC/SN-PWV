@@ -20,7 +20,7 @@ from pwv_kpno.transmission import calc_pwv_eff
 from scipy.interpolate import RegularGridInterpolator
 
 from snat_sim.utils.caching import Cache
-from . import VariablePropagationEffect
+from .supernova import VariablePropagationEffect
 from .. import constants as const
 from .. import types
 from ..utils import time_series as tsu
