@@ -1,5 +1,8 @@
-"""Commandline interface for simulating light-curves with atmospheric effects
-and then fitting them with a given SN model.
+"""The `cli` module defines a command line interface for interacting with
+the parent package.
+
+Module Docs
+-----------
 """
 
 import argparse
