@@ -61,8 +61,8 @@ import numpy as np
 import pandas as pd
 from astropy import units as u
 
-from .. import types
 from .. import constants as const
+from .. import types
 
 
 def datetime_to_sec_in_year(date: types.DateColl) -> types.NumpyLike:
