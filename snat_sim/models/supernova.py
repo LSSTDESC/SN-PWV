@@ -4,6 +4,7 @@ supernovae.
 
 from __future__ import annotations
 
+import abc
 from copy import copy, deepcopy
 from typing import *
 from typing import Optional
@@ -13,7 +14,6 @@ import pandas as pd
 import sncosmo
 
 from .light_curve import LightCurve, ObservedCadence
-from .pwv import VariablePropagationEffect
 from .. import constants as const
 from .. import types
 
@@ -171,9 +171,9 @@ class SNModel(sncosmo.Model):
             data: Table of photometric data.
             vparam_names: Model parameters to vary in the fit.
             bounds: Bounded range for each parameter. Keys should be parameter names, values are tuples.
-            guess_amplitude: Whether or not to guess the amplitude from the data.
-            guess_t0: Whether or not to guess t0. Only has an effect when fitting t0.
-            guess_z: Whether or not to guess z (redshift). Only has an effect when fitting redshift.
+            guess_amplitude: Whether to guess the amplitude from the data.
+            guess_t0: Whether to guess t0. Only has an effect when fitting t0.
+            guess_z: Whether to guess z (redshift). Only has an effect when fitting redshift.
             minsnr: When guessing amplitude and t0, only use data with signal-to-noise ratio greater than this value.
             method: Minimization method to use. Either "minuit" or "emcee"
             modelcov: Include model covariance when calculating chisq. Default is False.
@@ -342,3 +342,27 @@ class SNFitResult(sncosmo.utils.Result):
             f"      errors: {errors_str}\n"
             f"  covariance:{covariance_str}"
         )
+
+
+class VariablePropagationEffect(sncosmo.PropagationEffect):
+    """Base class for propagation effects that vary with time
+
+    Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
+    method accepts a ``time`` argument.
+    """
+
+    # noinspection PyMethodOverriding
+    @abc.abstractmethod
+    def propagate(self, wave: np.ndarray, flux: np.ndarray, time: np.ndarray) -> np.ndarray:
+        """Propagate the flux through the atmosphere
+
+        Args:
+            wave: An array of wavelength values
+            flux: An array of flux values
+            time: Array of time values
+
+        Returns:
+            An array of flux values after suffering propagation effects
+        """
+
+        pass  # pragma: no cover

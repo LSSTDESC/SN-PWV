@@ -9,7 +9,7 @@ Running at NERSC
 ----------------
 
 .. important:: Prebuilt runtime environments are no longer maintained at
-   NERSC for this project. Instruction in this section are included for
+   NERSC for this project. This section is provided for
    historical reference only. Please see later documentation sections for
    other options on running the analysis pipeline.
 

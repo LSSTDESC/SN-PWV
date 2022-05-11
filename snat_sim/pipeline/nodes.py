@@ -117,7 +117,7 @@ class SimulateLightCurves(Node):
         self.failure_output = Output('Simulation Failure')
         super().__init__(num_processes=num_processes)
 
-    def simulate_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> LightCurve:
+    def simulate_lc(self, params: Dict[str, float], cadence: ObservedCadence) -> Tuple[LightCurve, SNModel]:
         """Duplicate a plastic light-curve using the simulation model
 
         Args:
@@ -137,22 +137,22 @@ class SimulateLightCurves(Node):
         if self.catalog is not None:
             duplicated = self.catalog.calibrate_lc(duplicated, ra=params['ra'], dec=params['dec'])
 
-        return duplicated
+        return duplicated, model_for_sim
 
     def action(self) -> None:
         """Simulate light-curves with atmospheric effects"""
 
         for packet in self.input.iter_get():
             try:
-                packet.light_curve = self.simulate_lc(
-                    packet.sim_params, packet.cadence
-                )
+                light_curve, model = self.simulate_lc(packet.sim_params, packet.cadence)
 
             except Exception as excep:
                 packet.message = f'{self.__class__.__name__}: {repr(excep)}'
                 self.failure_output.put(packet)
 
             else:
+                packet.light_curve = light_curve
+                packet.sim_params['x0'] = model['x0']
                 self.success_output.put(packet)
 
 

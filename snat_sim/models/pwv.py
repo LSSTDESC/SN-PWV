@@ -20,6 +20,7 @@ from pwv_kpno.transmission import calc_pwv_eff
 from scipy.interpolate import RegularGridInterpolator
 
 from snat_sim.utils.caching import Cache
+from .supernova import VariablePropagationEffect
 from .. import constants as const
 from .. import types
 from ..utils import time_series as tsu
@@ -344,30 +345,6 @@ class PWVTransmissionModel:
 
             names = list(map('{} mm'.format, np.round(pwv, 4).astype(float)))
             return pd.DataFrame(self._interpolator(xi), columns=names)
-
-
-class VariablePropagationEffect(sncosmo.PropagationEffect):
-    """Base class for propagation effects that vary with time
-
-    Similar to ``sncosmo.PropagationEffect`` class, but the ``propagate``
-    method accepts a ``time`` argument.
-    """
-
-    # noinspection PyMethodOverriding
-    @abc.abstractmethod
-    def propagate(self, wave: np.ndarray, flux: np.ndarray, time: np.ndarray) -> np.ndarray:
-        """Propagate the flux through the atmosphere
-
-        Args:
-            wave: An array of wavelength values
-            flux: An array of flux values
-            time: Array of time values
-
-        Returns:
-            An array of flux values after suffering propagation effects
-        """
-
-        pass  # pragma: no cover
 
 
 class StaticPWVTrans(sncosmo.PropagationEffect):
