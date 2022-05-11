@@ -110,8 +110,8 @@ class PLAsTICC:
     def _iter_cadence_for_header(header_path, include_lc=False):
         """Iterate over cadence data from a given header file
 
-        Files are expected to be written in pairs of a header file 
-        (`*HEAD.fits`) that stores target meta data and a photometry file 
+        Files are expected to be written in pairs of a header file
+        (`*HEAD.fits`) that stores target meta data and a photometry file
         (`*PHOT.fits`) with simulated light-curves.
 
         Args:

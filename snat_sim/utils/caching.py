@@ -61,9 +61,8 @@ class MemoryCache(OrderedDict):
         super(MemoryCache, self).__init__()
 
         self.max_size = max_size
-        if max_size is not None:
-            if not isinstance(max_size, int) or max_size <= 0:
-                raise ValueError('Maximum cache size must be a positive integer')
+        if (max_size is not None) and not (isinstance(max_size, int) and not (max_size <= 0)):
+            raise ValueError('Maximum cache size must be a positive integer')
 
     def __setitem__(self, key: Hashable, value: Any):
         """Update an entry in the hash table."""
