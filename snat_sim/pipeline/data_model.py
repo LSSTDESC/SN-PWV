@@ -68,7 +68,6 @@ class PipelinePacket:
     cadence: Optional[ObservedCadence] = None
     light_curve: Optional[LightCurve] = None
     fit_result: Optional[SNFitResult] = None
-    fitted_model: Optional[SNModel] = None
     covariance: Optional[pd.DataFrame] = None
     message: Optional[str] = ""
 
