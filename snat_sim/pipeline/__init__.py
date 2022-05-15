@@ -99,9 +99,10 @@ class FittingPipeline(Pipeline):
             write_lc_sims: Include simulated light_curves in the
         """
 
-        out_path = Path(out_path)
-        if (not overwrite) and out_path.exists():
-            raise FileExistsError(f'Cannot overwrite existing results: {out_path}')
+        out_dir = Path(out_path).resolve().parent
+        existing_files = tuple(out_dir.glob(f'{out_path.stem}_fn*.h5'))
+        if (not overwrite) and existing_files:
+            raise FileExistsError(f'Cannot overwrite existing results. Found {len(existing_files)} files')
 
         out_path.parent.mkdir(exist_ok=True)
 
