@@ -1,5 +1,9 @@
 # Data files
-*.h5
+/data/analysis_runs/**/*.tar.gz
+/data/analysis_runs/**/*.h5
+/data/plasticc/**/*.tar.gz
+/data/plasticc/**/*.FITS
+!/data/plasticc/alt_sched/LSST_WFD_alt_sched_MODEL11/*.FITS
 
 # OS Files
 *.DS_Store
@@ -27,4 +31,3 @@ docs/build
 
 # Rendered figures
 *.pdf
-/data/analysis_runs/*.tar.gz
