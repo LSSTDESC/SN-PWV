@@ -33,7 +33,7 @@ follows:
    ...     sim_model=SNModel('salt2'),
    ...     fit_model=SNModel('salt2'),
    ...     vparams=['x0', 'x1', 'c'],
-   ...     out_path='./demo_out_path.csv',
+   ...     out_path='./demo_out_path.h5',
    ...     fitting_pool=6,
    ...     simulation_pool=3
    ... )
@@ -97,6 +97,7 @@ class FittingPipeline(Pipeline):
             write_lc_sims: Include simulated light_curves in the
         """
 
+        out_path = Path(out_path).resolve()
         out_path.parent.mkdir(exist_ok=True)
 
         # Define the nodes of the analysis pipeline
