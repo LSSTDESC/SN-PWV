@@ -287,13 +287,7 @@
             <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="s1">&#39;--out_path&#39;</span><span class="p">,</span>
             <span class="nb">type</span><span class="o">=</span><span class="n">Path</span><span class="p">,</span>
             <span class="n">required</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output file path (a .csv extension is enforced).&#39;</span>
-        <span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-            <span class="s1">&#39;--overwrite&#39;</span><span class="p">,</span>
-            <span class="n">action</span><span class="o">=</span><span class="s1">&#39;store_true&#39;</span><span class="p">,</span>
-            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Flag to allow existing results to be overwritten.&#39;</span>
+            <span class="n">help</span><span class="o">=</span><span class="s1">&#39;Output file path (a .h5 extension is enforced).&#39;</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -490,7 +484,6 @@
             <span class="n">catalog</span><span class="o">=</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">catalog</span><span class="p">,</span>
             <span class="n">add_scatter</span><span class="o">=</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">add_scatter</span><span class="p">,</span>
             <span class="n">fixed_snr</span><span class="o">=</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">fixed_snr</span><span class="p">,</span>
-            <span class="n">overwrite</span><span class="o">=</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">overwrite</span><span class="p">,</span>
             <span class="n">write_lc_sims</span><span class="o">=</span><span class="n">parsed_args</span><span class="o">.</span><span class="n">write_lc_sims</span>
         <span class="p">)</span>
 
