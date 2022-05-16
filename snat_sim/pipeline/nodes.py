@@ -203,8 +203,15 @@ class FitLightCurves(Node):
         model = copy(self.sn_model)
         model.update({k: v for k, v in initial_guess.items() if k in self.sn_model.param_names})
 
+        # Ensure any bounds applied to `t0` are applied relative to the simulated value
+        bounds = copy(self.bounds)
+        if bounds and bounds.get('t0', None):
+            model_t0 = model['t0']
+            lower_t0, upper_t0 = bounds['t0']
+            bounds['t0'] = (model_t0 + lower_t0, model_t0 + upper_t0)
+
         return model.fit_lc(
-            light_curve, self.vparams, bounds=self.bounds,
+            light_curve, self.vparams, bounds=bounds,
             guess_t0=False, guess_amplitude=False, guess_z=False)
 
     def action(self) -> None:
