@@ -76,7 +76,6 @@ class FittingPipeline(Pipeline):
             catalog: VariableCatalog = None,
             add_scatter: bool = True,
             fixed_snr: Optional[float] = None,
-            overwrite: bool = False,
             write_lc_sims: bool = False
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
@@ -95,14 +94,8 @@ class FittingPipeline(Pipeline):
             catalog: Reference star catalog to calibrate simulated supernova with
             add_scatter: Add randomly generated scatter to simulated light-curve points
             fixed_snr: Simulate light-curves with a fixed signal to noise ratio
-            overwrite: Whether to allow overwriting an existing output file
             write_lc_sims: Include simulated light_curves in the
         """
-
-        out_dir = Path(out_path).resolve().parent
-        existing_files = tuple(out_dir.glob(f'{out_path.stem}_fn*.h5'))
-        if (not overwrite) and existing_files:
-            raise FileExistsError(f'Cannot overwrite existing results. Found {len(existing_files)} files')
 
         out_path.parent.mkdir(exist_ok=True)
 

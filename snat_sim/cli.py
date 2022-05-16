@@ -169,13 +169,7 @@ class Parser(argparse.ArgumentParser):
             '-o', '--out_path',
             type=Path,
             required=True,
-            help='Output file path (a .csv extension is enforced).'
-        )
-
-        self.add_argument(
-            '--overwrite',
-            action='store_true',
-            help='Flag to allow existing results to be overwritten.'
+            help='Output file path (a .h5 extension is enforced).'
         )
 
         self.add_argument(
@@ -372,7 +366,6 @@ class Parser(argparse.ArgumentParser):
             catalog=parsed_args.catalog,
             add_scatter=parsed_args.add_scatter,
             fixed_snr=parsed_args.fixed_snr,
-            overwrite=parsed_args.overwrite,
             write_lc_sims=parsed_args.write_lc_sims
         )
 

@@ -203,8 +203,9 @@ class FitLightCurves(Node):
         model = copy(self.sn_model)
         model.update({k: v for k, v in initial_guess.items() if k in self.sn_model.param_names})
 
+        # Ensure any bounds applied to `t0` are applied relative to the simulated value
         bounds = copy(self.bounds)
-        if 't0' in bounds:
+        if bounds and bounds.get('t0', None):
             model_t0 = model['t0']
             lower_t0, upper_t0 = bounds['t0']
             bounds['t0'] = (model_t0 + lower_t0, model_t0 + upper_t0)
