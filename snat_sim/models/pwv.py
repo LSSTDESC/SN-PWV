@@ -348,7 +348,15 @@ class PWVTransmissionModel:
 
 
 class StaticPWVTrans(sncosmo.PropagationEffect):
-    """Propagation effect for the atmospheric absorption of light due to time static PWV"""
+    """Propagation effect for the atmospheric absorption of light due to time static PWV
+
+    The value of the ``pwv`` parameter reflects the total PWV concentration
+    along the line of sight. It is NOT scaled using the airmass through
+    which an object is observed.
+
+    Effect Parameters:
+        pwv: Atmospheric concentration of PWV along line of sight in mm
+    """
 
     _minwave = 3000.0
     _maxwave = 12000.0
@@ -358,9 +366,6 @@ class StaticPWVTrans(sncosmo.PropagationEffect):
 
         Setting the ``transmission_res`` argument to ``None`` results in the
         highest available transmission model available.
-
-        Effect Parameters:
-            pwv: Atmospheric concentration of PWV along line of sight in mm
 
         Args:
             transmission_res (float): Reduce the underlying transmission model by binning to the given resolution
@@ -469,20 +474,26 @@ class AbstractVariablePWVEffect(VariablePropagationEffect):
 
 
 class VariablePWVTrans(AbstractVariablePWVEffect):
-    """Propagation effect for the atmospheric absorption of light due to time variable PWV"""
+    """Propagation effect for the atmospheric absorption of light due to time variable PWV
+
+    The value of the ``pwv`` parameter reflects the total PWV concentration
+    at zenith. This value is scaled using the airmass as calculated using the
+    position of the observer (``lat``, ``lon``, and ``alt`` parameters) and the
+    object (``ra`` and ``dec`` parameters).
+
+    Effect Parameters:
+        ra: Target Right Ascension in degrees
+        dec: Target Declination in degrees
+        lat: Observer latitude in degrees (defaults to location of VRO)
+        lon: Observer longitude in degrees (defaults to location of VRO)
+        alt: Observer altitude in meters  (defaults to height of VRO)
+    """
 
     def __init__(self, pwv_model: PWVModel, time_format: str = 'mjd', transmission_res: float = 5.) -> None:
         """Time variable atmospheric transmission due to PWV
 
         Setting the ``transmission_res`` argument to ``None`` results in the
         highest available transmission model available.
-
-        Effect Parameters:
-            ra: Target Right Ascension in degrees
-            dec: Target Declination in degrees
-            lat: Observer latitude in degrees (defaults to location of VRO)
-            lon: Observer longitude in degrees (defaults to location of VRO)
-            alt: Observer altitude in meters  (defaults to height of VRO)
 
         Args:
             pwv_model: Returns PWV at zenith for a given time value and time format
@@ -529,23 +540,30 @@ class VariablePWVTrans(AbstractVariablePWVEffect):
 
 
 class SeasonalPWVTrans(AbstractVariablePWVEffect):
-    """Atmospheric propagation effect for a fixed PWV concentration per-season"""
+    """Atmospheric propagation effect for a fixed PWV concentration per-season
+
+    The value of the ``winter``, ``summer``, ``spring`` and ``fall`` parameters
+    reflect the total PWV concentration at zenith during those time periods.
+    These values are scaled using the airmass calculated using the
+    position of the observer (``lat``, ``lon``, and ``alt`` parameters)
+    and the object (``ra`` and ``dec`` parameters).
+
+    Season names are defined for an individual in the southern hemisphere.
+
+    Effect Parameters:
+        ra: Target Right Ascension in degrees
+        dec: Target Declination in degrees
+        lat: Observer latitude in degrees (defaults to location of VRO)
+        lon: Observer longitude in degrees (defaults to location of VRO)
+        alt: Observer altitude in meters  (defaults to height of VRO)
+        winter: PWV concentration in the winter
+        spring: PWV concentration in the spring
+        summer: PWV concentration in the summer
+        fall: PWV concentration in the fall
+    """
 
     def __init__(self, time_format: str = 'mjd', transmission_res: float = 5.) -> None:
         """Time variable atmospheric transmission due to PWV that changes per season
-
-        Season names are defined using the southern hemisphere
-
-        Effect Parameters:
-            ra: Target Right Ascension in degrees
-            dec: Target Declination in degrees
-            lat: Observer latitude in degrees (defaults to location of VRO)
-            lon: Observer longitude in degrees (defaults to location of VRO)
-            alt: Observer altitude in meters  (defaults to height of VRO)
-            winter: PWV concentration in the winter
-            spring: PWV concentration in the spring
-            summer: PWV concentration in the summer
-            fall: PWV concentration in the fall
 
         Args:
             time_format: Astropy recognized time format used by the ``pwv_interpolator``
