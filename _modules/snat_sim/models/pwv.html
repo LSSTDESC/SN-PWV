@@ -466,7 +466,15 @@
 
 
 <div class="viewcode-block" id="StaticPWVTrans"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.StaticPWVTrans">[docs]</a><span class="k">class</span> <span class="nc">StaticPWVTrans</span><span class="p">(</span><span class="n">sncosmo</span><span class="o">.</span><span class="n">PropagationEffect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Propagation effect for the atmospheric absorption of light due to time static PWV&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Propagation effect for the atmospheric absorption of light due to time static PWV</span>
+
+<span class="sd">    The value of the ``pwv`` parameter reflects the total PWV concentration</span>
+<span class="sd">    along the line of sight. It is NOT scaled using the airmass through</span>
+<span class="sd">    which an object is observed.</span>
+
+<span class="sd">    Effect Parameters:</span>
+<span class="sd">        pwv: Atmospheric concentration of PWV along line of sight in mm</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">_minwave</span> <span class="o">=</span> <span class="mf">3000.0</span>
     <span class="n">_maxwave</span> <span class="o">=</span> <span class="mf">12000.0</span>
@@ -476,9 +484,6 @@
 
 <span class="sd">        Setting the ``transmission_res`` argument to ``None`` results in the</span>
 <span class="sd">        highest available transmission model available.</span>
-
-<span class="sd">        Effect Parameters:</span>
-<span class="sd">            pwv: Atmospheric concentration of PWV along line of sight in mm</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            transmission_res (float): Reduce the underlying transmission model by binning to the given resolution</span>
@@ -587,20 +592,26 @@
 
 
 <div class="viewcode-block" id="VariablePWVTrans"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.VariablePWVTrans">[docs]</a><span class="k">class</span> <span class="nc">VariablePWVTrans</span><span class="p">(</span><span class="n">AbstractVariablePWVEffect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Propagation effect for the atmospheric absorption of light due to time variable PWV&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Propagation effect for the atmospheric absorption of light due to time variable PWV</span>
+
+<span class="sd">    The value of the ``pwv`` parameter reflects the total PWV concentration</span>
+<span class="sd">    at zenith. This value is scaled using the airmass as calculated using the</span>
+<span class="sd">    position of the observer (``lat``, ``lon``, and ``alt`` parameters) and the</span>
+<span class="sd">    object (``ra`` and ``dec`` parameters).</span>
+
+<span class="sd">    Effect Parameters:</span>
+<span class="sd">        ra: Target Right Ascension in degrees</span>
+<span class="sd">        dec: Target Declination in degrees</span>
+<span class="sd">        lat: Observer latitude in degrees (defaults to location of VRO)</span>
+<span class="sd">        lon: Observer longitude in degrees (defaults to location of VRO)</span>
+<span class="sd">        alt: Observer altitude in meters  (defaults to height of VRO)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="VariablePWVTrans.__init__"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.VariablePWVTrans.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pwv_model</span><span class="p">:</span> <span class="n">PWVModel</span><span class="p">,</span> <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span><span class="p">,</span> <span class="n">transmission_res</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Time variable atmospheric transmission due to PWV</span>
 
 <span class="sd">        Setting the ``transmission_res`` argument to ``None`` results in the</span>
 <span class="sd">        highest available transmission model available.</span>
-
-<span class="sd">        Effect Parameters:</span>
-<span class="sd">            ra: Target Right Ascension in degrees</span>
-<span class="sd">            dec: Target Declination in degrees</span>
-<span class="sd">            lat: Observer latitude in degrees (defaults to location of VRO)</span>
-<span class="sd">            lon: Observer longitude in degrees (defaults to location of VRO)</span>
-<span class="sd">            alt: Observer altitude in meters  (defaults to height of VRO)</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            pwv_model: Returns PWV at zenith for a given time value and time format</span>
@@ -647,23 +658,30 @@
 
 
 <div class="viewcode-block" id="SeasonalPWVTrans"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.SeasonalPWVTrans">[docs]</a><span class="k">class</span> <span class="nc">SeasonalPWVTrans</span><span class="p">(</span><span class="n">AbstractVariablePWVEffect</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Atmospheric propagation effect for a fixed PWV concentration per-season&quot;&quot;&quot;</span>
+    <span class="sd">&quot;&quot;&quot;Atmospheric propagation effect for a fixed PWV concentration per-season</span>
+
+<span class="sd">    The value of the ``winter``, ``summer``, ``spring`` and ``fall`` parameters</span>
+<span class="sd">    reflect the total PWV concentration at zenith during those time periods.</span>
+<span class="sd">    These values are scaled using the airmass calculated using the</span>
+<span class="sd">    position of the observer (``lat``, ``lon``, and ``alt`` parameters)</span>
+<span class="sd">    and the object (``ra`` and ``dec`` parameters).</span>
+
+<span class="sd">    Season names are defined for an individual in the southern hemisphere.</span>
+
+<span class="sd">    Effect Parameters:</span>
+<span class="sd">        ra: Target Right Ascension in degrees</span>
+<span class="sd">        dec: Target Declination in degrees</span>
+<span class="sd">        lat: Observer latitude in degrees (defaults to location of VRO)</span>
+<span class="sd">        lon: Observer longitude in degrees (defaults to location of VRO)</span>
+<span class="sd">        alt: Observer altitude in meters  (defaults to height of VRO)</span>
+<span class="sd">        winter: PWV concentration in the winter</span>
+<span class="sd">        spring: PWV concentration in the spring</span>
+<span class="sd">        summer: PWV concentration in the summer</span>
+<span class="sd">        fall: PWV concentration in the fall</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="SeasonalPWVTrans.__init__"><a class="viewcode-back" href="../../../api/models.html#snat_sim.models.pwv.SeasonalPWVTrans.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;mjd&#39;</span><span class="p">,</span> <span class="n">transmission_res</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Time variable atmospheric transmission due to PWV that changes per season</span>
-
-<span class="sd">        Season names are defined using the southern hemisphere</span>
-
-<span class="sd">        Effect Parameters:</span>
-<span class="sd">            ra: Target Right Ascension in degrees</span>
-<span class="sd">            dec: Target Declination in degrees</span>
-<span class="sd">            lat: Observer latitude in degrees (defaults to location of VRO)</span>
-<span class="sd">            lon: Observer longitude in degrees (defaults to location of VRO)</span>
-<span class="sd">            alt: Observer altitude in meters  (defaults to height of VRO)</span>
-<span class="sd">            winter: PWV concentration in the winter</span>
-<span class="sd">            spring: PWV concentration in the spring</span>
-<span class="sd">            summer: PWV concentration in the summer</span>
-<span class="sd">            fall: PWV concentration in the fall</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            time_format: Astropy recognized time format used by the ``pwv_interpolator``</span>
