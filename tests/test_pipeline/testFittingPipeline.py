@@ -1,7 +1,7 @@
 """Tests for the ``snat_sim.pipeline.pipelines.FittingPipeline`` class"""
 
 from pathlib import Path
-from tempfile import NamedTemporaryFile, TemporaryDirectory
+from tempfile import TemporaryDirectory
 from unittest import TestCase
 
 from snat_sim.models import SNModel
@@ -39,20 +39,3 @@ class ValidatePipeline(TestCase):
         """Test a finite limit is imposed on the number of input PLaSTICC simulations"""
 
         self.assertLess(self.pipeline.simulate_light_curves.input.maxsize, float('inf'))
-
-
-class OverwriteProtection(TestCase):
-    """Test the class will not overwrite existing files by default"""
-
-    def runTest(self) -> None:
-        with NamedTemporaryFile() as temp_file:
-            path = Path(temp_file.name)
-            path.touch()
-            with self.assertRaises(FileExistsError):
-                FittingPipeline(
-                    cadence='alt_sched',
-                    sim_model=SNModel('salt2'),
-                    fit_model=SNModel('salt2'),
-                    vparams=['x0'],
-                    out_path=path
-                )
