@@ -18,11 +18,11 @@ A summary of the available models is provided below:
    ReferenceCatalog
    VariableCatalog
 
-Supernova models (``SNModel``) are designed to closely resemble the behavior
-of the ``sncosmo`` package. However, unlike ``sncosmo.Model`` objects, the
-``snat_sim.SNModel`` class provides support for propagation effects that vary
-with time. A summary of custom propagation effects provided by the ``snat_sim``
-package is listed below:
+Supernova models (provided by the ``SNModel`` class) are designed to closely
+resemble the behavior of the ``sncosmo`` package. However, unlike
+``sncosmo.Model`` objects, the ``snat_sim.SNModel`` class provides support for
+propagation effects that vary with time. A summary of custom propagation
+effects provided by the ``snat_sim`` package is listed below:
 
 .. autosummary::
    :nosignatures:
