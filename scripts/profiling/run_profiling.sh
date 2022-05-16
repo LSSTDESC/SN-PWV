@@ -15,9 +15,13 @@ for ((NUM_WRITE = 1; NUM_WRITE <= MAX_WRITE; NUM_WRITE++)); do
 
     rm -rf ./temp.*.h5
     { time python ../../snat_sim_cli.py \
-        --overwrite -i $NUM_LC_SIMS \
-        -s $NUM_SIM -f $NUM_FIT -w $NUM_WRITE \
-        -c alt_sched_rolling --sim_variability epoch --fit_variability epoch \
-        -o ./temp.h5 ; } 2>  "$NUM_SIM.$NUM_FIT.$NUM_WRITE.txt"
+        -i $NUM_LC_SIMS \
+        -s $NUM_SIM \
+        -f $NUM_FIT \
+        -w $NUM_WRITE \
+        -c alt_sched_rolling \
+        --sim_variability epoch
+        --fit_variability epoch \
+        -o ./temp.h5 ; } 2>  "../../data/profiling/$NUM_SIM.$NUM_FIT.$NUM_WRITE.txt"
   done
 done
