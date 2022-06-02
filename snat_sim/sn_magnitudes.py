@@ -28,7 +28,6 @@ from .data_paths import paths_at_init
 from .models import SNModel
 
 
-# Todo: Add dictionary keys to docs? - consider named tuple?
 @lru_cache()  # Cache I/O
 def get_config_pwv_vals(config_path: types.PathLike = paths_at_init.pwv_config_path) -> types.NumericalParams:
     """Retrieve PWV values to use as reference values
