@@ -2,7 +2,7 @@
 magnitudes as a function of PWV and redshift. Functionality includes calculating
 magnitudes directly from a supernova model or via a light-curve fit.
 
-.. warning:: This module is deprecated. All of the functionality provided by
+.. warning:: This module is deprecated. All functionality provided by
    this module is now available elsewhere in the package.
 
 Module Docs
