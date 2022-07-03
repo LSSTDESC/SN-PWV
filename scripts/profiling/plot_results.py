@@ -72,7 +72,7 @@ def main() -> None:
     axis.set_ylabel('Runtime (Seconds)')
     axis.set_xlabel('Processes Allocated to Simulation')
     axis.legend()
-    plt.savefig('results.png')
+    plt.savefig(DATA_DIR / 'results.png')
 
     print('Best five runtimes:')
     for i in np.argsort(runtime_all_runs)[:5]:
