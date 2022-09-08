@@ -6,15 +6,14 @@ Module Docs
 """
 
 import argparse
-import sys
 from pathlib import Path
 from typing import Dict, Tuple, Union
 
 from pwv_kpno.gps_pwv import GPSReceiver
 
-sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
-from snat_sim import models
-from snat_sim.pipeline import FittingPipeline
+from . import models
+from .pipeline import FittingPipeline
+from . import __version__
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 SUOMINET_VALUES = ('PWV', 'SrfcPress', 'SrfcTemp', 'SrfcRH', 'ZenithDelay')
@@ -32,11 +31,9 @@ class AdvancedNamespace(argparse.Namespace):
         If ``pwv_variability`` represents a numerical value, return a
         ``StaticPWVTrans`` object set to the given PWV concentration (in mm).
 
-        If ``pwv_variability`` equals ``epoch``, return a ``VariablePWVTrans``
-        object.
+        If ``pwv_variability`` equals ``epoch``, return a ``VariablePWVTrans`` object.
 
-        If `pwv_variability`` equals ``seasonal``, return a
-        ``SeasonalPWVTrans`` object.
+        If `pwv_variability`` equals ``seasonal``, return a ``SeasonalPWVTrans`` object.
 
         Args:
             pwv_variability (str): Command line value for how to vary PWV as a function of time
@@ -126,10 +123,18 @@ class AdvancedNamespace(argparse.Namespace):
 
 
 class Parser(argparse.ArgumentParser):
-    """Return a command line argument parser"""
+    """Commandline parser with a pre-defined application interface"""
 
     def __init__(self) -> None:
+        """Instantiate the parser and define the commandline interface"""
+
         super().__init__()
+        self.add_argument('-v', '--version', action='version', version=__version__)
+
+        #######################################################################
+        # General Pipeline configuration
+        #######################################################################
+
         self.add_argument(
             '-c', '--cadence',
             type=str,
@@ -346,10 +351,18 @@ class Parser(argparse.ArgumentParser):
             help='Optionally use a proxy to serve the application to a different URL "{input}::{output}".'
         )
 
-    def execute(self):
-        """Run the analysis pipeline"""
 
-        parsed_args = self.parse_args(namespace=AdvancedNamespace())
+class Application:
+    """Executable command-line application.
+
+    Launch the application by running ``Application.execute``.
+    """
+
+    @staticmethod
+    def execute():
+        """Parse any commandline arguments and run the analysis pipeline"""
+
+        parsed_args = Parser().parse_args(namespace=AdvancedNamespace())
 
         print(f'Instantiating pipeline (target: {parsed_args.out_path})')
         pipeline = FittingPipeline(
