@@ -55,7 +55,7 @@ def run(out_dir, spec_types=SPEC_TYPES, pwv_vals=PWV_VALS):
     """Sample stellar flux in LSST bandpasses as a function of PWV
 
     Results are tabulated for multiple spectral types. Each spectral type
-    is written to it's own file.
+    is written to its own file.
 
     Args:
         out_dir    (Path): Directory to write output files to
