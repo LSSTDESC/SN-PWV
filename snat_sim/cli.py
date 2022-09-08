@@ -30,11 +30,9 @@ class AdvancedNamespace(argparse.Namespace):
         If ``pwv_variability`` represents a numerical value, return a
         ``StaticPWVTrans`` object set to the given PWV concentration (in mm).
 
-        If ``pwv_variability`` equals ``epoch``, return a ``VariablePWVTrans``
-        object.
+        If ``pwv_variability`` equals ``epoch``, return a ``VariablePWVTrans`` object.
 
-        If `pwv_variability`` equals ``seasonal``, return a
-        ``SeasonalPWVTrans`` object.
+        If `pwv_variability`` equals ``seasonal``, return a ``SeasonalPWVTrans`` object.
 
         Args:
             pwv_variability (str): Command line value for how to vary PWV as a function of time
@@ -124,9 +122,11 @@ class AdvancedNamespace(argparse.Namespace):
 
 
 class Parser(argparse.ArgumentParser):
-    """Return a command line argument parser"""
+    """Commandline parser with a pre-defined application interface"""
 
     def __init__(self) -> None:
+        """Instantiate the parser and define the commandline interface"""
+
         super().__init__()
         self.add_argument(
             '-c', '--cadence',
