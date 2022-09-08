@@ -392,7 +392,7 @@ div.rendered_html tbody tr:hover {
 <section id="PWV-effects-on-SN-Magnitude">
 <h1>PWV effects on SN Magnitude<a class="headerlink" href="#PWV-effects-on-SN-Magnitude" title="Permalink to this heading">¶</a></h1>
 <p>This notebook demonstrates the effects of PWV absorption on the apparent magnitude of SNe.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -411,6 +411,14 @@ div.rendered_html tbody tr:hover {
 <span class="kn">from</span> <span class="nn">tests.mock</span> <span class="kn">import</span> <span class="n">create_mock_cadence</span>
 <br/></pre></div>
 </div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+WARNING: AstropyDeprecationWarning: The update_default_config function is deprecated and may be removed in a future version. [sncosmo]
+</pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
@@ -474,7 +482,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 1155/1155 [00:02&lt;00:00, 570.08it/s]
+Tabulating Mag: 100%|████████████████████████████████████████| 1155/1155 [00:00&lt;00:00, 1169.28it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -536,7 +544,7 @@ Tabulating Mag: 100%|██████████| 1155/1155 [00:02&lt;00:00, 
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████| 315/315 [00:00&lt;00:00, 546.19it/s]
+Tabulating Mag: 100%|██████████████████████████████████████████| 315/315 [00:00&lt;00:00, 1224.04it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -585,7 +593,7 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;snat_sim.models.light_curve.ObservedCadence object at 0x7f8c18369790&gt;
+&lt;snat_sim.models.light_curve.ObservedCadence object at 0x7fddc7440670&gt;
   time        band        gain  skynoise    zp   zpsys
 ------- --------------- ------- -------- ------- ------
   -20.0 lsst_hardware_g     1.0      0.0    30.0     AB
@@ -594,15 +602,7 @@ curves should be different in each band.</p>
   -20.0 lsst_hardware_z     1.0      0.0    30.0     AB
   -20.0 lsst_hardware_r     1.0      0.0    30.0     AB
   -19.0 lsst_hardware_z     1.0      0.0    30.0     AB
-  -19.0 lsst_hardware_r     1.0      0.0    30.0     AB
-  -19.0 lsst_hardware_y     1.0      0.0    30.0     AB
-  -19.0 lsst_hardware_g     1.0      0.0    30.0     AB
-  -19.0 lsst_hardware_i     1.0      0.0    30.0     AB
     ...             ...     ...      ...     ...    ...
-   49.0 lsst_hardware_y     1.0      0.0    30.0     AB
-   49.0 lsst_hardware_i     1.0      0.0    30.0     AB
-   49.0 lsst_hardware_r     1.0      0.0    30.0     AB
-   49.0 lsst_hardware_z     1.0      0.0    30.0     AB
    49.0 lsst_hardware_g     1.0      0.0    30.0     AB
    50.0 lsst_hardware_i     1.0      0.0    30.0     AB
    50.0 lsst_hardware_r     1.0      0.0    30.0     AB
@@ -669,7 +669,7 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 231/231 [01:53&lt;00:00,  2.03it/s]
+Light-Curves: 100%|██████████████████████████████████████████████| 231/231 [01:24&lt;00:00,  2.74it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -696,7 +696,7 @@ Light-Curves: 100%|██████████| 231/231 [01:53&lt;00:00,  2.0
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24it/s]
+Light-Curves: 100%|████████████████████████████████████████████████| 63/63 [00:18&lt;00:00,  3.44it/s]
 </pre></div></div>
 </div>
 <p>Here we visualize the fitted, uncorrected (i.e. without any stretch / color correction) magnitudes.</p>
@@ -872,7 +872,7 @@ Light-Curves: 100%|██████████| 63/63 [00:28&lt;00:00,  2.24i
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████| 231/231 [01:52&lt;00:00,  2.06it/s]
+Light-Curves: 100%|██████████████████████████████████████████████| 231/231 [01:02&lt;00:00,  3.70it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">

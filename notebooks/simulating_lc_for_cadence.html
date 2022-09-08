@@ -390,7 +390,7 @@ div.rendered_html tbody tr:hover {
 <h1>Simulating Light-Curves with a Cadence<a class="headerlink" href="#Simulating-Light-Curves-with-a-Cadence" title="Permalink to this heading">¶</a></h1>
 <p>This notebook demonstrates the simulation of normal Type Ia Supernova (SN Ia) light-curves using realistic cadences and atmospheric variability expected from LSST. To achieve this we use data from the PLAsTICC simulations to establish the cadence, light-curve parameters, and location of SNe observed by LSST. Light-curves with customized time-variable PWV transmission effects are then simulated using these parameters.</p>
 <p>Plots in this notebook are rendered using a subset of the PLAsTICC simulation data. To access this data, configure your working environment as outlined <a class="reference external" href="https://lsstdesc.org/SN-PWV/overview/install.html">in the docs</a>.</p>
-<div class="nbinput nblast docutils container">
+<div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
@@ -412,6 +412,14 @@ div.rendered_html tbody tr:hover {
 <br/></pre></div>
 </div>
 </div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area stderr docutils container">
+<div class="highlight"><pre>
+WARNING: AstropyDeprecationWarning: The update_default_config function is deprecated and may be removed in a future version. [sncosmo]
+</pre></div></div>
+</div>
 <div class="nbinput docutils container">
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
 </pre></div>
@@ -427,7 +435,7 @@ div.rendered_html tbody tr:hover {
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-PosixPath(&#39;/home/djperrefort/Github/SN-PWV/data/plasticc&#39;)
+PosixPath(&#39;/mnt/md0/PLAsTiCC&#39;)
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -455,7 +463,13 @@ PosixPath(&#39;/home/djperrefort/Github/SN-PWV/data/plasticc&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&#39;alt_sched&#39;]
+[&#39;kraken_2044&#39;,
+ &#39;nexus_2097&#39;,
+ &#39;rolling_10yrs_opsim&#39;,
+ &#39;alt_sched_rolling&#39;,
+ &#39;rolling_mix_10yrs_opsim&#39;,
+ &#39;alt_sched&#39;,
+ &#39;kraken_2026&#39;]
 </pre></div></div>
 </div>
 <p>We load an example light-curve from one of these data sets and demonstrate the data below. Each cadence includes simulations run with multiple supernova models. In this notebook we only need simulations for normal SNe (Model 11).</p>
@@ -474,7 +488,7 @@ PosixPath(&#39;/home/djperrefort/Github/SN-PWV/data/plasticc&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Available Light-curves:  115
+Available Light-curves:  4737479
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -499,31 +513,23 @@ Available Light-curves:  115
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
-<div><i>Table length=191</i>
-<table id="table140224881042672" class="table-striped table-bordered table-condensed">
+<div><i>Table length=205</i>
+<table id="table140332724091344" class="table-striped table-bordered table-condensed">
 <thead><tr><th>time</th><th>band</th><th>flux</th><th>fluxerr</th><th>zp</th><th>zpsys</th><th>phot_flag</th></tr></thead>
 <thead><tr><th>float64</th><th>str15</th><th>float32</th><th>float32</th><th>float32</th><th>str2</th><th>int32</th></tr></thead>
-<tr><td>61954.3306</td><td>lsst_hardware_z</td><td>15.283731</td><td>20.61587</td><td>30.89</td><td>AB</td><td>0</td></tr>
-<tr><td>61954.3496</td><td>lsst_hardware_g</td><td>3.0582032</td><td>4.2619643</td><td>31.29</td><td>AB</td><td>0</td></tr>
-<tr><td>61958.423</td><td>lsst_hardware_y</td><td>-34.665913</td><td>24.074171</td><td>30.8</td><td>AB</td><td>0</td></tr>
-<tr><td>61960.3473</td><td>lsst_hardware_r</td><td>-2.3959112</td><td>10.888871</td><td>31.58</td><td>AB</td><td>0</td></tr>
-<tr><td>61960.3667</td><td>lsst_hardware_i</td><td>-11.10509</td><td>10.491764</td><td>31.29</td><td>AB</td><td>0</td></tr>
-<tr><td>61962.3822</td><td>lsst_hardware_r</td><td>0.25858268</td><td>12.420084</td><td>31.62</td><td>AB</td><td>0</td></tr>
-<tr><td>61962.4021</td><td>lsst_hardware_z</td><td>15.907692</td><td>15.589854</td><td>30.97</td><td>AB</td><td>0</td></tr>
-<tr><td>61965.4071</td><td>lsst_hardware_i</td><td>5.3211513</td><td>9.46272</td><td>31.3</td><td>AB</td><td>0</td></tr>
-<tr><td>61965.4287</td><td>lsst_hardware_z</td><td>2.6012752</td><td>13.66771</td><td>30.97</td><td>AB</td><td>0</td></tr>
-<tr><td>61974.3513</td><td>lsst_hardware_r</td><td>0.15049838</td><td>4.9526896</td><td>31.47</td><td>AB</td><td>0</td></tr>
+<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>4.7668333</td><td>4.6751437</td><td>31.49</td><td>AB</td><td>0</td></tr>
+<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>-2.588817</td><td>12.943774</td><td>30.94</td><td>AB</td><td>0</td></tr>
+<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>35.501144</td><td>46.115395</td><td>30.02</td><td>AB</td><td>0</td></tr>
+<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>-2.244006</td><td>7.831321</td><td>28.48</td><td>AB</td><td>0</td></tr>
+<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>-52.145115</td><td>33.700497</td><td>30.03</td><td>AB</td><td>0</td></tr>
+<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>5.403219</td><td>7.8971477</td><td>31.19</td><td>AB</td><td>0</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>62460.0252</td><td>lsst_hardware_z</td><td>11.420037</td><td>14.9348345</td><td>30.98</td><td>AB</td><td>0</td></tr>
-<tr><td>62460.0414</td><td>lsst_hardware_r</td><td>-0.52240676</td><td>10.964314</td><td>31.65</td><td>AB</td><td>0</td></tr>
-<tr><td>62461.0267</td><td>lsst_hardware_y</td><td>-113.93512</td><td>69.27011</td><td>30.03</td><td>AB</td><td>0</td></tr>
-<tr><td>62461.0445</td><td>lsst_hardware_z</td><td>-15.905042</td><td>23.246475</td><td>30.98</td><td>AB</td><td>0</td></tr>
-<tr><td>62463.0275</td><td>lsst_hardware_y</td><td>47.730938</td><td>29.80475</td><td>30.04</td><td>AB</td><td>0</td></tr>
-<tr><td>62463.0456</td><td>lsst_hardware_u</td><td>-6.670953</td><td>11.205029</td><td>29.07</td><td>AB</td><td>0</td></tr>
-<tr><td>62466.0279</td><td>lsst_hardware_y</td><td>17.758373</td><td>33.12478</td><td>30.04</td><td>AB</td><td>0</td></tr>
-<tr><td>62466.0447</td><td>lsst_hardware_r</td><td>3.4169402</td><td>3.4735596</td><td>31.49</td><td>AB</td><td>0</td></tr>
-<tr><td>62468.0277</td><td>lsst_hardware_y</td><td>6.5977235</td><td>42.13687</td><td>30.05</td><td>AB</td><td>0</td></tr>
-<tr><td>62468.0439</td><td>lsst_hardware_g</td><td>1.3531196</td><td>3.310382</td><td>31.4</td><td>AB</td><td>0</td></tr>
+<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>-46.466133</td><td>29.61527</td><td>30.02</td><td>AB</td><td>0</td></tr>
+<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>3.6633909</td><td>3.5757632</td><td>31.5</td><td>AB</td><td>0</td></tr>
+<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>-6.228678</td><td>31.823051</td><td>30.02</td><td>AB</td><td>0</td></tr>
+<tr><td>61883.992</td><td>lsst_hardware_r</td><td>3.5952897</td><td>4.650464</td><td>31.49</td><td>AB</td><td>0</td></tr>
+<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>-5.892972</td><td>20.891136</td><td>30.95</td><td>AB</td><td>0</td></tr>
+<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>-6.8839006</td><td>4.450736</td><td>31.41</td><td>AB</td><td>0</td></tr>
 </table></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -571,31 +577,23 @@ Available Light-curves:  115
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
-<div><i>Table length=191</i>
-<table id="table140224862832048" class="table-striped table-bordered table-condensed">
+<div><i>Table length=205</i>
+<table id="table140332091043952" class="table-striped table-bordered table-condensed">
 <thead><tr><th>time</th><th>band</th><th>flux</th><th>fluxerr</th><th>zp</th><th>zpsys</th><th>phot_flag</th></tr></thead>
 <thead><tr><th>float64</th><th>str15</th><th>float64</th><th>float64</th><th>float64</th><th>str2</th><th>float64</th></tr></thead>
-<tr><td>61954.3306</td><td>lsst_hardware_z</td><td>3.2656826635216163</td><td>47.31999969482422</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61954.3496</td><td>lsst_hardware_g</td><td>1.7014374053307402</td><td>13.680000305175781</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61958.423</td><td>lsst_hardware_y</td><td>-120.49124729317832</td><td>74.22000122070312</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61960.3473</td><td>lsst_hardware_r</td><td>-23.54679143688239</td><td>83.51000213623047</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61960.3667</td><td>lsst_hardware_i</td><td>-37.048641807797615</td><td>64.02999877929688</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61962.3822</td><td>lsst_hardware_r</td><td>-46.500711274188994</td><td>65.5999984741211</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61962.4021</td><td>lsst_hardware_z</td><td>-43.316216322373776</td><td>53.470001220703125</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61965.4071</td><td>lsst_hardware_i</td><td>-3.181483015194072</td><td>43.599998474121094</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61965.4287</td><td>lsst_hardware_z</td><td>37.23361934877177</td><td>47.650001525878906</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61974.3513</td><td>lsst_hardware_r</td><td>-2.4326976234810083</td><td>22.526463024740462</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>-4.155268799652832</td><td>24.209999084472656</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>32.427200124589206</td><td>43.790000915527344</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>-126.64691064374307</td><td>70.9000015258789</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>3.988293669612095</td><td>2.940000057220459</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>-10.72465910861562</td><td>64.44000244140625</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>5.629920019090801</td><td>34.279998779296875</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>62460.0252</td><td>lsst_hardware_z</td><td>-17.053687985682966</td><td>67.80999755859375</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62460.0414</td><td>lsst_hardware_r</td><td>-23.37688125748274</td><td>89.11000061035156</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62461.0267</td><td>lsst_hardware_y</td><td>5.593053027196466</td><td>58.2400016784668</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62461.0445</td><td>lsst_hardware_z</td><td>24.75970900898785</td><td>62.08000183105469</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62463.0275</td><td>lsst_hardware_y</td><td>0.9190041516119805</td><td>52.77000045776367</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62463.0456</td><td>lsst_hardware_u</td><td>-0.10918298716285584</td><td>6.760000228881836</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62466.0279</td><td>lsst_hardware_y</td><td>76.42805095135368</td><td>54.11000061035156</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62466.0447</td><td>lsst_hardware_r</td><td>23.02640708275082</td><td>22.0</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62468.0277</td><td>lsst_hardware_y</td><td>11.323358309222169</td><td>56.18000030517578</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>62468.0439</td><td>lsst_hardware_g</td><td>11.165446998439215</td><td>13.300000190734863</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>-55.224385368754184</td><td>55.72999954223633</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>-4.7186968572197046</td><td>24.3700008392334</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>9.199034289947337</td><td>51.529998779296875</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61883.992</td><td>lsst_hardware_r</td><td>-24.26469254772443</td><td>23.979999542236328</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>6.83610863811712</td><td>50.459999084472656</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>-13.194106226014217</td><td>14.979999542236328</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
 </table></div></div>
 </div>
 <p>When comparing our own “duplicated” light-curves with the original PLAsTICC simulations, we care about three things: 1. Do the light-curves have the same parameters (except for x0, which depends on the spectral template and cosmology)? 1. Do the light-curves have the same time sampling? 1. Do the light-curves have a similar SNR?</p>
