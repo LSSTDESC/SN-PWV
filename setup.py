@@ -6,7 +6,7 @@ from typing import Union
 
 from setuptools import find_packages, setup
 
-# File paths for source code and supporting artifacts
+# File paths for source code and supporting data
 root_dir = Path(__file__).resolve().parent
 data_dir = root_dir / 'data'
 readme_path = root_dir / 'README.md'
@@ -83,17 +83,20 @@ setup(
     long_description=readme_path.read_text(),
     url='https://lsstdesc.org/SN-PWV/',
 
-    # Package executable, source code and data
+    # Include data necessary for executing the package
+    # Treating the data directory as a "package" ensures thos files are included
     packages=find_packages() + ['data'],
-    data_files=get_data_files(data_dir),
+    package_data={'data': get_data_files(data_dir)},
     include_package_data=True,
+
+    # Define the commandline entrypoint
     entry_points="""
         [console_scripts]
-        snat-sim=cli:Application.execute
+        snat-sim=snat_sim.cli:Application.execute
     """,
 
     # Installation requirements
     python_requires='>=3.9',
     install_requires=parse_requirements(pkg_requirements_path),
-    extras_require=get_extras(tets=['coverage', 'sndata'], docs=doc_requirements_path)
+    extras_require=get_extras(tests=['coverage', 'sndata'], docs=doc_requirements_path)
 )
