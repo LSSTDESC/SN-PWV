@@ -5,7 +5,7 @@ from pathlib import Path
 import numpy as np
 from matplotlib import pyplot as plt
 
-dir = Path('.').resolve()
+DATA_DIR = Path(__file__).resolve().parent.parent.parent / 'data' / 'profiling'
 
 
 def get_runtime_results(file: Path) -> tuple[int, int, int, float]:
@@ -48,7 +48,7 @@ def main() -> None:
         x_vals = []  # The number of processes allocated to simulation
         y_vals = []  # The total runtime in seconds
 
-        for file in dir.glob(f'*{i}.txt'):
+        for file in DATA_DIR.glob(f'*{i}.txt'):
             try:
                 sim, fit, write, sec = get_runtime_results(file)
 
@@ -72,7 +72,7 @@ def main() -> None:
     axis.set_ylabel('Runtime (Seconds)')
     axis.set_xlabel('Processes Allocated to Simulation')
     axis.legend()
-    plt.savefig('results.png')
+    plt.savefig(DATA_DIR / 'results.png')
 
     print('Best five runtimes:')
     for i in np.argsort(runtime_all_runs)[:5]:

@@ -33,7 +33,7 @@ follows:
    ...     sim_model=SNModel('salt2'),
    ...     fit_model=SNModel('salt2'),
    ...     vparams=['x0', 'x1', 'c'],
-   ...     out_path='./demo_out_path.csv',
+   ...     out_path='./demo_out_path.h5',
    ...     fitting_pool=6,
    ...     simulation_pool=3
    ... )
@@ -76,7 +76,6 @@ class FittingPipeline(Pipeline):
             catalog: VariableCatalog = None,
             add_scatter: bool = True,
             fixed_snr: Optional[float] = None,
-            overwrite: bool = False,
             write_lc_sims: bool = False
     ) -> None:
         """Fit light-curves using multiple processes and combine results into an output file
@@ -95,14 +94,10 @@ class FittingPipeline(Pipeline):
             catalog: Reference star catalog to calibrate simulated supernova with
             add_scatter: Add randomly generated scatter to simulated light-curve points
             fixed_snr: Simulate light-curves with a fixed signal to noise ratio
-            overwrite: Whether to allow overwriting an existing output file
             write_lc_sims: Include simulated light_curves in the
         """
 
-        out_path = Path(out_path)
-        if (not overwrite) and out_path.exists():
-            raise FileExistsError(f'Cannot overwrite existing results: {out_path}')
-
+        out_path = Path(out_path).resolve()
         out_path.parent.mkdir(exist_ok=True)
 
         # Define the nodes of the analysis pipeline

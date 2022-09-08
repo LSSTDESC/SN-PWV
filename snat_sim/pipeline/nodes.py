@@ -203,8 +203,15 @@ class FitLightCurves(Node):
         model = copy(self.sn_model)
         model.update({k: v for k, v in initial_guess.items() if k in self.sn_model.param_names})
 
+        # Ensure any bounds applied to `t0` are applied relative to the simulated value
+        bounds = copy(self.bounds)
+        if bounds and bounds.get('t0', None):
+            model_t0 = model['t0']
+            lower_t0, upper_t0 = bounds['t0']
+            bounds['t0'] = (model_t0 + lower_t0, model_t0 + upper_t0)
+
         return model.fit_lc(
-            light_curve, self.vparams, bounds=self.bounds,
+            light_curve, self.vparams, bounds=bounds,
             guess_t0=False, guess_amplitude=False, guess_z=False)
 
     def action(self) -> None:
@@ -283,7 +290,7 @@ class WritePipelinePacket(Target):
         self._rotate_output_file()
 
         # We are taking the simulated parameters as guaranteed to exist
-        self.file_store.append('simulation/params', packet.sim_params_to_pandas())
+        self.file_store.append('simulation/params', packet.sim_params_to_pandas(), min_itemsize={'snid': 10})
         self.file_store.append('message', packet.packet_status_to_pandas().astype(str), min_itemsize={'snid': 10, 'message': 250})
 
         if self.write_lc_sims and packet.light_curve is not None:

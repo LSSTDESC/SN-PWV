@@ -5,12 +5,12 @@ Space and Time (LSST).
 """
 
 import warnings
+
 from tables import NaturalNameWarning
 
-from . import *
 from .utils import setup_environment as _setup_environment
 
-__version__ = 'Development'
+__version__ = '0.1.0'
 __author__ = 'Dark Energy Science Collaboration'
 __maintainer__ = 'Daniel Perrefort'
 __license__ = 'GPL 3.0'

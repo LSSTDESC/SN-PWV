@@ -1,6 +1,5 @@
 """Models for the spectro-photometric flux of stars and their combination into
 reference catalogs.
-
 """
 
 from __future__ import annotations
@@ -225,7 +224,9 @@ class ReferenceCatalog:
 
 
 class VariableCatalog:
-    """A reference star catalog that determines the time dependent PWV concentration along the line of sight from an underlying PWV model"""
+    """A reference star catalog that determines the time dependent PWV
+    concentration along the line of sight from an underlying PWV model
+    """
 
     def __init__(self, pwv_model: PWVModel, *spectral_types: str) -> None:
         """Create a reference star catalog composed of the given spectral types and a PWV model

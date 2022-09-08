@@ -81,5 +81,4 @@ class FailedFitOutput(TestCase, GenericSetup):
         self.assertEqual(self.packet.snid, pipeline_result.snid)
         self.assertEqual(self.packet.sim_params, pipeline_result.sim_params)
         self.assertIsNone(pipeline_result.fit_result)
-        self.assertIsNone(pipeline_result.fitted_model)
         self.assertEqual('FitLightCurves: ValueError(\'z must be bounded if fit.\')', pipeline_result.message)
