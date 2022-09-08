@@ -1,6 +1,5 @@
 """Models for the spectro-photometric flux of stars and their combination into
 reference catalogs.
-
 """
 
 from __future__ import annotations
