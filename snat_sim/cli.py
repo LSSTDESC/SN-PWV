@@ -344,10 +344,18 @@ class Parser(argparse.ArgumentParser):
             help='Optionally use a proxy to serve the application to a different URL "{input}::{output}".'
         )
 
-    def execute(self):
-        """Run the analysis pipeline"""
 
-        parsed_args = self.parse_args(namespace=AdvancedNamespace())
+class Application:
+    """Executable command-line application.
+
+    Launch the application by running ``Application.execute``.
+    """
+
+    @staticmethod
+    def execute():
+        """Parse any commandline arguments and run the analysis pipeline"""
+
+        parsed_args = Parser().parse_args(namespace=AdvancedNamespace())
 
         print(f'Instantiating pipeline (target: {parsed_args.out_path})')
         pipeline = FittingPipeline(
