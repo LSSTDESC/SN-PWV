@@ -5,7 +5,9 @@
 # See profiling results in the data directory when choosing these numbers.
 NUM_SIM=53
 NUM_FIT=8
-NUM_WRITE=2
+NUM_WRITE=1
+
+echo "Results generated using snat_sim version $(snat-sim --version)" > ../../data/validation/version.txt
 
 # Validation runs to ensure atmospheric variability is propagating in the expected ways
 snat-sim -s $NUM_SIM -f $NUM_FIT -w $NUM_WRITE -i 500 -c alt_sched --sim_variability 0     --fit_variability 0        -o ../../data/validation/pwv_sim_0_fit_0.h5
