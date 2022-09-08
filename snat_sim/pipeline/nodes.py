@@ -290,8 +290,8 @@ class WritePipelinePacket(Target):
         self._rotate_output_file()
 
         # We are taking the simulated parameters as guaranteed to exist
-        self.file_store.append('simulation/params', packet.sim_params_to_pandas(), min_itemsize={'snid': 10})
-        self.file_store.append('message', packet.packet_status_to_pandas().astype(str), min_itemsize={'snid': 10, 'message': 250})
+        self.file_store.append('simulation/params', packet.sim_params_to_pandas())
+        self.file_store.append('message', packet.packet_status_to_pandas(), min_itemsize={'message': 250})
 
         if self.write_lc_sims and packet.light_curve is not None:
             self.file_store.put(f'simulation/lcs/{packet.snid}', packet.light_curve.to_pandas())

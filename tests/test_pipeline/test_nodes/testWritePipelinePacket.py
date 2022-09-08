@@ -24,10 +24,10 @@ class InputDataMatchesDisk(TestCase):
 
         node = WritePipelinePacket(Path(cls.temp_dir.name) / 'tempfile.h5', True)
         node.debug = True
-        moc_source = MockSource(cls.packets)
-        moc_source.output.connect(node.input)
+        mock_source = MockSource(cls.packets)
+        mock_source.output.connect(node.input)
 
-        moc_source.execute()
+        mock_source.execute()
         node.execute()
 
         # Account for the rotation of output files
@@ -70,10 +70,8 @@ class InputDataMatchesDisk(TestCase):
     def test_status_matches_packet(self) -> None:
         """Test the status messages written to disk match the packet data"""
 
-        # This table contains mixed data types, so the output node
-        # converts it all to strings when writing to disk
         data_from_packets = pd.concat([p.packet_status_to_pandas() for p in self.packets])
-        data_from_packets = data_from_packets.astype(str)
+        data_from_packets = data_from_packets
 
         data_from_file = pd.read_hdf(self.temp_path, 'message')
         pd.testing.assert_frame_equal(data_from_packets, data_from_file)

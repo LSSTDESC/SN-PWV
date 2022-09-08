@@ -78,9 +78,9 @@ class PipelinePacket:
             Parameters used in the simulation of light-curves
         """
 
-        out_data = pd.Series(self.sim_params)
-        out_data['snid'] = self.snid
-        return pd.DataFrame(out_data).T
+        out_data = pd.DataFrame([self.sim_params])
+        out_data['snid'] = [self.snid]
+        return out_data
 
     def fitted_params_to_pandas(self) -> pd.DataFrame:
         """Return fitted parameters as a pandas Dataframe
@@ -99,7 +99,6 @@ class PipelinePacket:
         col_names.append('ndof')
         col_names.append('apparent_bessellb')
         col_names.append('absolute_bessellb')
-        # col_names.append('message')
 
         data_list = [self.snid]
         data_list.extend(self.fit_result.parameters)
@@ -108,7 +107,7 @@ class PipelinePacket:
         data_list.append(self.fit_result.ndof)
         data_list.append(self.fit_result.apparent_bessellb)
         data_list.append(self.fit_result.absolute_bessellb)
-        return pd.DataFrame(pd.Series(data_list, index=col_names)).T
+        return pd.DataFrame([data_list], columns=col_names)
 
     def packet_status_to_pandas(self) -> pd.DataFrame:
         """Return the packet status message as a pandas ``DataFrame``
