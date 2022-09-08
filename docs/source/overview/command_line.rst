@@ -7,5 +7,5 @@ and their default values is provided below.
 
 .. argparse::
    :filename: ../snat_sim_cli.py
-   :func: Parser
-   :prog: fitting_cli.py
+   :func: cli.Parser
+   :prog: snat-sim
