@@ -38,6 +38,13 @@ class SimParamsToPandas(TestCase):
         for key, val in self.packet.sim_params.items():
             self.assertEqual(val, returned_params[key])
 
+    # Regression test
+    def test_snid_is_integer(self) -> None:
+        """Test the SNID value is an integer"""
+
+        test_data = self.packet.sim_params_to_pandas()
+        self.assertTrue(issubclass(test_data['snid'].dtype.type, np.integer))
+
 
 class FittedParamsToPandas(TestCase):
     """Test the casting of fitted parameters to a pandas object"""
@@ -92,6 +99,12 @@ class FittedParamsToPandas(TestCase):
         with self.assertRaises(ValueError):
             packet.fitted_params_to_pandas()
 
+    def test_snid_is_integer(self) -> None:
+        """Test the SNID value is an integer"""
+
+        test_data = self.packet.fitted_params_to_pandas()
+        self.assertTrue(issubclass(test_data['snid'].dtype.type, np.integer))
+
 
 class PacketStatusToPandas(TestCase):
     """Tests for the compilation of packet status indicators into a DataFrame"""
@@ -115,3 +128,9 @@ class PacketStatusToPandas(TestCase):
         self.assertEqual(packet.snid, df_data['snid'])
         self.assertEqual(packet.message, df_data['message'])
         self.assertEqual(False, df_data['success'])
+
+    def test_snid_is_integer(self) -> None:
+        """Test the SNID value is an integer"""
+
+        test_data = create_mock_pipeline_packet().packet_status_to_pandas()
+        self.assertTrue(issubclass(test_data['snid'].dtype.type, np.integer))
