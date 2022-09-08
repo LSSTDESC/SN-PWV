@@ -29,15 +29,18 @@ def parse_requirements(path: Path) -> list:
         return req_file.read().splitlines()
 
 
-def get_extras(**paths: Union[list, Path]) -> dict:
+def get_extras(**extra_definitions: Union[list, Path]) -> dict:
     """Return a dictionary defining package installation extras
+
+    Args:
+        Either a list of extra Python dependencies or a path to a requirements file
 
     Returns:
         A dictionary definition of extra dependencies
     """
 
     extras = dict()
-    for extra_name, extra_definition in paths.items():
+    for extra_name, extra_definition in extra_definitions.items():
         if isinstance(extra_definition, Path):
             extras[extra_name] = parse_requirements(extra_definition)
 

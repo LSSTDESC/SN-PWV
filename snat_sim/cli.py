@@ -13,6 +13,7 @@ from pwv_kpno.gps_pwv import GPSReceiver
 
 from . import models
 from .pipeline import FittingPipeline
+from . import __version__
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 SUOMINET_VALUES = ('PWV', 'SrfcPress', 'SrfcTemp', 'SrfcRH', 'ZenithDelay')
@@ -128,6 +129,12 @@ class Parser(argparse.ArgumentParser):
         """Instantiate the parser and define the commandline interface"""
 
         super().__init__()
+        self.add_argument('-v', '--version', action='version', version=__version__)
+
+        #######################################################################
+        # General Pipeline configuration
+        #######################################################################
+
         self.add_argument(
             '-c', '--cadence',
             type=str,
