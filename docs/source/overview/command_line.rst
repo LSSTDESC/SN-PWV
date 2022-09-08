@@ -6,6 +6,6 @@ for running the analysis pipeline. An outline of the command line arguments
 and their default values is provided below.
 
 .. argparse::
-   :filename: ../snat_sim_cli.py
-   :func: cli.Parser
+   :module: snat_sim.cli
+   :func: Parser
    :prog: snat-sim
