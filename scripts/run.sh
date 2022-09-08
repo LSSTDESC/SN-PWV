@@ -19,6 +19,6 @@ MIN_COLOR=-0.3
 MAX_COLOR=0.4
 
 # Full analysis runs
-python ../../snat_sim_cli.py          --bound_t0 $MIN_T0 $MAX_T0 --bound_x1 $MIN_STRETCH $MAX_STRETCH --bound_c $MIN_COLOR $MAX_COLOR --write_lc_sims -s $NUM_SIM -f $NUM_FIT -w $NUM_WRITE -c alt_sched_rolling --sim_variability epoch --fit_variability 4        -o ../../data/analysis_runs/pwv_sim_epoch_fit_4/out.h5
-python ../../snat_sim_cli.py          --bound_t0 $MIN_T0 $MAX_T0 --bound_x1 $MIN_STRETCH $MAX_STRETCH --bound_c $MIN_COLOR $MAX_COLOR --write_lc_sims -s $NUM_SIM -f $NUM_FIT -w $NUM_WRITE -c alt_sched_rolling --sim_variability epoch --fit_variability seasonal -o ../../data/analysis_runs/pwv_sim_epoch_fit_seasonal/out.h5
-python ../../snat_sim_cli.py -i 10000 --bound_t0 $MIN_T0 $MAX_T0 --bound_x1 $MIN_STRETCH $MAX_STRETCH --bound_c $MIN_COLOR $MAX_COLOR --write_lc_sims -s $NUM_SIM -f $NUM_FIT -w $NUM_WRITE -c alt_sched_rolling --sim_variability epoch --fit_variability epoch    -o ../../data/analysis_runs/pwv_sim_epoch_fit_epoch/out.h5
+snat-sim          --bound_t0 $MIN_T0 $MAX_T0 --bound_x1 $MIN_STRETCH $MAX_STRETCH --bound_c $MIN_COLOR $MAX_COLOR --write_lc_sims -s $NUM_SIM -f $NUM_FIT -w $NUM_WRITE -c alt_sched_rolling --sim_variability epoch --fit_variability 4        -o ../../data/analysis_runs/pwv_sim_epoch_fit_4/out.h5
+snat-sim          --bound_t0 $MIN_T0 $MAX_T0 --bound_x1 $MIN_STRETCH $MAX_STRETCH --bound_c $MIN_COLOR $MAX_COLOR --write_lc_sims -s $NUM_SIM -f $NUM_FIT -w $NUM_WRITE -c alt_sched_rolling --sim_variability epoch --fit_variability seasonal -o ../../data/analysis_runs/pwv_sim_epoch_fit_seasonal/out.h5
+snat-sim -i 10000 --bound_t0 $MIN_T0 $MAX_T0 --bound_x1 $MIN_STRETCH $MAX_STRETCH --bound_c $MIN_COLOR $MAX_COLOR --write_lc_sims -s $NUM_SIM -f $NUM_FIT -w $NUM_WRITE -c alt_sched_rolling --sim_variability epoch --fit_variability epoch    -o ../../data/analysis_runs/pwv_sim_epoch_fit_epoch/out.h5
