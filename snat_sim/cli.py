@@ -6,15 +6,13 @@ Module Docs
 """
 
 import argparse
-import sys
 from pathlib import Path
 from typing import Dict, Tuple, Union
 
 from pwv_kpno.gps_pwv import GPSReceiver
 
-sys.path.insert(0, str(Path(sys.argv[0]).resolve().parent.parent))
-from snat_sim import models
-from snat_sim.pipeline import FittingPipeline
+from . import models
+from .pipeline import FittingPipeline
 
 SALT2_PARAMS = ('z', 't0', 'x0', 'x1', 'c')
 SUOMINET_VALUES = ('PWV', 'SrfcPress', 'SrfcTemp', 'SrfcRH', 'ZenithDelay')
