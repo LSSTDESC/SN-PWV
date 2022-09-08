@@ -1,9 +1,5 @@
-# Data files
-/data/analysis_runs/**/*.tar.gz
-/data/analysis_runs/**/*.h5
-/data/plasticc/**/*.tar.gz
-/data/plasticc/**/*.FITS
-!/data/plasticc/alt_sched/LSST_WFD_alt_sched_MODEL11/*.FITS
+# Full pipeline results
+/data/analysis_runs/full/*
 
 # OS Files
 *.DS_Store
