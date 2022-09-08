@@ -128,50 +128,12 @@
 <p>The <code class="docutils literal notranslate"><span class="pre">snat_sim</span></code> package is not available via a package manager, but can
 be installed directly from the project’s source code. Please follow the
 steps outlined below to install and configure the package.</p>
-<section id="running-at-nersc">
-<h2>Running at NERSC<a class="headerlink" href="#running-at-nersc" title="Permalink to this heading">¶</a></h2>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Prebuilt runtime environments are no longer maintained at
-NERSC for this project. This section is provided for
-historical reference only. Please see later documentation sections for
-other options on running the analysis pipeline.</p>
-</div>
-<p>If you are running this analysis on the Cori filesystem at NERSC,
-most of the setup procedure has already been completed for you.
-The only manual setup task is to define an appropriate
-Python environment for running the source code.</p>
-<p>If you have not already done so, configure your Python interpreter as follows
-(this only has to be done once).</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>module load python
-conda init
-</pre></div>
-</div>
-<p>Next, download the environment file included with the project source code, and use it
-to define a new conda environment</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>wget https://raw.githubusercontent.com/LSSTDESC/SN-PWV/master/cori_env.yml
-conda env create --file cori_env.yml
-</pre></div>
-</div>
-<p>You can now activate and deactivate the Python environment for this project at will.
-When working inside the environment, the necessary environmental variables will already be set.
-For example:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda activate SN-PWV
-<span class="nb">echo</span> <span class="nv">$CADENCE_SIMS</span>
-</pre></div>
-</div>
-</section>
-<section id="using-a-custom-environment">
-<h2>Using a Custom Environment<a class="headerlink" href="#using-a-custom-environment" title="Permalink to this heading">¶</a></h2>
-<p>For individuals developing on machines not linked to the CORI filesystem,
-the project source code is publicly available and can be downloaded/configured
-as outlined below.</p>
-<section id="downloading-the-source">
-<h3>Downloading the Source<a class="headerlink" href="#downloading-the-source" title="Permalink to this heading">¶</a></h3>
+<section id="installing-the-pipeline">
+<h2>Installing the Pipeline<a class="headerlink" href="#installing-the-pipeline" title="Permalink to this heading">¶</a></h2>
 <p>Source code for this project is available on
 <a class="reference external" href="https://github.com/LSSTDESC/SN-PWV">GitHub</a> and can be downloaded directly
 from the GitHub repository page or by using the <code class="docutils literal notranslate"><span class="pre">git</span></code> command line utility:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone  --depth<span class="o">=</span><span class="m">1</span> --branch<span class="o">=</span>master https://github.com/LSSTDESC/SN-PWV.git SN-PWV
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git clone --depth<span class="o">=</span><span class="m">1</span> --branch<span class="o">=</span>master https://github.com/LSSTDESC/SN-PWV.git SN-PWV
 rm -rf ./SN-PWV/.git
 </pre></div>
 </div>
@@ -186,14 +148,17 @@ the test suite dependencies:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install .<span class="o">[</span>tests<span class="o">]</span>
 </pre></div>
 </div>
-<p>Extra dependencies are also required for building package documentation.
-These requirements can be found in the <code class="docutils literal notranslate"><span class="pre">docs</span></code> directory, and installed as follows</p>
+<p>Extra dependencies are also required for building package documentation:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install .<span class="o">[</span>docs<span class="o">]</span>
+</pre></div>
+</div>
+<p>You can check the pipeline has been installed by running:</p>
+<div class="highlight-python3 notranslate"><div class="highlight"><pre><span></span><span class="n">snat</span><span class="o">-</span><span class="n">sim</span> <span class="o">--</span><span class="n">version</span>
 </pre></div>
 </div>
 </section>
 <section id="downloading-light-curve-sims">
-<h3>Downloading Light-Curve Sims<a class="headerlink" href="#downloading-light-curve-sims" title="Permalink to this heading">¶</a></h3>
+<h2>Downloading Light-Curve Sims<a class="headerlink" href="#downloading-light-curve-sims" title="Permalink to this heading">¶</a></h2>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Not all parts of this project require existing light-curve
@@ -221,15 +186,15 @@ gunzip <span class="o">[</span>FILE TO DECOMPRESS<span class="o">]</span>/*/*.gz
 </div>
 </section>
 <section id="configuring-your-environment">
-<h3>Configuring Your Environment<a class="headerlink" href="#configuring-your-environment" title="Permalink to this heading">¶</a></h3>
+<h2>Configuring Your Environment<a class="headerlink" href="#configuring-your-environment" title="Permalink to this heading">¶</a></h2>
 <p>The path of the downloaded data needs to be specified in the project
 environment so that the software knows where to find the simulated
 light-curves.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">CADENCE_SIMS</span><span class="o">=</span><span class="s2">&quot;[DESIRED DATA DIRECTORY]&quot;</span>
 </pre></div>
 </div>
-<p>If you are using a <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment, this can be accomplished by
-specifying the desired data directory as follows:</p>
+<p>If you are using a <code class="docutils literal notranslate"><span class="pre">conda</span></code> environment, this can be accomplished
+automatically by specifying the desired data directory as follows:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Instantiate the new environment</span>
 conda activate <span class="o">[</span>ENV-NAME<span class="o">]</span>
 
@@ -250,7 +215,6 @@ touch ./etc/conda/deactivate.d/env_vars.sh
 conda deactivate
 </pre></div>
 </div>
-</section>
 </section>
 </section>
 
