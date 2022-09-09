@@ -32,7 +32,7 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="snat_sim.models" href="../api/models.html" />
+    <link rel="next" title="Fitted Parameter Accuracy" href="parameter_accuracy.html" />
     <link rel="prev" title="PWV Modeling" href="pwv_modeling.html" />
   
    
@@ -48,7 +48,7 @@
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../api/models.html" title="snat_sim.models"
+          <a href="parameter_accuracy.html" title="Fitted Parameter Accuracy"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="pwv_modeling.html" title="PWV Modeling"
@@ -106,6 +106,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#Adding-Atmospheric-Effects">Adding Atmospheric Effects</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="parameter_accuracy.html">Fitted Parameter Accuracy</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -394,11 +395,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span>
-
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">sncosmo</span>
 <span class="kn">from</span> <span class="nn">astropy</span> <span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span> <span class="nn">astropy.coordinates</span> <span class="kn">import</span> <span class="n">SkyCoord</span>
@@ -435,7 +432,7 @@ WARNING: AstropyDeprecationWarning: The update_default_config function is deprec
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-PosixPath(&#39;/mnt/md0/PLAsTiCC&#39;)
+PosixPath(&#39;/home/djperrefort/miniconda3/envs/SN-PWV/lib/python3.9/site-packages/data/plasticc&#39;)
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -463,13 +460,7 @@ PosixPath(&#39;/mnt/md0/PLAsTiCC&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-[&#39;kraken_2044&#39;,
- &#39;nexus_2097&#39;,
- &#39;rolling_10yrs_opsim&#39;,
- &#39;alt_sched_rolling&#39;,
- &#39;rolling_mix_10yrs_opsim&#39;,
- &#39;alt_sched&#39;,
- &#39;kraken_2026&#39;]
+[&#39;alt_sched_rolling&#39;, &#39;alt_sched&#39;]
 </pre></div></div>
 </div>
 <p>We load an example light-curve from one of these data sets and demonstrate the data below. Each cadence includes simulations run with multiple supernova models. In this notebook we only need simulations for normal SNe (Model 11).</p>
@@ -488,7 +479,7 @@ PosixPath(&#39;/mnt/md0/PLAsTiCC&#39;)
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-Available Light-curves:  4737479
+Available Light-curves:  115
 </pre></div></div>
 </div>
 <div class="nbinput nblast docutils container">
@@ -513,23 +504,14 @@ Available Light-curves:  4737479
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
-<div><i>Table length=205</i>
-<table id="table140332724091344" class="table-striped table-bordered table-condensed">
+<div><i>Table length=191</i>
+<table id="table140128251571456" class="table-striped table-bordered table-condensed">
 <thead><tr><th>time</th><th>band</th><th>flux</th><th>fluxerr</th><th>zp</th><th>zpsys</th><th>phot_flag</th></tr></thead>
 <thead><tr><th>float64</th><th>str15</th><th>float32</th><th>float32</th><th>float32</th><th>str2</th><th>int32</th></tr></thead>
-<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>4.7668333</td><td>4.6751437</td><td>31.49</td><td>AB</td><td>0</td></tr>
-<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>-2.588817</td><td>12.943774</td><td>30.94</td><td>AB</td><td>0</td></tr>
-<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>35.501144</td><td>46.115395</td><td>30.02</td><td>AB</td><td>0</td></tr>
-<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>-2.244006</td><td>7.831321</td><td>28.48</td><td>AB</td><td>0</td></tr>
-<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>-52.145115</td><td>33.700497</td><td>30.03</td><td>AB</td><td>0</td></tr>
-<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>5.403219</td><td>7.8971477</td><td>31.19</td><td>AB</td><td>0</td></tr>
+<tr><td>61954.3306</td><td>lsst_hardware_z</td><td>15.283731</td><td>20.61587</td><td>30.89</td><td>AB</td><td>0</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>-46.466133</td><td>29.61527</td><td>30.02</td><td>AB</td><td>0</td></tr>
-<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>3.6633909</td><td>3.5757632</td><td>31.5</td><td>AB</td><td>0</td></tr>
-<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>-6.228678</td><td>31.823051</td><td>30.02</td><td>AB</td><td>0</td></tr>
-<tr><td>61883.992</td><td>lsst_hardware_r</td><td>3.5952897</td><td>4.650464</td><td>31.49</td><td>AB</td><td>0</td></tr>
-<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>-5.892972</td><td>20.891136</td><td>30.95</td><td>AB</td><td>0</td></tr>
-<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>-6.8839006</td><td>4.450736</td><td>31.41</td><td>AB</td><td>0</td></tr>
+<tr><td>62468.0277</td><td>lsst_hardware_y</td><td>6.5977235</td><td>42.13687</td><td>30.05</td><td>AB</td><td>0</td></tr>
+<tr><td>62468.0439</td><td>lsst_hardware_g</td><td>1.3531196</td><td>3.310382</td><td>31.4</td><td>AB</td><td>0</td></tr>
 </table></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -577,23 +559,14 @@ Available Light-curves:  4737479
 </pre></div>
 </div>
 <div class="output_area rendered_html docutils container">
-<div><i>Table length=205</i>
-<table id="table140332091043952" class="table-striped table-bordered table-condensed">
+<div><i>Table length=191</i>
+<table id="table140128237451104" class="table-striped table-bordered table-condensed">
 <thead><tr><th>time</th><th>band</th><th>flux</th><th>fluxerr</th><th>zp</th><th>zpsys</th><th>phot_flag</th></tr></thead>
 <thead><tr><th>float64</th><th>str15</th><th>float64</th><th>float64</th><th>float64</th><th>str2</th><th>float64</th></tr></thead>
-<tr><td>61387.3365</td><td>lsst_hardware_r</td><td>-4.155268799652832</td><td>24.209999084472656</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61389.3355</td><td>lsst_hardware_z</td><td>32.427200124589206</td><td>43.790000915527344</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61389.3544</td><td>lsst_hardware_y</td><td>-126.64691064374307</td><td>70.9000015258789</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61390.3328</td><td>lsst_hardware_u</td><td>3.988293669612095</td><td>2.940000057220459</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61390.3514</td><td>lsst_hardware_y</td><td>-10.72465910861562</td><td>64.44000244140625</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61392.2299</td><td>lsst_hardware_i</td><td>5.629920019090801</td><td>34.279998779296875</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>61954.3306</td><td>lsst_hardware_z</td><td>54.811352066851164</td><td>47.31999969482422</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
 <tr><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td><td>...</td></tr>
-<tr><td>61881.9734</td><td>lsst_hardware_y</td><td>-55.224385368754184</td><td>55.72999954223633</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61881.9871</td><td>lsst_hardware_r</td><td>-4.7186968572197046</td><td>24.3700008392334</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61883.9747</td><td>lsst_hardware_y</td><td>9.199034289947337</td><td>51.529998779296875</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61883.992</td><td>lsst_hardware_r</td><td>-24.26469254772443</td><td>23.979999542236328</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61885.9702</td><td>lsst_hardware_z</td><td>6.83610863811712</td><td>50.459999084472656</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
-<tr><td>61885.9872</td><td>lsst_hardware_g</td><td>-13.194106226014217</td><td>14.979999542236328</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>62468.0277</td><td>lsst_hardware_y</td><td>-69.66747927697624</td><td>56.18000030517578</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
+<tr><td>62468.0439</td><td>lsst_hardware_g</td><td>2.6161596433078604</td><td>13.300000190734863</td><td>30.0</td><td>AB</td><td>0.0</td></tr>
 </table></div></div>
 </div>
 <p>When comparing our own “duplicated” light-curves with the original PLAsTICC simulations, we care about three things: 1. Do the light-curves have the same parameters (except for x0, which depends on the spectral template and cosmology)? 1. Do the light-curves have the same time sampling? 1. Do the light-curves have a similar SNR?</p>
@@ -881,7 +854,7 @@ Available Light-curves:  4737479
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="../api/models.html" title="snat_sim.models"
+          <a href="parameter_accuracy.html" title="Fitted Parameter Accuracy"
              >next</a> |</li>
         <li class="right" >
           <a href="pwv_modeling.html" title="PWV Modeling"

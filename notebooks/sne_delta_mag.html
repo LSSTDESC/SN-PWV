@@ -109,6 +109,7 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pwv_modeling.html">PWV Modeling</a></li>
 <li class="toctree-l1"><a class="reference internal" href="simulating_lc_for_cadence.html">Simulating Light-Curves with a Cadence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="parameter_accuracy.html">Fitted Parameter Accuracy</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
 <ul>
@@ -396,10 +397,7 @@ div.rendered_html tbody tr:hover {
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[1]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">sys</span>
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;../&#39;</span><span class="p">)</span>
-
-<span class="kn">import</span> <span class="nn">itertools</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">itertools</span>
 <span class="kn">from</span> <span class="nn">copy</span> <span class="kn">import</span> <span class="n">copy</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
@@ -482,7 +480,7 @@ WARNING: AstropyDeprecationWarning: The update_default_config function is deprec
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|████████████████████████████████████████| 1155/1155 [00:00&lt;00:00, 1169.28it/s]
+Tabulating Mag: 100%|███████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 1155/1155 [00:02&lt;00:00, 441.21it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -544,7 +542,7 @@ Tabulating Mag: 100%|███████████████████�
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Tabulating Mag: 100%|██████████████████████████████████████████| 315/315 [00:00&lt;00:00, 1224.04it/s]
+Tabulating Mag: 100%|█████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 315/315 [00:00&lt;00:00, 572.22it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -593,20 +591,11 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area docutils container">
 <div class="highlight"><pre>
-&lt;snat_sim.models.light_curve.ObservedCadence object at 0x7fddc7440670&gt;
+&lt;snat_sim.models.light_curve.ObservedCadence object at 0x7f49987b3460&gt;
   time        band        gain  skynoise    zp   zpsys
 ------- --------------- ------- -------- ------- ------
   -20.0 lsst_hardware_g     1.0      0.0    30.0     AB
-  -20.0 lsst_hardware_y     1.0      0.0    30.0     AB
-  -20.0 lsst_hardware_i     1.0      0.0    30.0     AB
-  -20.0 lsst_hardware_z     1.0      0.0    30.0     AB
-  -20.0 lsst_hardware_r     1.0      0.0    30.0     AB
-  -19.0 lsst_hardware_z     1.0      0.0    30.0     AB
     ...             ...     ...      ...     ...    ...
-   49.0 lsst_hardware_g     1.0      0.0    30.0     AB
-   50.0 lsst_hardware_i     1.0      0.0    30.0     AB
-   50.0 lsst_hardware_r     1.0      0.0    30.0     AB
-   50.0 lsst_hardware_z     1.0      0.0    30.0     AB
    50.0 lsst_hardware_g     1.0      0.0    30.0     AB
    50.0 lsst_hardware_y     1.0      0.0    30.0     AB
 </pre></div></div>
@@ -669,7 +658,7 @@ curves should be different in each band.</p>
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████████████████████████████████████████| 231/231 [01:24&lt;00:00,  2.74it/s]
+Light-Curves: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 231/231 [03:18&lt;00:00,  1.16it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
@@ -696,7 +685,7 @@ Light-Curves: 100%|████████████████████�
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|████████████████████████████████████████████████| 63/63 [00:18&lt;00:00,  3.44it/s]
+Light-Curves: 100%|██████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 63/63 [00:54&lt;00:00,  1.16it/s]
 </pre></div></div>
 </div>
 <p>Here we visualize the fitted, uncorrected (i.e. without any stretch / color correction) magnitudes.</p>
@@ -872,7 +861,7 @@ Light-Curves: 100%|████████████████████�
 </div>
 <div class="output_area stderr docutils container">
 <div class="highlight"><pre>
-Light-Curves: 100%|██████████████████████████████████████████████| 231/231 [01:02&lt;00:00,  3.70it/s]
+Light-Curves: 100%|████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████████| 231/231 [03:10&lt;00:00,  1.21it/s]
 </pre></div></div>
 </div>
 <div class="nbinput docutils container">
