@@ -9,7 +9,8 @@ notebook_file_names = [
     'pwv_eff_on_black_body.ipynb',
     'pwv_modeling.ipynb',
     'simulating_lc_for_cadence.ipynb',
-    'sne_delta_mag.ipynb'
+    'sne_delta_mag.ipynb',
+    'pipeline_outputs.ipynb'
 ]
 
 if __name__ == '__main__':
