@@ -18,7 +18,7 @@ MAX_STRETCH=2.5
 MIN_COLOR=-0.3
 MAX_COLOR=0.4
 
-OUT_DIR=$OUT_DIR/
+OUT_DIR=../../data/analysis_runs/full/
 mkdir -p $OUT_DIR
 
 echo "Results generated using snat_sim version $(snat-sim --version)" > $OUT_DIR/version.txt
