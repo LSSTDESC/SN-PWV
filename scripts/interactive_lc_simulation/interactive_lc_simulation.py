@@ -41,7 +41,7 @@ class SimulationInputWidgets:
         self.pwv_slider = models.Slider(start=-0, end=100, value=7, step=.1, title='PWV')
         self.sampling_input = models.TextInput(value='4', title='Sampling (Days):')
         self.snr_input = models.TextInput(value='10.0', title='SNR:')
-        self.sim_options_checkbox = models.CheckboxGroup(labels=['Calibrate to Reference Catalog'], active=[1])
+        self.sim_options_checkbox = models.CheckboxGroup(labels=['Calibrate to Reference Catalog'], active=[0])
         self.plot_model_button = models.Button(label='Plot Light-Curve', button_type='success')
 
     def as_column(self, width=320, height=1000, sizing_mode="fixed", **kwargs) -> column:
@@ -107,10 +107,10 @@ class FittedParamWidgets:
         """Return a list of user specified parameter boundaries to be used when fitting"""
 
         return {
-            't0': [self.min_t0_input, self.max_t0_input],
-            'x0': [self.min_x0_input, self.max_x0_input],
-            'x1': [self.min_x1_input, self.max_x1_input],
-            'c': [self.min_c_input, self.max_c_input]
+            't0': [float(self.min_t0_input.value), float(self.max_t0_input.value)],
+            'x0': [float(self.min_x0_input.value), float(self.max_x0_input.value)],
+            'x1': [float(self.min_x1_input.value), float(self.max_x1_input.value)],
+            'c': [float(self.min_c_input.value), float(self.max_c_input.value)]
         }
 
     def as_column(self, width=320, height=1000, sizing_mode="fixed", **kwargs) -> column:
@@ -198,6 +198,7 @@ class ResultsPanel:
         Args:
             model: The supernova model to plot
             light_curve: The simulated light-curve
+            bands: The band pass names to plot light-curves for
         """
 
         self.clear_plotted_sim()
