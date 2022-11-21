@@ -9,7 +9,7 @@ import pandas as pd
 from pytz import utc
 
 from snat_sim.utils import time_series
-from tests.mock import create_mock_pwv_data
+from snat_sim.mock import create_mock_pwv_data
 
 
 class DatetimeToSecInYear(TestCase):

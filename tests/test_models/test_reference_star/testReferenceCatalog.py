@@ -5,7 +5,7 @@ from unittest import TestCase
 import numpy as np
 
 from snat_sim.models import ReferenceCatalog, ReferenceStar
-from tests.mock import create_mock_light_curve
+from snat_sim.mock import create_mock_light_curve
 
 
 class InitErrors(TestCase):

@@ -4,12 +4,11 @@ from time import sleep
 from typing import List
 from unittest import TestCase
 
-import numpy as np
 from egon.mock import MockSource, MockTarget
 
 from snat_sim.models import SNModel
 from snat_sim.pipeline.nodes import FitLightCurves
-from tests.mock import create_mock_pipeline_packet
+from snat_sim.mock import create_mock_pipeline_packet
 
 
 class GenericSetup:

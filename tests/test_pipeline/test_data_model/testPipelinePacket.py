@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 from snat_sim.pipeline.data_model import MASK_VALUE
-from tests.mock import create_mock_pipeline_packet
+from snat_sim.mock import create_mock_pipeline_packet
 
 
 class SimParamsToPandas(TestCase):
