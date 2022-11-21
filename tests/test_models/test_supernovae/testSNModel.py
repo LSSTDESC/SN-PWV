@@ -10,7 +10,7 @@ from sncosmo.tests import test_models as sncosmo_test_models
 
 from snat_sim.models.pwv import VariablePWVTrans
 from snat_sim.models.supernova import SNModel
-from tests.mock import create_mock_pwv_model
+from snat_sim.mock import create_mock_pwv_model
 
 no_emcee_package = False
 

@@ -4,7 +4,7 @@ from unittest import TestCase
 
 from snat_sim import constants as const
 from snat_sim.models import pwv
-from tests.mock import create_mock_pwv_model
+from snat_sim.mock import create_mock_pwv_model
 from .base import PropagationEffectTests
 
 

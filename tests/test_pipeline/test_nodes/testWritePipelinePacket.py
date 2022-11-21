@@ -9,7 +9,7 @@ import pandas as pd
 from egon.mock import MockSource
 
 from snat_sim.pipeline.nodes import WritePipelinePacket
-from tests.mock import create_mock_pipeline_packet
+from snat_sim.mock import create_mock_pipeline_packet
 
 
 class InputDataMatchesDisk(TestCase):

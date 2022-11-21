@@ -7,7 +7,7 @@ from egon.mock import MockSource, MockTarget
 
 from snat_sim.models import SNModel
 from snat_sim.pipeline.nodes import SimulateLightCurves
-from tests.mock import create_mock_pipeline_packet, create_mock_variable_catalog
+from snat_sim.mock import create_mock_pipeline_packet, create_mock_variable_catalog
 
 
 class ResultRouting(TestCase):

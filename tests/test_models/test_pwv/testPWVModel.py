@@ -6,7 +6,7 @@ import numpy as np
 from astropy.time import Time
 
 from snat_sim.models import PWVModel
-from tests.mock import create_mock_pwv_data
+from snat_sim.mock import create_mock_pwv_data
 
 
 class Interpolation(TestCase):
