@@ -87,14 +87,14 @@ class FittedParamWidgets:
         self.x1_slider = models.Slider(start=-1, end=1, value=0, step=1E-4, title='x1')
         self.c_slider = models.Slider(start=-1, end=1, value=0, step=1E-4, title='c')
         self.pwv_slider = models.Slider(start=-0, end=100, value=4, step=.1, title='PWV')
-        self.min_t0_input = models.TextInput(value=str(self.t0_slider.start), default_size=110)
-        self.max_t0_input = models.TextInput(value=str(self.t0_slider.end), default_size=110)
-        self.min_x0_input = models.TextInput(value=str(self.x0_slider.start), default_size=110)
-        self.max_x0_input = models.TextInput(value=str(self.x0_slider.end), default_size=110)
-        self.min_x1_input = models.TextInput(value=str(self.x1_slider.start), default_size=110)
-        self.max_x1_input = models.TextInput(value=str(self.x1_slider.end), default_size=110)
-        self.min_c_input = models.TextInput(value=str(self.c_slider.start), default_size=110)
-        self.max_c_input = models.TextInput(value=str(self.c_slider.end), default_size=110)
+        self.min_t0_input = models.TextInput(value=str(self.t0_slider.start))
+        self.max_t0_input = models.TextInput(value=str(self.t0_slider.end))
+        self.min_x0_input = models.TextInput(value=str(self.x0_slider.start))
+        self.max_x0_input = models.TextInput(value=str(self.x0_slider.end))
+        self.min_x1_input = models.TextInput(value=str(self.x1_slider.start))
+        self.max_x1_input = models.TextInput(value=str(self.x1_slider.end))
+        self.min_c_input = models.TextInput(value=str(self.c_slider.start))
+        self.max_c_input = models.TextInput(value=str(self.c_slider.end))
         self.plot_model_button = models.Button(label='Plot Current Model', button_type='warning')
         self.run_fit_button = models.Button(label='Fit and Plot Model', button_type='success')
 
@@ -161,15 +161,15 @@ class ResultsPanel:
         self._plotted_spec_fits = []
 
         self.light_curve_figure = figure(
-            plot_height=400,
-            plot_width=700,
-            sizing_mode='scale_both',
+            height=400,
+            width=700,
+            sizing_mode='stretch_width',
             toolbar_location='above')
 
         self.spectrum_figure = figure(
-            plot_height=200,
-            plot_width=700,
-            sizing_mode='scale_both',
+            height=200,
+            width=700,
+            sizing_mode='stretch_width',
             toolbar_location='above')
 
         self.fit_results_div = models.Div()
@@ -208,14 +208,15 @@ class ResultsPanel:
         sim_as_astropy = light_curve.to_astropy()
         for band, color in zip(bands, PALLETE):
             band_data = sim_as_astropy[sim_as_astropy['band'] == band]
-            x = band_data['time']
-            y = band_data['flux']
-            yerr = band_data['fluxerr']
+            x = list(band_data['time'])
+            y = list(band_data['flux'])
+            yhigh = list(band_data['flux'] + band_data['fluxerr'])
+            ylow = list(band_data['flux'] - band_data['fluxerr'])
 
             circ = self.light_curve_figure.circle(x=x, y=y, color=color, legend_label=band)
             err_bar = self.light_curve_figure.multi_line(
                 np.transpose([x, x]).tolist(),
-                np.transpose([y - yerr, y + yerr]).tolist(),
+                np.transpose([ylow, yhigh]).tolist(),
                 color=color)
 
             self._plotted_lc_sims.append(circ)
@@ -323,7 +324,7 @@ class Application:
         doc_layout = layout([
             [header_div],
             [left_column, center_column, right_column]
-        ], sizing_mode="scale_both")
+        ], sizing_mode="scale_width")
 
         curdoc().add_root(doc_layout)
 
