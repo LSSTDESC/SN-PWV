@@ -55,6 +55,10 @@ class SimulationInputWidgets:
             '<h2>Simulated Parameters</h2>'
             '<p>Use the controls below to vary the input parameters to the simulated light-curve. '))
 
+        # Update layout instructions for a column layout
+        self.sampling_input.sizing_mode = 'stretch_width'
+        self.snr_input.sizing_mode = 'stretch_width'
+
         return column(
             column_header,
             self.z_slider,
@@ -87,14 +91,14 @@ class FittedParamWidgets:
         self.x1_slider = models.Slider(start=-1, end=1, value=0, step=1E-4, title='x1')
         self.c_slider = models.Slider(start=-1, end=1, value=0, step=1E-4, title='c')
         self.pwv_slider = models.Slider(start=-0, end=100, value=4, step=.1, title='PWV')
-        self.min_t0_input = models.TextInput(value=str(self.t0_slider.start))
-        self.max_t0_input = models.TextInput(value=str(self.t0_slider.end))
-        self.min_x0_input = models.TextInput(value=str(self.x0_slider.start))
-        self.max_x0_input = models.TextInput(value=str(self.x0_slider.end))
-        self.min_x1_input = models.TextInput(value=str(self.x1_slider.start))
-        self.max_x1_input = models.TextInput(value=str(self.x1_slider.end))
-        self.min_c_input = models.TextInput(value=str(self.c_slider.start))
-        self.max_c_input = models.TextInput(value=str(self.c_slider.end))
+        self.min_t0_input = models.TextInput(value=str(self.t0_slider.start), width=100)
+        self.max_t0_input = models.TextInput(value=str(self.t0_slider.end), width=100)
+        self.min_x0_input = models.TextInput(value=str(self.x0_slider.start), width=100)
+        self.max_x0_input = models.TextInput(value=str(self.x0_slider.end), width=100)
+        self.min_x1_input = models.TextInput(value=str(self.x1_slider.start), width=100)
+        self.max_x1_input = models.TextInput(value=str(self.x1_slider.end), width=100)
+        self.min_c_input = models.TextInput(value=str(self.c_slider.start), width=100)
+        self.max_c_input = models.TextInput(value=str(self.c_slider.end), width=100)
         self.plot_model_button = models.Button(label='Plot Current Model', button_type='warning')
         self.run_fit_button = models.Button(label='Fit and Plot Model', button_type='success')
 
