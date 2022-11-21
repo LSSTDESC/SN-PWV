@@ -152,9 +152,13 @@ class ResultsPanel:
     def __init__(self) -> None:
         """Instantiate bokeh widgets associated with the parent application element"""
 
-        # Track plotted data
-        self._plotted_sims = []
-        self._plotted_fits = []
+        # Track plotted simulation data
+        self._plotted_lc_sims = []
+        self._plotted_spec_sims = []
+
+        # Track plotted fit data
+        self._plotted_lc_fits = []
+        self._plotted_spec_fits = []
 
         self.light_curve_figure = figure(
             plot_height=400,
@@ -173,14 +177,20 @@ class ResultsPanel:
     def clear_plotted_sim(self) -> None:
         """Remove simulated data from all plots"""
 
-        while self._plotted_sims:
-            self.light_curve_figure.renderers.remove(self._plotted_sims.pop())
+        while self._plotted_lc_sims:
+            self.light_curve_figure.renderers.remove(self._plotted_lc_sims.pop())
+
+        while self._plotted_spec_sims:
+            self.spectrum_figure.renderers.remove(self._plotted_spec_sims.pop())
 
     def clear_plotted_fit(self) -> None:
         """Remove model fits from all plots"""
 
-        while self._plotted_fits:
-            self.light_curve_figure.renderers.remove(self._plotted_fits.pop())
+        while self._plotted_lc_fits:
+            self.light_curve_figure.renderers.remove(self._plotted_lc_fits.pop())
+
+        while self._plotted_spec_fits:
+            self.spectrum_figure.renderers.remove(self._plotted_spec_fits.pop())
 
     def plot_simulated_lc(self, model: SNModel, light_curve: LightCurve) -> None:
         """Plot a simulated supernova light-curve
@@ -211,12 +221,12 @@ class ResultsPanel:
                 color=color
             )
 
-            self._plotted_fits.append(line)
+            self._plotted_lc_fits.append(line)
 
         # Plot the spectrum
         wave = np.arange(model.minwave(), min(model.maxwave(), 12000))
         spec_line = self.spectrum_figure.line(x=wave, y=model.flux(0, wave), color='red', legend_label='Model')
-        self._plotted_fits.append(spec_line)
+        self._plotted_spec_fits.append(spec_line)
 
     def as_column(self, height=1200, sizing_mode="scale_width", **kwargs) -> column:
         """Return the application element as a column
@@ -257,8 +267,8 @@ class Application:
         self.plots = ResultsPanel()
 
         # Instantiate application interface and behavior
-        self._init_layout()
         self._init_callbacks()
+        self._init_layout()
 
     def _init_layout(self) -> None:
         """Populate the current document with the application GUI"""
