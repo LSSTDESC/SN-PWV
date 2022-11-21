@@ -20,7 +20,7 @@ from bokeh.palettes import Dark2_5
 from bokeh.plotting import figure
 
 from snat_sim import mock
-from snat_sim.models import LightCurve, ReferenceCatalog, SNModel, StaticPWVTrans
+from snat_sim.models import LightCurve, ReferenceCatalog, SNFitResult, SNModel, StaticPWVTrans
 
 # The color pallet to use when plotting
 PALLETE = Dark2_5
@@ -205,6 +205,7 @@ class ResultsPanel:
             bands: The band pass names to plot light-curves for
         """
 
+        self.clear_results_div()
         self.clear_plotted_sim()
         self.clear_plotted_fit()
 
@@ -257,7 +258,15 @@ class ResultsPanel:
         spec_line = self.spectrum_figure.line(x=wave, y=model.flux(0, wave), color='red', legend_label='Model')
         self._plotted_spec_fits.append(spec_line)
 
-    def update_results_div(self, sim_model, fit_model, fit_result) -> None:
+    def update_results_div(self, sim_model: SNModel, fit_model: SNModel, fit_result: SNFitResult) -> None:
+        """Update the results text box with fit results
+
+        Args:
+            sim_model: The model used to simulate the data
+            fit_model: The fitted model
+            fit_result: The fit result object
+        """
+
         # Update results div
         text = '<h4>Fit Results</h4>'
         text += str(fit_result).replace('\n', '<br>')
@@ -270,6 +279,11 @@ class ResultsPanel:
         text += f'source peak standard::b (AB): {fit_model.source_peakmag("standard::b", "AB")}'
         text += f'<br>source peak absolute standard::b (AB): {fit_model.source_peakabsmag("standard::b", "AB")}'
         self.fit_results_div.update(text=text)
+
+    def clear_results_div(self):
+        """Clear all text from the results text box"""
+
+        self.fit_results_div.update(text='')
 
     def as_column(self, height=1200, sizing_mode="scale_width", **kwargs) -> column:
         """Return the application element as a column
@@ -371,7 +385,6 @@ class Application:
         self.fit_widgets.x0_slider.update(value=self.sim_widgets.x0_slider.value)
         self.fit_widgets.x1_slider.update(value=self.sim_widgets.x1_slider.value)
         self.fit_widgets.c_slider.update(value=self.sim_widgets.c_slider.value)
-        self.fit_widgets.pwv_slider.update(value=self.sim_widgets.pwv_slider.value)
 
     def fit_lc_callback(self, event=None):
         """Fit and plot the SN model to the simulated light-curve"""
@@ -406,12 +419,13 @@ class Application:
         self.fit_widgets.x0_slider.value = fit_result.parameters['x0']
         self.fit_widgets.x1_slider.value = fit_result.parameters['x1']
         self.fit_widgets.c_slider.value = fit_result.parameters['c']
-        self.results_widgets.update_results_div(self._sim_model, model, fit_result)
         self.plot_fit_callback()
+        self.results_widgets.update_results_div(self._sim_model, model, fit_result)
 
     def plot_fit_callback(self, event=None) -> None:
         """Plot the current fitted SN model"""
 
+        self.results_widgets.clear_results_div()
         model = copy(self.sn_model)
         model.set(
             z=self.sim_widgets.z_slider.value,

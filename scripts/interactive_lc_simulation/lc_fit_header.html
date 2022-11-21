@@ -4,9 +4,23 @@
 </head>
 
 
-<h1>Supernova Light-Curves with PWV</h1>
-<p>
-    Interact with the widgets on the left to simulate a SNe Ia light-curve
-    with PWV effects. Use the widgets on the right to fit the simulated
-    light-curve.
-</p>
+<h1>Simulating Light-Curves with PWV</h1>
+<h2>Usage Instructions:</h2>
+<ol>
+    <li>
+        Use the sliders in the left hand panel to choose the input values for a light-curve simulation.
+        By default, light-curves are calibrated against a reference star catalog comprising a G2, M5, and K2 type star.
+        Click the "Plot Light-Curve" button to update the plots and visualize the simulated light-curve
+    </li>
+    <li>
+        Use the widgets in the right hand panel to prepare your fitted model.
+        The sliders represent the initial guess used when fitting.
+        Each of these values (except PWV) are automatically updated in the previous step to reflect the simulated model.
+        Click the "Plot Current Model" button to visualize your model using the currently chosen parameters.
+    </li>
+    <li>
+        Click the "Fit and Plot Model" button.
+        The plots, fitted model sliders, and results panel will update to show the fit results.
+        A text notice is displayed for failed or errored fits.
+    </li>
+</ol>
