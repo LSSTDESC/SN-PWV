@@ -41,8 +41,7 @@ class SimulationInputWidgets:
         self.pwv_slider = models.Slider(start=-0, end=100, value=7, step=.1, title='PWV')
         self.sampling_input = models.TextInput(value='4', title='Sampling (Days):')
         self.snr_input = models.TextInput(value='10.0', title='SNR:')
-        self.sim_options_checkbox = models.CheckboxGroup(
-            labels=["Plot SNR", 'Calibrate to Reference Catalog'], active=[0, 1])
+        self.sim_options_checkbox = models.CheckboxGroup(labels=['Calibrate to Reference Catalog'], active=[1])
         self.plot_model_button = models.Button(label='Plot Light-Curve', button_type='success')
 
     def as_column(self, width=320, height=1000, sizing_mode="fixed", **kwargs) -> column:
@@ -96,13 +95,13 @@ class FittedParamWidgets:
         self.max_x1_input = models.TextInput(value=str(self.x1_slider.end), default_size=110)
         self.min_c_input = models.TextInput(value=str(self.c_slider.start), default_size=110)
         self.max_c_input = models.TextInput(value=str(self.c_slider.end), default_size=110)
-        self.plot_model_button = models.Button(label='Plot Current Values', button_type='warning')
-        self.run_fit_button = models.Button(label='Fit Light-Curve', button_type='success')
+        self.plot_model_button = models.Button(label='Plot Current Model', button_type='warning')
+        self.run_fit_button = models.Button(label='Fit and Plot Model', button_type='success')
 
     def get_params_to_vary(self) -> list[str]:
         """Return a list of parameters the user has specified should be varied"""
 
-        return self.param_checkbox_group.labels[self.param_checkbox_group.active]
+        return [self.param_checkbox_group.labels[i] for i in self.param_checkbox_group.active]
 
     def get_params_boundaries(self):
         """Return a list of user specified parameter boundaries to be used when fitting"""
@@ -202,6 +201,7 @@ class ResultsPanel:
         """
 
         self.clear_plotted_sim()
+        self.clear_plotted_fit()
 
         # Update the main plot with simulated flux data
         sim_as_astropy = light_curve.to_astropy()
@@ -338,7 +338,7 @@ class Application:
         self._simulated_lc = model.simulate_lc(cadence, fixed_snr=snr, scatter=False)
 
         # Scale flux by reference star
-        if 1 in self.sim_widgets.sim_options_checkbox.active:
+        if 0 in self.sim_widgets.sim_options_checkbox.active:
             self._simulated_lc = self.reference_catalog.calibrate_lc(self._simulated_lc, model['pwv'])
 
         # Update the main plot with simulated flux data
