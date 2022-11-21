@@ -1,4 +1,11 @@
-"""Interactive Bokeh application for plotting light-curve fits and simulations"""
+"""Interactive Bokeh application for plotting light-curve fits and simulations
+
+Application widgets are grouped into classes by common purpose
+(e.g., simulation inputs, fitted model parameters). Each class provides
+methods for formatting widgets into usable layouts (rows, columns, etc.).
+Where appropriate, convenience methods are provided for manipulating widget
+states in bulk.
+"""
 
 from copy import copy
 from pathlib import Path
@@ -14,6 +21,7 @@ from bokeh.plotting import figure
 
 from snat_sim.models import LightCurve, ReferenceCatalog, SNModel, StaticPWVTrans
 
+# The color pallet to use when plotting
 PALLET = Dark2_5
 
 
@@ -32,12 +40,16 @@ class SimulationInputWidgets:
         self.pwv_slider = models.Slider(start=-0, end=100, value=7, step=.1, title='PWV')
         self.sampling_input = models.TextInput(value='4', title='Sampling (Days):')
         self.snr_input = models.TextInput(value='10.0', title='SNR:')
-        self.sim_options_checkbox = models.CheckboxGroup(labels=["Plot SNR", 'Calibrate to Reference Catalog'],
-                                                         active=[0, 1])
+        self.sim_options_checkbox = models.CheckboxGroup(
+            labels=["Plot SNR", 'Calibrate to Reference Catalog'], active=[0, 1])
         self.plot_model_button = models.Button(label='Plot Light-Curve', button_type='success')
 
-    def as_column(self) -> layout:
-        """Return the application element as a column"""
+    def as_column(self, width=320, height=1000, sizing_mode="fixed", **kwargs) -> column:
+        """Return the application element as a column
+
+        Args:
+            All arguments are passed to the returned ``column`` instance
+        """
 
         column_header = models.Div(text=(
             '<h2>Simulated Parameters</h2>'
@@ -55,9 +67,11 @@ class SimulationInputWidgets:
             self.snr_input,
             self.sim_options_checkbox,
             self.plot_model_button,
-            width=320,
-            height=1000,
-            sizing_mode="fixed")
+            width=width,
+            height=height,
+            sizing_mode=sizing_mode,
+            **kwargs
+        )
 
 
 class FittedParamWidgets:
@@ -99,8 +113,12 @@ class FittedParamWidgets:
             'c': [self.min_c_input, self.max_c_input]
         }
 
-    def as_column(self) -> layout:
-        """Return the application element as a column"""
+    def as_column(self, width=320, height=1000, sizing_mode="fixed", **kwargs) -> column:
+        """Return the application element as a column
+
+        Args:
+            All arguments are passed to the returned ``column`` instance
+        """
 
         column_header = models.Div(text=(
             '<h2>Fitted Parameters</h2>'
@@ -122,9 +140,10 @@ class FittedParamWidgets:
             self.pwv_slider,
             self.plot_model_button,
             self.run_fit_button,
-            width=320,
-            height=1000,
-            sizing_mode="fixed")
+            width=width,
+            height=height,
+            sizing_mode=sizing_mode,
+            **kwargs)
 
 
 class ResultsPanel:
@@ -199,15 +218,20 @@ class ResultsPanel:
         spec_line = self.spectrum_figure.line(x=wave, y=model.flux(0, wave), color='red', legend_label='Model')
         self._plotted_fits.append(spec_line)
 
-    def as_column(self) -> layout:
-        """Return the application element as a column"""
+    def as_column(self, height=1200, sizing_mode="scale_width", **kwargs) -> column:
+        """Return the application element as a column
+
+        Args:
+            All arguments are passed to the returned ``column`` instance
+        """
 
         return column(
             self.light_curve_figure,
             self.spectrum_figure,
             self.fit_results,
-            height=1200,
-            sizing_mode="scale_width")
+            height=height,
+            sizing_mode=sizing_mode,
+            **kwargs)
 
 
 class Application:
