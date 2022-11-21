@@ -19,10 +19,11 @@ from bokeh.models import CheckboxGroup
 from bokeh.palettes import Dark2_5
 from bokeh.plotting import figure
 
+from snat_sim import mock
 from snat_sim.models import LightCurve, ReferenceCatalog, SNModel, StaticPWVTrans
 
 # The color pallet to use when plotting
-PALLET = Dark2_5
+PALLETE = Dark2_5
 
 
 class SimulationInputWidgets:
@@ -192,7 +193,7 @@ class ResultsPanel:
         while self._plotted_spec_fits:
             self.spectrum_figure.renderers.remove(self._plotted_spec_fits.pop())
 
-    def plot_simulated_lc(self, model: SNModel, light_curve: LightCurve) -> None:
+    def plot_simulated_lc(self, model: SNModel, light_curve: LightCurve, bands: Collection[str]) -> None:
         """Plot a simulated supernova light-curve
 
         Args:
@@ -200,7 +201,29 @@ class ResultsPanel:
             light_curve: The simulated light-curve
         """
 
-        raise NotImplementedError
+        self.clear_plotted_sim()
+
+        # Update the main plot with simulated flux data
+        sim_as_astropy = light_curve.to_astropy()
+        for band, color in zip(bands, PALLETE):
+            band_data = sim_as_astropy[sim_as_astropy['band'] == band]
+            x = band_data['time']
+            y = band_data['flux']
+            yerr = band_data['fluxerr']
+
+            circ = self.light_curve_figure.circle(x=x, y=y, color=color, legend_label=band)
+            err_bar = self.light_curve_figure.multi_line(
+                np.transpose([x, x]).tolist(),
+                np.transpose([y - yerr, y + yerr]).tolist(),
+                color=color)
+
+            self._plotted_lc_sims.append(circ)
+            self._plotted_lc_sims.append(err_bar)
+
+        # Update plot of simulated spectrum
+        wave = np.arange(model.minwave(), model.maxwave())
+        spec_line = self.spectrum_figure.line(x=wave, y=model.flux(0, wave), legend_label='Observed')
+        self._plotted_spec_sims.append(spec_line)
 
     def plot_model_fit(self, model: SNModel, bands: Collection[str]) -> None:
         """Plot a fitted supernova model
@@ -214,7 +237,7 @@ class ResultsPanel:
 
         # Plot photometric light-curves in each band
         time_arr = np.arange(-25, 55, .5)
-        for band, color in zip(bands, PALLET):
+        for band, color in zip(bands, PALLETE):
             line = self.light_curve_figure.line(
                 x=time_arr,
                 y=model.bandflux(band, time_arr, zp=30, zpsys='ab'),
@@ -255,7 +278,7 @@ class Application:
     def __init__(self) -> None:
         """Instantiate the parent application and populate the given document"""
 
-        self._lc_data = None
+        self._simulated_lc = None
         self.sn_model = SNModel(
             self.sncosmo_source,
             effects=[StaticPWVTrans()],
@@ -297,12 +320,41 @@ class Application:
     def simulate_lc_callback(self, event=None):
         """Simulate and plot a new SN light-curve"""
 
-        raise NotImplementedError
+        # Create a model using simulation parameters from the GUI
+        model = copy(self.sn_model)
+        model.set(
+            z=self.sim_widgets.z_slider.value,
+            t0=self.sim_widgets.t0_slider.value,
+            x0=self.sim_widgets.x0_slider.value,
+            x1=self.sim_widgets.x1_slider.value,
+            c=self.sim_widgets.c_slider.value,
+            pwv=self.sim_widgets.pwv_slider.value
+        )
+
+        # Simulate a light-curve
+        snr = float(self.sim_widgets.snr_input.value)
+        time_sampling = float(self.sim_widgets.sampling_input.value)
+        cadence = mock.create_mock_cadence(np.arange(-10, 51, time_sampling), self.photometric_bands)
+        self._simulated_lc = model.simulate_lc(cadence, fixed_snr=snr, scatter=False)
+
+        # Scale flux by reference star
+        if 1 in self.sim_widgets.sim_options_checkbox.active:
+            self._simulated_lc = self.reference_catalog.calibrate_lc(self._simulated_lc, model['pwv'])
+
+        # Update the main plot with simulated flux data
+        self.plots.plot_simulated_lc(model, self._simulated_lc, self.photometric_bands)
+
+        # Match fitted param sliders to sim param sliders
+        self.fit_widgets.t0_slider.update(value=self.sim_widgets.t0_slider.value)
+        self.fit_widgets.x0_slider.update(value=self.sim_widgets.x0_slider.value)
+        self.fit_widgets.x1_slider.update(value=self.sim_widgets.x1_slider.value)
+        self.fit_widgets.c_slider.update(value=self.sim_widgets.c_slider.value)
+        self.fit_widgets.pwv_slider.update(value=self.sim_widgets.pwv_slider.value)
 
     def fit_lc_callback(self, event=None):
         """Fit and plot the SN model to the simulated light-curve"""
 
-        if not self._lc_data:
+        if not self._simulated_lc:
             return
 
         model = copy(self.sn_model)
@@ -317,7 +369,7 @@ class Application:
 
         # Simulate a light-curve
         fit_result = model.fit_lc(
-            data=self._lc_data,
+            data=self._simulated_lc,
             vparam_names=self.fit_widgets.get_params_to_vary(),
             bounds=self.fit_widgets.get_params_boundaries()
         )
