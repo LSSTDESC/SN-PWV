@@ -172,7 +172,7 @@ class ResultsPanel:
             sizing_mode='scale_both',
             toolbar_location='above')
 
-        self.fit_results = models.Div()
+        self.fit_results_div = models.Div()
 
     def clear_plotted_sim(self) -> None:
         """Remove simulated data from all plots"""
@@ -252,6 +252,20 @@ class ResultsPanel:
         spec_line = self.spectrum_figure.line(x=wave, y=model.flux(0, wave), color='red', legend_label='Model')
         self._plotted_spec_fits.append(spec_line)
 
+    def update_results_div(self, sim_model, fit_model, fit_result) -> None:
+        # Update results div
+        text = '<h4>Fit Results</h4>'
+        text += str(fit_result).replace('\n', '<br>')
+
+        text += '<br><h4>Sim Mag</h4>'
+        text += f'source peak standard::b (AB): {sim_model.source_peakmag("standard::b", "AB")}'
+        text += f'<br>source peak absolute standard::b (AB): {sim_model.source_peakabsmag("standard::b", "AB")}'
+
+        text += '<br><h4>Fitted Mag</h4>'
+        text += f'source peak standard::b (AB): {fit_model.source_peakmag("standard::b", "AB")}'
+        text += f'<br>source peak absolute standard::b (AB): {fit_model.source_peakabsmag("standard::b", "AB")}'
+        self.fit_results_div.update(text=text)
+
     def as_column(self, height=1200, sizing_mode="scale_width", **kwargs) -> column:
         """Return the application element as a column
 
@@ -262,7 +276,7 @@ class ResultsPanel:
         return column(
             self.light_curve_figure,
             self.spectrum_figure,
-            self.fit_results,
+            self.fit_results_div,
             height=height,
             sizing_mode=sizing_mode,
             **kwargs)
@@ -279,7 +293,9 @@ class Application:
     def __init__(self) -> None:
         """Instantiate the parent application and populate the given document"""
 
+        self._sim_model = None
         self._simulated_lc = None
+
         self.sn_model = SNModel(
             self.sncosmo_source,
             effects=[StaticPWVTrans()],
@@ -288,7 +304,7 @@ class Application:
 
         self.sim_widgets = SimulationInputWidgets()
         self.fit_widgets = FittedParamWidgets()
-        self.plots = ResultsPanel()
+        self.results_widgets = ResultsPanel()
 
         # Instantiate application interface and behavior
         self._init_callbacks()
@@ -300,7 +316,7 @@ class Application:
         # Create layouts for different sections of the GUI
         header_div = models.Div(text=self.header_path.read_text(), sizing_mode="stretch_width")
         left_column = self.sim_widgets.as_column()
-        center_column = self.plots.as_column()
+        center_column = self.results_widgets.as_column()
         right_column = self.fit_widgets.as_column()
 
         # noinspection PyTypeChecker
@@ -322,8 +338,8 @@ class Application:
         """Simulate and plot a new SN light-curve"""
 
         # Create a model using simulation parameters from the GUI
-        model = copy(self.sn_model)
-        model.set(
+        self._sim_model = copy(self.sn_model)
+        self._sim_model.set(
             z=self.sim_widgets.z_slider.value,
             t0=self.sim_widgets.t0_slider.value,
             x0=self.sim_widgets.x0_slider.value,
@@ -336,14 +352,14 @@ class Application:
         snr = float(self.sim_widgets.snr_input.value)
         time_sampling = float(self.sim_widgets.sampling_input.value)
         cadence = mock.create_mock_cadence(np.arange(-10, 51, time_sampling), self.photometric_bands)
-        self._simulated_lc = model.simulate_lc(cadence, fixed_snr=snr, scatter=False)
+        self._simulated_lc = self._sim_model.simulate_lc(cadence, fixed_snr=snr, scatter=False)
 
         # Scale flux by reference star
         if 0 in self.sim_widgets.sim_options_checkbox.active:
-            self._simulated_lc = self.reference_catalog.calibrate_lc(self._simulated_lc, model['pwv'])
+            self._simulated_lc = self.reference_catalog.calibrate_lc(self._simulated_lc, self._sim_model['pwv'])
 
         # Update the main plot with simulated flux data
-        self.plots.plot_simulated_lc(model, self._simulated_lc, self.photometric_bands)
+        self.results_widgets.plot_simulated_lc(self._sim_model, self._simulated_lc, self.photometric_bands)
 
         # Match fitted param sliders to sim param sliders
         self.fit_widgets.t0_slider.update(value=self.sim_widgets.t0_slider.value)
@@ -368,18 +384,24 @@ class Application:
             pwv=self.fit_widgets.pwv_slider.value
         )
 
-        # Simulate a light-curve
-        fit_result = model.fit_lc(
-            data=self._simulated_lc,
-            vparam_names=self.fit_widgets.get_params_to_vary(),
-            bounds=self.fit_widgets.get_params_boundaries()
-        )
+        try:
+            # Simulate a light-curve
+            fit_result = model.fit_lc(
+                data=self._simulated_lc,
+                vparam_names=self.fit_widgets.get_params_to_vary(),
+                bounds=self.fit_widgets.get_params_boundaries()
+            )
+
+        except Exception as e:
+            self.results_widgets.fit_results_div.update(text=str(e))
+            return
 
         # Update slider values and plot the result
         self.fit_widgets.t0_slider.value = fit_result.parameters['t0']
         self.fit_widgets.x0_slider.value = fit_result.parameters['x0']
         self.fit_widgets.x1_slider.value = fit_result.parameters['x1']
         self.fit_widgets.c_slider.value = fit_result.parameters['c']
+        self.results_widgets.update_results_div(self._sim_model, model, fit_result)
         self.plot_fit_callback()
 
     def plot_fit_callback(self, event=None) -> None:
@@ -395,7 +417,7 @@ class Application:
             pwv=self.fit_widgets.pwv_slider.value
         )
 
-        self.plots.plot_model_fit(model, bands=self.photometric_bands)
+        self.results_widgets.plot_model_fit(model, bands=self.photometric_bands)
 
 
 Application()
