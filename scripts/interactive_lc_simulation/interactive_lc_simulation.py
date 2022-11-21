@@ -38,7 +38,7 @@ class SimulationInputWidgets:
         self.x0_slider = models.Slider(start=0.001, end=2, value=.25, step=.01, title='x0')
         self.x1_slider = models.Slider(start=-1, end=1, value=0.11, step=.01, title='x1')
         self.c_slider = models.Slider(start=-1, end=1, value=-.05, step=.01, title='c')
-        self.pwv_slider = models.Slider(start=-0, end=100, value=7, step=.1, title='PWV')
+        self.pwv_slider = models.Slider(start=-0, end=60, value=7, step=.1, title='PWV')
         self.sampling_input = models.TextInput(value='4', title='Sampling (Days):')
         self.snr_input = models.TextInput(value='10.0', title='SNR:')
         self.sim_options_checkbox = models.CheckboxGroup(labels=['Calibrate to Reference Catalog'], active=[0])
